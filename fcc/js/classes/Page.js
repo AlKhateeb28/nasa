@@ -1,5 +1,4 @@
-
-class Page {
+class Page extends Object {
     static activeCardBackgroundColor = "#ffefd5";
 
     constructor() {
