@@ -1,0 +1,1 @@
+function getWebsocketClient(){try{return new WebSocketClient("ws://10.176.17.61:3000/");}catch(e){}}function getMismatchInstance() {mismatch={};mismatch.type = "MISMATCH";mismatch.dateTime=Date();mismatch.count=0;return mismatch;}function sendMessageToWebsocket(ws, mismatch) {try{ws.Send("#"+EncodeJson(mismatch));return ws;}catch(e){return null;}}

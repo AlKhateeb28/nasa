@@ -1,0 +1,1493 @@
+// 7007011544639605220
+<%
+// const_start
+var oConstBP = ({
+"sConstAllFilters": tools_web.get_web_const( 'vsefiltry', curLngWeb ),
+"sConstAllCourses": tools_web.get_web_const( 'vsekursy', curLngWeb ),
+"sConstAllTests": tools_web.get_web_const( 'vsetesty', curLngWeb ),
+"sConstAllStatuses": tools_web.get_web_const( 'vsestatusy', curLngWeb ),
+"sConstAllTypes": tools_web.get_web_const( 'c_all_types', curLngWeb ),
+"sConstAllPlaces": tools_web.get_web_const( 'vseraspolozheniya', curLngWeb ),
+"sConstAllEduOrgs": tools_web.get_web_const( 'vseobuchayushieor', curLngWeb ),
+"sConstAllOrgForms": tools_web.get_web_const( 'vseorganizacio', curLngWeb ),
+"sConstAllLectors": tools_web.get_web_const( 'vseprepodavate', curLngWeb ),
+"sConstAllEduPrograms": tools_web.get_web_const( 'vsenaboryprogr', curLngWeb ),
+"sConstAllBudgetPeriods": tools_web.get_web_const( 'vsebyudzhetnyepe', curLngWeb ),
+"sConstTiles": tools_web.get_web_const( 'plitki', curLngWeb ),
+"sConstFilters": tools_web.get_web_const( 'c_filter', curLngWeb ),
+"operational": tools_web.get_web_const( 'rabotayushie', curLngWeb ),
+"hired_after": tools_web.get_web_const( 'prinyatnarabotu_1', curLngWeb ),
+"any_sex": tools_web.get_web_const( 'lyubogopola', curLngWeb ),
+"visited": tools_web.get_web_const( 'posesheno', curLngWeb ),
+"types": tools_web.get_web_const( 'tipy', curLngWeb ),
+"sConstApply": "Применить",
+"sConstClear": "Сброс"
+});
+// const_end
+
+var iPageItemsCount = OptInt( tools_web.get_web_param( curParams, "boss_panel_body.iPageItemsCount", 15, true ), 0);
+var iTreeWidth = OptInt( tools_web.get_web_param( curParams, "boss_panel_body.iTreeWidth", 216, true ), 216);
+//var iTreeWidth = 216;
+//var iGridWidth = Int( tools_web.get_web_param( curParams, "boss_panel_body.iGridWidth", 650, true ));
+//var iGridHeight = Int( tools_web.get_web_param( curParams, "boss_panel_body.iGridHeight", 400, true ));
+var bShowThrobber = false; //tools_web.get_web_param( curParams, "boss_panel_body.show_throbber", "0", true ) == "1";
+var sPaneView, bThinMode = curDevice.disp_type == "mobile";
+if (bThinMode)
+sPaneView = "card";
+else
+sPaneView = tools_web.get_web_param( curParams, "boss_panel_body.sPaneView", "column", true );
+
+var bCategorized = bThinMode ? false : (tools_web.get_web_param( curParams, "boss_panel_body.bCategirizedGrids", null, true) == "1");
+
+var bShowDissmissedCheckBox = tools_web.get_web_param( curParams, "boss_panel_body.show_dissmissed_checkbox", "1", true ) == "1";
+var bHideDissMissedDefault = tools_web.get_web_param( curParams, "boss_panel_body.show_dissmissed_checkbox.hide_default_value", "1", true ) == "1";
+
+var bCountPersonsInSub = tools_web.get_web_param( curParams, "boss_panel_body.bCountPersonsInSub", "1", true ) == "1";
+var bCacheTree = tools_web.get_web_param( curParams, "boss_panel_body.bCacheTree", "1", true ) == "1";
+var bAdminAccess = tools_web.get_web_param( curParams, "boss_panel_body.bAdminAccess", "0", true ) == "1";
+var bMindDisbanded = tools_web.get_web_param( curParams, "boss_panel_body.bMindDisbanded", "0", true ) == "1";;
+var bListViewSelectors = tools_web.get_web_param( curParams, "boss_panel_body.list_view_selectors", "1", true ) == "1";
+
+var bFlush=(OptInt( curUrlQuery.GetOptProperty( "flush" ), OptInt(CONTEXT.GetOptProperty( "flush" ) , 0 ) ,0)==1);
+
+var sReadyEvent = "";
+var bShowTree = null; // now it's computed
+var iPerfCut = OptInt( tools_web.get_web_param( curParams, "boss_panel_body.iPerfCut", "", true ), null);
+var sDefaultViewParam = tools_web.get_web_param( curParams, "boss_panel_body.sDefaultView", "tiles", true );
+var sTreeType = tools_web.get_web_param( curParams, "boss_panel_body.sTreeType", "tree", true );
+
+//var arrTabListParam = (bThinMode ? (["collaborators"]) : String( tools_web.get_web_param( curParams, "boss_panel_body.tab_list", "collaborators;courses;tests;requests;events", true ) ).split( ";" ));
+var arrTabListParam = String( tools_web.get_web_param( curParams, "boss_panel_body.tab_list", "collaborators;courses;tests;requests;events", true ) ).split( ";" );
+
+var sSubTreeCollectionCode = tools_web.get_web_param( curParams, "boss_panel_body.subtree_collection_code", "boss_panel_tree_custom", true );
+var sCollaboratorCollectionCode = tools_web.get_web_param( curParams, "boss_panel_body.collaborator_collection_code", "boss_panel_collaborators", true );
+var sCollaboratorTileCode = tools_web.get_web_param( curParams, "boss_panel_body.collaborator_tile_code", "collaborator_tile", true );
+
+var sInitialElemID = CONTEXT.GetOptProperty("currentlySelectedSub", "");
+if (tools_web.get_web_param( curParams, "boss_panel_body.bSkipTreeIfTrivial", "1", true ) == "1" && (!bAdminAccess || curUser.access.access_role != "admin" && curUser.access.access_role != "hr"))
+{
+/////////// skip tree if only one func_manager ////////////
+var vFM = tools.xquery('for $elem in func_managers where $elem/person_id = ' + curUserID + ' return $elem/object_id,$elem/catalog');
+if (ArrayCount(vFM) == 1)
+{
+vFM = ArrayFirstElem(vFM);
+
+var sSingleFuncCatalog = vFM.catalog.Value;
+
+switch(vFM.catalog)
+{
+case "collaborator":
+vFM = vFM.object_id.OptForeignElem;
+if (vFM != undefined)
+sInitialElemID = (vFM.position_parent_id.HasValue ? vFM.position_parent_id.Value : vFM.org_id.Value);
+break;
+case "position":
+vFM = vFM.object_id.OptForeignElem;
+if (vFM != undefined)
+sInitialElemID = (vFM.parent_object_id.HasValue ? vFM.parent_object_id.Value : vFM.org_id.Value);
+break;
+case "org":
+case "subdivision":
+case "group":
+sInitialElemID = vFM.object_id.Value;
+break;
+}
+
+if (sSingleFuncCatalog != "group")
+{
+bShowTree = (ArrayOptFirstElem(tools.xquery("for $elem in subdivisions where $elem/parent_object_id = " +XQueryLiteral(sInitialElemID)+ " or $elem/org_id = " +XQueryLiteral(sInitialElemID)+ " return $elem/id")) != undefined);
+}
+else
+bShowTree = false;
+
+
+vFM = tools_web.get_user_data("boss_panel_collaborators_cache_" + curUserID);
+if (vFM == null || !vFM.HasProperty("result_array"))
+sReadyEvent = "ACTION=UpdateCollaboratorsCache;REFRESH";
+}
+else
+bShowTree = true;
+}
+else
+{
+bShowTree = CONTEXT.GetOptProperty("showTree") !== "0";
+}
+
+var sInitialElemName = CONTEXT.GetOptProperty("currentlySelectedSubTitle", "");
+if (sInitialElemName == "" && sInitialElemID != "")
+{
+try
+{
+sInitialElemName = OpenDoc(UrlFromDocID(Int(sInitialElemID))).TopElem.name.Value;
+}
+catch(_x_)
+{}
+}
+//alert("sInitialElemID: " + sInitialElemID);
+//sKeySelSubdiv = "boss_panel_sel_sudiv_cache_" + curUserID;
+//tools_web.set_user_data(sKeySelSubdiv, ({"select_subdiv" : sInitialElemID}), 86400);
+
+//sCasheSubdiv = tools_web.get_user_data("boss_panel_sel_sudiv_cache_" + curUserID);
+//alert("sCasheSubdiv: " + sCasheSubdiv.select_subdiv);
+
+//var sDgWidth = bShowTree ? (iGridWidth + iTreeWidth) : "100%";
+
+var bStatisticColumnOn = tools_web.is_true(tools_web.get_web_param( curParams, "boss_panel_body.statistic_column", "", true));
+
+var sUpdateCollaboratorSuccessAction = "UPDATE=CatalogListDataGridcollaboratorsView,CatalogListDataTilecollaboratorsView,CatalogListDataGridcoursesView,CatalogListDataGridtestsView,CatalogListDataGridrequestsView,CatalogListDataGrideventsView,CatalogListDataGridedu_plansView" + (bShowThrobber ? ";HIDE=BossPanelThrobber;SHOW=BossPanelTree": "") + ";HIDE=BossPanelBodyThrobber;UPDATE=OrgAnalicTab;SHOW=BossPanelBodyTab";
+
+var sUpdateCollaboratorAnaliticSuccessAction = "UPDATE=CatalogListDataGridcollaboratorsViewAnalitic,CatalogListDataTilecollaboratorsViewAnalitic,CatalogListDataGridcoursesViewAnalitic,CatalogListDataGridtestsViewAnalitic,CatalogListDataGridrequestsViewAnalitic,CatalogListDataGrideventsViewAnalitic,CatalogListDataGridedu_plansViewAnalitic" + (bShowThrobber ? ";HIDE=BossPanelThrobber;SHOW=BossPanelTree": "") + ";HIDE=BossPanelBodyThrobber;UPDATE=OrgAnalicTab;SHOW=BossPanelBodyTab;REFRESH;";
+
+%>
+<SPXMLScreen Ready="<%=sReadyEvent%>">
+    <Action Name="UpdateCollaboratorsCache" Source="boss_panel_update_collaborators_custom" Initialize="<%=(bShowThrobber ? "HIDE=BossPanelTree;SHOW=BossPanelThrobber;": "")%>HIDE=BossPanelBodyTab;SHOW=BossPanelBodyThrobber" Success="{!UpdateCollaboratorsCacheSuccessAction}" Failure="<%=(bShowThrobber ? "HIDE=BossPanelThrobber;SHOW=BossPanelTree": "")%>;HIDE=BossPanelBodyThrobber;SHOW=BossPanelBodyTab">
+    <Param Name="iElemId" Value="<%=sInitialElemID%>"/>
+    <Param Name="sFilterId" Value="f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate},c:{collaboratorsCreateDateFrom}--{collaboratorsCreateDateTo},r:{collaboratorsRegion}"/>
+    <Param Name="sSearchWord" Value="{CatalogListSearchcollaboratorsView}"/>
+    <Param Name="curUserID" Value="<%=curUserID%>"/>
+    <Param Name="bAdminAccess" Value="<%=(bAdminAccess)%>"/>
+    <Param Name="bHideDismissed" Value="{collaboratorsHideDismissed}"/>
+    <Param Name="statistic_id" Value="{collaboratorsStatisticID}"/>
+    <Param Name="is_mobile" Value="<%=bThinMode%>"/>
+    <Param Name="view_type" Value="{CatalogListSelectorscollaboratorsView}"/>
+    <Param Name="cut" Value="<%=iPerfCut%>"/>
+    </Action>
+
+    <Action Name="UpdateCollaboratorsCacheAnalitic" Source="boss_panel_update_collaborators_custom" Initialize="<%=(bShowThrobber ? "HIDE=BossPanelTree;SHOW=BossPanelThrobber;": "")%>HIDE=BossPanelBodyTab;SHOW=BossPanelBodyThrobber" Success="{!UpdateCollaboratorsAnaliticCacheSuccessAction}" Failure="<%=(bShowThrobber ? "HIDE=BossPanelThrobber;SHOW=BossPanelTree": "")%>;HIDE=BossPanelBodyThrobber;SHOW=BossPanelBodyTab">
+    <Param Name="iElemId" Value="<%=sInitialElemID%>"/>
+    <Param Name="sFilterId" Value="f:,s:,a:--,h:,c:--,r:"/>
+    <Param Name="sSearchWord" Value=""/>
+    <Param Name="curUserID" Value="<%=curUserID%>"/>
+    <Param Name="bAdminAccess" Value="<%=(bAdminAccess)%>"/>
+    <Param Name="bHideDismissed" Value="{collaboratorsHideDismissed}"/>
+    <Param Name="statistic_id" Value="{collaboratorsStatisticID}"/>
+    <Param Name="is_mobile" Value="<%=bThinMode%>"/>
+    <Param Name="view_type" Value="{CatalogListSelectorscollaboratorsView}"/>
+    <Param Name="cut" Value="<%=iPerfCut%>"/>
+    <Param Name="sRegPeriod" Value=""/>
+    <Param Name="sAnaliticCourseId" Value=""/>
+    <Param Name="sAnaliticCourseType" Value=""/>
+    </Action>
+
+    <Action Name="UpdateCollaboratorsCacheAndDownloadReportCollaborators" Source="boss_panel_update_collaborators_for_report" Success="HIDE=DownloadAllCollsReportContainerInfo;SHOW=DownloadAllCollsReportContainer;ALERT=Отчет сформирован, не закрывайте окно браузера до окончания скачивания файла.;<%=XmlAttrEncode('SET=excelExportAction/sCollection,boss_panel_collaborators_report;SET=excelExportAction/sCollectionData,curUserID=' + curUserID + '&iElemId=&sFilterId=f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate}&sSearchWord={CatalogListSearchcollaboratorsView}&view_type={CatalogListSelectorscollaboratorsView};SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction')%>" Initialize="HIDE=DownloadAllCollsReportContainer;SHOW=DownloadAllCollsReportContainerInfo;">
+        <Param Name="iElemId" Value="<%=sInitialElemID%>"/>
+        <Param Name="sFilterId" Value="f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate}"/>
+        <Param Name="sSearchWord" Value="{CatalogListSearchcollaboratorsView}"/>
+        <Param Name="curUserID" Value="<%=curUserID%>"/>
+        <Param Name="bAdminAccess" Value="<%=(bAdminAccess)%>"/>
+        <Param Name="bHideDismissed" Value="{collaboratorsHideDismissed}"/>
+        <Param Name="statistic_id" Value="{collaboratorsStatisticID}"/>
+        <Param Name="is_mobile" Value="<%=bThinMode%>"/>
+        <Param Name="view_type" Value="{CatalogListSelectorscollaboratorsView}"/>
+        <Param Name="cut" Value="<%=iPerfCut%>"/>
+    </Action>
+
+    <Action Name="UpdateCollaboratorsCacheAndDownloadReportEdu" Source="boss_panel_update_collaborators_for_report" Success="HIDE=DownloadAllEduReportContainerInfo;SHOW=DownloadAllEduReportContainer;ALERT=Отчет сформирован, не закрывайте окно браузера до окончания скачивания файла.;<%=XmlAttrEncode('SET=excelExportAction/sCollection,boss_panel_edu_report;SET=excelExportAction/sCollectionData,curUserID=' + curUserID + '&iElemId=&sFilterId=f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate}&sSearchWord={CatalogListSearchcollaboratorsView}&view_type={CatalogListSelectorscollaboratorsView};SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction')%>" Initialize="HIDE=DownloadAllEduReportContainer;SHOW=DownloadAllEduReportContainerInfo;">
+        <Param Name="iElemId" Value="<%=sInitialElemID%>"/>
+        <Param Name="sFilterId" Value="f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate}"/>
+        <Param Name="sSearchWord" Value="{CatalogListSearchcollaboratorsView}"/>
+        <Param Name="curUserID" Value="<%=curUserID%>"/>
+        <Param Name="bAdminAccess" Value="<%=(bAdminAccess)%>"/>
+        <Param Name="bHideDismissed" Value="{collaboratorsHideDismissed}"/>
+        <Param Name="statistic_id" Value="{collaboratorsStatisticID}"/>
+        <Param Name="is_mobile" Value="<%=bThinMode%>"/>
+        <Param Name="view_type" Value="{CatalogListSelectorscollaboratorsView}"/>
+        <Param Name="cut" Value="<%=iPerfCut%>"/>
+    </Action>
+
+    <Action Source="ExcelExporterAction" Name="excelExportAction" Success="OPENWINDOW=assessment_excel_export.html?mode=htmlfileurl&header={header}&ext={ext}&cdt=attachment&htmlfileurl={xls_url}" Failure="ALERT={messageText}">
+        <Param Name="sCollection" Value=""/>
+        <Param Name="sCollectionData" Value=""/>
+        <Param Name="sData" Value=""/>
+        <Param Name="sMode" Value=""/>
+        <Param Name="sColumnList" Value=""/>
+        <Param Name="sType" Value=""/>
+    </Action>
+
+    <Collection Name="PanellTreeCollection" Source="<%=sSubTreeCollectionCode%>">
+        <Param Name="curUserID" Value="<%=curUserID%>"/>
+        <Param Name="bCacheTree" Value="<%=(bCacheTree && !bFlush)%>"/>
+        <Param Name="bAdminAccess" Value="<%=(bAdminAccess)%>"/>
+        <Param Name="bMindDisbanded" Value="<%=(bMindDisbanded)%>"/>
+        <Param Name="sSearchWord" Value="{SearchField}"/>
+    </Collection>
+
+    <%
+    curTitle = {
+    "type": "simple",
+    "title": tools_web.get_web_const( '3hmw4myf6l', curLngWeb )
+    }
+    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_object_title.xaml" ) );
+
+    if (sPaneView == "switch")
+    {
+    %>
+    <TabControl Name="sliderTab" DisplayMode_="onehandedconcertina" TabsHidden="true" Class="XAML-tabcontrol-invisible" MinHeight="500" TabsWidth="1" ActiveTab="<%=CONTEXT.GetOptProperty("sliderTab","")%>">
+    <%
+    }
+    else if (sPaneView == "card")
+    {
+    %>
+    <TabControl Name="sliderTab" DisplayMode="tab" TabsHidden="true" Height="100%" ActiveTab="<%=CONTEXT.GetOptProperty("sliderTab","")%>">
+    <%
+    }
+    else
+    {
+    %>
+
+    <Grid Class="XAML-grid-content-hor-container">
+        <GridColumns>
+            <%
+            if(bShowTree)
+            {
+            %>
+            <GridColumn Width="<%=iTreeWidth%>"/>
+            <%
+            }
+            %>
+            <GridColumn/>
+        </GridColumns>
+        <GridRow>
+            <%
+            }
+            if(bShowTree)
+            {
+            // Вызов универсального меню
+            curCollectionMenu = {
+            "catalog_name": "{BossPanelTree:^/type}"
+            };
+            curCollectionMenu.SetProperty("data_grid_id", "BossPanelTree");
+            curCollectionMenu.SetProperty("selected_data", "{BossPanelTree}");
+            curCollectionMenu.SetProperty("id", "BossPanelTree");
+            Response.Write(EvalCodePageUrl(global_settings.web_path + "view_catalog_list_menu_boss_panel.xaml"));
+            }
+
+            if (bShowTree)
+            {
+            if (sPaneView == "switch" || sPaneView == "card")
+            {
+            %>
+            <TabItem Title="">
+                <%
+                }
+                %>
+                <StackPanel Class="XAML-stack-container">
+                    <StackPanel Class="XAML-stack-container">
+                        <StackPanel Orientation="Vertical" Class="XAML-stack-filters-container" Align="<%=(sPaneView == "switch" || sPaneView == "card" ? "right": "center")%>">
+                        <StackPanel Orientation="Horizontal" Class="<%=(sPaneView == "switch" || sPaneView == "card" ? "XAML-stack-filter" : "")%>" Align="right">
+                        <StackPanel Name="DownloadAllCollsReportContainer">
+                            <Button Class="XAML-button XAML-button-view" Name="ButtonDownloadAllCollsReport" Toggle="0" Click="SET=UpdateCollaboratorsCacheAndDownloadReportCollaborators/iElemId,0;ACTION=UpdateCollaboratorsCacheAndDownloadReportCollaborators">Общий отчет. Сотрудники</Button>
+                        </StackPanel>
+                        <StackPanel Name="DownloadAllCollsReportContainerInfo" Hidden="1">
+                            <Label>
+                                Формирование отчета запущено...
+                            </Label>
+                        </StackPanel>
+                        <Label Class="XAML-label-divider"/>
+
+                        <StackPanel Name="DownloadAllEduReportContainer">
+                            <Button Class="XAML-button XAML-button-view" Toggle="0" Click="SET=UpdateCollaboratorsCacheAndDownloadReportEdu/iElemId,0;ACTION=UpdateCollaboratorsCacheAndDownloadReportEdu">Общий отчет. Курсы</Button>
+                        </StackPanel>
+                        <StackPanel Name="DownloadAllEduReportContainerInfo" Hidden="1">
+                            <Label>
+                                Формирование отчета запущено...
+                            </Label>
+                        </StackPanel>
+                        <Label Class="XAML-label-divider"/>
+
+                        <Button Name="GTree_ListButton" Class="XAML-button XAML-button-list XAML-button-view icon-tree2" Toggle="1" ToggleGroup="GTree_selector" Pressed="<%=(sTreeType != "chart")%>" Click="HIDE=BossPanelChart;HIDE=MainAnalicTab;SHOW=BossPanelTree;UPDATE=BossPanelTree"></Button>
+                        <Button Name="GTree_ChartButton" Class="XAML-button XAML-button-view icon-th-large" Toggle="1" ToggleGroup="GTree_selector" Pressed="<%=(sTreeType == "chart")%>" Click="HIDE=BossPanelTree;HIDE=MainAnalicTab;SHOW=BossPanelChart;UPDATE=BossPanelChart"></Button>
+                        <Button Name="AnalicToggleButton" Class="XAML-button XAML-button-list XAML-button-view icon-stats-dots" Toggle="1" ToggleGroup="GTree_selector" Pressed="<%=(sTreeType == "chart")%>" Click="HIDE=BossPanelChart;HIDE=BossPanelTree;SHOW=MainAnalicTab;"></Button>
+
+                        <StackPanel Orientation="Horizontal" Class="XAML-panel-search">
+                            <StackPanel Name="SearchStackPanel1" Hidden="<%=!bThinMode%>" Orientation="Horizontal">
+                                <Edit Name="SearchField" EmptyText="<%=tools_web.get_web_const( "vkpb_search", curLngWeb )%>" KeyPress="#13:UPDATE=BossPanelTree"></Edit>
+                                <Button Class="XAML-button-view icon-arrow-right" Click="UPDATE=BossPanelTree"></Button>
+                            </StackPanel>
+                            <%
+                            if (!bThinMode)
+                            {
+                            %>
+                            <Button Class="XAML-button-view icon-search" Click="TOGGLE=SearchStackPanel1"></Button>
+                            <%
+                            }
+                            %>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Width="<%=(sPaneView == "switch" || sPaneView == "card" ? "" : iTreeWidth)%>">
+
+                <WTTree Width="100%" Name="BossPanelChart" Source="{PanellTreeCollection}" Selectable="0" DataID="id" DataParent="parent_id" DataTitle="name" DataText="name" DataImage="icon" NodeMode="normal" LevelsOpen="2" NodeClick="SET=currentlySelectedSubTitle,{name};SET=currentlySelectedSub,{id};SET=ParentNodeObjectID,{id};SET=sliderTab,1;SET=UpdateCollaboratorsCache/iElemId,{id};ACTION=UpdateCollaboratorsCache" Hidden="<%=(sTreeType != "chart")%>" DisplayToggle="true" ElementLayout="fonticon|text=name">
+                </WTTree>
+
+                <Tree Name="BossPanelTree" Source="{PanellTreeCollection}" DataID="id" DataParent="parent_id"
+                      DataTitle="name" DataFatherhood="hasChildren" DataIcon="icon"
+                      Click="SET=currentlySelectedSubTitle,{name};SET=currentlySelectedSub,{id};SET=ParentNodeObjectID,{id};SET=sliderTab,1;SET=UpdateCollaboratorsCache/iElemId,{id};ACTION=UpdateCollaboratorsCache;REFRESH;" Preservable="1" Width="<%=(sPaneView == "switch" || sPaneView == "card" ? "" : iTreeWidth)%>" Hidden="<%=(sTreeType == "chart")%>">
+                <Menu Source="{CatalogListMenuBossPanelTree}"/>
+                <!--<Menu Source="{TreeContextMenu}"/>						-->
+                </Tree>
+
+                <Panel Name="MainAnalicTab" Hidden="1" ShowHeader="0" Source="boss_panel_analitic"/>
+
+                <StackPanel Name="BossPanelThrobber" Hidden="1">
+                    <Image Source="/pics/ajax-loader-big.gif"/>
+                </StackPanel>
+
+                </StackPanel>
+                </StackPanel>
+                </StackPanel>
+                <%
+                if (sPaneView == "switch" || sPaneView == "card")
+                {
+                %>
+            </TabItem>
+            <%
+            }
+            }
+
+
+            if (sPaneView == "switch" )
+            {
+            %>
+            <TabItem>
+                <%
+                }
+                else if	(sPaneView == "card")
+                {
+                %>
+                <TabItem Title="<%=tools_web.get_web_const( "strukturaorgan", curLngWeb )%>">
+                <%
+                }
+
+                %>
+                <StackPanel Orientation="Vertical">
+                    <Grid Width="100%" Class="XAML-grid-container">
+                        <GridColumns>
+                            <%
+                            if (bShowTree && (sPaneView == "card" || sPaneView == "switch"))
+                            {
+                            %>
+                            <GridColumn/>
+                            <%
+                            }
+                            %>
+                            <GridColumn Width="100%"/>
+                        </GridColumns>
+
+                        <GridRow>
+                            <%
+                            if (bShowTree && (sPaneView == "card" || sPaneView == "switch"))
+                            {
+                            %>
+                            <Link Click="SET=sliderTab,0" Class="icon-arrow-left"></Link>
+                            <%
+                            }
+
+
+                            var iBodyTab = OptInt(CONTEXT.GetOptProperty("BossPanelBodyTab"), 0);
+
+                            %>
+                            <Edit Class="XAML-edit-label XAML-edit-label-title" Name="currentlySelectedSubTitle" Editable="0"><%=sInitialElemName%></Edit>
+
+                        </GridRow>
+                    </Grid>
+
+                    <Edit Hidden="1" Name="currentlySelectedSub"><%=sInitialElemID%></Edit>
+                    <Edit Hidden="1" Name="showTree" Value="<%=bShowTree ? 1 : 0%>"/>
+                    <StackPanel Name="BossPanelBodyThrobber" Hidden="1" Width="100%" Align="center">
+                        <Image Source="pics/spinner.gif"/>
+                    </StackPanel>
+                    <TabControl Name="BossPanelBodyTab" Class="XAML-tabcontrol-filter" Align="Right" ActiveTab="<%=iBodyTab%>">
+                        <%
+                        //sCurSelectSub4 = CONTEXT.GetOptProperty("currentlySelectedSub", "");
+                        //alert("sCurSelectSub4: " + sCurSelectSub4);
+
+
+                        var curView, iTabsCounter = 0;
+                        arrTabListParam.push('analitics');
+                        for ( sTabListParam in arrTabListParam )
+                        {
+                        ///////////////////////////////////////////////   collaborators TAB   /////////////////////////////////////////////
+                        if ( sTabListParam == "collaborators" )
+                        {
+                        %>
+                        <TabItem Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_collaborators", curLngWeb ) )%>" Reload="1">
+
+                        <%
+                        if (iTabsCounter == iBodyTab)
+                        {
+                        if (bHideDissMissedDefault && !bShowDissmissedCheckBox)
+                        {
+                        %>
+                        <Edit Name="collaboratorsHideDismissed" Hidden="1">1</Edit>
+                        <%
+                        }
+
+                        if (curUser.access.access_role == "OrganizingTrainerRCK")
+                        {
+                        //"row_filters": ([
+                        //	[
+                        //		{"name": "collaboratorsFilter", "title": tools_web.get_web_const("filtry", curLngWeb), "type": "combo", "value": "", "items": ([{"title": oConstBP.sConstAllFilters, "value": ""}, {"title": tools_web.get_web_const("uvolennye", curLngWeb), "value": "fired"}, {"title": tools_web.get_web_const("c_managers", curLngWeb), "value": "boss"}, {"title": oConstBP.operational, "value": "operational"}])},
+                        //		{"name": "collaboratorsSexFilter", "title": tools_web.get_web_const("vpb_sex", curLngWeb), "type": "combo", "value": "", "items": ([{"title": oConstBP.any_sex, "value": ""}, {"title": tools_web.get_web_const("muzhchina", curLngWeb), "value": "m"}, {"title": tools_web.get_web_const("zhenshina", curLngWeb), "value": "w"}])}
+                        //	],
+                        //	[
+                        //		{"name": "collaboratorsHireDate", "title": oConstBP.hired_after, "type": "date", "value": ""},
+                        //		{"name": "collaboratorsAge", "title": tools_web.get_web_const("vrb_age", curLngWeb), "type": "number_range"}
+                        //	],
+                        //	[
+                        //		{"name": ("collaboratorsCreateDateFrom"), "title": "Дата регистрации c", "type": "date", "value": ""},
+                        //		{"name": ("collaboratorsCreateDateTo"), "title": "Дата регистрации по", "type": "date", "value": ""},
+                        //		{"name": ("collaboratorsRegion"), "title": "Регион отчетности", "type": "combo", "value": "", "items": ArrayUnion(([{"title": "", "value": ""}]), ArrayExtract(XQuery("for $elem in regions return $elem/Fields('id','name')"), '({"title":This.name.Value, "value": This.id.Value})'))}
+                        //	]
+                        //]),
+
+                        curView = {
+                        "id": (sTabListParam + "View"),
+                        "disp_selectors": true,
+                        "disp_search": true,
+                        "disp_filter": false,
+                        "selectors": (bListViewSelectors ? "data_grid;tile" : ""),
+                        "disp_paging": (iPageItemsCount > 0),
+                        "paging_size": iPageItemsCount,
+                        "catalog_name": "collaborator",
+                        "parent_node_object_id": "{ParentNodeObjectID}",
+                        "tile_template": sCollaboratorTileCode,
+                        "disp_type": (sDefaultViewParam != "tiles" ? "data_grid" :"tile"),
+                        "filter_action": "ACTION=UpdateCollaboratorsCache",
+                        "selectors_action": "SET=UpdateCollaboratorsCacheSuccessAction,REFRESH;ACTION=UpdateCollaboratorsCache",
+                        "height": null,
+                        "buttons": [
+                        {
+                        "name": "excelExportButton",
+                        "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+                        "click": ("SET=excelExportAction/sCollection," +sCollaboratorCollectionCode+ ";SET=excelExportAction/sCollectionData,curUserID=" + curUserID + "&iElemId=&sFilterId=f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate},c:{collaboratorsCreateDateFrom}--{collaboratorsCreateDateTo},r:{collaboratorsRegion}&sSearchWord={CatalogListSearchcollaboratorsView}&view_type=" +(bThinMode ? "mobile" : "{CatalogListSelectorscollaboratorsView}")+ ";SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction")
+                        }
+                        ],
+                        "collection": {
+                        "name": sCollaboratorCollectionCode,
+                        "params": ([
+                        {"name": "iElemId", "value": sInitialElemID},
+                        {"name": "sFilterId", "value": "f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate},c:{collaboratorsCreateDateFrom}--{collaboratorsCreateDateTo},r:{collaboratorsRegion}"},
+                        {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+                        {"name": "curUserID", "value": curUserID},
+                        {"name": "view_type", "value": (bThinMode ? "mobile" : "{CatalogListSelectorscollaboratorsView}")},
+                        {"name": "statistic_id", "value": (bStatisticColumnOn ? "{collaboratorsStatisticID}" : null)}
+                        ])
+                        }
+                        };
+                        //alert("sInitialElemID333: " + sInitialElemID);
+                        }
+                        else
+                        {
+                        //"row_filters": ([
+                        //	[
+                        //		{"name": "collaboratorsFilter", "title": tools_web.get_web_const("filtry", curLngWeb), "type": "combo", "value": "", "items": ([{"title": oConstBP.sConstAllFilters, "value": ""}, {"title": tools_web.get_web_const("uvolennye", curLngWeb), "value": "fired"}, {"title": tools_web.get_web_const("c_managers", curLngWeb), "value": "boss"}, {"title": oConstBP.operational, "value": "operational"}])},
+                        //		{"name": "collaboratorsSexFilter", "title": tools_web.get_web_const("vpb_sex", curLngWeb), "type": "combo", "value": "", "items": ([{"title": oConstBP.any_sex, "value": ""}, {"title": tools_web.get_web_const("muzhchina", curLngWeb), "value": "m"}, {"title": tools_web.get_web_const("zhenshina", curLngWeb), "value": "w"}])}
+                        //	],
+                        //	[
+                        //		{"name": "collaboratorsHireDate", "title": oConstBP.hired_after, "type": "date", "value": ""},
+                        //		{"name": "collaboratorsAge", "title": tools_web.get_web_const("vrb_age", curLngWeb), "type": "number_range"}
+                        //	],
+                        //	[
+                        //		{"name": ("collaboratorsCreateDateFrom"), "title": "Дата регистрации c", "type": "date", "value": ""},
+                        //		{"name": ("collaboratorsCreateDateTo"), "title": "Дата регистрации по", "type": "date", "value": ""},
+                        //	]
+                        //]),
+
+                        curView = {
+                        "id": (sTabListParam + "View"),
+                        "disp_selectors": true,
+                        "disp_search": true,
+                        "disp_filter": false,
+                        "selectors": (bListViewSelectors ? "data_grid;tile" : ""),
+                        "disp_paging": (iPageItemsCount > 0),
+                        "paging_size": iPageItemsCount,
+                        "catalog_name": "collaborator",
+                        "parent_node_object_id": "{ParentNodeObjectID}",
+                        "tile_template": sCollaboratorTileCode,
+                        "disp_type": (sDefaultViewParam != "tiles" ? "data_grid" :"tile"),
+                        "filter_action": "ACTION=UpdateCollaboratorsCache",
+                        "selectors_action": "SET=UpdateCollaboratorsCacheSuccessAction,REFRESH;ACTION=UpdateCollaboratorsCache",
+                        "height": null,
+                        "buttons": [
+                        {
+                        "name": "excelExportButton",
+                        "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+                        "click": ("SET=excelExportAction/sCollection," +sCollaboratorCollectionCode+ ";SET=excelExportAction/sCollectionData,curUserID=" + curUserID + "&iElemId=&sFilterId=f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate},c:{collaboratorsCreateDateFrom}--{collaboratorsCreateDateTo}&sSearchWord={CatalogListSearchcollaboratorsView}&view_type=" +(bThinMode ? "mobile" : "{CatalogListSelectorscollaboratorsView}")+ ";SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction")
+                        }
+                        ],
+                        "collection": {
+                        "name": sCollaboratorCollectionCode,
+                        "params": ([
+                        {"name": "iElemId", "value": sInitialElemID},
+                        {"name": "sFilterId", "value": "f:{collaboratorsFilter},s:{collaboratorsSexFilter},a:{collaboratorsAgeFrom}--{collaboratorsAgeTo},h:{collaboratorsHireDate},c:{collaboratorsCreateDateFrom}--{collaboratorsCreateDateTo}"},
+                        {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+                        {"name": "curUserID", "value": curUserID},
+                        {"name": "view_type", "value": (bThinMode ? "mobile" : "{CatalogListSelectorscollaboratorsView}")},
+                        {"name": "statistic_id", "value": (bStatisticColumnOn ? "{collaboratorsStatisticID}" : null)}
+                        ])
+                        }
+                        };
+                        }
+                        var oFilter = ArraySelect(lists.view_conditions_schemes, "This.catalog == 'collaborator' && This.disp_web == true");
+
+                        if (ArrayCount(oFilter) > 0)
+                        {
+                        curView.row_filters[0][0].items = ArrayUnion(curView.row_filters[0][0].items, ArrayExtract(oFilter, '({"title": This.name.Value, "value": ("F" + This.id)})'));
+                        }
+
+                        if (bShowDissmissedCheckBox)
+                        {
+                        curView.row_filters[curView.row_filters.length-1].push({"name": "collaboratorsHideDismissed", "title_value": tools_web.get_web_const("c_no_disp_dismiss", curLngWeb), "type": "checkbox", "value": (bHideDissMissedDefault ? 1:0)});
+                        }
+
+                        if (bStatisticColumnOn)
+                        {
+                        var xarrStatistics = XQuery("for $elem in statistic_recs where MatchSome($elem/catalog, ('collaborator')) order by $elem/name return $elem/Fields('id','name')");
+
+
+                        oFilter = ({"name": "collaboratorsStatisticID", "title": tools_web.get_web_const("kaleydoskoppok", curLngWeb), "type": "combo", "value": "", "items": ([{"title": "-", "value": ""}])});
+                        oFilter.items = ArrayUnion(oFilter.items, ArrayExtract(xarrStatistics, '({"title": This.name.Value, "value": This.id.Value})'));
+
+                        curView.row_filters[0].push(oFilter);
+                        }
+
+
+
+                        Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list_custom.xaml" ) );
+
+                        }
+                        %>
+
+            </TabItem>
+
+            <%
+            }
+
+            ///////////////////////////////////////////////  courses TAB   /////////////////////////////////////////////
+
+            else if ( sTabListParam == "courses" )
+            {
+
+            %>
+            <TabItem Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_courses", curLngWeb ) )%>" Reload="1">
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+
+            //"row_filters": ([
+            //	[
+            //		{"name": ("select" + sTabListParam + "Type"), "title": tools_web.get_web_const("c_courses", curLngWeb), "type": "combo", "value": "", "items": ([{"title": oConstBP.sConstAllCourses, "value": ""}, {"title": tools_web.get_web_const("09xq3nwyj8", curLngWeb), "value": "learnings"}, {"title": tools_web.get_web_const("nezavershennyek", curLngWeb), "value": "active_learnings"}])},
+            //		{"name": (sTabListParam + "FinDateFrom"), "title": (tools_web.get_web_const("c_is_completed", curLngWeb) + " " + tools_web.get_web_const("vppb_from", curLngWeb)), "type": "date", "value": ""},
+            //		{"name": (sTabListParam + "FinDateTo"), "title": (tools_web.get_web_const("c_is_completed", curLngWeb) + " " + tools_web.get_web_const("c_enter_time_error2", curLngWeb)), "type": "date", "value": ""}
+            //	],
+            //	[
+            //		{"name": ("select" + sTabListParam + "Status"), "title": tools_web.get_web_const("afen6mr32w", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllStatuses, "value": ""}]), ArrayExtract(curLngCommon.learning_states, '({"title":This.name.Value, "value": This.id.Value})'))},
+            //		{"name": (sTabListParam + "Score"), "title": tools_web.get_web_const("c_score", curLngWeb), "type": "number_range"}
+            //	],
+            //	[
+            //		{"name": (sTabListParam + "CrtDateFrom"), "title": "Дата регистрации c", "type": "date", "value": ""},
+            //		{"name": (sTabListParam + "CrtDateTo"), "title": "Дата регистрации по", "type": "date", "value": ""}
+            //	]
+            //]),
+
+            curView = ({
+            "id": (sTabListParam + "View"),
+            "disp_selectors": false,
+            "disp_search": true,
+            "disp_filter": false,
+            "disp_paging": (iPageItemsCount > 0),
+            "paging_size": iPageItemsCount,
+            "catalog_name": "learning",
+            "disp_type": "data_grid",
+            //"filter_action": "ACTION=SubPersonCourseGrid",
+            "height": null,
+            "buttons": [
+            {
+            "name": "excelExportButton",
+            "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+            "click": ("SET=excelExportAction/sCollection,boss_panel_course_data_collection_custom;SET=excelExportAction/sCollectionData,sLearningType=t:{select" +sTabListParam+ "Type},s:{select" +sTabListParam+ "Status},p:{" + sTabListParam+ "ScoreFrom}-{" +sTabListParam+ "ScoreTo},f:{" +sTabListParam+ "FinDateFrom}--{" +sTabListParam+ "FinDateTo},c:{" +sTabListParam+ "CrtDateFrom}--{" +sTabListParam+ "CrtDateTo}&curDocID=" +curDocID+ "&bCategory=&sSearchWord={" +sTabListParam+ "SearchField};SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction")
+            }
+            ],
+            "collection": {
+            "name": "boss_panel_course_data_collection_custom",
+            "params": ([
+            {"name": "curDocID", "value": curDocID},
+            {"name": "sLearningType", "value": "t:{select" + sTabListParam+ "Type},s:{select" +sTabListParam+ "Status},p:{" + sTabListParam+ "ScoreFrom}-{" + sTabListParam+ "ScoreTo},f:{" + sTabListParam+ "FinDateFrom}--{" + sTabListParam+ "FinDateTo},c:{" +sTabListParam+ "CrtDateFrom}--{" +sTabListParam+ "CrtDateTo}"},
+            {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+            {"name": "bCategory", "value": (bCategorized ? "1" : "")},
+            {"name": "is_mobile", "value": bThinMode}
+            ])
+            }
+            });
+            if (bCategorized)
+            curView.categorized = "id:parent_id";
+
+
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) );
+            }
+            %>
+            </TabItem>
+            <%
+            }
+
+            ///////////////////////////////////////////////  tests TAB   /////////////////////////////////////////////
+            else if ( sTabListParam == "tests" )
+            {
+            %>
+            <TabItem Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_tests", curLngWeb ) )%>" Reload="1">
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+            curView = {
+            "id": (sTabListParam + "View"),
+            "disp_selectors": false,
+            "disp_search": true,
+            "disp_filter": false,
+            "disp_paging": (iPageItemsCount > 0),
+            "paging_size": iPageItemsCount,
+            "catalog_name": "test_learning",
+            "disp_type": "data_grid",
+            "height": null,
+            "row_filters": ([
+            [
+            {"name": ("select" + sTabListParam + "Type"), "title": tools_web.get_web_const("c_tests", curLngWeb), "type": "combo", "value": "", "items": ([{"title": oConstBP.sConstAllTests, "value": ""}, {"title": tools_web.get_web_const("8fcf8y2h17", curLngWeb), "value": "test_learnings"}, {"title": tools_web.get_web_const("nezavershennyet", curLngWeb), "value": "active_test_learnings"}])},
+            {"name": (sTabListParam + "FinDateFrom"), "title": (tools_web.get_web_const("c_is_completed", curLngWeb) + " " + tools_web.get_web_const("vppb_from", curLngWeb)), "type": "date", "value": ""},
+            {"name": (sTabListParam + "FinDateTo"), "title": (tools_web.get_web_const("c_is_completed", curLngWeb) + " " + tools_web.get_web_const("c_enter_time_error2", curLngWeb)), "type": "date", "value": ""}
+            ],
+            [
+            {"name": ("select" + sTabListParam + "Status"), "title": tools_web.get_web_const("afen6mr32w", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllStatuses, "value": ""}]), ArrayExtract(curLngCommon.learning_states, '({"title":This.name.Value, "value": This.id.Value})'))},
+            {"name": (sTabListParam + "Score"), "title": tools_web.get_web_const("c_score", curLngWeb), "type": "number_range"}
+            ],
+            ]),
+            "buttons": [
+            {
+            "name": "excelExportButton",
+            "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+            "click": ("SET=excelExportAction/sCollection,boss_panel_test_data_collection;SET=excelExportAction/sCollectionData,sLearningType=t:{select" +sTabListParam+ "Type},s:{select" +sTabListParam+ "Status},p:{" +sTabListParam+ "ScoreFrom}-{" +sTabListParam+ "ScoreTo},f:{" +sTabListParam+ "FinDateFrom}--{" +sTabListParam+ "FinDateTo}&curDocID=" +curDocID+ "&bCategory=&sSearchWord={" +sTabListParam+ "SearchField};SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction")
+            }
+            ],
+            "collection": {
+            "name": "boss_panel_test_data_collection",
+            "params": ([
+            {"name": "curDocID", "value": curDocID},
+            {"name": "sLearningType", "value": ("t:{select" +sTabListParam+ "Type},s:{select" +sTabListParam+ "Status},p:{" +sTabListParam+ "ScoreFrom}-{" +sTabListParam+ "ScoreTo},f:{" +sTabListParam+ "FinDateFrom}--{" +sTabListParam+ "FinDateTo}")},
+            {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+            {"name": "bCategory", "value": (bCategorized ? "1" : "")},
+            {"name": "is_mobile", "value": bThinMode}
+            ])
+            }
+            };
+            if (bCategorized)
+            curView.categorized = "id:parent_id";
+
+
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) );
+            }
+            %>
+            </TabItem>
+            <%
+            }
+            ///////////////////////////////////////////////  requests TAB   /////////////////////////////////////////////
+            else if ( sTabListParam == "requests" )
+            {
+            %>
+            <TabItem Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_requests", curLngWeb ) )%>" Reload="1">
+
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+            curView = {
+            "id": (sTabListParam + "View"),
+            "disp_selectors": false,
+            "disp_search": true,
+            "disp_filter": false,
+            "disp_paging": (iPageItemsCount > 0),
+            "paging_size": iPageItemsCount,
+            "catalog_name": "request",
+            "disp_type": "data_grid",
+            "height": null,
+            "row_filters": ([
+            [
+            {"name": (sTabListParam + "StatusType"), "title": tools_web.get_web_const("afen6mr32w", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllStatuses, "value": ""}]), ArrayExtract(curLngCommon.request_status_types, '({"title":This.name.Value, "value": This.id.Value})'))},
+            {"name": (sTabListParam + "Type"), "title": oConstBP.types, "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllTypes, "value": ""}]), ArrayExtract(XQuery("for $elem in request_types return $elem/Fields('id','name')"), '({"title":This.name.Value, "value": This.id.Value})'))}
+            ],
+            [
+            {"name": (sTabListParam + "DateFrom"), "title": (tools_web.get_web_const("verb_title", curLngWeb) + " " + tools_web.get_web_const("vppb_from", curLngWeb)), "type": "date", "value": ""},
+            {"name": (sTabListParam + "DateTo"), "title": (tools_web.get_web_const("verb_title", curLngWeb) + " " + tools_web.get_web_const("c_enter_time_error2", curLngWeb)), "type": "date", "value": ""}
+            ]
+            ]),
+            "buttons": [
+            {
+            "name": "excelExportButton",
+            "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+            "click": ("SET=excelExportAction/sCollection,boss_panel_request_data_collection;SET=excelExportAction/sCollectionData,sRequestStatusType=s:{" +sTabListParam+ "StatusType},t:{" +sTabListParam+ "Type},d:{" +sTabListParam+ "DateFrom}--{" +sTabListParam+ "DateTo}&curDocID=" +curDocID+ "&bCategory=&sSearchWord={" +sTabListParam+ "SearchField};SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction")
+            }
+            ],
+            "collection": {
+            "name": "boss_panel_request_data_collection",
+            "params": ([
+            {"name": "curDocID", "value": curDocID},
+            {"name": "sRequestStatusType", "value": ("s:{" +sTabListParam+ "StatusType},t:{" +sTabListParam+ "Type},d:{" +sTabListParam+ "DateFrom}--{" +sTabListParam+ "DateTo}")},
+            {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+            {"name": "bCategory", "value": (bCategorized ? "1" : "")},
+            {"name": "is_mobile", "value": bThinMode}
+            ])
+            }
+            };
+            if (bCategorized)
+            curView.categorized = "creator_person_id:parent_id";
+
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) );
+            }
+            %>
+            </TabItem>
+            <%
+            }
+
+            ///////////////////////////////////////////////  events TAB   /////////////////////////////////////////////
+            else if ( sTabListParam == "events" )
+            {
+            %>
+            <TabItem Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_events", curLngWeb ) )%>" Reload="1">
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+            curView = {
+            "id": (sTabListParam + "View"),
+            "disp_selectors": false,
+            "disp_search": true,
+            "disp_filter": false,
+            "disp_paging": (iPageItemsCount > 0),
+            "paging_size": iPageItemsCount,
+            "catalog_name": "event",
+            "disp_type": "data_grid",
+            "height": null,
+            "row_filters": ([
+            [
+            {"name": (sTabListParam + "StatusType"), "title": tools_web.get_web_const("afen6mr32w", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllStatuses, "value": ""}]), ArrayExtract(curLngCommon.event_status_types, '({"title":This.name.Value, "value": This.id.Value})'))},
+            {"name": (sTabListParam + "Type"), "title": tools_web.get_web_const("c_type", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllTypes, "value": ""}]), ArrayExtract(curLngCommon.event_types, '({"title":This.name.Value, "value": This.id.Value})'))},
+            {"name": (sTabListParam + "Place"), "title": tools_web.get_web_const("c_place", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllPlaces, "value": ""}]), ArrayExtract(XQuery("for $elem in places return $elem/Fields('id','name')"), '({"title":This.name.Value, "value": This.id.Value})'))},
+            ],
+            [
+            {"name": (sTabListParam + "Lector"), "title": tools_web.get_web_const("c_lector", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllLectors, "value": ""}]), ArrayExtract(XQuery("for $elem in lectors return $elem/Fields('id','lector_fullname')"), '({"title":This.lector_fullname.Value, "value": This.id.Value})'))},
+            {"name": (sTabListParam + "EducationOrg"), "title": tools_web.get_web_const("c_org", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllEduOrgs, "value": ""}]), ArrayExtract(XQuery("for $elem in education_orgs return $elem/Fields('id','name')"), '({"title":This.name.Value, "value": This.id.Value})'))},
+            {"name": (sTabListParam + "EducationProgram"), "title": tools_web.get_web_const("c_edu_prog", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllEduPrograms, "value": ""}]), ArrayExtract(XQuery("for $elem in education_programs return $elem/Fields('id','name')"), '({"title":This.name.Value, "value": This.id.Value})'))},
+            ],
+            [
+            {"name": (sTabListParam + "OrgForm"), "title": tools_web.get_web_const("qdmoojntdf", curLngWeb), "type": "combo", "value": "", "items": ArrayUnion(([{"title": oConstBP.sConstAllOrgForms, "value": ""}]), ArrayExtract(lists.organizational_forms, '({"title":This.name.Value, "value": tools_web.get_cur_lng_name(This.name, curLng.short_id)})'))},
+            {"name": (sTabListParam + "DateFrom"), "title": (tools_web.get_web_const("verb_title", curLngWeb) + " " + tools_web.get_web_const("vppb_from", curLngWeb)), "type": "date", "value": ""},
+            {"name": (sTabListParam + "DateTo"), "title": (tools_web.get_web_const("verb_title", curLngWeb) + " " + tools_web.get_web_const("c_enter_time_error2", curLngWeb)), "type": "date", "value": ""}
+            ]
+            ]),
+            "buttons": [
+            {
+            "name": "excelExportButton",
+            "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+            "click": ("SET=excelExportAction/sCollection,boss_panel_event_data_collection;SET=excelExportAction/sCollectionData,sEventStatusType={SelectEventStatusType}&curDocID=" +curDocID+ "&sEventType=s:{" +sTabListParam+ "StatusType},t:{" +sTabListParam+ "Type},d:{" +sTabListParam+ "DateFrom}--{" +sTabListParam+ "DateTo}&sSearchWord={" +sTabListParam+ "SearchField};SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction")
+            }
+            ],
+            "collection": {
+            "name": "boss_panel_event_data_collection",
+            "params": ([
+            {"name": "curDocID", "value": curDocID},
+            {"name": "sEventStatusType", "value": ("s:{" +sTabListParam+ "StatusType},t:{" +sTabListParam+ "Type},d:{" +sTabListParam+ "DateFrom}--{" +sTabListParam+ "DateTo},p:{" +sTabListParam+ "Place},o:{" +sTabListParam+ "EducationOrg},f:{" +sTabListParam+ "OrgForm},l:{" +sTabListParam+ "Lector},g:{" +sTabListParam+ "EducationProgram}")},
+            {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+            {"name": "bCategory", "value": (bCategorized ? "1" : "")},
+            {"name": "is_mobile", "value": bThinMode}
+            ])
+            }
+
+            };
+            if (bCategorized)
+            curView.categorized = "id:parent_id";
+
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) );
+            }
+            %>
+            </TabItem>
+            <%
+            }
+
+            ///////////////////////////////////////////////  education_plans TAB   /////////////////////////////////////////////
+            else if ( sTabListParam == "edu_plans" )
+            {
+            %>
+            <TabItem Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_edu_plans", curLngWeb ) )%>" Reload="1">
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+            curView = {
+            "id": (sTabListParam + "View"),
+            "disp_selectors": false,
+            "disp_search": false,
+            "disp_filter": false,
+            "disp_paging": (iPageItemsCount > 0),
+            "paging_size": iPageItemsCount,
+            "catalog_name": "education_plan",
+            "disp_type": "data_grid",
+            "height": null,
+            "row_filters": ([
+            [
+            {"name": "SelectEduPlanStatusType", "title": tools_web.get_web_const("afen6mr32w", curLngWeb), "type": "combo", "value": "all", "items": ArrayUnion(([{"title": oConstBP.sConstAllStatuses, "value": "all"}]), ArrayExtract(curLngCommon.learning_states, '({"title":This.name.Value, "value": This.id.Value})'))}
+            ]
+            ]),
+            "buttons": [
+            {
+            "name": "excelExportButton",
+            "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+            "click": ("SET=excelExportAction/sCollection,boss_panel_edu_plan_data_collection;SET=excelExportAction/sCollectionData,sEduPlanStatusType={SelectEduPlanStatusType}&curDocID=" +curDocID+ "&bCategory=;SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sType,xls;ACTION=excelExportAction")
+            }
+            ],
+            "collection": {
+            "name": "boss_panel_edu_plan_data_collection",
+            "params": ([
+            {"name": "curDocID", "value": curDocID},
+            {"name": "sEduPlanStatusType", "value": ("{SelectEduPlanStatusType}")},
+            {"name": "bCategory", "value": (bCategorized ? "1" : "")},
+            {"name": "is_mobile", "value": bThinMode}
+            ])
+            }
+            };
+            if (bCategorized)
+            curView.categorized = "id:parent_id";
+
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) );
+            }
+            %>
+            </TabItem>
+            <%
+            }
+
+            ///////////////////////////////////////////////  custom_reports TAB   /////////////////////////////////////////////
+            else if ( sTabListParam == "custom_reports" )
+            {
+            //if (ArrayOptFirstElem(xarrCRs) != undefined)
+            {
+            %>
+            <TabItem Title="<%=XmlAttrEncode(tools_web.get_web_const( "ers8nliwka", curLngWeb ))%>" Reload="1">
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+
+            curView = {
+            "id": (sTabListParam + "View"),
+            "disp_selectors": false,
+            "disp_search": true,
+            "disp_filter": false,
+            "disp_paging": (iPageItemsCount > 0),
+            "paging_size": iPageItemsCount,
+            "catalog_name": "custom_report",
+            "disp_type": "data_grid",
+            "xquery_qual": "$elem/access_block_type = 'boss_panel'",
+            "height": null
+            };
+
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) );
+
+            }
+            %>
+            </TabItem>
+            <%
+            }
+            }
+
+            ///////////////////////////////////////////////  assessment_appraise TAB   /////////////////////////////////////////////
+            else if ( sTabListParam == "assessment" )
+            {
+            %>
+            <TabItem Title="<%=XmlAttrEncode(tools_web.get_web_const( "7swdju5pdc", curLngWeb ))%>" Reload="1">
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+            %>
+            <StackPanel Orientation="Vertical" Class="XAML-stack-filters-container" Align="right">
+                <StackPanel Class="XAML-stack-filter" Orientation="Horizontal" Adapt="1" Align="left">
+
+                    <Button Click="SET=excelExportAction/sCollection,boss_panel_assessment_data_collection;SET=excelExportAction/sCollectionData,sAssessmentFilter=b:{<%=sTabListParam%>BudgetPeriod},s:{<%=sTabListParam%>AssessmentStatus}&sSearchWord={<%=sTabListParam%>SearchField};SET=excelExportAction/sData,;SET=excelExportAction/sMode,datagrid;SET=excelExportAction/sColumnList,c1_data=person_fullname&c1_title=<%=UrlEncode( tools_web.get_web_const( "c_fio", curLngWeb ) )%>&c1_width=200&c1_type=string&c2_data=assessment&c2_title=<%=UrlEncode(tools_web.get_web_const( "assessment", curLngWeb ))%>&c2_width=180&c2_type=string&c3_data=status&c3_title=<%=UrlEncode(tools_web.get_web_const( "c_status", curLngWeb ))%>&c3_width=180;SET=excelExportAction/sType,xls;ACTION=excelExportAction" Class="XAML-button XAML-button-view"><%=tools_web.get_web_const( "sgsvrm6x6u", curLngWeb )%></Button>
+
+
+                    <Label Class="XAML-label-divider"></Label>
+
+                    <Button Name="ListButton" Class="XAML-button XAML-button-view" Toggle="1" ToggleGroup="AssessmentViewSelector" Pressed="<%=(1)%>" Click="HIDE=AssessmentObjDash;SHOW=AssessmentGrid"><%=tools_web.get_web_const("ass_mark", curLngWeb)%></Button>
+                    <Button Name="TileButton" Class="XAML-button XAML-button-view" Toggle="1" ToggleGroup="AssessmentViewSelector" Pressed="<%=(0)%>" Click="SHOW=AssessmentObjDash;HIDE=AssessmentGrid"><%=tools_web.get_web_const("vsb_purposes", curLngWeb)%></Button>
+
+                    <Label Class="XAML-label-divider"></Label>
+
+                    <StackPanel Orientation="Horizontal" Class="XAML-panel-search">
+                        <StackPanel Name="<%=sTabListParam%>SearchStackPanel" Hidden="<%=!bThinMode%>" Orientation="Horizontal">
+                            <Edit Name="<%=sTabListParam%>SearchField" EmptyText="<%=tools_web.get_web_const( "vkpb_search", curLngWeb )%>" KeyPress="#13:UPDATE=SubPersonEventGrid"></Edit>
+                            <Button Class="XAML-button-view icon-arrow-right" Click="UPDATE=AssessmentGrid"></Button>
+                        </StackPanel>
+                        <%
+                        if (!bThinMode)
+                        {
+                        %>
+                        <Button Class="XAML-button-view icon-search" Click="TOGGLE=<%=sTabListParam%>SearchStackPanel"></Button>
+                        <%
+                        }
+                        %>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Name="<%=sTabListParam%>FiltersPanel" Hidden="<%=true%>">
+                    <Grid Width="100%" Class="XAML-grid-filter-content-with-labels" Adapt="1">
+                        <GridColumns>
+                            <GridColumn Width="50%"/>
+                            <GridColumn Width="50%"/>
+                        </GridColumns>
+                        <GridRow>
+                            <StackPanel Class="XAML-stack-container" Orientation="Vertical">
+                                <Label Class="XAML-label-filter-label"><%=tools_web.get_web_const("byudzhetnyeperio", curLngWeb)%></Label>
+                                <ComboBox Name="<%=sTabListParam%>BudgetPeriod" SelectedItem="" Change="UPDATE=AssessmentGrid" Width="100%">
+                                    <ComboBoxItem Value="" Selected="true"><%=XmlAttrEncode(oConstBP.sConstAllBudgetPeriods)%></ComboBoxItem>
+                                    <%
+                                    for (_fldFilterElem in tools.xquery("for $elem in budget_periods order by $elem/name return $elem/id,$elem/name"))
+                                    {
+                                    %>
+                                    <ComboBoxItem Value="<%=_fldFilterElem.id%>"><%=XmlAttrEncode(tools_web.get_cur_lng_name(_fldFilterElem.name, curLng.short_id))%></ComboBoxItem>
+                                    <%
+                                    }
+                                    %>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Class="XAML-stack-container" Orientation="Vertical">
+                                <Label Class="XAML-label-filter-label"><%=tools_web.get_web_const("afen6mr32w", curLngWeb)%></Label>
+                                <ComboBox Name="<%=sTabListParam%>AssessmentStatus" SelectedItem="" Change="UPDATE=AssessmentGrid" Width="100%">
+                                    <ComboBoxItem Value="" Selected="true"><%=XmlAttrEncode( oConstBP.sConstAllStatuses )%></ComboBoxItem>
+                                    <%
+                                    for (_fldFilterElem in curLngCommon.assessment_appraise_statuses)
+                                    {
+                                    %>
+                                    <ComboBoxItem Value="<%=_fldFilterElem.id%>"><%=XmlAttrEncode(_fldFilterElem.name )%></ComboBoxItem>
+                                    <%
+                                    }
+                                    %>
+                                </ComboBox>
+                            </StackPanel>
+
+                        </GridRow>
+                    </Grid>
+                    <Grid Width="100%" Class="XAML-grid-dialog-buttons">
+                        <GridColumns>
+                            <GridColumn Width="100%"/>
+                            <GridColumn/>
+                            <GridColumn/>
+                        </GridColumns>
+
+                        <GridRow>
+                            <Label/>
+                            <Button Class="XAML-button-important" Click="UPDATE=SubPersonEduPlanGrid"><%=oConstBP.sConstApply%></Button>
+                            <Button Toggle="1" ToggleGroup="<%=sTabListParam%>ToggleFiltersButtons" Click="DELETE=<%=sTabListParam%>BudgetPeriod,<%=sTabListParam%>AssessmentStatus;HIDE=<%=sTabListParam%>FiltersPanel;UPDATE=AssessmentGrid"><%=oConstBP.sConstClear%></Button>
+                        </GridRow>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+
+            <Collection Name="AssessmentReport" Source="boss_panel_assessment_data_collection">
+                <Param Name="sAssessmentFilter" Value="b:{<%=sTabListParam%>BudgetPeriod},s:{<%=sTabListParam%>AssessmentStatus}"/>
+                <Param Name="curDocID" Value="<%=curDocID%>"/>
+                <Param Name="bCategory" Value="<%=(bCategorized ? "1" : "")%>"/>
+                <Param Name="sSearchWord" Value="{<%=sTabListParam%>SearchField}"/>
+            </Collection>
+            <Collection Name="ObjectiveDashboard" Source="boss_panel_objective_dash">
+                <Param Name="assessment_appraise_id" Value="{<%=sTabListParam%>AssessmentAppraise}"/>
+            </Collection>
+            <DataGrid Name="AssessmentGrid" Source="{AssessmentReport}" Width="100%" PageSize="<%=iPageItemsCount%>" <%=(bCategorized ? "Categorized=\"id:parent_id\"" : "")%>>
+            <DataGridColumn Value="person_fullname" Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_fio", curLngWeb ) )%>" ColorSource="color" MinWidth="250" Type="link" Click="OPENURL=<%=tools_web.get_mode_clean_url( "assessment_appraise", null, ({"assessment_appraise_id": "{assessment_id}"}))%>" Sortable="True"/>
+            <DataGridColumn Value="assessment" Title="<%=XmlAttrEncode( tools_web.get_web_const( "ass_name", curLngWeb ) )%>" ColorSource="color" MinWidth="250" Type="string" Sortable="True"/>
+            <DataGridColumn Value="status" Title="<%=XmlAttrEncode( tools_web.get_web_const( "c_status", curLngWeb ) )%>" ColorSource="color" Width="150"  Type="string" Sortable="True"/>
+            <DataGridColumn Value="id" Hidden="1" Ghost="0"/>
+            </DataGrid>
+            <StackPanel Width="100%" Name="AssessmentObjDash" Hidden="true">
+                <Grid Width="100%" Class="XAML-grid-filter-content-with-labels">
+                    <GridColumns>
+                        <GridColumn Width="33%"/>
+                        <GridColumn Width="33%"/>
+                        <GridColumn/>
+                    </GridColumns>
+                    <GridRow>
+                        <StackPanel Class="XAML-stack-container" Orientation="Horizontal">
+                            <Label Width="155"><%=tools_web.get_web_const("ass_name", curLngWeb)%>:</Label>
+                            <ComboBox Class="XAML-combo-view" Name="<%=sTabListParam%>AssessmentAppraise" SelectedItem="" Change="UPDATE=AssObjDashChart,AssObjDashChart1" Width="250">
+                                <ComboBoxItem Value="" Selected="true"><%=tools_web.get_web_const("vrb_not_specified", curLngWeb)%></ComboBoxItem>
+                                <%
+                                xarrCRs = tools.xquery("for $elem in pas where $elem/expert_person_id = " +curUserID+ " and ($elem/assessment_appraise_type = 'activity_appraisal' or $elem/assessment_appraise_type = 'activity_plan')  and $elem/status != 'self' return $elem/assessment_appraise_id");
+
+                                xarrCRs = ArraySelectDistinct(ArrayExtract(xarrCRs, "This.assessment_appraise_id.Value"));
+
+                                for (_fldFilterElem in tools.xquery("for $elem in assessment_appraises where MatchSome($elem/id, (" + ArrayMerge(xarrCRs, "This", ",") + ")) order by $elem/name return $elem/id,$elem/name"))
+                                {
+                                %>
+                                <ComboBoxItem Value="<%=_fldFilterElem.id%>"><%=XmlAttrEncode(tools_web.get_cur_lng_name(_fldFilterElem.name , curLng.short_id))%></ComboBoxItem>
+                                <%
+                                }
+                                %>
+                            </ComboBox>
+                        </StackPanel>
+                    </GridRow>
+                </Grid>
+                <!--
+                <OrgChart Name="AssObjDashChart1" Width="100%" Height="600" Source="{ObjectiveDashboard}" Selectable="0" DataID="id" DataParent="parent_id" DataTitle="name" DataImage="icon" NodeMode="normal" NodeClick="">
+                </OrgChart>
+                -->
+                <WTTree Name="AssObjDashChart" Width="100%" DisplayToggle="1" Source="{ObjectiveDashboard}" Selectable="0" DataID="id" DataParent="parent_id" DataTitle="name" DataImage="icon" NodeMode="normal" NodeClick="" LevelsOpen="2" ElementWidth="300" ElementHeight="100" Orientation="left" DisplayTips="1" TipLayout="image=icon|text=text" ElementForm="roundrect">
+                </WTTree>
+            </StackPanel>
+            <%
+            }
+            %>
+            </TabItem>
+            <%
+            }
+            ///////////////////////////////////////////////  stat TAB   /////////////////////////////////////////////
+            else if ( sTabListParam == "stat" )
+            {
+            %>
+            <TabItem Title="<%=XmlAttrEncode(tools_web.get_web_const( "c_stat", curLngWeb ))%>" Reload="1">
+            <StackPanel Orientation="Vertical" Class="XAML-stack-filters-container" Align="right">
+                <StackPanel Orientation="Horizontal" Class="XAML-stack-filter" Adapt="1" Align="right" >
+                    <Label Class="XAML-button-view"></Label>
+                </StackPanel>
+            </StackPanel>
+            <%
+            if (iTabsCounter == iBodyTab)
+            {
+            if (tools_web.is_true(tools_web.get_web_param( curParams, "boss_panel_body.stat_actions_on", "", false)))
+            {
+            var oBtn, vRes = ArrayOptFirstElem(tools.xquery("for $elem in remote_collections where $elem/code = 'uni_catalog_list_menu' return $elem/id,$elem/__data"));
+            if (vRes != undefined)
+            {
+            var arrOfSelColls = tools_web.get_user_data("boss_panel_collaborators_cache_" + curUserID);
+            if (arrOfSelColls != null && arrOfSelColls.HasProperty("result_array"))
+            arrOfSelColls = arrOfSelColls.result_array;
+            else
+            arrOfSelColls = new Array();
+
+            sArrOfSelColls = "[" + ArrayMerge(arrOfSelColls, "'{\"id\":' + This.id + '}'", ",") + "]";
+
+
+            curCollectionMenu = {
+            "catalog_name": "{BossPanelTree:^/type}"
+            };
+            curCollectionMenu.SetProperty("selected_data", "{boss_panel_stat__selectedPeople}");
+            curCollectionMenu.SetProperty("id", "boss_panel_stat_actions");
+            Response.Write(EvalCodePageUrl(global_settings.web_path + "view_catalog_list_menu.xaml"));
+            %>
+            <Edit Name="boss_panel_stat_actions__currentClickAction" Hidden="1"/>
+            <Edit Name="boss_panel_stat__selectedPeople" Hidden="1"/>
+
+            <Dialog Name="SelectDialog_boss_panel_stat_actions" Source="dlg_select" Title="<%=XmlAttrEncode( tools_web.get_web_const("0mzyraf76u", curLngWeb ) )%>" Close="SET=boss_panel_stat__selectedPeople,{CatalogListDataGridSelList};{!boss_panel_stat_actions__currentClickAction}">
+            <Param Name="catalog_name" Value="collaborator"/>
+            <Param Name="multi_select" Value="true"/>
+            <Param Name="view_type" Value=""/>
+            <Param Name="xquery_qual" Value=""/>
+            <Param Name="check_access" Value="false"/>
+            <Param Name="selected_object_ids" Value=""/>
+            <Param Name="display_object_ids" Value="<%=ArrayMerge(arrOfSelColls, "This.id", ";")%>"/>
+            <Param Name="disp_filter" Value="false"/>
+            <Param Name="filter_id" Value="#empty#"/>
+            <Param Name="show_all" Value="<%=global_settings.settings.show_all_persons%>"/>
+            <Param Name="typein" Value="false"/>
+            <Param Name="can_be_empty" Value="false"/>
+            <Param Name="secid" Value="<%=tools_web.get_secid( Session.sid )%>"/>
+            <Param Name="list_columns" Value=""/>
+            </Dialog>
+            <%
+            vRes = OpenDoc(UrlFromDocID(vRes.PrimaryKey)).TopElem;
+            vRes.wvars.ObtainChildByKey("name_id").value = "boss_panel_stat_actions";
+            vRes.wvars.ObtainChildByKey("id_field_name").value = "id";
+            vRes.wvars.ObtainChildByKey("selected_data").value = sArrOfSelColls;
+            vRes.wvars.ObtainChildByKey("catalog_name").value = "collaborator";
+            vRes.wvars.ObtainChildByKey("source_type").value = "";
+            vRes.wvars.ObtainChildByKey("calc_by_first").value = true;
+
+            vRes = vRes.evaluate("raw", Request);
+            for (oBtn in vRes.result)
+            {
+            %>
+            <Button Click="SET=boss_panel_stat_actions__currentClickAction,<%=UrlEncode(oBtn.GetOptProperty("click", ""))%>;OPENDIALOG=SelectDialog_boss_panel_stat_actions"><%=HtmlEncode(oBtn.title)%></Button>
+            <%
+            }
+
+            }
+
+
+            }
+
+            var STATISTIC_SOURCE = new Object;
+            STATISTIC_SOURCE.code = "boss_panel";
+            STATISTIC_SOURCE.object_id = sInitialElemID;
+
+            try
+            {
+            STATISTIC_SOURCE.parameters = ParseJson(tools_web.get_web_param(curParams, "boss_panel_body.statistics_params", "null", true));
+            }
+            catch(_x_)
+            {
+            alert("BOSSPANEL Statistics ERROR: invalid parameters.");
+            }
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_statistics_body.xaml" ) );
+
+
+            sUpdateCollaboratorSuccessAction = "REFRESH";
+            }
+            %>
+            </TabItem>
+            <%
+            }
+
+            if ( sTabListParam == "analitics" )
+            {
+            %>
+            <TabItem Title="Аналитика" Reload="1">
+                <Panel Name="OrgAnalicTab" ShowHeader="0" Source="boss_panel_analitic_select_org"/>
+            </TabItem>
+            <%
+            }
+
+            ///////////////////////////////////////////////   CUSTOM TAB   /////////////////////////////////////////////
+            if ( sTabListParam == 'custom_tab' )
+            {
+            var _sTabCustomTitle, _aCustomTabTitles = Trim(tools_web.get_web_param( curParams, "boss_panel_body.tab_list.custom_tab", "", true ));
+            if (_aCustomTabTitles != "")
+            _aCustomTabTitles = _aCustomTabTitles.split(";");
+            else
+            _aCustomTabTitles = new Array();
+
+            var _docCustomTemplate, __iT = 0;
+            var _aAddOnParam = null;
+            var SELECTED_ELEMENT_ID = sInitialElemID;
+
+            for (_fldFilterElem in XQuery("for $elem in override_web_templates where $elem/zone = 'object_custom_tab' and ( $elem/mode = " + XQueryLiteral( curMode ) + " or $elem/mode = '' ) and ( $elem/web_design_id = " + XQueryLiteral( curWebDesignID ) + " or $elem/web_design_id = null() ) and ( $elem/site_id = " + XQueryLiteral( curSiteID ) + " or $elem/site_id = null() ) and $elem/custom_web_template_id != null() and $elem/is_enabled = true() order by $elem/weight return $elem/Fields('custom_web_template_id')"))
+            {
+            _docCustomTemplate = tools.open_doc(_fldFilterElem.custom_web_template_id);
+            if (_docCustomTemplate != undefined && _docCustomTemplate.TopElem.cwt_type == "default" && _docCustomTemplate.TopElem.out_type == "xaml" && tools_web.check_access(_docCustomTemplate.TopElem, curUserID, curUser, Session))
+            {
+            if (ArrayCount(_aCustomTabTitles) > __iT)
+            _sTabCustomTitle = _aCustomTabTitles[__iT];
+            else
+            {
+            _sTabCustomTitle = _docCustomTemplate.TopElem.name.Value;
+            }
+            %>
+            <TabItem Title="<%=XmlAttrEncode( tools_web.get_cur_lng_name( _sTabCustomTitle, curLng.short_id ) )%>" Reload="1">
+                <StackPanel Orientation="Vertical" Class="XAML-stack-filters-container" Align="right">
+                    <StackPanel Class="XAML-stack-filter" Orientation="Horizontal" Adapt="1" Align="right">
+                        <Label Class="XAML-button-view"></Label>
+                    </StackPanel>
+                </StackPanel>
+                <%
+                if (iTabsCounter == iBodyTab)
+                {
+                Response.Write(tools_web.place_xaml( _fldFilterElem.custom_web_template_id, _docCustomTemplate.TopElem));
+                }
+                %>
+            </TabItem>
+            <%
+            __iT++;
+            iTabsCounter++;
+            }
+            }
+
+
+            }
+            else
+            iTabsCounter++;
+            }
+            %>
+            </TabControl>
+            </StackPanel>
+
+            <%
+            if (sPaneView == "switch" || sPaneView == "card")
+            {
+            %>
+            </TabItem>
+            <%
+            }
+            if (sPaneView == "switch" || sPaneView == "card")
+            {
+            %>
+            <TabItem>
+                <StackPanel Orientation="Vertical">
+                    <Grid Width="100%" Class="XAML-grid-container">
+                        <GridColumns>
+                            <GridColumn/>
+                            <GridColumn Width="100%"/>
+                        </GridColumns>
+
+                        <GridRow>
+                            <Link Click="SET=sliderTab,1;REFRESH;" Class="icon-arrow-left"></Link>
+                            <Edit Class="XAML-edit-label XAML-edit-label-title" Name="currentlySelectedSubTitleAnaliticColls" Editable="0"><%=sInitialElemName%></Edit>
+                        </GridRow>
+                    </Grid>
+                    <%
+                    if (curUser.access.access_role == "OrganizingTrainerRCK")
+                    {
+                    curView = {
+                    "id": (sTabListParam + "ViewAnalitic"),
+                    "disp_selectors": true,
+                    "disp_search": false,
+                    "disp_filter": false,
+                    "selectors": (bListViewSelectors ? "data_grid;tile" : ""),
+                    "disp_paging": (iPageItemsCount > 0),
+                    "paging_size": iPageItemsCount,
+                    "catalog_name": "collaborator",
+                    "parent_node_object_id": "{ParentNodeObjectID}",
+                    "tile_template": sCollaboratorTileCode,
+                    "disp_type": (sDefaultViewParam != "tiles" ? "data_grid" :"tile"),
+                    "filter_action": "ACTION=UpdateCollaboratorsCache",
+                    "selectors_action": "SET=UpdateCollaboratorsCacheSuccessAction,REFRESH;ACTION=UpdateCollaboratorsCache",
+                    "height": null,
+                    "collection": {
+                    "name": sCollaboratorCollectionCode,
+                    "params": ([
+                    {"name": "iElemId", "value": sInitialElemID},
+                    {"name": "sFilterId", "value": "f:{collaboratorsFilterAnalitic},s:{collaboratorsSexFilterAnalitic},a:{collaboratorsAgeAnaliticFrom}--{collaboratorsAgeAnaliticTo},h:{collaboratorsHireDateAnalitic},c:{collaboratorsCreateDateFromAnalitic}--{collaboratorsCreateDateToAnalitic},r:{collaboratorsRegionAnalitic}"},
+                    {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+                    {"name": "curUserID", "value": curUserID},
+                    {"name": "view_type", "value": (bThinMode ? "mobile" : "{CatalogListSelectorscollaboratorsView}")},
+                    {"name": "statistic_id", "value": (bStatisticColumnOn ? "{collaboratorsStatisticID}" : null)}
+                    ])
+                    }
+                    };
+                    //alert("sInitialElemID333: " + sInitialElemID);
+                    }
+                    else
+                    {
+                    curView = {
+                    "id": (sTabListParam + "ViewAnalitic"),
+                    "disp_selectors": true,
+                    "disp_search": false,
+                    "disp_filter": false,
+                    "selectors": (bListViewSelectors ? "data_grid;tile" : ""),
+                    "disp_paging": (iPageItemsCount > 0),
+                    "paging_size": iPageItemsCount,
+                    "catalog_name": "collaborator",
+                    "parent_node_object_id": "{ParentNodeObjectID}",
+                    "tile_template": sCollaboratorTileCode,
+                    "disp_type": (sDefaultViewParam != "tiles" ? "data_grid" :"tile"),
+                    "filter_action": "ACTION=UpdateCollaboratorsCache",
+                    "selectors_action": "SET=UpdateCollaboratorsCacheSuccessAction,REFRESH;ACTION=UpdateCollaboratorsCache",
+                    "height": null,
+                    "collection": {
+                    "name": sCollaboratorCollectionCode,
+                    "params": ([
+                    {"name": "iElemId", "value": sInitialElemID},
+                    {"name": "sFilterId", "value": "f:{collaboratorsFilterAnalitic},s:{collaboratorsSexFilterAnalitic},a:{collaboratorsAgeAnaliticFrom}--{collaboratorsAgeAnaliticTo},h:{collaboratorsHireDateAnalitic},c:{collaboratorsCreateDateFromAnalitic}--{collaboratorsCreateDateToAnalitic}"},
+                    {"name": "sSearchWord", "value": ("{CatalogListSearch" + sTabListParam + "View}")},
+                    {"name": "curUserID", "value": curUserID},
+                    {"name": "view_type", "value": (bThinMode ? "mobile" : "{CatalogListSelectorscollaboratorsView}")},
+                    {"name": "statistic_id", "value": (bStatisticColumnOn ? "{collaboratorsStatisticID}" : null)}
+                    ])
+                    }
+                    };
+                    }
+                    oFilter = ArraySelect(lists.view_conditions_schemes, "This.catalog == 'collaborator' && This.disp_web == true");
+
+                    if (ArrayCount(oFilter) > 0)
+                    {
+                    curView.row_filters[0][0].items = ArrayUnion(curView.row_filters[0][0].items, ArrayExtract(oFilter, '({"title": This.name.Value, "value": ("F" + This.id)})'));
+                    }
+
+                    if (bStatisticColumnOn)
+                    {
+                    xarrStatistics = XQuery("for $elem in statistic_recs where MatchSome($elem/catalog, ('collaborator')) order by $elem/name return $elem/Fields('id','name')");
+
+
+                    oFilter = ({"name": "collaboratorsStatisticIDAnalitic", "title": tools_web.get_web_const("kaleydoskoppok", curLngWeb), "type": "combo", "value": "", "items": ([{"title": "-", "value": ""}])});
+                    oFilter.items = ArrayUnion(oFilter.items, ArrayExtract(xarrStatistics, '({"title": This.name.Value, "value": This.id.Value})'));
+
+                    curView.row_filters[0].push(oFilter);
+                    }
+
+
+
+                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list_custom.xaml" ) );
+                    %>
+                </StackPanel>
+            </TabItem>
+            </TabControl>
+            <%
+            }
+            else
+            {
+            %>
+        </GridRow>
+    </Grid>
+    <%
+    }
+    %>
+    <Edit Name="UpdateCollaboratorsCacheSuccessAction" Hidden="1"><%=sUpdateCollaboratorSuccessAction%></Edit>
+    <Edit Name="UpdateCollaboratorsAnaliticCacheSuccessAction" Hidden="1"><%=sUpdateCollaboratorAnaliticSuccessAction%></Edit>
+
+
+
+    <Action Source="boss_panel_activate_hidden_corse" Name="ActivateHiddenCourse" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{CatalogListDataGridcollaboratorsView}"/>
+        <Param Name="sCourseIDs" Value="{SelectedCourseIDs}"/>
+    </Action>
+
+    <Dialog Name="DialogActivateHiddenCourse" Source="dlg_select" Title="Назначить курсы ФЦК" Close="Set=SelectedCourseIDs,{CatalogListDataGridSelList:*/id};ACTION=ActivateHiddenCourse">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="xquery_qual" Value="contains($elem/code, 'HR')"/>
+    </Dialog>
+    <Edit Name="SelectedCourseIDs" Hidden="1"></Edit>
+
+    <Action Source="boss_panel_activate_hidden_course_sub" Name="ActivateHiddenCourseSub" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{BossPanelTree}"/>
+        <Param Name="sCourseIDs" Value="{SelectedCourseIDs}"/>
+    </Action>
+
+    <Dialog Name="DialogActivateHiddenCourseSub" Source="dlg_select" Title="Назначить курсы ФЦК" Close="Set=SelectedCourseIDs,{CatalogListDataGridSelList:*/id};ACTION=ActivateHiddenCourseSub">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="xquery_qual" Value="contains($elem/code, 'HR')"/>
+    </Dialog>
+
+    <%
+    aGroups = XQuery("for $elem in func_managers where $elem/person_id = " + curUserID + " and $elem/boss_type_id = 7158147030098137646 and $elem/catalog = 'group' return $elem");
+    sGroupIds = ArrayMerge(aGroups, 'This.object_id', ",");
+    %>
+
+    <Action Source="boss_panel_remove_customized_order_group" Name="RemoveCustomizedOrderGroup" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{CatalogListDataGridcollaboratorsView}"/>
+        <Param Name="sGroupId" Value="{SelectedGroupID}"/>
+    </Action>
+    <Action Source="boss_panel_add_customized_order_group" Name="AddCustomizedOrderGroup" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{CatalogListDataGridcollaboratorsView}"/>
+        <Param Name="sGroupId" Value="{SelectedGroupID}"/>
+    </Action>
+    <Edit Name="SelectedGroupID" Hidden="1"></Edit>
+
+    <Dialog Name="DialogAddCustomizedOrderGroup" Source="dlg_select" Title="Добавить в группу" Close="Set=SelectedGroupID,{CatalogListDataGridFullList:^/id};ACTION=AddCustomizedOrderGroup">
+        <Param Name="catalog_name" Value="group"/>
+        <Param Name="multi_select" Value="false"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sGroupIds%>))"/>
+    </Dialog>
+
+    <Dialog Name="DialogRemoveCustomizedOrderGroup" Source="dlg_select" Title="Удалить из группы" Close="Set=SelectedGroupID,{CatalogListDataGridFullList:^/id};ACTION=RemoveCustomizedOrderGroup">
+        <Param Name="catalog_name" Value="group"/>
+        <Param Name="multi_select" Value="false"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sGroupIds%>))"/>
+    </Dialog>
+
+
+    <%
+    sQuery = "sql:\
+    DECLARE @BOSS_TYPE_ID BIGINT = (SELECT TOP 1 id FROM boss_types WHERE code = 'for_customized_order');\
+    \
+    SELECT DISTINCT\
+    courses.field.value('(./course_id)[1]', 'bigint') course_id\
+    FROM\
+    func_managers fms\
+    JOIN cc_boss_panel_org_courses cbps ON cbps.org_id = fms.object_id\
+    JOIN cc_boss_panel_org_course cbp ON cbp.id = cbps.id\
+    CROSS APPLY cbp.data.nodes('(//courses/course)') AS courses(field)\
+    WHERE\
+    fms.person_id = " + curUserID + "\
+    AND fms.boss_type_id = @BOSS_TYPE_ID\
+    ";
+
+    aCourseIds = XQuery(sQuery);
+    sCourseIds = ArrayMerge(aCourseIds, "This.course_id", ",");
+    %>
+
+    <Action Source="boss_panel_activate_customized_order_course" Name="ActivateCustomizedOrderCourse" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{CatalogListDataGridcollaboratorsView}"/>
+        <Param Name="sCourseId" Value="{SelectedCourseIDs}"/>
+    </Action>
+
+    <Action Source="boss_panel_deactivate_customized_order_course" Name="DeactivateCustomizedOrderCourse" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{CatalogListDataGridcollaboratorsView}"/>
+        <Param Name="sCourseId" Value="{SelectedCourseIDs}"/>
+    </Action>
+
+
+    <Dialog Name="DialogActivateCustomizedOrderCourse" Source="dlg_select" Title="Назначить курсы" Close="Set=SelectedCourseIDs,{CatalogListDataGridSelList:*/id};ACTION=ActivateCustomizedOrderCourse">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sCourseIds%>))"/>
+    </Dialog>
+
+    <Dialog Name="DialogDeactivateCustomizedOrderCourse" Source="dlg_select" Title="Завершить курс" Close="Set=SelectedCourseIDs,{CatalogListDataGridSelList:*/id};ACTION=DeactivateCustomizedOrderCourse">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sCourseIds%>))"/>
+    </Dialog>
+
+
+    <Action Source="boss_panel_activate_customized_order_course" Name="ActivateCustomizedOrderCourseForGroup" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{BossPanelTree}"/>
+        <Param Name="sCourseId" Value="{SelectedCourseIDs}"/>
+    </Action>
+
+    <Action Source="boss_panel_deactivate_customized_order_course" Name="DeactivateCustomizedOrderCourseForGroup" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{BossPanelTree}"/>
+        <Param Name="sCourseId" Value="{SelectedCourseIDs}"/>
+    </Action>
+
+    <Action Source="boss_panel_add_customized_order_group" Name="AddCustomizedOrderGroupForGroup" Success="ALERT={messageText}" Failure="">
+        <Param Name="sData" Value="{BossPanelTree}"/>
+        <Param Name="sGroupId" Value="{SelectedGroupID}"/>
+    </Action>
+
+    <Dialog Name="DialogAddCustomizedOrderGroupForGroup" Source="dlg_select" Title="Добавить в группу" Close="Set=SelectedGroupID,{CatalogListDataGridFullList:^/id};ACTION=AddCustomizedOrderGroupForGroup">
+        <Param Name="catalog_name" Value="group"/>
+        <Param Name="multi_select" Value="false"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sGroupIds%>))"/>
+    </Dialog>
+
+    <Dialog Name="DialogActivateCustomizedOrderCourseForGroup" Source="dlg_select" Title="Назначить курсы" Close="Set=SelectedCourseIDs,{CatalogListDataGridSelList:*/id};ACTION=ActivateCustomizedOrderCourseForGroup">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sCourseIds%>))"/>
+    </Dialog>
+
+    <Dialog Name="DialogDeactivateCustomizedOrderCourseForGroup" Source="dlg_select" Title="Завершить курс" Close="Set=SelectedCourseIDs,{CatalogListDataGridSelList:*/id};ACTION=DeactivateCustomizedOrderCourseForGroup">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sCourseIds%>))"/>
+    </Dialog>
+
+    <Edit Name="SelectedAssignedCourseID" Hidden="1"></Edit>
+    <Edit Name="SelectedOrgPersonID" Hidden="1"></Edit>
+    <Edit Name="SelectedCourseIDsFilter" Hidden="1"></Edit>
+    <Action Source="delete_assigned_active_learnings" Name="DeleteAssignedActiveLearnings" Success="ALERT={messageText}" Failure="">
+        <Param Name="sPersonId" Value="{SelectedOrgPersonID}"/>
+        <Param Name="sCourseId" Value="{SelectedAssignedCourseID}"/>
+    </Action>
+
+    <Dialog Name="DialogDeleteAssignedCourse" Source="dlg_select" Title="Отменить назначение" Close="Set=SelectedAssignedCourseID,{CatalogListDataGridSelList:*/id};ACTION=DeleteAssignedActiveLearnings">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, ({SelectedCourseIDsFilter}))"/>
+    </Dialog>
+
+    <Dialog Name="DialogDeleteAssignedCustomizedOrderCourse" Source="dlg_select" Title="Отменить назначение" Close="Set=SelectedAssignedCourseID,{CatalogListDataGridSelList:*/id};ACTION=DeleteAssignedActiveLearnings">
+        <Param Name="catalog_name" Value="course"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="xquery_qual" Value="MatchSome($elem/id, (<%=sCourseIds%>))"/>
+    </Dialog>
+
+    <Edit Name="NotifPersonID" Hidden="1"></Edit>
+    <Edit Name="NotifPersonNotifBody" Hidden="1"></Edit>
+    <Action Source="dlg_create_notification_custom" Name="CreateDlgCollaboratorNotification" Success="ALERT={messageText}" Failure="">
+        <Param Name="sNotificationCollaboratorId" Value="{NotifPersonID}"/>
+        <Param Name="sNotificationText" Value="{NotifPersonNotifBody}"/>
+    </Action>
+    <Dialog Name="DialogCreateCollaboratorNotification" Width="50%" Source="dlg_create_notification_custom" Title="Отправить уведомление сотруднику" Close="Set=NotifPersonNotifBody,{CreateNotificationBody};ACTION=CreateDlgCollaboratorNotification">
+    </Dialog>
+
+    <Edit Name="ParentNodeObjectID" Hidden="1"></Edit>
+</SPXMLScreen>

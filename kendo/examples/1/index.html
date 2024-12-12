@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logistics</title>
+
+    <link type="text/css" href="../../wi/bo/wws.css" rel="stylesheet" />
+    <link type="text/css" href="../../inc/kendo/styles/kendo.common.min.css" rel="stylesheet"/>
+    <link type="text/css" href="../../inc/kendo/styles/kendo.blueopal.mobile.min.css" rel="stylesheet"/>
+    <link type="text/css" href="css/logistic.css" rel="stylesheet"/>
+
+    <script type="text/javascript" src="../../inc/jquery3.js"></script>
+    <script type="text/javascript" src="../../inc/jquery.number.min.js"></script>
+    <script type="text/javascript" src="../../inc/kendo/js/kendo.all.min.js"></script>
+    <script type="text/javascript" src="../../inc/moment/moment-with-locales.js"></script>
+    <script type="text/javascript" src="../../inc/pearl/pearl.common.js"></script>
+    <script type="text/javascript" src="../../inc/pearl/pearl.startup.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+
+    <style>
+        .reports-content td {
+            border: 1px solid #5B5B5B;
+        }
+
+        .k-tabstrip > .k-content {
+            display: block;
+        }
+
+        .km-widget.km-buttongroup {
+            margin: 0 auto;
+        }
+
+        img:focus {
+            outline: none;
+        }
+
+        *:focus {
+            outline: none;
+        }
+
+        html,
+        body,
+        #parent,
+        #grid
+        {
+            margin: 0;
+            padding: 0;
+            border-width: 0;
+            height: 100%; /* DO NOT USE !important for setting the Grid height! */
+        }
+
+        .summary_block {
+            box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.08);
+            padding: 10px;
+            margin: 10px;
+        }
+        .summary_block div{
+            padding-bottom: 3px;
+        }
+
+        .summary_block h4 {
+            box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.08);
+            padding: 5px;
+            margin-bottom: 3px;
+            background-color: #3e6b99;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div id="error_window"></div>
+<span id="pearlNotification"></span>
+
+<script type="text/javascript">
+    $.ajax({
+        url: "/bbs/partners/logistic/view_privilege.do",
+        dataType: "json",
+        async: false,
+        success: function (data) {
+        },
+        error: function (httpRequest) {
+            if(httpRequest.status === 401) {
+                window.location = '/bbs/wi/bo/login.jsp?url=' + window.location.pathname;
+            } else {
+                doErrorOnLoad(httpRequest);
+            }
+        }
+    });
+</script>
+
+<script type="text/x-kendo-template" id="template">
+    <div style="z-index: 0;">
+        <div>
+            <div class="summary_block k-content" style="width: 1050px;">
+                <h4>Logistic center ID: #= id #</h4>
+                <h4>Customer ID:
+                    # if(clientId != null) { #
+                    #= clientId #
+                    # } #
+                </h4>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">First name: </span>
+                    # if(clientFirstName != null) { #
+                    #= clientFirstName #
+                    # } #
+                    <span style="padding-left: 15px; font-weight: bold">Last name: </span>
+                    # if(clientLastName != null) { #
+                    #= clientLastName #
+                    # } #
+                </div>
+                <h4>Bill ID of last received shipment:
+                    # if(billLastId != null) { #
+                    #= billLastId #
+                    # } #
+                </h4>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Request status: </span>
+                    #= requestStatus # - #= requestStatusName #
+                    # if(requestStatus >= 0) { #
+                    - <span style="font-style: italic; color: black;">#= requestStatusComment #</span>
+                    # } else { #
+                    - <span style="font-style: italic; color: red;">#= requestStatusComment #</span>
+                    # } #
+                </div>
+                <h4>Stock priority for:</h4>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Expensive products: </span>
+                    #= stockPriorityPrice #
+                    <span style="padding-left: 15px; font-weight: bold">Air freight products: </span>
+                    #= stockPriorityAir #
+                    <span style="padding-left: 15px; font-weight: bold">Little products: </span>
+                    #= stockPrioritySmall #
+                    <span style="padding-left: 15px; font-weight: bold">Express shipment products: </span>
+                    #= stockPriorityFast #
+                    <span style="padding-left: 15px; font-weight: bold">The rest of products: </span>
+                    #= stockPriorityOther #
+                </div>
+                <h4>&nbsp;</h4>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Lagerort: </span>
+                    #= stockType #
+                    <span style="padding-left: 15px; font-weight: bold">Reduce stock: </span>
+                    #= reduceStock #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Favorites: </span>
+                    # if(favorites != null) { #
+                    #= favorites #
+                    # } #
+                    <span style="padding-left: 15px; font-weight: bold">No shipments to: </span>
+                    # if(noShipmentsTo != null) { #
+                    #= noShipmentsTo #
+                    # } #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Method of request: </span>
+                    #= reqMethod #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Quantity factor: </span>
+                    #= $.number( quantityFactor, 2 ) #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Capacity: </span>
+                    #= capacity #
+                    <span style="padding-left: 15px; font-weight: bold">Quantity of storing positions: </span>
+                    #= quantityStoringPos #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">First request factor: </span>
+                    #= $.number( firstReqRate, 2 ) #
+                    <span style="padding-left: 15px; font-weight: bold">First request factor new catalog products: </span>
+                    #= $.number( firstReqRateCatalog, 2 ) #
+                    <span style="padding-left: 15px; font-weight: bold">First request cost limit: </span>
+                    #= firstReqCostLimit #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Max product volume: </span>
+                    #= maxProductVolume #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Number of request days: </span>
+                    #= reqDays #
+                    <span style="padding-left: 15px; font-weight: bold">Max days to booking: </span>
+                    #= maxDaysToBooking #
+                    <span style="padding-left: 15px; font-weight: bold">Weeks to request: </span>
+                    #= weeksToRequest #
+                    <span style="padding-left: 15px; font-weight: bold">Rounded packaging days: </span>
+                    #= packagingDays #
+                    <span style="padding-left: 15px; font-weight: bold">Calculation min weeks: </span>
+                    #= calcMinWeeks #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Manual average LZS: </span>
+                    #= manualAverage #
+                    <span style="padding-left: 15px; font-weight: bold">Capacity divider for run 5 (VZ3 only): </span>
+                    #= $.number( capacityDivider, 2 ) #
+                </div>
+                <div style="padding-left: 15px;">
+                    <table style="width: 1020px;">
+                        <tr>
+                            <th style="width: 12%;">Tag der Woche</th>
+                            <th style="width: 15%;">Start</th>
+                            <th style="width: 15%;">End</th>
+                            <th></th>
+                        </tr>
+                    # requestDays.forEach(function(requestDay) { #
+                        <tr>
+                            <td>
+                                <span style="font-weight: bold">#= getWeekDayName(requestDay.weekday) #</span>
+                            </td>
+                            <td style="text-align: center;">
+                                #= requestDay.startTimeAsString #
+                            </td>
+                            <td style="text-align: center;">
+                                #= requestDay.endTimeAsString #
+                            </td>
+                            <td style="text-align: center;">
+                                <label>Active</label>
+                                # if(requestDay.active === 1) { #
+                                <input type="checkbox" checked disabled="disabled"/>
+                                # } else { #
+                                <input type="checkbox" disabled="disabled">
+                                # } #
+                                | <label>Sending</label>
+                                # if(requestDay.sending === 1) { #
+                                <input type="checkbox" checked disabled="disabled">
+                                # } else { #
+                                <input type="checkbox" disabled="disabled">
+                                # } #
+                                | <label>Requesting:&nbsp;</label>
+                                #= requestDay.requesting #
+                            </td>
+                        </tr>
+                    # }) #
+                    </table>
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Request frequency: </span>
+                    #= reqFrequency #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Prefix of IP address range: </span>
+                    #= ipRangePrefix #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Create date: </span>
+                    #= createDate #
+                    <span style="padding-left: 15px; font-weight: bold">Create user: </span>
+                    #= createUser #
+                </div>
+                <div>
+                    <span style="padding-left: 15px; font-weight: bold">Update date: </span>
+                    # if(updateDate != null) { #
+                    #= updateDate #
+                    # } #
+                    <span style="padding-left: 15px; font-weight: bold">Update user: </span>
+                    # if(updateUser != null) { #
+                    #= updateUser #
+                    # } #
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div id="parent">
+    <div id="grid"></div>
+</div>
+<div id="dialog_window"></div>
+</body>
+</html>

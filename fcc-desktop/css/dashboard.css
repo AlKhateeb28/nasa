@@ -1,0 +1,59 @@
+.float-left-box {
+    float: left;
+}
+
+.float-right-box {
+    float: right;
+}
+
+.thread {
+    background-color: black;
+    font-family: 'Noto Sans', sans-serif;
+    color: silver;
+}
+
+.menu_box {
+    width: 150px;
+    vertical-align: top;
+    background-color: #212529;
+}
+
+.menu_item {
+    cursor: pointer;
+    color: silver;
+    padding-left: 10px;
+}
+
+.menu_item:hover{
+    cursor: pointer;
+    color: white;
+}
+
+.menu_item_caption {
+    margin-top: 8px;
+}
+
+.menu_item_caption_active {
+    margin-top: 8px;
+    color: white
+}
+
+.menu_item:hover .dashboard_image{
+    content:url("../images/dashboard_white.png");
+}
+
+.menu_item:hover .agents_image{
+    content:url("../images/agents_white.png");
+}
+
+.menu_item:hover .network_image{
+    content:url("../images/network_white.png");
+}
+
+.pointer-image {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+    margin-top: 3px;
+    cursor: pointer;
+}

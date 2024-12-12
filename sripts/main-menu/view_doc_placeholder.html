@@ -1,0 +1,385 @@
+﻿<%
+// 6467098219746645555
+var iZoneCounter = 0;
+function place_zones( arrZonesParam ) {
+if ( iZoneCounter++ > 50 )
+return;
+
+var arrZones;
+for ( fldZoneElem in ArraySort( ( arrZonesParam == undefined ? ArraySelectByKey( curTemplateSource.zones, "", "parent_zone" ) : arrZonesParam ), "position", "+" ) ) {
+arrZones = ArraySelectByKey( curTemplateSource.zones, fldZoneElem.name, "parent_zone" );
+if ( ArrayCount( arrZones ) == 0 ) {
+sZoneHtml = tools_web.place_zone( fldZoneElem.name );
+if ( sZoneHtml == "" ) {
+if ( fldZoneElem.is_mandatory )
+sZoneHtml = "";
+else
+continue;
+}
+if(fldZoneElem.name == "header_top") {
+
+var sConst_PersonalCabinet = tools_web.get_web_const( 'personalnyykab', curLngWeb );
+var sConst_ViewAll = tools_web.get_web_const( 'smotretvse', curLngWeb );
+var sConst_Close = tools_web.get_web_const( 'c_close', curLngWeb );
+
+var sCannotQuit = tools_web.get_web_const( 'sbrosavtorizac', curLngWeb );
+var sLogoutString = tools_web.get_web_const( '695sh36394', curLngWeb );
+// const_end
+
+var sMainCSS = tools_web.get_web_param( curParams, "UserCabinetDropdown.sMainCSS", "WTCSS-user-info", true );
+var sViewStyle = tools_web.get_web_param( curParams, "UserCabinetDropdown.sViewStyle", "icon", true );
+var bUseDropdown = ( String( tools_web.get_web_param( curParams, "UserCabinetDropdown.bUseDropdown", "1", true ) ) == "1");
+var sDropdownAlign = tools_web.get_web_param( curParams, "UserCabinetDropdown.sDropdownAlign", "left", true );
+var iTemplateGroupID = OptInt( tools_web.get_web_param( curParams, "UserCabinetDropdown.sTemplateGroup", undefined, true ) );
+var bDisplayTooltip = ( String( tools_web.get_web_param( curParams, "UserCabinetDropdown.bDisplayTooltip", "1", true ) ) == "1");
+var sTitle = tools_web.get_web_param( curParams, "UserCabinetDropdown.sTitle", sConst_PersonalCabinet, true );
+var sLink = tools_web.get_web_param( curParams, "UserCabinetDropdown.sLink", "view_doc.html?mode=my_account", true );
+var sHelpLink = tools_web.get_web_param( curParams, "UserCabinetDropdown.helplink", "view_doc.html?mode=home", true );
+
+
+var bDisplayExitButton = ( String( tools_web.get_web_param( curParams, "UserCabinetDropdown.bDisplayExitButton", "1", true ) ) == "1");
+var bDisplayPersonalCabinetTxt = ( String( tools_web.get_web_param( curParams, "UserCabinetDropdown.bDisplayPersonalCabinetTxt", "1", true ) ) == "1");
+var bMenuExitButton = ( String( tools_web.get_web_param( curParams, "UserCabinetDropdown.bMenuExitButton", "0", true ) ) == "1");
+
+var sAlignment = (sDropdownAlign=="right") ? "true" : "false";
+var sIconCSS = "no-icon";
+var sIconURL = "pptrf2019/baseline-account_circle-24px.png";
+
+if(sViewStyle=="avatar" || sViewStyle=="avatar_name" || sViewStyle=="name_avatar" || sViewStyle=="shortname_icon")
+{
+sIconCSS = "userphoto";
+sIconURL = ( String(curUser.pict_url) == "" ) ? "pptrf2019/baseline-account_circle-24px.png" : StrReplace(curUser.pict_url, "\\", "/");
+if(curUser.ChildExists("personal_config"))
+{
+if(curUser.personal_config.ChildExists("avatar_filename"))
+{
+sIconURL = ( String(curUser.personal_config.avatar_filename) == "" ) ? "pptrf2019/baseline-account_circle-24px.png" : StrReplace(curUser.personal_config.avatar_filename, "\\", "/");
+}
+}
+}
+else if(sViewStyle=="photo" || sViewStyle=="photo_name" || sViewStyle=="name_photo" || sViewStyle=="shortname_avatar" )
+{
+sIconCSS = "userphoto";
+sIconURL = ( String(curUser.pict_url) == "" ) ? "pptrf2019/baseline-account_circle-24px.png" : StrReplace(curUser.pict_url, "\\", "/");
+}
+else if(sViewStyle=="icon" || sViewStyle=="icon_name" || sViewStyle=="name_icon")
+{
+sIconCSS = "usericon";
+}
+
+sIconURL = tools_web.set_base_url_path( sIconURL, Env ) ;
+
+bUseDropdown = (bUseDropdown && iTemplateGroupID!=undefined);
+
+if (bUseDropdown)
+var sOnclick = "onclick='fnToggleDropdown(this, " + sAlignment + ")'";
+else
+var sOnclick = "onClick=\"document.location.href='" + sLink + "'\"";
+if (bDisplayPersonalCabinetTxt && sTitle!='')
+{
+var sName = bUseDropdown ? '<a href="javascript:void(0)">' + sTitle + '</a>' : '<a href="' + sLink + '">' + sTitle + '</a>';
+var sNameShort = bUseDropdown ? '<a href="javascript:void(0)">' + sTitle + '</a>' : '<a href="' + sLink + '">' + sTitle + '</a>';
+}
+else
+{
+var sName = bUseDropdown ? '<a href="javascript:void(0)">' + HtmlEncode(curUser.firstname) + '</a>' : '<a href="' + sLink + '">' + HtmlEncode(curUser.firstname) + '</a>';
+var sNameShort = bUseDropdown ? '<a href="javascript:void(0)">' + HtmlEncode(curUser.firstname) + '</a>' : '<a href="' + sLink + '">' + HtmlEncode(curUser.firstname) +'</a>';
+}
+
+var sTooltipPart = bDisplayTooltip ? ' title="' + HtmlEncode(sTitle) + '"' : '';
+
+%>
+<script>
+	function fnLogout()
+	{
+		<%
+	switch(curHost.portal_auth_type)
+	{
+		case "cookie":
+		{
+		%>
+			var sDate = new Date(0).toUTCString();
+			document.cookie = "<%=curHost.auth_cookie_login%>=null; path=/; expires=" + sDate + ";<%=( curHost.auth_cookie_domain.HasValue ? 'domain=' + curHost.auth_cookie_domain : '' )%>";
+			document.cookie = "<%=curHost.auth_cookie_pass%>=null; path=/; expires=" + sDate + ";<%=( curHost.auth_cookie_domain.HasValue ? 'domain=' + curHost.auth_cookie_domain : '' )%>";
+			document.location.href = <%=CodeLiteral( tools_web.set_base_url_path( "/view_doc.html?mode=default&logout=1", Env ) )%>;
+			<%
+			break;
+		}
+		default:
+		{
+		%>
+			try
+			{
+				if(document.all || !!navigator.userAgent.match(/Trident\/7\./) )
+				{
+					document.execCommand("ClearAuthenticationCache");
+					history.back(-1*history.length);
+					window.location.href = window.location.protocol + "//" + window.location.host + "/view_doc.html?mode=default&logout=1";
+				}
+				else
+				{
+					history.back(-1*history.length);
+					window.location.href = window.location.protocol + "//logout:true@" + window.location.host + "/view_doc.html?mode=default&logout=1";
+				}
+			}
+			catch(e)
+			{
+				alert("<%=sCannotQuit%>")
+			}
+			<%
+			break;
+		}
+	}
+	%>
+	}
+</script>
+<div class="<%=sMainCSS%> block block-user-info" style="margin-top: 25px;">
+	<div class="wrapper">
+		<div class="help-container" style="float: left; margin-top: 3px;">
+			<div style="float: left; padding: 2px;"><img class="user-photo" src="pptrf2019/baseline-contact_support-24px.png" /></div>
+			<div style="float: left; color: #FFFFFF; margin-top: 4px; margin-left: 10px;"><a href="<%=sHelpLink%>" style="color: #FFFFFF; text-transform: none">Помощь</a></div>
+		</div>
+		<div id="wt-user-cabinet" wt-id="wt-user-cabinet" class="user-cabinet" <%=sTooltipPart%>>
+		<%
+		switch(sViewStyle)
+		{
+		case "photo":
+		case "icon":
+		case "avatar":
+		{
+
+		%>
+		<table cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td><div class="<%=sIconCSS%> user-photo-container" <%=sOnclick%>><img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(<%=sIconURL%>);" border="0"/></div></td>
+
+	<%
+	if(bUseDropdown)
+	{
+	%>
+	<td><div class="button-dropdown" <%=sOnclick%>></div></td>
+<%
+}
+if(bDisplayExitButton)
+{
+%>
+<td>
+	<div class="exit-button-container" style="margin-top: 5px;">
+		<a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><%=curUser.lastname + " " + curUser.firstname%>
+			<div id="logout_btn" style="margin-left: 110px; margin-top: -28px;">
+				<i class="icon-sign-out-ico  icon-2x" style="margin-left: 10px; font-size: 1.5em;"></i>
+			</div>
+		</a>
+	</div>
+</td>
+<%
+}
+%>
+</tr></table>
+<%
+break;
+}
+case "name":
+{
+%>
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td><div class="username" <%=sOnclick%>><%=sName%></div></td>
+		<%
+		if(bUseDropdown)
+		{
+		%>
+		<td><div class="button-dropdown" <%=sOnclick%>></div></td>
+		<%
+		}
+		if(bDisplayExitButton)
+		{
+		%>
+		<td><div class="exit-button-container"><a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico  icon-2x"></i></a></div></td>
+		<%
+		}
+		%>
+	</tr></table>
+<%
+break;
+}
+case "icon_name":
+case "photo_name":
+case "avatar_name":
+{
+%>
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td class="btnimg"><div class="<%=sIconCSS%> user-photo-container" <%=sOnclick%>><img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(<%=sIconURL%>);" border="0"/></div></td>
+		<td class="btnname"><div class="username" <%=sOnclick%>><%=sName%></div></td>
+		<%
+		if(bUseDropdown)
+		{
+		%>
+		<td class="btndd"><div class="button-dropdown" <%=sOnclick%>></div></td>
+		<%
+		}
+		if(bDisplayExitButton)
+		{
+		%>
+		<td class="btnexit"><div class="exit-button-container"><a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico  icon-2x"></i></a></div></td>
+		<%
+		}
+		%>
+	</tr>
+</table>
+<%
+break;
+}
+case "name_icon":
+case "name_photo":
+case "name_avatar":
+{
+%>
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td><div class="username" <%=sOnclick%>><%=sName%></div></td>
+		<td><div class="<%=sIconCSS%> user-photo-container" <%=sOnclick%>><img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(<%=sIconURL%>);" border="0"/></div></td>
+		<%
+		if(bUseDropdown)
+		{
+		%>
+		<td><div class="button-dropdown" <%=sOnclick%>></div></td>
+		<%
+		}
+		if(bDisplayExitButton)
+		{
+		%>
+		<td><div class="exit-button-container"><a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico  icon-2x"></i></a></div></td>
+		<%
+		}
+		%>
+	</tr>
+</table>
+<%
+break;
+}
+case "shortname_avatar":
+{
+%>
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td><div class="username" <%=sOnclick%>><%=sNameShort%></div></td>
+		<td><div class="<%=sIconCSS%> user-photo-container" <%=sOnclick%>><img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(<%=sIconURL%>);" border="0"/></div></td>
+		<%
+		if(bUseDropdown)
+		{
+		%>
+		<td><div class="button-dropdown" <%=sOnclick%>></div></td>
+		<%
+		}
+		if(bDisplayExitButton)
+		{
+		%>
+		<td><div class="exit-button-container"><a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico  icon-2x"></i></a></div></td>
+		<%
+		}
+		%>
+	</tr>
+</table>
+<%
+break;
+}
+case "shortname_icon":
+{
+%>
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td><div class="username" <%=sOnclick%>><%=sNameShort%></div></td>
+		<td><div class="user-photo-container" <%=sOnclick%>><icon class="icon-user-ico icon-2x"></icon></div></td>
+		<%
+		if(bUseDropdown)
+		{
+		%>
+		<td><div class="button-dropdown" <%=sOnclick%>></div></td>
+		<%
+		}
+		if(bDisplayExitButton)
+		{
+		%>
+		<td><div class="exit-button-container"><a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico  icon-2x"></i></a></div></td>
+		<%
+		}
+		%>
+	</tr>
+</table>
+<%
+break;
+}
+}
+%>
+</div>
+</div>
+
+<%
+if(bUseDropdown)
+{
+%>
+<div id="wt-user-cabinet-box" class="WTCSS-dropdown dropdown">
+	<div class="title"><%=HtmlEncode(sTitle)%></div>
+	<div class="list-div">
+		<ul>
+			<%
+			teTemplateGroup = OpenDoc( UrlFromDocID( iTemplateGroupID ) ).TopElem;
+			arrTemplates = ArraySort( teTemplateGroup.templates, "position", "+" );
+			iCounter = 0;
+			for ( fldTemplateElem in arrTemplates )
+			{
+			if ( fldTemplateElem.custom_web_template_id.HasValue )
+			{
+			%>
+			<li><div class="pagelink"><a href="<%=sLink%>&tab=<%=iCounter%>"><%=HtmlEncode(tools_web.get_cur_lng_name( fldTemplateElem.name, curLng.short_id ))%></a></div></li>
+			<%
+			iCounter++;
+			}
+			}
+			if(bMenuExitButton)
+			{
+			%>
+			<li><div class="pagelink"><a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><%=sLogoutString%></a></div></li>
+			<%
+			}
+			%>
+		</ul>
+	</div>
+	<table border="0" cellpadding="0" cellspacing="0" class="link-container">
+		<tr>
+			<td class="view-all-box"><a href="<%=sLink%>"><%=sConst_ViewAll%></a></td>
+			<td class="close-box"><a href="javascript:void(0)" onclick="fnHideDropdowns()"><%=sConst_Close%></a></td>
+		</tr>
+	</table>
+</div>
+<%
+}
+%>
+
+</div>
+	<%
+}
+
+newHeaderStyle = "style='margin-top: -14px;'";
+if(fldZoneElem.name == "header_top_center") {
+newHeaderStyle = "";
+}
+%>
+<div placeholder_zone="<%=fldZoneElem.name%>"<%=( ( fldZoneElem.tag_id.HasValue ? ' id="' + fldZoneElem.tag_id + '"' : '' ) + ( fldZoneElem.class.HasValue ? ' class="' + fldZoneElem.class + '"' : '' ) + ( fldZoneElem.style.HasValue ? ' style="' + fldZoneElem.style + '"' : '' ) )%>><%=sZoneHtml%></div>
+<%
+} else {
+%>
+<div<%=( ( fldZoneElem.tag_id.HasValue ? ' id="' + fldZoneElem.tag_id + '"' : '' ) + ( fldZoneElem.class.HasValue ? ' class="' + fldZoneElem.class + '"' : '' ) + ( fldZoneElem.style.HasValue ? ' style="' + fldZoneElem.style + '"' : '' ) )%>>
+<%
+place_zones( arrZones );
+%>
+</div>
+<%
+}
+}
+}
+
+place_zones();
+%>

@@ -1,0 +1,166 @@
+﻿<%
+//tt11=GetCurTicks();
+//alert('VIEW_DOC - before - '+(GetCurTicks()-tt11)+' - '+Request.Url);
+if ( Request.Session.HasProperty( 'Env' ) )
+{
+	Env = Request.Session.Env;
+}
+else
+{
+	Env = new SafeObject;
+	Request.Session.SetProperty( 'Env', Env );
+}
+
+Request.Session.Env.curVars = new SafeObject;
+curVars = Request.Session.Env.curVars;
+
+curContextEnvSave = true;
+curObjectEnvSave = true;
+curTemplateMain = true;
+Request.Session.Env.SetProperty( "curWebModeExecFlag", true );
+Server.Execute( "include/access_init.html" );
+curTemplateMain = false;
+curContextEnvSave = false;
+curObjectEnvSave = false;
+
+curParams = new SafeObject;
+tools_web.set_web_params( curParams, curWebDesign.wvars, true );
+if ( curWebMode == null || ! curWebMode.use_lpapi() )
+{
+	Request.Session.Env.SetProperty( "curParams", curParams );
+}
+
+if ( curObjectInitErrorText != '' )
+{
+	curErrorText = curObjectInitErrorText;
+	Server.Execute( "view_access_panel.html" );
+	Cancel();
+}
+
+if ( curUserID != null && ( global_settings.settings.check_user_required_fields.Value || curUser.change_password ) )
+{
+	var ___oUserVerified = tools_web.get_user_data("user_verification_" + curUserID);
+	if ((___oUserVerified == null || ___oUserVerified.GetOptProperty("is_user_verified") != true) && curMode != "personal_info")
+	{
+		function verify_user_fields()
+		{
+			var fldRequiredField, fldChildValue, bOk = true;
+			var aLame = Array();
+			for (fldRequiredField in ArraySelect(global_settings.settings.required_fields, "This.is_required.Value"))
+			{
+				if (fldRequiredField.name == "password" && curHost.portal_auth_type == "ntlm")
+					continue;
+
+				bHasValue = false;
+				if ( fldRequiredField.is_custom )
+				{
+					fldChildValue = curUser.custom_elems.GetOptChildByKey( fldRequiredField.name );
+					if ( fldChildValue != undefined )
+						bHasValue = fldChildValue.value.HasValue;
+				}
+				else
+				{
+					if (fldRequiredField.name == "gdpr")
+					{
+						bHasValue = OpenDoc(UrlFromDocID(curUserID)).TopElem.gdpr.Value;
+					}
+					else
+					{
+						if (fldRequiredField.name == "desc")
+							fldChildValue = OpenDoc(UrlFromDocID(curUserID)).TopElem.desc;
+						else
+							fldChildValue = curUser.EvalPath( fldRequiredField.name );
+
+						bHasValue = fldChildValue.HasValue;
+					}
+				}
+
+				if ( ! bHasValue )
+				{
+					bOk = false;
+					aLame.push(fldRequiredField.name.Value);
+				}
+			}
+
+			if (curUser.change_password)
+			{
+				bOk = false;
+				aLame.push("password");
+			}
+
+			if (bOk)
+			{
+				tools_web.set_user_data("user_verification_" + curUserID, ({"is_user_verified" : true, "user_verification": null}), 86400);
+			}
+			else
+			{
+				tools_web.set_user_data("user_verification_" + curUserID, ({"is_user_verified" : false, "user_verification": ({"lame_array": aLame, "save_url": (Request.Url + "")})}), 86400);
+%>
+<script type="text/javascript">
+	document.location.href = <%=CodeLiteral( tools_web.get_mode_clean_url( "personal_info" ) )%>;
+</script>
+<%
+				Cancel();
+			}
+
+		}
+		verify_user_fields();
+	}
+}
+bDesigner = (Request.QueryString.GetOptProperty("designer") == "1" && curUser != null && ms_tools.check_access_block_rights("admin","write",curUser));
+curTemplateSourceStack = [];
+curOverrideWebTemplateID = null;
+
+if ( curDoc != null )
+	tools_web.set_web_params( curParams, curDoc.wvars, true );
+
+bEmpty = Request.QueryString.GetOptProperty( 'placeholder' ) == 'empty';
+iStepTo = OptInt( Request.Query.GetOptProperty( 'stepto' ) );
+if ( bEmpty )
+{
+	curActiveWebTemplateDoc = null;
+	curActiveWebTemplate = null;
+}
+else
+{
+	Server.Execute( "include/template_init.html" );
+}
+
+iPlaceHolderTemplate = null;
+if ( bEmpty )
+{
+	iPlaceHolderTemplate = tools.get_default_object_id( "custom_web_template", "placeholder_empty" );
+}
+else if ( curWebMode != null )
+{
+	iPlaceHolderTemplate = curWebMode.placeholder_template_id.Value;
+}
+if ( iPlaceHolderTemplate == null )
+{
+	if ( curAnonymousAccess && curWebDesign.default_custom_web_template_id.HasValue )
+	{
+		iPlaceHolderTemplate = curWebDesign.default_custom_web_template_id.Value;
+	}
+	else if ( curWebDesign.home_custom_web_template_id.HasValue )
+	{
+		iPlaceHolderTemplate = curWebDesign.home_custom_web_template_id.Value;
+	}
+}
+if(iStepTo!=undefined && iStepTo==curWebModeID)
+{
+	Server.Execute( "view_doc_part.html" );
+}
+else if ( iPlaceHolderTemplate == null )
+{
+	Server.Execute( "view_doc_main.html" );
+}
+else
+{
+	tePlaceHolderTemplate = FetchDoc( UrlFromDocID( iPlaceHolderTemplate ) ).TopElem;
+	tools_web.write_custom_web_template( tePlaceHolderTemplate );
+}
+
+tools_web.save_cur_active_web_template( curActiveWebTemplateDoc, false );
+//alert(Session.ExportToXml())
+//alert('VIEW_DOC - after - '+(GetCurTicks()-tt11)+' - '+Request.Url);
+%>

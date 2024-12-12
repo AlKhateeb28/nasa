@@ -1,0 +1,119 @@
+﻿<%
+customWebTemplateID = OptInt( Request.Query.GetOptProperty( "custom_web_template_id" ) );
+if ( customWebTemplateID == undefined )
+{
+	customWebTemplateID = OptInt( Request.Query.GetOptProperty( "object_id" ) );
+}
+if ( customWebTemplateID == undefined )
+{
+	customWebTemplateCode = Request.Query.GetOptProperty( "object_code", "" );
+	if ( customWebTemplateCode != "" )
+		customWebTemplateID = ArrayOptFirstElem( XQuery( "for $elem in custom_web_templates where $elem/code =" + XQueryLiteral( customWebTemplateCode ) +" return $elem/Fields('id')" ) );
+	if ( customWebTemplateID != undefined )
+		customWebTemplateID = customWebTemplateID.id.Value;
+}
+if ( customWebTemplateID == undefined )
+{
+	Response.Write( "*Error: no custom web template specified*" );
+	Cancel();
+}
+else
+{
+	customWebTemplate = OpenDoc( UrlFromDocID( customWebTemplateID ) ).TopElem;
+	if ( ! tools_web.is_true( customWebTemplate.is_enabled ) )
+	{
+		Response.Write( "*Error: no available custom web template*" );
+		Cancel();
+	}
+}
+
+if ( (tools.sys_db_capability & tools.UNI_CAP_APP_INSIGHTS) != 0 )
+{
+	tools.spxml_unibridge.Object.provider.AddThreadDictionaryValue("template_id", customWebTemplateID);
+}
+
+if ( ! Request.Session.HasProperty( "Env" ) )
+{
+	Env = new SafeObject;
+	Request.Session.SetProperty( "Env", Env );
+}
+
+if ( customWebTemplate.access.enable_anonymous_access.Value != true )
+{
+	Server.Execute( "include/user_init.html" );
+
+	if ( ! tools_web.check_access( customWebTemplate, curUserID, curUser, Request.Session ) )
+	{
+		throw 'Access denied.';
+	}
+}
+
+_vwars = undefined;
+
+curDocID = OptInt(Request.Query.GetOptProperty("doc_id"), null);
+curDoc = null;
+
+var curParams = Request.Session.GetOptProperty( "Env", ({}) ).GetOptProperty( "curParams" );
+
+if (curDocID != null)
+{
+	curDoc = tools.open_doc(curDocID);
+	if (curDoc != undefined && curDoc.TopElem.ChildExists("wvars"))
+	{
+		curDoc = curDoc.TopElem;
+		_vwars = curDoc.wvars;
+	}
+	else
+		curDoc = null;
+
+	Request.Session.Env.SetProperty( "curDocID", curDocID );
+	Request.Session.Env.SetProperty( "curDoc", curDoc );
+	if (curDoc != null && curParams != undefined)
+		tools_web.set_web_params( curParams, _vwars, true );
+}
+
+curOverrideWebTemplateID = OptInt( Request.Query.GetOptProperty( "override_web_template_id" ), null );
+curOverrideWebTemplate = null;
+if ( curOverrideWebTemplateID != null )
+{
+	docOverrideWebTemplate = tools.open_doc( curOverrideWebTemplateID );
+	if ( docOverrideWebTemplate != undefined )
+	{
+		curOverrideWebTemplate = docOverrideWebTemplate.TopElem;
+		curParams = new SafeObject;
+		tools_web.set_web_params( curParams, curOverrideWebTemplate.wvars, true );
+		_vwars = docOverrideWebTemplate.TopElem.wvars;
+	}
+}
+
+var __sResponseStr = tools_web.insert_custom_code(customWebTemplateID, customWebTemplate, true, false, 0, _vwars);
+if ( customWebTemplate.cwt_type.Value == "css" )
+{
+	Response.ContentType = "text/css";
+
+	dtLastModified = null;
+	sUrl = null;
+	if ( customWebTemplate.url.HasValue && ! StrContains( customWebTemplate.url, '://' ) )
+		sUrl = UrlAppendPath( 'x-local://wt/web', customWebTemplate.url );
+	else if ( customWebTemplate.doc_info.modification.date.HasValue )
+		dtLastModified = customWebTemplate.doc_info.modification.date.Value;
+
+	if ( sUrl != null && dtLastModified != null )
+	{
+		oResponseSet = tools_web.set_modified_response_status( Request, sUrl, dtLastModified );
+		if ( oResponseSet.ResponseStatus != 200 )
+			Cancel();
+	}
+}
+else
+{
+	var __sParamStr = Request.Query.GetOptProperty("content_type");
+	if (__sParamStr != undefined)
+		Response.ContentType = UrlDecode(__sParamStr);
+}
+__sParamStr = Request.Query.GetOptProperty("encoding");
+if (__sParamStr != undefined && __sParamStr != "utf-8")
+	__sResponseStr = EncodeCharset(__sResponseStr, __sParamStr);
+Response.Write(__sResponseStr);
+Cancel();
+%>

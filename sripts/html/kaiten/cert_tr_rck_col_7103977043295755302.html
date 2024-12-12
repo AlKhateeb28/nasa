@@ -1,0 +1,1124 @@
+<SPXMLScreen>
+    <%
+    // 7103977043295755302
+    function from_str_to_date( _sDate, _bWithTime ) {
+    try {
+    if ( _bWithTime ) {
+    return OptDate( _sDate )
+    } else {
+    return OptDate( StrDate( OptDate( _sDate ), false, false ) )
+    }
+    } catch( err ) { return '' }
+    }
+
+    function addQualificationCombo(programIndex, selectedValue, enabled) {
+    %>
+    <Grid Width="900" Class="grid_class" >
+        <GridColumns>
+            <GridColumn Width="300"/>
+            <GridColumn Width="600"/>
+        </GridColumns>
+        <GridRow>
+            <Label Class="">Квалификация:</Label>
+            <ComboBox Name="qualification<%=programIndex%>" Width="580" SelectedItem="<%=selectedValue%>" Enabled="<%=enabled%>" >
+                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                <%
+                for(qualification in qualificationList) {
+                %>
+                <ComboBoxItem Value="<%=qualification.id%>"><%=qualification.name%></ComboBoxItem>
+                <%
+                }
+                %>
+            </ComboBox>
+        </GridRow>
+        <GridRow><Label></Label></GridRow>
+    </Grid>
+    <%
+    }
+    object_id = curUrlQuery.GetOptProperty( "object_id" )
+    teCol = tools.open_doc( object_id ).TopElem
+    cert_object_data_type_id = 7103978283796946164 // Сертификация тренеров РЦК
+    //sXQ = "for $elem in object_datas where $elem/object_data_type_id=" + cert_object_data_type_id + " and $elem/object_id=" + object_id + " and $elem/sec_object_id=" + curUserID + " return $elem"
+    sXQ = "for $elem in object_datas where $elem/object_data_type_id=" + cert_object_data_type_id + " and $elem/object_id=" + object_id + " return $elem"
+    foundObjectData = ArrayOptFirstElem( XQuery( sXQ ) )
+
+    qualificationList = ArrayDirect(XQuery("sql: " +
+    " SELECT id, name " +
+    " FROM [WTDB].[dbo].qualifications " +
+    " WHERE code = 'kval_rck' " +
+    "       AND status = 'active' " +
+    " ORDER BY name "));
+
+    if ( foundObjectData == undefined ) {
+    checkbox1_value = "true"
+    checkbox2_value = "true"
+    checkbox3_value = "true"
+    checkbox4_value = "true"
+    checkbox5_value = "true"
+    checkbox6_value = "true"
+    checkbox7_value = "true"
+    checkbox8_value = "true"
+    checkbox9_value = "true"
+    checkbox10_value = "true"
+    checkbox11_value = "true"
+    checkbox12_value = "true"
+    checkbox13_value = "true"
+    MyCombo1_value = "Не выбрано"
+    MyCombo2_value = "Не выбрано"
+    MyCombo3_value = "Не выбрано"
+    MyCombo4_value = "Не выбрано"
+    MyCombo5_value = "Не выбрано"
+    MyCombo6_value = "Не выбрано"
+    MyCombo7_value = "Не выбрано"
+    MyCombo8_value = "Не выбрано"
+    MyCombo9_value = "Не выбрано"
+    MyCombo10_value = "Не выбрано"
+    MyCombo11_value = "Не выбрано"
+    MyCombo12_value = "Не выбрано"
+    MyCombo13_value = "Не выбрано"
+    qualificationValue1 = "Не выбрано"
+    qualificationValue2 = "Не выбрано"
+    qualificationValue3 = "Не выбрано"
+    qualificationValue4 = "Не выбрано"
+    qualificationValue5 = "Не выбрано"
+    qualificationValue6 = "Не выбрано"
+    qualificationValue7 = "Не выбрано"
+    qualificationValue8 = "Не выбрано"
+    qualificationValue9 = "Не выбрано"
+    qualificationValue10 = "Не выбрано"
+    qualificationValue11 = "Не выбрано"
+    qualificationValue12 = "Не выбрано"
+    qualificationValue13 = "Не выбрано"
+    MyDate1_value = ""
+    MyDate2_value = ""
+    MyDate3_value = ""
+    MyDate4_value = ""
+    MyDate5_value = ""
+    MyDate6_value = ""
+    MyDate7_value = ""
+    MyDate8_value = ""
+    MyDate9_value = ""
+    MyDate10_value = ""
+    MyDate11_value = ""
+    MyDate12_value = ""
+    MyDate13_value = ""
+    Edit1_value = ""
+    Edit2_value = ""
+    Edit3_value = ""
+    Edit4_value = ""
+    Edit5_value = ""
+    Edit6_value = ""
+    Edit7_value = ""
+    Edit8_value = ""
+    Edit9_value = ""
+    Edit10_value = ""
+    Edit11_value = ""
+    Edit12_value = ""
+    Edit13_value = ""
+    } else {
+    te = tools.open_doc( foundObjectData.id ).TopElem
+    checkbox1_value = te.custom_elems.ObtainChildByKey( "flag1" ).value
+    checkbox2_value = te.custom_elems.ObtainChildByKey( "flag2" ).value
+    checkbox3_value = te.custom_elems.ObtainChildByKey( "flag3" ).value
+    checkbox4_value = te.custom_elems.ObtainChildByKey( "flag4" ).value
+    checkbox5_value = te.custom_elems.ObtainChildByKey( "flag5" ).value
+    checkbox6_value = te.custom_elems.ObtainChildByKey( "flag6" ).value
+    checkbox7_value = te.custom_elems.ObtainChildByKey( "flag7" ).value
+    checkbox8_value = te.custom_elems.ObtainChildByKey( "flag8" ).value
+    checkbox9_value = te.custom_elems.ObtainChildByKey( "flag9" ).value
+    checkbox10_value = te.custom_elems.ObtainChildByKey( "flag10" ).value
+    checkbox11_value = te.custom_elems.ObtainChildByKey( "flag11" ).value
+    checkbox12_value = te.custom_elems.ObtainChildByKey( "flag12" ).value
+    checkbox13_value = te.custom_elems.ObtainChildByKey( "flag13" ).value
+    MyCombo1_value = te.custom_elems.ObtainChildByKey( "result_1" ).value
+    MyCombo2_value = te.custom_elems.ObtainChildByKey( "result_2" ).value
+    MyCombo3_value = te.custom_elems.ObtainChildByKey( "result_3" ).value
+    MyCombo4_value = te.custom_elems.ObtainChildByKey( "result_4" ).value
+    MyCombo5_value = te.custom_elems.ObtainChildByKey( "result_5" ).value
+    MyCombo6_value = te.custom_elems.ObtainChildByKey( "result_6" ).value
+    MyCombo7_value = te.custom_elems.ObtainChildByKey( "result_7" ).value
+    MyCombo8_value = te.custom_elems.ObtainChildByKey( "result_8" ).value
+    MyCombo9_value = te.custom_elems.ObtainChildByKey( "result_9" ).value
+    MyCombo10_value = te.custom_elems.ObtainChildByKey( "result_10" ).value
+    MyCombo11_value = te.custom_elems.ObtainChildByKey( "result_11" ).value
+    MyCombo12_value = te.custom_elems.ObtainChildByKey( "result_12" ).value
+    MyCombo13_value = te.custom_elems.ObtainChildByKey( "result_13" ).value
+    qualificationValue1 = te.custom_elems.ObtainChildByKey( "kval_1" ).value;
+    qualificationValue2 = te.custom_elems.ObtainChildByKey( "kval_2" ).value;
+    qualificationValue3 = te.custom_elems.ObtainChildByKey( "kval_3" ).value;
+    qualificationValue4 = te.custom_elems.ObtainChildByKey( "kval_4" ).value;
+    qualificationValue5 = te.custom_elems.ObtainChildByKey( "kval_5" ).value;
+    qualificationValue6 = te.custom_elems.ObtainChildByKey( "kval_6" ).value;
+    qualificationValue7 = te.custom_elems.ObtainChildByKey( "kval_7" ).value;
+    qualificationValue8 = te.custom_elems.ObtainChildByKey( "kval_8" ).value;
+    qualificationValue9 = te.custom_elems.ObtainChildByKey( "kval_9" ).value;
+    qualificationValue10 = te.custom_elems.ObtainChildByKey( "kval_10" ).value;
+    qualificationValue11 = te.custom_elems.ObtainChildByKey( "kval_11" ).value;
+    qualificationValue12 = te.custom_elems.ObtainChildByKey( "kval_12" ).value;
+    qualificationValue13 = te.custom_elems.ObtainChildByKey( "kval_13" ).value;
+    MyDate1_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_1" ).value, false )
+    MyDate2_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_2" ).value, false )
+    MyDate3_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_3" ).value, false )
+    MyDate4_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_4" ).value, false )
+    MyDate5_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_5" ).value, false )
+    MyDate6_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_6" ).value, false )
+    MyDate7_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_7" ).value, false )
+    MyDate8_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_8" ).value, false )
+    MyDate9_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_9" ).value, false )
+    MyDate10_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_10" ).value, false )
+    MyDate11_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_11" ).value, false )
+    MyDate12_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_12" ).value, false )
+    MyDate13_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_13" ).value, false )
+    Edit1_value = te.custom_elems.ObtainChildByKey( "comment_1" ).value
+    Edit2_value = te.custom_elems.ObtainChildByKey( "comment_2" ).value
+    Edit3_value = te.custom_elems.ObtainChildByKey( "comment_3" ).value
+    Edit4_value = te.custom_elems.ObtainChildByKey( "comment_4" ).value
+    Edit5_value = te.custom_elems.ObtainChildByKey( "comment_5" ).value
+    Edit6_value = te.custom_elems.ObtainChildByKey( "comment_6" ).value
+    Edit7_value = te.custom_elems.ObtainChildByKey( "comment_7" ).value
+    Edit8_value = te.custom_elems.ObtainChildByKey( "comment_8" ).value
+    Edit9_value = te.custom_elems.ObtainChildByKey( "comment_9" ).value
+    Edit10_value = te.custom_elems.ObtainChildByKey( "comment_10" ).value
+    Edit11_value = te.custom_elems.ObtainChildByKey( "comment_11" ).value
+    Edit12_value = te.custom_elems.ObtainChildByKey( "comment_12" ).value
+    Edit13_value = te.custom_elems.ObtainChildByKey( "comment_13" ).value
+    }
+    MyCombo1_Enabled = MyCombo1_value == "Сертифицировать" ? "false" : "true"
+    MyCombo2_Enabled = MyCombo2_value == "Сертифицировать" ? "false" : "true"
+    MyCombo3_Enabled = MyCombo3_value == "Сертифицировать" ? "false" : "true"
+    MyCombo4_Enabled = MyCombo4_value == "Сертифицировать" ? "false" : "true"
+    MyCombo5_Enabled = MyCombo5_value == "Сертифицировать" ? "false" : "true"
+    MyCombo6_Enabled = MyCombo6_value == "Сертифицировать" ? "false" : "true"
+    MyCombo7_Enabled = MyCombo7_value == "Сертифицировать" ? "false" : "true"
+    MyCombo8_Enabled = MyCombo8_value == "Сертифицировать" ? "false" : "true"
+    MyCombo9_Enabled = MyCombo9_value == "Сертифицировать" ? "false" : "true"
+    MyCombo10_Enabled = MyCombo10_value == "Сертифицировать" ? "false" : "true"
+    MyCombo11_Enabled = MyCombo11_value == "Сертифицировать" ? "false" : "true"
+    MyCombo12_Enabled = MyCombo12_value == "Сертифицировать" ? "false" : "true"
+    MyCombo13_Enabled = MyCombo13_value == "Сертифицировать" ? "false" : "true"
+    qualificationEnabled1 = MyCombo1_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled2 = MyCombo2_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled3 = MyCombo3_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled4 = MyCombo4_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled5 = MyCombo5_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled6 = MyCombo6_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled7 = MyCombo7_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled8 = MyCombo8_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled9 = MyCombo9_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled10 = MyCombo10_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled11 = MyCombo11_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled12 = MyCombo12_value == "Сертифицировать" ? "false" : "true";
+    qualificationEnabled13 = MyCombo13_value == "Сертифицировать" ? "false" : "true";
+    MyDate1_Enabled = MyCombo1_value == "Сертифицировать" ? "false" : "true"
+    MyDate2_Enabled = MyCombo2_value == "Сертифицировать" ? "false" : "true"
+    MyDate3_Enabled = MyCombo3_value == "Сертифицировать" ? "false" : "true"
+    MyDate4_Enabled = MyCombo4_value == "Сертифицировать" ? "false" : "true"
+    MyDate5_Enabled = MyCombo5_value == "Сертифицировать" ? "false" : "true"
+    MyDate6_Enabled = MyCombo6_value == "Сертифицировать" ? "false" : "true"
+    MyDate7_Enabled = MyCombo7_value == "Сертифицировать" ? "false" : "true"
+    MyDate8_Enabled = MyCombo8_value == "Сертифицировать" ? "false" : "true"
+    MyDate9_Enabled = MyCombo9_value == "Сертифицировать" ? "false" : "true"
+    MyDate10_Enabled = MyCombo10_value == "Сертифицировать" ? "false" : "true"
+    MyDate11_Enabled = MyCombo11_value == "Сертифицировать" ? "false" : "true"
+    MyDate12_Enabled = MyCombo12_value == "Сертифицировать" ? "false" : "true"
+    MyDate13_Enabled = MyCombo13_value == "Сертифицировать" ? "false" : "true"
+    checkbox1_Enabled = MyCombo1_value == "Сертифицировать" ? "false" : "true"
+    checkbox2_Enabled = MyCombo2_value == "Сертифицировать" ? "false" : "true"
+    checkbox3_Enabled = MyCombo3_value == "Сертифицировать" ? "false" : "true"
+    checkbox4_Enabled = MyCombo4_value == "Сертифицировать" ? "false" : "true"
+    checkbox5_Enabled = MyCombo5_value == "Сертифицировать" ? "false" : "true"
+    checkbox6_Enabled = MyCombo6_value == "Сертифицировать" ? "false" : "true"
+    checkbox7_Enabled = MyCombo7_value == "Сертифицировать" ? "false" : "true"
+    checkbox8_Enabled = MyCombo8_value == "Сертифицировать" ? "false" : "true"
+    checkbox9_Enabled = MyCombo9_value == "Сертифицировать" ? "false" : "true"
+    checkbox10_Enabled = MyCombo10_value == "Сертифицировать" ? "false" : "true"
+    checkbox11_Enabled = MyCombo11_value == "Сертифицировать" ? "false" : "true"
+    checkbox12_Enabled = MyCombo12_value == "Сертифицировать" ? "false" : "true"
+    checkbox13_Enabled = MyCombo13_value == "Сертифицировать" ? "false" : "true"
+
+    %>
+    <Action Name="MyActionName" Source="save_object_data_cert_tr_rck" Success="ALERT={messageText};REFRESH;" Failure="ALERT={messageText}">
+        <Param Name="object_id" Value="<%=object_id%>"/>
+        <Param Name="checkbox1" Value="{checkbox1}"/>
+        <Param Name="checkbox2" Value="{checkbox2}"/>
+        <Param Name="checkbox3" Value="{checkbox3}"/>
+        <Param Name="checkbox4" Value="{checkbox4}"/>
+        <Param Name="checkbox5" Value="{checkbox5}"/>
+        <Param Name="checkbox6" Value="{checkbox6}"/>
+        <Param Name="checkbox7" Value="{checkbox7}"/>
+        <Param Name="checkbox8" Value="{checkbox8}"/>
+        <Param Name="checkbox9" Value="{checkbox9}"/>
+        <Param Name="checkbox10" Value="{checkbox10}"/>
+        <Param Name="checkbox11" Value="{checkbox11}"/>
+        <Param Name="checkbox12" Value="{checkbox12}"/>
+        <Param Name="checkbox13" Value="{checkbox13}"/>
+        <Param Name="MyCombo1" Value="{MyCombo1}"/>
+        <Param Name="MyCombo2" Value="{MyCombo2}"/>
+        <Param Name="MyCombo3" Value="{MyCombo3}"/>
+        <Param Name="MyCombo4" Value="{MyCombo4}"/>
+        <Param Name="MyCombo5" Value="{MyCombo5}"/>
+        <Param Name="MyCombo6" Value="{MyCombo6}"/>
+        <Param Name="MyCombo7" Value="{MyCombo7}"/>
+        <Param Name="MyCombo8" Value="{MyCombo8}"/>
+        <Param Name="MyCombo9" Value="{MyCombo9}"/>
+        <Param Name="MyCombo10" Value="{MyCombo10}"/>
+        <Param Name="MyCombo11" Value="{MyCombo11}"/>
+        <Param Name="MyCombo12" Value="{MyCombo12}"/>
+        <Param Name="MyCombo13" Value="{MyCombo13}"/>
+        <Param Name="qualification1" Value="{qualification1}"/>
+        <Param Name="qualification2" Value="{qualification2}"/>
+        <Param Name="qualification3" Value="{qualification3}"/>
+        <Param Name="qualification4" Value="{qualification4}"/>
+        <Param Name="qualification5" Value="{qualification5}"/>
+        <Param Name="qualification6" Value="{qualification6}"/>
+        <Param Name="qualification7" Value="{qualification7}"/>
+        <Param Name="qualification8" Value="{qualification8}"/>
+        <Param Name="qualification9" Value="{qualification9}"/>
+        <Param Name="qualification10" Value="{qualification10}"/>
+        <Param Name="qualification11" Value="{qualification11}"/>
+        <Param Name="qualification12" Value="{qualification12}"/>
+        <Param Name="qualification13" Value="{qualification13}"/>
+        <Param Name="MyDate1" Value="{MyDate1}"/>
+        <Param Name="MyDate2" Value="{MyDate2}"/>
+        <Param Name="MyDate3" Value="{MyDate3}"/>
+        <Param Name="MyDate4" Value="{MyDate4}"/>
+        <Param Name="MyDate5" Value="{MyDate5}"/>
+        <Param Name="MyDate6" Value="{MyDate6}"/>
+        <Param Name="MyDate7" Value="{MyDate7}"/>
+        <Param Name="MyDate8" Value="{MyDate8}"/>
+        <Param Name="MyDate9" Value="{MyDate9}"/>
+        <Param Name="MyDate10" Value="{MyDate10}"/>
+        <Param Name="MyDate11" Value="{MyDate11}"/>
+        <Param Name="MyDate12" Value="{MyDate12}"/>
+        <Param Name="MyDate13" Value="{MyDate13}"/>
+        <Param Name="Edit1" Value="{Edit1}"/>
+        <Param Name="Edit2" Value="{Edit2}"/>
+        <Param Name="Edit3" Value="{Edit3}"/>
+        <Param Name="Edit4" Value="{Edit4}"/>
+        <Param Name="Edit5" Value="{Edit5}"/>
+        <Param Name="Edit6" Value="{Edit6}"/>
+        <Param Name="Edit7" Value="{Edit7}"/>
+        <Param Name="Edit8" Value="{Edit8}"/>
+        <Param Name="Edit9" Value="{Edit9}"/>
+        <Param Name="Edit10" Value="{Edit10}"/>
+        <Param Name="Edit11" Value="{Edit11}"/>
+        <Param Name="Edit12" Value="{Edit12}"/>
+        <Param Name="Edit13" Value="{Edit13}"/>
+    </Action>
+
+    <Grid Width="900" Class="wrapper" >
+        <GridColumns>
+            <GridColumn Width="900"/>
+        </GridColumns>
+
+        <GridRow>
+            <Grid Width="900" Class="grid_labels_class" >
+                <GridColumns>
+                    <GridColumn Width="400"/>
+                    <GridColumn Width="400"/>
+                </GridColumns>
+                <GridRow>
+                    <Label Class="label_class1"><%=teCol.fullname%></Label>
+                    <Label Class=""> ИНН <%=teCol.custom_elems.ObtainChildByKey( "uf_inn" ).value%>,  <%=teCol.org_name%></Label>
+                </GridRow>
+            </Grid>
+        </GridRow>
+
+        <GridRow>
+            <TabControl Name="Tab1" ActiveTab="0">
+                <TabItem Title="Модуль 1">
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[0].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo1" Width="280" SelectedItem="<%=MyCombo1_value%>" Enabled="<%=MyCombo1_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate1" Enabled="<%=MyDate1_Enabled%>" ><%=MyDate1_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(1, qualificationValue1, qualificationEnabled1);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="" >Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox1" Class="checkbox" Checked="<%=checkbox1_value%>" Enabled="<%=checkbox1_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit1" Width="580"><%=Edit1_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[1].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo2" Width="280" SelectedItem="<%=MyCombo2_value%>" Enabled="<%=MyCombo2_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate2" Enabled="<%=MyDate2_Enabled%>" ><%=MyDate2_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(2, qualificationValue2, qualificationEnabled2);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox2" Class="checkbox" Checked="<%=checkbox2_value%>" Enabled="<%=checkbox2_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit2" Width="580"><%=Edit2_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[2].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo3" Width="280" SelectedItem="<%=MyCombo3_value%>" Enabled="<%=MyCombo3_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate3" Enabled="<%=MyDate3_Enabled%>" ><%=MyDate3_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(3, qualificationValue3, qualificationEnabled2);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox3" Class="checkbox" Checked="<%=checkbox3_value%>" Enabled="<%=checkbox3_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit3" Width="580"><%=Edit3_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[3].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo4" Width="280" SelectedItem="<%=MyCombo4_value%>" Enabled="<%=MyCombo4_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate4" Enabled="<%=MyDate4_Enabled%>" ><%=MyDate4_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(4, qualificationValue4, qualificationEnabled4);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox4" Class="checkbox" Checked="<%=checkbox4_value%>" Enabled="<%=checkbox4_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit4" Width="580"><%=Edit4_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[4].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo5" Width="280" SelectedItem="<%=MyCombo5_value%>" Enabled="<%=MyCombo5_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate5" Enabled="<%=MyDate5_Enabled%>" ><%=MyDate5_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(5, qualificationValue5, qualificationEnabled5);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox5" Class="checkbox" Checked="<%=checkbox5_value%>" Enabled="<%=checkbox5_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit5" Width="580"><%=Edit5_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_button_class">
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Button Click="ACTION=MyActionName;" Width="150">Сохранить</Button>
+                        </GridRow>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Title="Модуль 2">
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[5].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo6" Width="280" SelectedItem="<%=MyCombo6_value%>" Enabled="<%=MyCombo6_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate6" Enabled="<%=MyDate6_Enabled%>" ><%=MyDate6_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(6, qualificationValue6, qualificationEnabled6);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox6" Class="checkbox" Checked="<%=checkbox6_value%>" Enabled="<%=checkbox6_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit6" Width="580"><%=Edit6_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[6].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo7" Width="280" SelectedItem="<%=MyCombo7_value%>" Enabled="<%=MyCombo7_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate7" Enabled="<%=MyDate7_Enabled%>" ><%=MyDate7_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(7, qualificationValue7, qualificationEnabled7);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox7" Class="checkbox" Checked="<%=checkbox7_value%>" Enabled="<%=checkbox7_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit7" Width="580"><%=Edit7_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[7].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo8" Width="280" SelectedItem="<%=MyCombo8_value%>" Enabled="<%=MyCombo8_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate8" Enabled="<%=MyDate8_Enabled%>" ><%=MyDate8_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(8, qualificationValue8, qualificationEnabled8);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox8" Class="checkbox" Checked="<%=checkbox8_value%>" Enabled="<%=checkbox8_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit8" Width="580"><%=Edit8_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[8].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo9" Width="280" SelectedItem="<%=MyCombo9_value%>" Enabled="<%=MyCombo9_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate9" Enabled="<%=MyDate9_Enabled%>" ><%=MyDate9_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(9, qualificationValue9, qualificationEnabled9);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox9" Class="checkbox" Checked="<%=checkbox9_value%>" Enabled="<%=checkbox9_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit9" Width="580"><%=Edit9_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[9].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo10" Width="280" SelectedItem="<%=MyCombo10_value%>" Enabled="<%=MyCombo10_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate10" Enabled="<%=MyDate10_Enabled%>" ><%=MyDate10_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(10, qualificationValue10, qualificationEnabled10);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox10" Class="checkbox" Checked="<%=checkbox10_value%>" Enabled="<%=checkbox10_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit10" Width="580"><%=Edit10_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_button_class">
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Button Click="ACTION=MyActionName;" Width="150">Сохранить</Button>
+                        </GridRow>
+                    </Grid>
+                </TabItem>
+                <TabItem Title="Модуль 3">
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[10].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo11" Width="280" SelectedItem="<%=MyCombo11_value%>" Enabled="<%=MyCombo11_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate11" Enabled="<%=MyDate11_Enabled%>" ><%=MyDate11_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(11, qualificationValue11, qualificationEnabled11);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox11" Class="checkbox" Checked="<%=checkbox11_value%>" Enabled="<%=checkbox11_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit11" Width="580"><%=Edit11_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[11].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo12" Width="280" SelectedItem="<%=MyCombo12_value%>" Enabled="<%=MyCombo12_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate12" Enabled="<%=MyDate12_Enabled%>" ><%=MyDate12_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(12, qualificationValue12, qualificationEnabled12);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox12" Class="checkbox" Checked="<%=checkbox12_value%>" Enabled="<%=checkbox12_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit12" Width="580"><%=Edit12_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+
+                    <Grid Width="900" Class="grid_button_class">
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Button Click="ACTION=MyActionName;" Width="150">Сохранить</Button>
+                        </GridRow>
+                    </Grid>
+                </TabItem>
+                <TabItem Title="Модуль 4">
+                    <Grid Width="900" Class="grid_labels_class" >
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="label_class1"><%=custom_templates.object_data_type.items[2].sheets[12].title%></Label>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="285"/>
+                            <GridColumn Width="315"/>
+                            <GridColumn Width="100"/>
+                            <GridColumn Width="200"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Результат сертификации:</Label>
+                            <ComboBox Name="MyCombo13" Width="280" SelectedItem="<%=MyCombo13_value%>" Enabled="<%=MyCombo13_Enabled%>" >
+                                <ComboBoxItem Value="Не выбрано">Не выбрано</ComboBoxItem>
+                                <ComboBoxItem Value="Сертифицировать">Сертифицировать</ComboBoxItem>
+                                <ComboBoxItem Value="Не сертифицировать">Не сертифицировать</ComboBoxItem>
+                            </ComboBox>
+                            <Label Class="">Дата:</Label>
+                            <DatePicker Name="MyDate13" Enabled="<%=MyDate13_Enabled%>" ><%=MyDate13_value%></DatePicker>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+
+                    <%
+                    addQualificationCombo(13, qualificationValue13, qualificationEnabled13);
+                    %>
+
+                    <Grid Width="900" Class="grid_class" >
+                        <GridColumns>
+                            <GridColumn Width="270"/>
+                            <GridColumn Width="630"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label Class="">Отправить уведомление:</Label>
+                            <CheckBox Name="checkbox13" Class="checkbox" Checked="<%=checkbox13_value%>" Enabled="<%=checkbox13_Enabled%>">Поставьте галочку чтобы отправить</CheckBox>
+                        </GridRow>
+                        <GridRow><Label></Label></GridRow>
+                    </Grid>
+                    <Grid Width="900" Class="grid_class">
+                        <GridColumns>
+                            <GridColumn Width="300"/>
+                            <GridColumn Width="600"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Label>Обратная связь тренеру:</Label>
+                            <EditBox Name="Edit13" Width="580"><%=Edit13_value%></EditBox>
+                        </GridRow>
+                    </Grid>
+
+                    <Grid Width="900" Class="grid_button_class">
+                        <GridColumns>
+                            <GridColumn Width="900"/>
+                        </GridColumns>
+                        <GridRow>
+                            <Button Click="ACTION=MyActionName;" Width="150">Сохранить</Button>
+                        </GridRow>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </GridRow>
+    </Grid>
+    <HTMLBox Dynamic="true"><![CDATA[
+        <style>
+            .label_class1 {
+                margin: 20px;
+                font-size: 150%;
+                color: #4A4FD4;
+            }
+            .label_class2 {
+                width: 20%;
+            }
+            .grid_class {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 10px;
+                margin-right: 10px;
+                padding: 20px;
+                background-color: #bdbdbd;
+            }
+            .wrapper {
+                margin-left: 150px;
+                margin-right: 150px;
+                padding: 20px;
+            }
+            .grid_labels_class {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            .grid_button_class {
+                margin: 10px;
+            }
+        </style>
+        <script>
+        </script>
+        ]]>
+    </HTMLBox>
+</SPXMLScreen>

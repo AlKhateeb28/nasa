@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Monitor</title>
+
+    <link rel="icon" href="images/favicon.ico"/>
+    <link href="../kendo/styles/kendo.common.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/index.css"/>
+
+    <script type="text/javascript" src="js/jquery3.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="js/moment.js"></script>
+    <script type="text/javascript" src="../kendo/js/kendo.all.min.js"></script>
+    <script type="text/javascript" src="js/webSocket.js"></script>
+    <script type="text/javascript" src="js/jsonReviver.js"></script>
+    <script type="text/javascript" src="js/agent.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+</head>
+<body class="body">
+
+<div id="tabstrip">
+    <table border="0" width="100%">
+        <tr>
+            <td style="vertical-align: text-top; width: 250px;">
+                <div class="statistic ws_statistic">
+                    <div id="start_datetime" class="start_datetime"></div>
+                    <div>
+                        <div class="float-left-box header-image header-image-size">
+                            <img src="images/cube_orange.png"/>
+                        </div>
+                        <div class="header-label rock-and-roll">
+                            WS Server
+                        </div>
+                    </div>
+                    <div id="ws_server" class="ws-server ws-server-unknown">
+                        Unknown
+                    </div>
+                    <div class="ws-server-tooltip">
+                        Websocket version: 2.5.0
+                        <br/>
+                        Dashboard version: 4.0.1
+                    </div>
+                </div>
+
+                <div class="statistic ws_statistic" style="height: 350px;">
+                    <div class="float-left-box header-image header-image-size">
+                        <img src="images/cube_pink.png" style="margin-top: 20px;"/>
+                    </div>
+                    <div class="header-label rock-and-roll">
+                        WS Visitors
+                    </div>
+                    <div id="ws_visitors" class="ws-visitors left-block-btn" onclick="refreshVisitors()">
+                        Обновить
+                    </div>
+                    <div>
+                        <div style="padding-top: 15px;">
+                            <div class="float-left-box visitors-element" style="width: 10px; color: burlywood;">IDX</div>
+                            <div id="agentNameHeader" class="float-left-box visitors-element" style="margin-left: 10px; width: 153px; color: burlywood;">Агенты</div>
+                            <br/>
+                        </div>
+                    </div>
+                    <table id="visitors" class="visitors-block" style="overflow-y: clip;">
+
+                    </table>
+                </div>
+
+                <div class="statistic ws_statistic" style="color: orange; height: 365px;">
+                    <div id="hours-count" class="hours-count" style="left: 20px; background-image: linear-gradient(290deg, #ceff86, #7cfc00 30%) !important;" title="Всего запущенных агентов">0</div>
+                    <div id="active-count" class="hours-count" style="left: 220px; color: mintcream; background-image: linear-gradient(290deg, #ff0080, #7928ca) !important;" title="Активных агентов">0</div>
+                    <div id="inactive-count" class="hours-count" style="left: 270px; color: mintcream; background-image: linear-gradient(290deg, #5e5f5e, #212529) !important;" title="Завершенных агентов">0</div>
+                    <div id="hoursChart" style="margin-top: -20px;"></div>
+                </div>
+            </td>
+
+            <td style="width: 882px;">
+                <div id="table" class="thread-table tab-element"></div>
+            </td>
+
+            <td style="vertical-align: top;">
+                <div id="mismatchBox">
+
+                </div>
+
+            </td>
+        </tr>
+    </table>
+</div>
+
+<dialog>
+    <p>This modal dialog has a groovy backdrop!</p>
+    <button autofocus>Close</button>
+</dialog>
+
+<script type="text/x-kendo-template" id="template">
+    <div id="rowId" pin="0" class="thread thread-unknown-state thread-active agent-box" onclick="haveFocus(this)">
+        <div id="pin_btn" parent="" class="pin-btn unpinned-btn-mode" onclick="pinUnpinParent(this)">Pin</div>
+        <div id="owner" class="float-left-box owner"></div>
+        <div>
+            <table>
+                <tr>
+                    <td colspan="6">
+                        <div class="float-left-box" style="height: 21px; padding-right: 5px;">
+                            <div class="float-left-box" style="margin-top: -1px;">
+                                <img id="wait" class="float-left-box pointer-image" src="images/wait.gif"/>
+                            </div>
+                            <div class="float-left-box">
+                                <div id="wsState" class="device device-run">WS</div>
+                            </div>
+                            <div class="float-left-box">
+                                <div id="agentState" class="device device-run">AG</div>
+                            </div>
+                        </div>
+                        <div class="float-left-box agent-info-block">
+                            <div class="idbox-textbox float-left-box">
+                                <div id="agentName" class="idbox-textbox-text agent-name-box"></div>
+                            </div>
+                            <div class="idbox-imagebox-copy float-left-box" style="margin-top: -1px;" title="Copy to clipboard">
+                                <button id="agentCopyId" class="btn btn-pointer" style="margin-left: 5px;" onclick="copyAgentId(this)">Get It</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="float-left-box user-info-box">
+                            <div class="idbox-textbox float-left-box">
+                                <div id="userName" class="idbox-textbox-text user-name-box"></div>
+                            </div>
+                            <div class="idbox-imagebox-copy float-left-box" style="margin-top: -1px;" title="Copy to clipboard">
+                                <button id="userCopyId" class="btn btn-pointer" style="margin-left: 5px;" onclick="copyUserId(this)">Get It</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 70px;"><div class="header-box">Всего</div></td>
+                    <td style="width: 120px;"><div class="header-box">Обработано</div></td>
+                    <td style="width: 120px;"><div class="header-box">Пропущено</div></td>
+                    <td style="width: 120px;"><div class="header-box">Сохранено / Удалено</div></td>
+                    <td style="width: 120px;"><div class="header-box">Не найдено</div></td>
+                    <td style="width: 155px;"><div class="header-box">Старт</div></td>
+
+                </tr>
+                <tr>
+                    <td><div id="total" class="value-line">0</div></td>
+                    <td><div id="processed" class="value-line">0</div></td>
+                    <td><div id="skipped" class="value-line">0</div></td>
+                    <td><div id="saved" class="value-line">0</div></td>
+                    <td><div id="notFound" class="value-line">0</div></td>
+                    <td><div id="dateTime" class="value-line"></div></td>
+
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div id="optionalData" style="margin-left: -3px; height: 40px;">
+                            <table>
+                                <tr>
+                                    <td style="width: 150px;"><div id="name1" class="header-box" style="visibility: hidden;"></div></td>
+                                    <td style="width: 150px;"><div id="name2" class="header-box" style="visibility: hidden;"></div></td>
+                                    <td style="width: 80px;"><div class="header-box header-box-align" style="text-indent: 2px;">Длительность</div></td>
+                                    <td style="width: 80px;"><div class="header-box header-box-align1">Ожидается</div></td>
+                                    <td style="width: 120px;"><div class="header-box header-box-align1" title="Одна запись в ms">RpMs</div></td>
+                                </tr>
+                                <tr>
+                                    <td><div id="value1" class="value-line" style="visibility: hidden;"></div></td>
+                                    <td><div id="value2" class="value-line" style="visibility: hidden;"></div></td>
+                                    <td><div id="duration" class="value-line"></div></td>
+                                    <td><div id="expected" class="value-line"></div></td>
+                                    <td><div id="msPerRow" class="value-line">--</div></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div id="message" class="idbox-textbox-text float-left-box text-align" style="padding-top: 4px;"></div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <div>
+            <table class="special-block">
+                <tr>
+                    <td style="width: 250px;"><div class="footer-box">Диаграмма (% времени на операцию)</div></td>
+                    <td style="width: 400px;"><div class="footer-box">Стек-трейс</div></td>
+                </tr>
+                <tr>
+                    <td><div id="chart" class="chart"></div></td>
+                    <td>
+                        <div class="error-parent-box">
+                            <div id="errorBox" class="float-left-box error-message-box" style="visibility: hidden"></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="visitor_template">
+    <tr class="visitor-element">
+        <td>
+            <div id="visitorParent">
+                <div id="visitorIndex" class="float-left-box visitors-element visitor-index-box visitors-font"></div>
+                <div id="visitorName" class="float-left-box visitors-element visitor-name-box visitors-font" title="ID/Название агента"></div>
+                <div id="visitorId" class="float-left-box visitors-element visitor-id-box visitors-font" title="Внутренний ID агента на сервере Websocket"></div>
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script type="text/x-kendo-template" id="mismatch_template">
+    <div id="mismatch_parent" class="float-left-box task-box" onclick="//document.querySelector('dialog').showModal();">
+        <div id="mismatch_header" class="float-left-box caption-box rock-and-roll"></div>
+        <div>
+            <img id="mismatch_img" class="float-right-box mismatch-pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="mismatch_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="mismatch_sun" class="float-left-box sun_parent_box"><img class="sun_image" src="images/sun.png"/></div>
+                        <div id="mismatch" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button id="mismatch_fix_btn" class="mismatch-btn" onclick="copyToClipboard('7368463748813160933')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="mismatch_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div id="mismatch_footer" class="footer_caption"></div>
+        <div id="mismatch_date_footer" class="footer-date-caption"></div>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="overload_template">
+    <div class="float-left-box overload-box">
+        <div id="overload_header" class="float-left-box caption-box" style="font-size: small;"></div>
+        <div>
+            <div id="overload_chart" class="/*network-gradient*/"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="network_template">
+    <div class="network-box big_right_box">
+        <table width="100%">
+            <tr>
+                <td>
+                    <div class="float-left-box caption-box rock-and-roll"> Web: 192.168.0.96 (порт: 80)</div>
+                    <div class="float-left-box min-caption">Min:</div>
+                    <div id="web_min" weight="999999" class="float-left-box min-value network-green-color">0 ms</div>
+                    <div class="float-left-box max-caption">Max:</div>
+                    <div id="web_max" weight="0" class="float-left-box max-value network-green-color">0 ms</div>
+                    <div class="float-right-box network_btn left-block-btn" onclick="openFullNetworkPage();">Подробнее</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="web_chart" class="network-gradient"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="float-left-box caption-box rock-and-roll"> SQL: 192.168.0.97 (порт: 1433)</div>
+                    <div class="float-left-box min-caption">Min:</div>
+                    <div id="sql_min" weight="999999" class="float-left-box min-value network-green-color">0 ms</div>
+                    <div class="float-left-box max-caption">Max:</div>
+                    <div id="sql_max" weight="0" class="float-left-box max-value network-green-color">0 ms</div>
+                    <div class="float-right-box network_btn left-block-btn" onclick="openFullNetworkPage();">Подробнее</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="sql_chart" class="network-gradient"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="created_colls_template">
+    <div id="createdColls" class="big_right_box" style="padding-bottom: 15px; margin-top: 15px;">
+        <div id="colls_hour" class="created_colls-tab created-colls-active" onclick="showCreatedCollsBy('HOURS')">По часам</div>
+        <div id="colls_day" class="created_colls-tab created_colls-tab-day" onclick="showCreatedCollsBy('DAYS')">По дням</div>
+        <div id="colls_month" class="created_colls-tab created_colls-tab-month" onclick="showCreatedCollsBy('MONTH')">По месяцам</div>
+
+        <div id="hour_datetime" class="colls-datetime"></div>
+        <div id="day_datetime" class="colls-datetime" style="display: none;"></div>
+        <div id="month_datetime" class="colls-datetime" style="display: none;"></div>
+
+        <div id="mucCountHour" class="muc-count">0</div>
+        <div id="otherCountHour" class="other-count">0</div>
+        <div id="createdCollsHourChart" class="network-gradient"></div>
+
+        <div id="mucCountDay" class="muc-count" style="display: none;">0</div>
+        <div id="otherCountDay" class="other-count" style="display: none;">0</div>
+        <div id="createdCollsDayChart" class="network-gradient" style="display: none;"></div>
+
+        <div id="mucCountMonth" class="muc-count" style="display: none;">0</div>
+        <div id="otherCountMonth" class="other-count" style="display: none;">0</div>
+
+        <div id="hour_refresh_btn" class="refresh-btn" style="display: none" onclick="refreshHourChart()">Обновить</div>
+        <div id="createdCollsMonthChart" class="network-gradient" style="display: none;"></div>
+    </div>
+</script>
+
+</body>
+</html>

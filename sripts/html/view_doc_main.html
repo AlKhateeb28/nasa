@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<%Server.Execute( "include/head.html" )%>
+<body id="wt-body" class="<%=curDevice.disp_type != "mobile" ? "desktop" : "mobile"%>" onload="OnLoad()" onresize="OnResize()">
+<%
+	sHTMLHeader = tools_web.place_zone( "header" );
+	sHTMLFooter = tools_web.place_zone( "footer" );
+	sHTMLLeft = Trim( tools_web.place_zone( "left" ) );
+	sHTMLRight = Trim( tools_web.place_zone( "right" ) );
+	sHTMLMain = curAccess ? tools_web.place_zone( "main" ) : tools_web.insert_custom_code( tools_web.get_web_param( curParams, "access_panel_template_code", "access_panel", true ), null, true, false, 0, null, true ) ;
+	sWidthLeft = tools_web.get_web_param( curParams, "place_holder_left_panel_width", "200", true );
+	sWidthRight = tools_web.get_web_param( curParams, "place_holder_right_panel_width", "200", true );
+	sHTMLInterimLeft = Trim( tools_web.place_zone( "interim_left" ) );
+	sHTMLInterimRight = Trim( tools_web.place_zone( "interim_right" ) );
+	sHTMLInterimMain = Trim( tools_web.place_zone( "interim_main" ) );
+	sWidthInterimLeft = tools_web.get_web_param( curParams, "iInterimLeftWidth", "200", true );
+	sWidthInterimRight = tools_web.get_web_param( curParams, "iInterimRightWidth", "200", true );
+	sPaddingMainLeft = "";
+	sPaddingMainRight = "";
+	sPaddingInterimLeft = "";
+	sPaddingInterimRight = "";
+	if(sHTMLLeft == "" && sHTMLRight == "")
+	{
+		sMarginMain = "0";
+		sPaddingMainLeft = "padding-left: 0px !important;";
+		sPaddingMainRight = "padding-right: 0px !important;";
+	}
+	else
+	{
+		if(sHTMLLeft == "")
+		{
+			sMarginMain = "0px " + sWidthRight + "px 0px 0px";
+			sPaddingMainLeft = "padding-left: 0px !important;";
+		}
+		else
+		{
+			if(sHTMLRight == "")
+			{
+				sMarginMain = "0px 0px 0px " + sWidthLeft + "px";
+				sPaddingMainRight = "padding-right: 0px !important;";
+			}
+			else
+			{
+				sMarginMain = "0px " + sWidthRight + "px 0px " + sWidthLeft + "px";
+			}
+		}
+	}
+	if(sHTMLInterimLeft == "" && sHTMLInterimRight == "")
+	{
+		sMarginInterimMain = "0";
+		sPaddingInterimLeft = "padding-left: 0px !important;";
+		sPaddingInterimRight = "padding-right: 0px !important;";
+	}
+	else
+	{
+		if(sHTMLInterimLeft == "")
+		{
+			sMarginInterimMain = "0px " + sWidthInterimRight + "px 0px 0px";
+			sPaddingInterimLeft = "padding-left: 0px !important;";
+		}
+		else
+		{
+			if(sHTMLInterimRight == "")
+			{
+				sMarginInterimMain = "0px 0px 0px " + sWidthInterimLeft + "px";
+				sPaddingInterimRight = "padding-right: 0px !important;";
+			}
+			else
+			{
+				sMarginInterimMain = "0px " + sWidthInterimRight + "px 0px " + sWidthInterimLeft + "px";
+			}
+		}
+	}
+%>
+	<div id="wt-spacer-top">&nbsp;</div>
+	<div id="wt-spacer-left">&nbsp;</div>
+	<div id="wt-spacer-right">&nbsp;</div>
+	<div id="wt-container">
+		<div id="wt-content">
+		<div id="wt-zone-header" zone="header" class="designContainer"><div class="WTCSS-design-wrapper"><div id="wt-zone-header-wrapper"><%=sHTMLHeader%></div></div></div>
+		<div id="wt-spacer-header-body">&nbsp;</div>
+		<div class="clearfloat">&nbsp;</div>
+		<%
+		if(sHTMLInterimLeft != "" || (sHTMLInterimRight != "") || (sHTMLInterimMain != ""))
+		{
+		%>
+			<div id="wt-spacer-header-interim">&nbsp;</div>
+			<div id="wt-zone-interim">
+			<%
+			if(sHTMLInterimLeft != "")
+			{
+			%>
+				<div id="wt-zone-interim-left" style="width: <%=sWidthInterimLeft%>px;" class="designContainer" zone="interim_left"><div id="wt-zone-interim-left-wrapper"><%=sHTMLInterimLeft%></div></div>
+			<%
+			}
+			if(sHTMLInterimRight != "")
+			{
+			%>
+				<div id="wt-zone-interim-right" style="width: <%=sWidthInterimRight%>px;" class="designContainer" zone="interim_right"><div id="wt-zone-interim-right-wrapper"><%=sHTMLInterimRight%></div></div>
+			<%
+			}
+			if(sHTMLInterimMain != "")
+			{
+			%>
+				<div id="wt-zone-interim-main" style="margin: <%=sMarginInterimMain%>; <%=sPaddingInterimRight%> <%=sPaddingInterimLeft%>" class="designContainer" zone="interim_main"><div id="wt-zone-interim-main-wrapper"><%=sHTMLInterimMain%></div></div>
+			<%
+			}
+			%>
+			</div>
+			<div id="wt-spacer-interim-body">&nbsp;</div>
+		<%
+		}
+		%>
+		<div id="wt-wrapper">
+		<%
+		if(sHTMLLeft != "")
+		{
+		%>
+			<div id="wt-zone-left" style="width: <%=sWidthLeft%>px;" class="designContainer" zone="left"><div class="WTCSS-design-wrapper"><div id="wt-zone-left-wrapper"><%=sHTMLLeft%></div></div></div>
+		<%
+		}
+		if(sHTMLRight != "")
+		{
+		%>
+			<div id="wt-zone-right" style="width: <%=sWidthRight%>px;" class="designContainer" zone="right"><div id="wt-zone-right-wrapper"><%=sHTMLRight%></div></div>
+		<%
+		}
+		%>
+			<div id="wt-zone-main" style="margin: <%=sMarginMain%>; <%=sPaddingMainRight%> <%=sPaddingMainLeft%>" class="designContainer" zone="main"><div id="wt-zone-main-wrapper"><%=sHTMLMain%></div></div>
+		</div>
+		<div id="wt-spacer-middle-footer">&nbsp;</div>
+		<div class="clearfloat">&nbsp;</div>
+		<div id="wt-spacer-bottom">&nbsp;</div>
+		</div>
+		<div id="wt-zone-footer" zone="footer" class="designContainer"><div id="wt-zone-footer-wrapper"><%=sHTMLFooter%></div></div>
+</div>
+</body>
+</html>

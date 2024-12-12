@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="icon" href="images/favicon.ico"/>
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link rel="stylesheet" href="css/index.css"/>
+
+    <script type="text/javascript" src="js/jquery3.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/moment.js"></script>
+
+    <script type="text/javascript" src="js/apexcharts.min.js"></script>
+
+    <script type="text/javascript" src="js/classes/ModalWindow.js"></script>
+    <script type="text/javascript" src="js/classes/Calendar.js"></script>
+    <script type="text/javascript" src="js/classes/Page.js"></script>
+    <script type="text/javascript" src="js/classes/GlobalPage.js"></script>
+    <script type="text/javascript" src="js/classes/Menu.js"></script>
+    <script type="text/javascript" src="js/classes/Page1.js"></script>
+    <script type="text/javascript" src="js/classes/Page10.js"></script>
+    <script type="text/javascript" src="js/classes/Page20.js"></script>
+    <script type="text/javascript" src="js/classes/Page30.js"></script>
+    <script type="text/javascript" src="js/classes/Page70.js"></script>
+    <script type="text/javascript" src="js/classes/Page80.js"></script>
+    <script type="text/javascript" src="js/classes/Page91.js"></script>
+    <script type="text/javascript" src="js/classes/Page92.js"></script>
+    <script type="text/javascript" src="js/classes/report/Page900.js"></script>
+    <script type="text/javascript" src="js/classes/report/Page901.js"></script>
+    <script type="text/javascript" src="js/classes/report/Page902.js"></script>
+    <script type="text/javascript" src="js/classes/report/Page903.js"></script>
+    <script type="text/javascript" src="js/classes/report/Page904.js"></script>
+    <script type="text/javascript" src="js/classes/report/Page905.js"></script>
+    <script type="text/javascript" src="js/classes/report/Page906.js"></script>
+
+    <script type="text/javascript" src="js/exit_page.js"></script>
+</head>
+<body class="fcc-body" reaction_onclick="0" onclick="GlobalPage.onBodyClick()">
+<!-- WAIT BOX -->
+<div id="fcc_wait" style="position: absolute; z-index: 10000; left: 215px; top: 1px;">
+    <div class="fcc-loader" style="width: 24px; height: 24px; margin-left: 10px; margin-top: 8px;"></div>
+</div>
+
+<div id="html-hidden-box" style="display: none"></div>
+<!-- LEFT MENU-->
+<div class="menu-box">
+    <table id="main_menu" border="0"></table>
+    <script type="text/html" id="menu_item_template">
+        <tr id="menu_row">
+            <td>
+                <div id="item_parent" opened="0" folder="0" parent="" index="" class="menuitem" onclick="Menu.activateMenuItem(this);">
+                    <img id="item_img" src='' class='menu-item-image'/>
+                    <div id="item_caption" class='menu-item'></div>
+                </div>
+            </td>
+        </tr>
+    </script>
+</div>
+
+<!-- TOP INFO BOX-->
+<div id="info_box" class="info-box" >
+    <div class="logo">
+        <div class="logo_img">
+            <img src="./images/logo-std.svg" class="float-left"/>
+        </div>
+        <div class="logo-caption">АКАДЕМИЯ ПРОИЗВОДИТЕЛЬНОСТИ</div>
+    </div>
+    <div class="float-right info-btn" style="margin-right: 20px; margin-top: 8px;">
+        <img src="./images/exit.png"/>
+    </div>
+    <div id="user_icon_box" opened="0" class="float-right info-btn" style="margin-right: 20px; margin-top: 8px;" title="Избранное" onclick="GlobalPage.onUserInfoImageClick()">
+        <img src="./images/user.png"/>
+    </div>
+    <div id="user_icon_next" opened="0" class="float-right info-btn" style="margin-right: 20px; margin-top: 8px;" title="Вперед" onclick="globalPage.goForward()">
+        <img id="next_img" src="./images/next.png"/>
+    </div>
+    <div id="user_icon_prev" opened="0" class="float-right info-btn" style="margin-top: 8px;" title="Назад" onclick="globalPage.goBack()">
+        <img id="prev_img" src="./images/prev.png"/>
+    </div>
+
+    <div id="user_box" count="0" class="fcc-card" style="position: absolute; top: 22px; display: none; z-index: 1000;">
+        <div id="current_user_id" style="padding-left: 20px; padding-right: 20px; padding-bottom: 10px;"></div>
+        <div id="info_box_user" class="user-box-info-box"></div>
+        <div id="special_users" class="user-box-info-box" style="display: none;">
+            <div id="fk" class="special-user" picked="0" picked_id="6743923349751162819" onclick="globalPage.selectSpecialUser(this)">Федулов Кирилл</div>
+            <div id="to" class="special-user" picked="0" picked_id="6614087247971038079" onclick="globalPage.selectSpecialUser(this)">Тарасова Ольга</div>
+            <div id="aa" class="special-user" picked="0" picked_id="7351734047845980789" onclick="globalPage.selectSpecialUser(this)">Азаров Андрей</div>
+        </div>
+        <script type="text/html" id="user_box_item_template">
+            <div id="user_box_item" class="user-box-item" page_id="" onclick="GlobalPage.selectPage(this)"></div>
+        </script>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div id="content" style="margin-top: 50px; margin-left: 258px;">
+    <div id="content_1"></div>
+    <div id="content_10"></div>
+    <div id="content_20"></div>
+    <div id="content_30"></div>
+    <div id="content_70"></div>
+    <div id="content_80"></div>
+    <div id="content_91"></div>
+    <div id="content_92"></div>
+    <div id="content_900"></div>
+    <div id="content_901"></div>
+    <div id="content_902"></div>
+    <div id="content_903"></div>
+    <div id="content_904"></div>
+    <div id="content_905"></div>
+    <div id="content_906"></div>
+</div>
+
+<div id="modal_box"></div>
+
+</body>
+</html>

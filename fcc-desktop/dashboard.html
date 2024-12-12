@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FCK Dashboard</title>
+
+    <link rel="icon" href="images/favicon.ico"/>
+    <link rel="stylesheet" href="css/dashboard.css"/>
+
+    <script type="text/javascript" src="js/jquery3.js"></script>
+    <script type="text/javascript" src="js/dashboard.js"></script>
+</head>
+<body class="thread">
+<table style="width: 100%; height: 900px; ">
+    <tr>
+        <td class="menu_box">
+            <div class="menu_item">
+                <div class="float-left-box" onclick="changeTask('DASHBOARD')">
+                    <img id="dashboard_img" class="dashboard_image pointer-image" src="images/dashboard_white.png"/>
+                </div>
+                <div id="dashboard_caption" class="float-left-box menu_item_caption_active" onclick="changeTask('DASHBOARD')">Dashboard</div>
+            </div>
+
+            <div class="menu_item">
+                <br/><br/>
+                <div class="float-left-box" onclick="changeTask('AGENTS')">
+                    <img id="agents_img" class="agents_image pointer-image" src="images/agents_silver.png"/>
+                </div>
+                <div id="agents_caption" class="float-left-box menu_item_caption" onclick="changeTask('AGENTS')">Agents</div>
+            </div>
+
+            <div class="menu_item">
+                <br/><br/>
+                <div class="float-left-box" onclick="changeTask('NETWORK')">
+                    <img id="network_img" class="network_image pointer-image" src="images/network_silver.png"/>
+                </div>
+                <div id="network_caption" class="float-left-box menu_item_caption" onclick="changeTask('NETWORK')">Network</div>
+            </div>
+        </td>
+        <td>
+            <object id="mismatch_box" style="width: 100%; height: 100%;" data="mismatch.html"></object>
+            <object id="index_box" style="width: 100%; height: 100%; display: none;" data="index.html"></object>
+            <!--object id="network_box" style="width: 100%; height: 100%; display: none;" data="network.html"></object-->
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

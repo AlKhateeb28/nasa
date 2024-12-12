@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agent's History</title>
+
+    <link rel="icon" href="images/favicon.ico"/>
+    <link href="../kendo/styles/kendo.common.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/index.css"/>
+    <link rel="stylesheet" href="css/history.css"/>
+
+    <script type="text/javascript" src="js/jquery3.js"></script>
+    <script type="text/javascript" src="../kendo/js/kendo.all.min.js"></script>
+    <script type="text/javascript" src="js/agent.js"></script>
+    <script type="text/javascript" src="js/history.js"></script>
+
+</head>
+<body style="font-family: Inter, sans-serif;">
+<div class="float-left-box">
+    <div id="calendar"></div>
+</div>
+
+<div class="float-left-box">
+    <table id="table" class="thread-table"></table>
+</div>
+
+<script type="text/x-kendo-template" id="template">
+    <tr>
+        <td>
+            <div id="rowId" class="thread thread-unknown-state" style="background-color: lightsteelblue">
+                <div id="owner" class="float-left-box owner"></div>
+                <div class="float-left-box">
+                    <table>
+                        <tr>
+                            <td colspan="9">
+                                <div class="float-left-box" style="height: 21px; padding-right: 5px;">
+                                    <div class="float-left-box"><img id="wsState" class="float-left-box pointer-image" src="images/wsb.png" title="WS is running"/></div>
+                                    <div class="float-left-box"><img id="agentState" class="float-left-box pointer-image" src="images/ss.png" title="Agent is running"/></div>
+                                </div>
+                                <div class="float-left-box info-block">
+                                    <div class="pointer float-left-box" title="Agent's Name">
+                                        <img class="pointer-image" src="images/description.png"/>
+                                    </div>
+                                    <div class="idbox-textbox float-left-box">
+                                        <div id="agentName" class="idbox-textbox-text"></div>
+                                    </div>
+                                    <div class="idbox-imagebox-copy float-left-box" title="Copy to clipboard">
+                                        <img id="agentCopyId" class="idbox-imagebox-image-copy" style="cursor: pointer;" src="images/copy.png" onclick="copyAgentId(this)"/>
+                                    </div>
+
+                                    <div class="pointer float-left-box" title="Message">
+                                        <img class="pointer-image" src="images/description.png"/>
+                                    </div>
+                                    <div class="idbox-textbox float-left-box">
+                                        <div id="userName" class="idbox-textbox-text"></div>
+                                    </div>
+                                    <div class="idbox-imagebox-copy float-left-box" title="Copy to clipboard">
+                                        <img id="userCopyId" class="idbox-imagebox-image-copy" style="cursor: pointer;" src="images/copy.png" onclick="copyUserId(this)"/>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50px;"><div class="header-box">Всего</div></td>
+                            <td style="width: 105px;"><div class="header-box">Обработано</div></td>
+                            <td style="width: 105px;"><div class="header-box">Пропущено</div></td>
+                            <td style="width: 105px;"><div class="header-box">Сохранено</div></td>
+                            <td style="width: 105px;"><div class="header-box">Не найдено</div></td>
+                            <td style="width: 130px;"><div class="header-box">Старт</div></td>
+                            <td style="width: 80px;"><div class="header-box">Длительность</div></td>
+                            <td style="width: 80px;"><div class="header-box">Ожидается</div></td>
+                            <td style="width: 80px;"><div class="header-box" title="Одна запись в ms">rpMs</div></td>
+                        </tr>
+                        <tr>
+                            <td><div id="total" class="value-line">0</div></td>
+                            <td><div id="processed" class="value-line">0</div></td>
+                            <td><div id="skipped" class="value-line">0</div></td>
+                            <td><div id="saved" class="value-line">0</div></td>
+                            <td><div id="notFound" class="value-line">0</div></td>
+                            <td><div id="dateTime" class="value-line"></div></td>
+                            <td><div id="duration" class="value-line"></div></td>
+                            <td><div id="expected" class="value-line"></div></td>
+                            <td><div id="msPerRow" class="value-line">--</div></td>
+                        </tr>
+                        <tr>
+                            <td colspan="9">
+                                <div id="optionalData" style="display: none; margin-left: -3px;">
+                                    <table>
+                                        <tr>
+                                            <td style="width: 150px;"><div id="name1" class="header-box"></div></td>
+                                            <td style="width: 150px;"><div id="name2" class="header-box"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div id="value1" class="value-line"></div></td>
+                                            <td><div id="value2" class="value-line"></div></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="9">
+                                <div class="idbox-imagebox-copy float-left-box" title="Message">
+                                    <img class="idbox-imagebox-image-copy" src="images/message.png"/>
+                                </div>
+                                <div id="message" class="idbox-textbox-text float-left-box" style="padding-top: 4px;"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="float-left-box">
+                    <table class="special-block">
+                        <tr>
+                            <td style="width: 250px;"><div class="header-box">Диаграмма (% времени на операцию)</div></td>
+                            <td style="width: 400px;"><div class="header-box">Стек-трейс</div></td>
+                        </tr>
+                        <tr>
+                            <td><div id="chart" class="chart"></div></td>
+                            <td>
+                                <div class="error-parent-box">
+                                    <div id="errorBox" class="float-left-box error-message-box" style="visibility: hidden"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="processCount" class="float-right-box agent-count-box"></div>
+            </div>
+        </td>
+    </tr>
+</script>
+
+</body>
+</html>

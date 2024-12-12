@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mismatches</title>
+
+    <link rel="icon" href="images/favicon.ico"/>
+    <link rel="stylesheet" href="css/apexcharts.css"/>
+    <link rel="stylesheet" href="css/mismatch.css"/>
+
+    <script type="text/javascript" src="js/jquery3.js"></script>
+    <script type="text/javascript" src="js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="js/webSocket.js"></script>
+    <script type="text/javascript" src="js/jsonReviver.js"></script>
+    <script type="text/javascript" src="js/agent.js"></script>
+    <script type="text/javascript" src="js/mismatch.js"></script>
+</head>
+<body style="background-color: black; font-family: 'Noto Sans', sans-serif;">
+<div>
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Dossier FCK</div>
+        <div>
+            <img id="doss_fck_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="doss_fck_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="doss_fck_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="doss_fck" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7368463748813160933')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="doss_fck_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Изменилось количество пройденных программ</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Dossier RCK</div>
+        <div>
+            <img id="doss_rck_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="doss_rck_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="doss_rck_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="doss_rck" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7368463748813160933')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="doss_rck_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Изменилось количество пройденных программ</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Event Broken Links</div>
+        <div>
+            <img id="bl_event_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="bl_event_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="bl_event_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="bl_event" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7016289963953509200')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="bl_event_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Event_result имеет ломанные ссылки на event</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Collaborator Broken Links</div>
+        <div>
+            <img id="bl_colls_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="bl_colls_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="bl_colls_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="bl_colls" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7016289963953509200')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="bl_colls_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Event_result имеет ломанные ссылки на collaborator</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Suspicious Collaborators</div>
+        <div>
+            <img id="suspicious_colls_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="suspicious_colls_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="suspicious_colls_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="suspicious_colls" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7379923484682240522')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="suspicious_colls_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Подозрительные сотрудники</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Dossier Instructors</div>
+        <div>
+            <img id="doss_instructors_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="doss_instructors_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="doss_instructors_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="doss_instructors" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7389939808110063496')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="doss_instructors_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Количество проблемных сертификатов</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Dossier Trainers</div>
+        <div>
+            <img id="doss_trainers_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="doss_trainers_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="doss_trainers_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="doss_trainers" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7389939808110063496')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="doss_trainers_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Количество проблемных сертификатов</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">In Program Flag</div>
+        <div>
+            <img id="in_program_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="in_program_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="in_program_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="in_program" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7397671274748933246')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="in_program_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Не верный признак сотрудник.in_program</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Is Fcc</div>
+        <div>
+            <img id="is_fcc_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="is_fcc_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="is_fcc_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="is_fcc" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7397671274748933246')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="is_fcc_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Не верный признак сотрудник.is_fcc</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Is Rck</div>
+        <div>
+            <img id="is_rck_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="is_rck_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="is_rck_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="is_rck" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7397671274748933246')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="is_rck_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Не верный признак сотрудник.is_rck</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Is Roiv</div>
+        <div>
+            <img id="is_roiv_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="is_roiv_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="is_roiv_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="is_roiv" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7397671274748933246')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="is_roiv_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Не верный признак сотрудник.is_roiv</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Is Partner</div>
+        <div>
+            <img id="is_partner_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="is_partner_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="is_partner_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="is_partner" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7397671274748933246')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="is_partner_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Не верный признак сотрудник.is_partner</div>
+    </div>
+
+    <div class="float-left-box task_box">
+        <div class="float-left-box caption_box">Is Commerce</div>
+        <div>
+            <img id="is_commerce_img" class="float-right-box pointer-image" src="images/blank.png"/>
+        </div>
+        <div id="is_commerce_percent" class="float-right-box nil_box">0</div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <div id="is_commerce_sun" class="float-left-box sun_parent_box"><img src="images/sun.png" class="sun_image"/></div>
+                        <div id="is_commerce" prev_count="0" class="float-right-box count_box">0</div>
+                    </div>
+                    <div class="footer_box">
+                        <button class="btn pointer" onclick="copyToClipboard('7397671274748933246')">Fix It</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="is_commerce_chart"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer_caption">Не верный признак сотрудник.is_commerce</div>
+    </div>
+
+</div>
+</body>
+</html>

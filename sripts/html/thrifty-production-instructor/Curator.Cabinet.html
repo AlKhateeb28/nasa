@@ -1,0 +1,240 @@
+<SPXMLScreen>
+    <%
+    // 6971291415981615202
+    curTitle = {
+    "type": "simple",
+    "title": "Кабинет куратора подготовки инструкторов по бережливому производству"
+    }
+    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_object_title.xaml" ) );
+    %>
+    <%
+    orgs_arr = XQuery( "for $elem in func_managers where $elem/catalog='org' and $elem/person_id=" + curUserID + " return $elem" )
+    org_ids = ArrayMerge( orgs_arr, "object_id", "," )
+    sXQ = "sql:
+    SELECT
+    fms.*
+    FROM func_managers fms
+    LEFT JOIN groups
+    ON groups.id = fms.object_id
+    LEFT JOIN [WTDB].[dbo].[group] g
+    ON g.id = groups.id
+    WHERE fms.catalog = 'group'
+    AND groups.person_num != 0
+    AND fms.person_id = " + curUserID + "
+    AND fms.boss_type_id = 6878899960667451125
+    ORDER BY g.created DESC
+    "
+    func_manager_arr = XQuery( sXQ )
+    group_ids_str = ArrayMerge( func_manager_arr, 'object_id', ',' )
+    i = 1
+    for ( func_manager in func_manager_arr ) {
+    group_id = func_manager.object_id
+    group_name = func_manager.object_name
+    group_collaborators_arr = XQuery( "for $elem in group_collaborators where $elem/group_id=" + group_id + " return $elem" )
+    group_collaborators_display_object_ids = ArrayMerge( group_collaborators_arr, 'collaborator_id', ';' )
+    te_group = tools.open_doc( group_id ).TopElem
+    %>
+    <Action Name="export_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="">
+        <Param Name="sCollection" Value="cols_from_group_cert_ibp"/>
+        <Param Name="sMode" Value="datagrid"/>
+        <Param Name="sSearchWord" Value="{!CatalogListSearchQWE<%=i%>}"/>
+        <Param Name="curObjectID" Value="<%=group_id%>"/>
+    </Action>
+    <Action Name="report_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="">
+        <Param Name="sCollection" Value="report_cert_ibp"/>
+        <Param Name="sMode" Value="datagrid"/>
+        <Param Name="curObjectID" Value="<%=group_id%>"/>
+    </Action>
+    <Action Name="report_all_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="">
+        <Param Name="sCollection" Value="report_cert_ibp_all"/>
+        <Param Name="sMode" Value="datagrid"/>
+        <Param Name="sSearchWord" Value="<%=group_ids_str%>"/>
+    </Action>
+    <Action Name="get_selected_object_ids_add<%=i%>" Source="get_selected_object_ids" Success="SET=col_selector_add<%=i%>/selected_object_ids, {res_selected_object_ids};ACTION=add_cols_to_group_name<%=i%>;" Failure="ALERT={messageText}">
+        <Param Name="objects_array" Value=""/>
+        <Param Name="catalog_name" Value="collaborator"/>
+    </Action>
+    <Action Name="get_selected_object_ids_del<%=i%>" Source="get_selected_object_ids" Success="SET=col_selector_del<%=i%>/selected_object_ids, {res_selected_object_ids}; ACTION=del_cols_from_group_name<%=i%>;" Failure="ALERT={messageText}">
+        <Param Name="objects_array" Value=""/>
+        <Param Name="catalog_name" Value="collaborator"/>
+    </Action>
+    <Action Name="add_cols_to_group_name<%=i%>" Source="add_cols_to_group" Success="REFRESH;" Failure="ALERT={messageText}">
+        <Param Name="sCols" Value=""/>
+        <Param Name="iGroupID" Value="<%=group_id%>"/>
+    </Action>
+
+    <Action Name="del_cols_from_group_name<%=i%>" Source="del_cols_from_group" Success="REFRESH;" Failure="ALERT={messageText}">
+        <Param Name="sCols" Value=""/>
+        <Param Name="iGroupID" Value="<%=group_id%>"/>
+    </Action>
+
+    <Dialog Name="col_selector_add<%=i%>" Source="dlg_select" Title="Выберите сотрудников" Close="SET=get_selected_object_ids_add<%=i%>/objects_array, {CatalogListDataGridSelList:*/id};SET=add_cols_to_group_name<%=i%>/sCols, {CatalogListDataGridSelList:*/id}; ACTION=get_selected_object_ids_add<%=i%>;">
+        <Param Name="catalog_name" Value="collaborator"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="view_type" Value=""/>
+        <Param Name="xquery_qual" Value="$elem/id!=<%=curUserID%> and $elem/is_dismiss=false() and $elem/org_id!=null() and MatchSome($elem/org_id,(<%=org_ids%>))"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="selected_object_ids" Value=""/>
+        <Param Name="display_object_ids" Value=""/>
+        <Param Name="disp_filter" Value="false"/>
+        <Param Name="filter_id" Value=""/>
+        <Param Name="show_all" Value="true"/>
+        <Param Name="typein" Value="false"/>
+        <Param Name="can_be_empty" Value="true"/>
+        <Param Name="secid" Value="<%=tools_web.get_secid( Session.sid )%>"/>
+        <Param Name="list_columns" Value=""/>
+        <Param Name="custom_info" Value=""/>
+        <Param Name="isEditable" Value="true"/>
+    </Dialog>
+    <Dialog Name="col_selector_del<%=i%>" Source="dlg_select" Title="Выберите сотрудников" Close="SET=get_selected_object_ids_del<%=i%>/objects_array, {CatalogListDataGridSelList:*/id}; SET=del_cols_from_group_name<%=i%>/sCols, {CatalogListDataGridSelList:*/id}; ACTION=get_selected_object_ids_del<%=i%>;">
+        <Param Name="catalog_name" Value="collaborator"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="view_type" Value=""/>
+        <Param Name="xquery_qual" Value=""/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="selected_object_ids" Value=""/>
+        <Param Name="display_object_ids" Value="<%=group_collaborators_display_object_ids%>"/>
+        <Param Name="disp_filter" Value="false"/>
+        <Param Name="filter_id" Value=""/>
+        <Param Name="show_all" Value="true"/>
+        <Param Name="typein" Value="false"/>
+        <Param Name="can_be_empty" Value="true"/>
+        <Param Name="secid" Value="<%=tools_web.get_secid( Session.sid )%>"/>
+        <Param Name="list_columns" Value=""/>
+        <Param Name="custom_info" Value=""/>
+        <Param Name="isEditable" Value="true"/>
+    </Dialog>
+    <%
+    is_file_ok = true
+    file_doc = tools.open_doc( te_group.custom_elems.ObtainChildByKey( "resource_id" ).value )
+    if ( file_doc == undefined ) {
+    is_file_ok = false
+    } else if ( file_doc.TopElem.type != "pdf" ) {
+    is_file_ok = false
+    }
+    if ( !is_file_ok ) {
+    curView = {
+    "title" : group_name + " - " + ArrayCount( group_collaborators_arr ) + " участников",
+    "id": "QWE"+i,
+    "disp_selectors": false,
+    "disp_search": true,
+    "disp_filter": false,
+    "disp_paging": true,
+    "paging_size": 10,
+    "catalog_name": "collaborators",
+    "xquery_qual": "",
+    "disp_type": "data_grid",
+    "height": null,
+    "buttons": [
+    /*{
+    "name": "",
+    "title": "Добавить",
+    "click": ("OPENDIALOG=col_selector_add"+i)
+    }
+    ,
+    {
+    "name": "",
+    "title": "Удалить",
+    "click": ("OPENDIALOG=col_selector_del"+i)
+    }
+    ,*/
+    {
+    "name": "export_action_name"+i,
+    "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+    "click": ("ACTION=export_action_name"+i)
+    }
+    ,
+    {
+    "name": "report_action_name"+i,
+    "title": "Отчет",
+    "click": ("ACTION=report_action_name"+i)
+
+    }
+    ,
+    {
+    "name": "report_all_action_name"+i,
+    "title": "Отчет общий",
+    "click": ("ACTION=report_all_action_name"+i)
+
+    }
+    ],
+    "collection": {
+    "name": "cols_from_group_cert_ibp",
+    "params": ([
+    {"name": "sSearchWord", "value": "{!CatalogListSearchQWE"+i+"}"},
+    {"name": "curObjectID", "value": group_id}
+    ])
+    }
+    }
+    } else {
+    curView = {
+    "title" : group_name + " - " + ArrayCount( group_collaborators_arr ) + " участников",
+    "id": "QWE"+i,
+    "disp_selectors": false,
+    "disp_search": true,
+    "disp_filter": false,
+    "disp_paging": true,
+    "paging_size": 10,
+    "catalog_name": "collaborators",
+    "xquery_qual": "",
+    "disp_type": "data_grid",
+    "height": null,
+    "buttons": [
+    /*{
+    "name": "",
+    "title": "Добавить",
+    "click": ("OPENDIALOG=col_selector_add"+i)
+    }
+    ,
+    {
+    "name": "",
+    "title": "Удалить",
+    "click": ("OPENDIALOG=col_selector_del"+i)
+    }
+    ,*/
+    {
+    "name": "export_action_name"+i,
+    "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+    "click": ("ACTION=export_action_name"+i)
+    }
+    ,
+    {
+    "name": "report_action_name"+i,
+    "title": "Отчет",
+    "click": ("ACTION=report_action_name"+i)
+
+    }
+    ,
+    {
+    "name": "report_all_action_name"+i,
+    "title": "Отчет общий",
+    "click": ("ACTION=report_all_action_name"+i)
+
+    }
+    ,
+    {
+    "name": "",
+    "title": "Карта подготовки",
+    // "click": ("OPENWINDOW=/download_file.html?file_id=" + te_group.custom_elems.ObtainChildByKey( "resource_id" ).value )
+    "click": ("OPENWINDOW=/scripts/pdf/web/wt_viewer_envelope.html?player_id=6584410140108469906&object_id=" + te_group.custom_elems.ObtainChildByKey( "resource_id" ).value )
+    }
+    ],
+    "collection": {
+    "name": "cols_from_group_cert_ibp",
+    "params": ([
+    {"name": "sSearchWord", "value": "{!CatalogListSearchQWE"+i+"}"},
+    {"name": "curObjectID", "value": group_id}
+    ])
+    }
+    }
+    }
+
+    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
+    %>
+
+    <%
+    i++
+    }
+    %>
+
+</SPXMLScreen>

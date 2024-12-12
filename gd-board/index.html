@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GD Board</title>
+
+    <link rel="icon" href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/images/favicon.ico"/>
+    <link href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/kendo/styles/kendo.common.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/css/jquery-ui.css">
+    <link rel="stylesheet" href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/css/index.css"/>
+
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/jquery3.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/kendo/js/kendo.all.min.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/index.js"></script>
+
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/page1_widget.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/fcc_widget.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/rck_widget.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/ibp_widget.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/tren_widget.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/reg_widget.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/self_widget.js"></script>
+
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/page2_widget.js"></script>
+
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/page3_widget.js"></script>
+    <script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/gd-board/js/page4_widget.js"></script>
+</head>
+<body class="body">
+<div>
+
+    <div id="tab_box" class="tab-box" style="display: none">
+        <div id="wait" style="float: left">
+            <div class="loader" style="width: 24px; height: 24px; margin-left: 10px; margin-top: 8px;"></div>
+        </div>
+        <div id="tab1" class="tab" style="color: #008cff; background-color: #d8edfd; border-radius: 3px;" onclick="onPageChange(1);" refreshMethod="">Обучение</div>
+        <div id="tab2" class="tab" onclick="onPageChange(2);" refreshMethod="reloadPage2()">Электронные курсы</div>
+        <div id="tab3" class="tab" onclick="onPageChange(3);" refreshMethod="reloadPage3()">Сертификаты</div>
+        <div id="tab4" class="tab" onclick="onPageChange(4);" refreshMethod="reloadPage4()">Другое</div>
+    </div>
+
+    <div id="page1" class="page">
+    </div>
+
+    <div id="page2" class="page" style="display: none;">
+    </div>
+
+    <div id="page3" class="page" style="display: none;">
+    </div>
+
+    <div id="page4" class="page" style="display: none;">
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<SPXMLScreen>
+    <%
+    function isRegionVisible() {
+        // 6743923349751162819 FK
+        // 6940257832121737591 RE
+        // 7056951664027461636 SE
+        if(curUserID == 6743923349751162819 || curUserID == 6940257832121737591) {
+            return true;
+        }
+
+        if(result.id == organisationTE.custom_elems.ObtainChildByKey("fact_region_id").value) {
+            return true;
+        }
+
+        return false;
+    }
+
+    var regionsList = [];
+
+    region = new Object(); region.name = "Алтайский край"; region.id = "6670321118558952052"; region.reportId = "7376627957910274649"; regionsList.push(region);
+    region = new Object(); region.name = "Амурская область"; region.id = "6714457602959896370"; region.reportId = "7376620261078216321"; regionsList.push(region);
+    region = new Object(); region.name = "Архангельская область"; region.id = "6722298593509445252"; region.reportId = "7376620415650507115"; regionsList.push(region);
+    region = new Object(); region.name = "Астраханская область"; region.id = "6759165180136487498"; region.reportId = "7376620445318992867"; regionsList.push(region);
+    region = new Object(); region.name = "Белгородская область"; region.id = "6656995556178681648"; region.reportId = "7376620388797514636"; regionsList.push(region);
+    region = new Object(); region.name = "Брянская область"; region.id = "6691135655713658395"; region.reportId = "7376620432514830403"; regionsList.push(region);
+    region = new Object(); region.name = "Владимирская область"; region.id = "6656626403163506004"; region.reportId = "7376620458183392710"; regionsList.push(region);
+    region = new Object(); region.name = "Волгоградская область"; region.id = "6660750551252995755"; region.reportId = "7376620470793097569"; regionsList.push(region);
+    region = new Object(); region.name = "Вологодская область"; region.id = "6719327875843969032"; region.reportId = "7376620479255154522"; regionsList.push(region);
+    region = new Object(); region.name = "Воронежская область"; region.id = "6672959605404758684"; region.reportId = "7376620495700317962"; regionsList.push(region);
+    region = new Object(); region.name = "Еврейская автономная область"; region.id = "6782463220939516855"; region.reportId = "7376620668375149781"; regionsList.push(region);
+    region = new Object(); region.name = "Забайкальский край"; region.id = "6771386796820233395"; region.reportId = "7376620661020713730"; regionsList.push(region);
+    region = new Object(); region.name = "Ивановская область"; region.id = "6661884420127463992"; region.reportId = "7376620677978199255"; regionsList.push(region);
+    region = new Object(); region.name = "Иркутская область"; region.id = "6691158451589420112"; region.reportId = "7376620685324059265"; regionsList.push(region);
+    region = new Object(); region.name = "Кабардино-Балкарская Республика"; region.id = "6782463196033081329"; region.reportId = "7376620694652354013"; regionsList.push(region);
+    region = new Object(); region.name = "Калининградская область"; region.id = "6667429689983371989"; region.reportId = "7376620702014385301"; regionsList.push(region);
+    region = new Object(); region.name = "Калужская область"; region.id = "6652240967037451456"; region.reportId = "7376620710592861783"; regionsList.push(region);
+    region = new Object(); region.name = "Камчатский край"; region.id = "6782463294381059800"; region.reportId = "7376620719294119972"; regionsList.push(region);
+    region = new Object(); region.name = "Карачаево-Черкесская Республика"; region.id = "6759953710233487858"; region.reportId = "7376620732171842362"; regionsList.push(region);
+    region = new Object(); region.name = "Кемеровская область"; region.id = "6658800723139905830"; region.reportId = "7376620741497277918"; regionsList.push(region);
+    region = new Object(); region.name = "Кировская область"; region.id = "6724523043361158772"; region.reportId = "7376620745617857811"; regionsList.push(region);
+    region = new Object(); region.name = "Костромская область"; region.id = "6743923367674346447"; region.reportId = "7376620759615038695"; regionsList.push(region);
+    region = new Object(); region.name = "Краснодарский край"; region.id = "6659321965265163514"; region.reportId = "7376620767018446373"; regionsList.push(region);
+    region = new Object(); region.name = "Красноярский край"; region.id = "6652174340395119051"; region.reportId = "7376620776010892719"; regionsList.push(region);
+    region = new Object(); region.name = "Курганская область"; region.id = "6693785129609728185"; region.reportId = "7376620783762750588"; regionsList.push(region);
+    region = new Object(); region.name = "Курская область"; region.id = "6690001083727096227"; region.reportId = "7376627721592468837"; regionsList.push(region);
+    region = new Object(); region.name = "г. Санкт-Петербург"; region.id = "6719412722320359138"; region.reportId = "7376620521481115238"; regionsList.push(region);
+    region = new Object(); region.name = "Ленинградская область"; region.id = "6721575422634559170"; region.reportId = "7376627789626303765"; regionsList.push(region);
+    region = new Object(); region.name = "Липецкая область"; region.id = "6654025328065058836"; region.reportId = "7376627789772512247"; regionsList.push(region);
+    region = new Object(); region.name = "Магаданская область"; region.id = "6764231668244422689"; region.reportId = "7376627831838146715"; regionsList.push(region);
+    region = new Object(); region.name = "г. Москва"; region.id = "6712010472087555325"; region.reportId = "7376620505961864059"; regionsList.push(region);
+    region = new Object(); region.name = "Московская область"; region.id = "5667697629116916689"; region.reportId = "7376627831857231085"; regionsList.push(region);
+    region = new Object(); region.name = "Мурманская область"; region.id = "6722301216949170819"; region.reportId = "7376627832266308806"; regionsList.push(region);
+    region = new Object(); region.name = "Ненецкий автономный округ"; region.id = "6782463685468242186"; region.reportId = "7376627833509600375"; regionsList.push(region);
+    region = new Object(); region.name = "Нижегородская область"; region.id = "6653024791378528315"; region.reportId = "7376627875126082254"; regionsList.push(region);
+    region = new Object(); region.name = "Новгородская область"; region.id = "6719463048106173995"; region.reportId = "7376627875399563768"; regionsList.push(region);
+    region = new Object(); region.name = "Новосибирская область"; region.id = "6687413799865372317"; region.reportId = "7376627875600084700"; regionsList.push(region);
+    region = new Object(); region.name = "Омская область"; region.id = "6725408493027464931"; region.reportId = "7376627875628724568"; regionsList.push(region);
+    region = new Object(); region.name = "Оренбургская область"; region.id = "6691463828108417773"; region.reportId = "7376627875721517785"; regionsList.push(region);
+    region = new Object(); region.name = "Орловская область"; region.id = "6667834624833958003"; region.reportId = "7376627875756867280"; regionsList.push(region);
+    region = new Object(); region.name = "Пензенская область"; region.id = "6665558797350694346"; region.reportId = "7376627876041872439"; regionsList.push(region);
+    region = new Object(); region.name = "Пермский край"; region.id = "6655097391315288100"; region.reportId = "7376605382186309820"; regionsList.push(region);
+    region = new Object(); region.name = "Приморский край"; region.id = "6691074722370885585"; region.reportId = "7376627876184996602"; regionsList.push(region);
+    region = new Object(); region.name = "Псковская область"; region.id = "6724563020129790425"; region.reportId = "7376627956225033832"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Адыгея"; region.id = "6758751242955216188"; region.reportId = "7376627956567192053"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Алтай"; region.id = "6743920097814915307"; region.reportId = "7376627956814665847"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Башкортостан"; region.id = "6652122796401960147"; region.reportId = "7376627957117237654"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Бурятия"; region.id = "6673698318713683976"; region.reportId = "7376627957230997526"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Дагестан"; region.id = "6754231598070374611"; region.reportId = "7376627957249477289"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Ингушетия"; region.id = "6782463357757571550"; region.reportId = "7376627957254592814"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Калмыкия"; region.id = "6782463538481225334"; region.reportId = "7376627957295290137"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Карелия"; region.id = "6719419844809356781"; region.reportId = "7376627957483521309"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Коми"; region.id = "6711166407771323284"; region.reportId = "7376627957663354844"; regionsList.push(region);
+    region = new Object(); region.name = "г. Севастополь"; region.id = "6766545544318169921"; region.reportId = "7376620642625192827"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Крым"; region.id = "6663033326651209075"; region.reportId = "7376627957677639380"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Марий Эл"; region.id = "6733209613113427915"; region.reportId = "7376653821786339254"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Мордовия"; region.id = "6652254927007726933"; region.reportId = "7376653744639848294"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Саха (Якутия)"; region.id = "6693015541324383714"; region.reportId = "7376627957813310047"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Северная Осетия - Алания"; region.id = "6747989232994836664"; region.reportId = "7376653766582888965"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Татарстан"; region.id = "6654426286676994260"; region.reportId = "7376653782611929188"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Тыва"; region.id = "6755650401907994923"; region.reportId = "7376654031553325320"; regionsList.push(region);
+    region = new Object(); region.name = "Республика Хакасия"; region.id = "6782463142989021050"; region.reportId = "7376654019386090931"; regionsList.push(region);
+    region = new Object(); region.name = "Ростовская область"; region.id = "6655502012263831842"; region.reportId = "7376653984251339645"; regionsList.push(region);
+    region = new Object(); region.name = "Рязанская область"; region.id = "6660785599524317654"; region.reportId = "7376653975515396108"; regionsList.push(region);
+    region = new Object(); region.name = "Самарская область"; region.id = "6652197660750330500"; region.reportId = "7376653963245934418"; regionsList.push(region);
+    region = new Object(); region.name = "Саратовская область"; region.id = "6658203753125015184"; region.reportId = "7376653938408037031"; regionsList.push(region);
+    region = new Object(); region.name = "Сахалинская область"; region.id = "6725408496769578307"; region.reportId = "7376653919829433249"; regionsList.push(region);
+    region = new Object(); region.name = "Свердловская область"; region.id = "6656598664045034056"; region.reportId = "7376653903024891654"; regionsList.push(region);
+    region = new Object(); region.name = "Смоленская область"; region.id = "6693018551693230823"; region.reportId = "7376653889451478096"; regionsList.push(region);
+    region = new Object(); region.name = "Ставропольский край"; region.id = "6652027619561851641"; region.reportId = "7376653876963061065"; regionsList.push(region);
+    region = new Object(); region.name = "Тамбовская область"; region.id = "6660359142102283265"; region.reportId = "7376653865236200405"; regionsList.push(region);
+    region = new Object(); region.name = "Тверская область"; region.id = "6695952288701833821"; region.reportId = "7376653846410262824"; regionsList.push(region);
+    region = new Object(); region.name = "Томская область"; region.id = "6677710897317821042"; region.reportId = "7376653833833694566"; regionsList.push(region);
+    region = new Object(); region.name = "Тульская область"; region.id = "6659625266760799274"; region.reportId = "7376658258605390837"; regionsList.push(region);
+    region = new Object(); region.name = "Тюменская область"; region.id = "6659322042133322565"; region.reportId = "7376658236997519502"; regionsList.push(region);
+    region = new Object(); region.name = "Удмуртская Республика"; region.id = "6660415248042388959"; region.reportId = "7376658223653391821"; regionsList.push(region);
+    region = new Object(); region.name = "Ульяновская область"; region.id = "6720081252454580604"; region.reportId = "7376658205863868107"; regionsList.push(region);
+    region = new Object(); region.name = "Хабаровский край"; region.id = "6746322308306315441"; region.reportId = "7376658188539017503"; regionsList.push(region);
+    region = new Object(); region.name = "Ханты-Манскийский автономный округ - Югра"; region.id = "6758318057054094079"; region.reportId = "7376658175439164890"; regionsList.push(region);
+    region = new Object(); region.name = "Челябинская область"; region.id = "6659320890472399051"; region.reportId = "7376658162976189735"; regionsList.push(region);
+    region = new Object(); region.name = "Чеченская Республика"; region.id = "6763663285810709786"; region.reportId = "7376658145576444914"; regionsList.push(region);
+    region = new Object(); region.name = "Чувашская Республика"; region.id = "6659321753314335126"; region.reportId = "7376659151036903940"; regionsList.push(region);
+    region = new Object(); region.name = "Чукотский автономный округ"; region.id = "6782463710786618315"; region.reportId = "7376659138974394413"; regionsList.push(region);
+    region = new Object(); region.name = "Ямало-Ненецкий автономный округ"; region.id = "6707439817673301662"; region.reportId = "7376658175439164890"; regionsList.push(region);
+    region = new Object(); region.name = "Ярославская область"; region.id = "6655127567769761135"; region.reportId = "7376659095524217573"; regionsList.push(region);
+
+    var collaborator = tools.open_doc(curUserID);
+    var organisationTE = tools.open_doc(collaborator.TopElem.org_id).TopElem;
+
+    %>
+    <Grid Width="800" Class="grid">
+        <GridColumns>
+            <GridColumn Width="500"/>
+        </GridColumns>
+        <GridRow>
+            <Label Class="row-header">Отчет по уникально обученным для Минэк</Label>
+        </GridRow>
+        <%
+        for(result in regionsList) {
+            if(isRegionVisible()) {
+        %>
+        <GridRow>
+            <HTMLBox>
+                <![CDATA[
+                <div class="row" onclick="document.getElementById('a_<%=result.reportId%>').click();">
+                    <%=result.name%><a id="a_<%=result.reportId%>" class="region-link" href="_wt/custom_report/<%=result.reportId%>" target="_blank" style="display: none;"></a>
+                </div>
+                ]]>
+            </HTMLBox>
+        </GridRow>
+        <%
+            }
+        }
+        %>
+    </Grid>
+
+    <HTMLBox Dynamic="true"><![CDATA[
+        <style>
+            .grid {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-left: 10px;
+                margin-right: 10px;
+                padding: 20px;
+                overflow-x: hidden;
+            }
+
+            .row-header {
+                background-color: #f3f3f4 !important;
+                color: #969eb2;
+                font-weight: bold;
+                padding-top: 7px;
+                padding-bottom: 7px;
+                margin-bottom: 1px;
+                text-indent: 10px;
+            }
+
+            .row {
+                padding-top: 7px;
+                padding-bottom: 7px;
+                margin-bottom: 1px;
+                background-color: #f3f3f4;
+                text-indent: 10px;
+            }
+
+            .row:hover{
+                background-color: #4176ea;
+                cursor: pointer;
+                color: navajowhite;
+            }
+
+            .row:hover .region-link{
+                color: navajowhite;
+            }
+        </style>
+        <script>
+        </script>
+        ]]>
+    </HTMLBox>
+</SPXMLScreen>

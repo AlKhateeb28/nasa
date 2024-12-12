@@ -1,0 +1,41 @@
+﻿<%
+var iZoneCounter = 0;
+function place_zones( arrZonesParam )
+{
+	if ( iZoneCounter++ > 50 )
+		return;
+
+	var arrZones;
+	for ( fldZoneElem in ArraySort( ( arrZonesParam == undefined ? ArraySelectByKey( curTemplateSource.zones, "", "parent_zone" ) : arrZonesParam ), "position", "+" ) )
+	{
+//alert('ZONE = '+fldZoneElem.name)
+		arrZones = ArraySelectByKey( curTemplateSource.zones, fldZoneElem.name, "parent_zone" );
+		if ( ArrayCount( arrZones ) == 0 )
+		{
+			sZoneHtml = tools_web.place_zone( fldZoneElem.name );
+			if ( sZoneHtml == "" )
+			{
+				if ( fldZoneElem.is_mandatory )
+					sZoneHtml = "";
+				else
+					continue;
+			}
+%>
+<div placeholder_zone="<%=fldZoneElem.name%>"<%=( ( fldZoneElem.tag_id.HasValue ? ' id="' + fldZoneElem.tag_id + '"' : '' ) + ( fldZoneElem.class.HasValue ? ' class="' + fldZoneElem.class + '"' : '' ) + ( fldZoneElem.style.HasValue ? ' style="' + fldZoneElem.style + '"' : '' ) )%>><%=sZoneHtml%></div>
+<%
+		}
+		else
+		{
+%>
+<div<%=( ( fldZoneElem.tag_id.HasValue ? ' id="' + fldZoneElem.tag_id + '"' : '' ) + ( fldZoneElem.class.HasValue ? ' class="' + fldZoneElem.class + '"' : '' ) + ( fldZoneElem.style.HasValue ? ' style="' + fldZoneElem.style + '"' : '' ) )%>>
+<%
+			place_zones( arrZones );
+%>
+</div>
+<%
+		}
+	}
+}
+
+place_zones();
+%>

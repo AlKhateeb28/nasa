@@ -1,0 +1,59 @@
+.float-left-box {
+    float: left;
+}
+
+.float-right-box {
+    float: right;
+}
+
+.task_box {
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: #212529;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.task_box_size {
+    width: 600px;
+    height: 120px;
+}
+
+.caption_box {
+    color: orange;
+    font-size: small;
+    text-indent: 10px;
+}
+
+.small_caption_box {
+    color: #adff2f;
+    font-size: xx-small;
+}
+
+.count_box {
+    color: white;
+    text-indent: 10px;
+    font-size: x-large;
+    margin-top: -31px;
+    margin-left: 10px;
+    width: 80px;
+}
+
+.footer_caption {
+    padding-left: 5px;
+    color: silver;
+    font-size: xx-small;
+    text-indent: 10px;
+}
+
+.element_footer_box {
+    margin-top: 10px;
+}
+
+.element_footer_caption {
+    padding-left: 5px;
+    color: silver;
+    font-size: xx-small;
+    text-indent: 10px;
+    margin-top: -18px;
+}

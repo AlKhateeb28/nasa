@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<active_learning>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" EXPR="course_name" TITLE="const=c_name"/>
+
+	<course_id TYPE="integer" FOREIGN-ARRAY="courses" TITLE="const=c_course"/>
+	<course_name TYPE="string" TITLE="const=a74bhtte55"/>
+	<course_code TYPE="string" TITLE="const=cz4823o9d1"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<person_current_state TYPE="string" TITLE="const=cloqadyou3"/>
+
+	<event_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog('events')" TITLE="const=c_event"/>
+	<event_name TYPE="string" TITLE="const=e5i74i7omp"/>
+	<event_start_date TYPE="date" TITLE="const=laddyafkjs"/>
+
+	<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+
+	<start_usage_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_act_date"/>
+	<start_learning_date TYPE="date" TITLE="const=c_start_learning_date"/>
+	<is_self_enrolled TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=40z0829cbn"/>
+	<duration TYPE="integer" TITLE="const=ij926v78io"/>
+	<max_end_date TYPE="date" TITLE="const=vkmb_max_end_date"/>
+	<attempts_num TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_attempt_num"/>
+	<base_url TYPE="string" TITLE="const=ff58twxqbg"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+
+	<parts TITLE="const=n6ycg6sa3w">
+		<part MULTIPLE="1" PRIMARY-KEY="code">
+			<INHERIT TYPE="learning_part_base"/>
+
+			<is_mandatory TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vceb_is_mandatory"/>
+			<score_factor TYPE="real" NOT-NULL="1" DEFAULT="1.0" TITLE="const=vceb_factor"/>
+
+			<dynamic_status TYPE="string"/>
+
+			<INHERIT TYPE="learning_current_state_base"/>
+		</part>
+	</parts>
+
+	<events TITLE="const=c_events">
+		<event MULTIPLE="1" PRIMARY-KEY="event_id">
+			<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+			<score TYPE="real" NOT-NULL="1" TITLE="const=c_score"/>
+		</event>
+	</events>
+
+	<last_usage_part_code TYPE="string" TITLE="const=0igifv22po"/>
+
+	<last_usage_date TYPE="date" EXPR="
+			_date = null;
+			for ( _cur_part in parts )
+				if ( _cur_part.last_usage_date &gt; _date )
+					_date = _cur_part.last_usage_date;
+
+			return _date;
+	" TITLE="const=vtlpb_last_use"/>
+
+	<max_score TYPE="real" NOT-NULL="1" DEFAULT="0" TITLE="const=c_max_score"/>
+	<score_sum_eval TYPE="string" NOT-NULL="1" DEFAULT="score" TITLE="const=zclzjifiya"/>
+	<score TYPE="real" NOT-NULL="1" TITLE="const=c_score"/>
+	<calc_score PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			sum = 0;
+			try
+			{
+				for ( fldPartElem in Ps.parts )
+				{
+					if ( fldPartElem.type == 'activity' )
+					{
+						fldPartElem.score = ArraySum( fldPartElem.statements, 'score' );
+					}
+
+					with ( fldPartElem )
+					{
+						if ( fldPartElem.max_score_per_attempt.Value > eval( Ps.score_sum_eval ) )  {
+							sum += fldPartElem.max_score_per_attempt.Value;
+						} else {
+							sum += eval( Ps.score_sum_eval );
+						}
+					}
+				}
+			}
+			catch ( err )
+			{
+			}
+			sum += ArraySum( Ps.events, 'score' );
+			Ps.score = sum;
+			return sum;
+	" TITLE="const=c_score"/>
+
+	<state_id TYPE="integer" FOREIGN-ARRAY="common.learning_states" DEFAULT="0" NOT-NULL="1" EXPR="
+			_has_0 = false;
+			_has_2_4 = false;
+			_has_man = false;
+			for ( _part in parts )
+			{
+				if ( _part.is_mandatory )
+				{
+					switch ( _part.state_id )
+					{
+						case 2:
+
+						case 4:
+							_has_2_4 = true;
+							break;
+						case 0:
+							_has_0 = true;
+							break;
+						default:
+							return 1;
+					}
+				}
+				else if ( _part.state_id &gt; 0 )
+				{
+					_has_man = true;
+				}
+			}
+			return ( _has_2_4 ? ( _has_0 ? 1 : 2 ) : ( _has_man ? 1 : 0 ) );
+	" TITLE="const=vppb_state"/>
+
+	<time TYPE="integer" EXPR="
+			sum = 0;
+			for ( fldParmElem in parts )
+				if ( fldParmElem.time.HasValue )
+					sum += fldParmElem.time;
+			return sum;
+	" TITLE="const=vremyamoduley"/>
+
+	<calc_max_end_date PROPERTY="1" EXPR="max_end_date.HasValue ? max_end_date : ( duration.HasValue ? ( start_learning_date.HasValue ? DateOffset( start_learning_date, 86400 * duration ) : ( start_usage_date.HasValue ? DateOffset( start_usage_date, 86400 * duration ) : DateOffset( Date(), 86400 * duration ) ) ) : null )"/>
+
+	<no_encoding_core_lesson TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=7pk2kf379q"/>
+	<logging TYPE="bool" NULL-FALSE="1" TITLE="const=loggirovaniepr"/>
+	<commenting TYPE="bool" NULL-FALSE="1" TITLE="const=kommentirovanie"/>
+	<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать прокторинг'##"/>
+
+	<device_disp_type TYPE="string" TITLE="Тип устройства"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=zhoi4m132s"/>
+
+	<view TEMP="1">
+		<old_course_id TYPE="integer" FOREIGN-ARRAY="courses" TEMP="1"/>
+		<old_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TEMP="1"/>
+		<never_saved TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<course_object TYPE="variant" TEMP="1"/>
+		<result_tab_selector TYPE="string" NOT-NULL="1" DEFAULT="result" TEMP="1"/>
+	</view>
+
+	<complete_course PROPERTY="1" EXPR="
+		try
+		{
+			docActiveLearning = Child(0).Parent.Doc;
+			iActiveLearnId = docActiveLearning.DocID;
+			teActiveLearn = docActiveLearning.TopElem;
+
+			if ( teActiveLearn.course_id.HasValue )
+			{
+				teCourse = OpenDoc(UrlFromDocID(teActiveLearn.course_id)).TopElem;
+
+				iLearningId = tools.active_learning_finish(iActiveLearnId,'',teCourse);
+
+				return iLearningId;
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+
+	"/>
+
+	<update_add_data PROPERTY="1" EXPR="
+		for ( fldPartElem in parts )
+		{
+			if ( fldPartElem.assessment_id.HasValue &amp;&amp; ! fldPartElem.assessment_name.HasValue )
+				tools.common_filling( 'assessment', fldPartElem, fldPartElem.assessment_id );
+		}
+	"/>
+
+</active_learning>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.course_id.HasValue )
+			{
+				courseDoc = TopElem.view.course_object.HasValue ? TopElem.view.course_object.Object : OpenDoc( UrlFromDocID( TopElem.course_id ) ).TopElem;
+				TopElem.course_name = courseDoc.name;
+				TopElem.course_code = courseDoc.code;
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+
+		tools.filling_learning_parts( TopElem );
+"/>
+
+
+<OnLocalInit PROPERTY="1" EXPR="
+		active_learning.view.old_course_id = active_learning.course_id;
+		active_learning.view.old_person_id = active_learning.person_id;
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		curCourse = active_learning.course_id.OptForeignElem;
+		return ms_tools.get_const('s6zzm6z621') + ': ' + active_learning.start_usage_date + ' ' + active_learning.person_fullname + ' ' + ( curCourse == undefined ? 'course ID ' + active_learning.course_id : curCourse.name );
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,1946 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<common>
+
+<!--  QTI start -->
+	<order_types>
+		<order_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</order_type>
+	</order_types>
+
+	<item_types>
+		<item_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</item_type>
+	</item_types>
+
+	<grading_option_types>
+		<grading_option_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<option_id TYPE="string"/>
+			<qti_tag TYPE="string"/>
+		</grading_option_type>
+	</grading_option_types>
+
+	<sentence_option_types>
+		<sentence_option_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</sentence_option_type>
+	</sentence_option_types>
+
+	<player_types>
+		<player_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<archive_name TYPE="string"/>
+		</player_type>
+	</player_types>
+	<player_positions>
+		<player_position MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</player_position>
+	</player_positions>
+	<player_languages>
+		<player_language MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</player_language>
+	</player_languages>
+	<player_send_types>
+		<player_send_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</player_send_type>
+	</player_send_types>
+	<player_display_types>
+		<player_display_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</player_display_type>
+	</player_display_types>
+	<player_rubric_display_types>
+		<player_rubric_display_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</player_rubric_display_type>
+	</player_rubric_display_types>
+<!--  QTI end -->
+
+	<learning_states>
+		<learning_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+			<short_descriptor TYPE="string"/>
+			<long_descriptor TYPE="string"/>
+			<text_color TYPE="string"/>
+			<lpe_color TYPE="string"/>
+		</learning_state>
+	</learning_states>
+
+
+	<education_learning_states>
+		<education_learning_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+			<short_descriptor TYPE="string"/>
+			<long_descriptor TYPE="string"/>
+			<text_color TYPE="string"/>
+		</education_learning_state>
+	</education_learning_states>
+
+	<viewing_states>
+		<viewing_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</viewing_state>
+	</viewing_states>
+
+
+	<availability_states>
+		<availability_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</availability_state>
+	</availability_states>
+
+	<acquaint_states>
+		<acquaint_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</acquaint_state>
+	</acquaint_states>
+
+	<acquaint_question_types>
+		<acquaint_question_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<multiple TYPE="bool"/>
+		</acquaint_question_type>
+	</acquaint_question_types>
+	<object_resource_states>
+		<object_resource_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</object_resource_state>
+	</object_resource_states>
+
+	<material_format_types>
+		<material_format_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</material_format_type>
+	</material_format_types>
+
+
+
+	<forum_smile_types>
+		<forum_smile_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<url TYPE="string"/>
+		</forum_smile_type>
+	</forum_smile_types>
+
+
+	<annals_item_types>
+		<annals_item_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<data_id TYPE="string"/>
+			<item_id TYPE="string"/>
+		</annals_item_type>
+	</annals_item_types>
+
+
+
+	<passport_types>
+		<passport_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</passport_type>
+	</passport_types>
+
+
+
+	<upload_types>
+		<upload_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</upload_type>
+	</upload_types>
+
+
+
+	<exchange_object_types>
+		<exchange_object_type MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<disp_name TYPE="string"/>
+			<title TYPE="string" TITLE="1"/>
+			<web_title TYPE="string" TITLE="1"/>
+			<web_template TYPE="string"/>
+			<web_const TYPE="string"/>
+			<is_hier TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+			<is_custom TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+			<form_url TYPE="string"/>
+			<form_type TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<max_records_num TYPE="integer"/>
+			<ft_index TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		</exchange_object_type>
+	</exchange_object_types>
+
+
+
+	<annals_states>
+		<annals_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</annals_state>
+	</annals_states>
+
+
+	<all_option_types>
+		<all_option_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<title TYPE="string" TITLE="1"/>
+			<caption TYPE="string" TITLE="1"/>
+		</all_option_type>
+	</all_option_types>
+
+
+
+	<action_report_types>
+		<action_report_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</action_report_type>
+	</action_report_types>
+
+	<action_status_types>
+		<action_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</action_status_type>
+	</action_status_types>
+
+
+
+	<package_types>
+		<package_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</package_type>
+	</package_types>
+
+
+
+	<position_types>
+		<position_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<mod_name TYPE="string"/>
+		</position_type>
+	</position_types>
+
+
+
+	<request_status_types>
+		<request_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string" DEFAULT="write"/>
+		</request_status_type>
+	</request_status_types>
+
+
+	<cl_object_groups>
+		<cl_object_group MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</cl_object_group>
+	</cl_object_groups>
+
+
+	<account_status_types>
+		<account_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string" DEFAULT="write"/>
+		</account_status_type>
+	</account_status_types>
+
+	<block_message_states>
+		<block_message_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</block_message_state>
+	</block_message_states>
+
+
+	<project_status_types>
+		<project_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</project_status_type>
+	</project_status_types>
+
+	<personnel_committee_status_types>
+		<personnel_committee_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</personnel_committee_status_type>
+	</personnel_committee_status_types>
+
+	<committee_member_types>
+		<committee_member_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</committee_member_type>
+	</committee_member_types>
+
+	<committee_member_status_types>
+		<committee_member_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</committee_member_status_type>
+	</committee_member_status_types>
+
+
+	<event_status_types>
+		<event_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</event_status_type>
+	</event_status_types>
+
+	<event_result_status_types>
+		<event_result_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</event_result_status_type>
+	</event_result_status_types>
+
+	<event_types>
+		<event_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</event_type>
+	</event_types>
+
+
+	<learning_task_status_types>
+		<learning_task_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</learning_task_status_type>
+	</learning_task_status_types>
+
+	<event_file_visibility_types>
+		<event_file_visibility_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</event_file_visibility_type>
+	</event_file_visibility_types>
+
+	<package_status_types>
+		<package_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</package_status_type>
+	</package_status_types>
+
+	<contact_status_types>
+		<contact_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</contact_status_type>
+	</contact_status_types>
+
+
+
+	<field_name_types>
+		<field_name_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</field_name_type>
+	</field_name_types>
+
+
+	<field_types>
+		<field_type MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+		</field_type>
+	</field_types>
+
+	<result_field_types>
+		<result_field_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+		</result_field_type>
+	</result_field_types>
+
+	<spxml_types>
+		<spxml_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+		</spxml_type>
+	</spxml_types>
+
+	<lector_types>
+		<lector_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</lector_type>
+	</lector_types>
+
+
+
+	<education_method_types>
+		<education_method_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</education_method_type>
+	</education_method_types>
+
+
+
+	<template_field_types>
+		<template_field_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<field_type TYPE="string"/>
+			<icon TYPE="string"/>
+			<has_entries TYPE="bool" NULL-FALSE="1"/>
+		</template_field_type>
+	</template_field_types>
+
+
+
+
+	<server_agent_types>
+		<server_agent_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</server_agent_type>
+	</server_agent_types>
+
+
+	<trigger_types>
+		<trigger_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</trigger_type>
+	</trigger_types>
+
+
+	<access_block_types>
+		<access_block_type MULTIPLE="1" PRIMARY-KEY="id">
+			<INHERIT TYPE="access_block_base"/>
+		</access_block_type>
+	</access_block_types>
+
+
+
+
+	<recipient_types>
+		<recipient_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<func_man TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+		</recipient_type>
+	</recipient_types>
+
+
+
+
+	<cost_types>
+		<cost_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<short_name TYPE="string" TITLE="1"/>
+		</cost_type>
+	</cost_types>
+
+
+	<web_filter_types>
+		<web_filter_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</web_filter_type>
+	</web_filter_types>
+
+
+
+
+	<poll_types>
+		<poll_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<multiple TYPE="bool"/>
+			<is_table TYPE="bool" DEFAULT="false"/>
+		</poll_type>
+	</poll_types>
+
+
+	<web_template_types>
+		<web_template_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<code PROPERTY="1" EXPR="id"/>
+			<name TYPE="string" TITLE="1"/>
+			<url TYPE="string"/>
+			<mode TYPE="string"/>
+			<INHERIT TYPE="web_variables_base"/>
+		</web_template_type>
+	</web_template_types>
+
+
+
+
+
+	<discharge_types>
+		<discharge_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<is_import TYPE="bool"/>
+			<source_name TYPE="string"/>
+		</discharge_type>
+	</discharge_types>
+	<discharge_db_types>
+		<discharge_db_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</discharge_db_type>
+	</discharge_db_types>
+
+
+
+
+	<linking_views>
+		<linking_view MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<catalog_name TYPE="string"/>
+			<disp_name TYPE="string"/>
+			<title TYPE="string" TITLE="1"/>
+			<view_url TYPE="string"/>
+		</linking_view>
+	</linking_views>
+
+
+
+
+	<workflow_operation_types>
+		<workflow_operation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</workflow_operation_type>
+	</workflow_operation_types>
+
+	<objectflow_condition_types>
+		<objectflow_condition_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<is_primary TYPE="bool"/>
+		</objectflow_condition_type>
+	</objectflow_condition_types>
+
+	<objectflow_operation_types>
+		<objectflow_operation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</objectflow_operation_type>
+	</objectflow_operation_types>
+
+
+	<test_project_types>
+		<test_project_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</test_project_type>
+	</test_project_types>
+
+	<item_status_types>
+		<item_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</item_status_type>
+	</item_status_types>
+
+
+	<career_reserve_status_types>
+		<career_reserve_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</career_reserve_status_type>
+	</career_reserve_status_types>
+
+	<key_position_status_types>
+		<key_position_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</key_position_status_type>
+	</key_position_status_types>
+
+	<successor_status_types>
+		<successor_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</successor_status_type>
+	</successor_status_types>
+
+	<tutor_status_types>
+		<tutor_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</tutor_status_type>
+	</tutor_status_types>
+
+	<personnel_reserve_status_types>
+		<personnel_reserve_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</personnel_reserve_status_type>
+	</personnel_reserve_status_types>
+
+	<personnel_reserve_task_status_types>
+		<personnel_reserve_task_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</personnel_reserve_task_status_type>
+	</personnel_reserve_task_status_types>
+
+	<print_form_types>
+		<print_form_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<content_type TYPE="string"/>
+			<extension TYPE="string"/>
+		</print_form_type>
+	</print_form_types>
+
+
+
+
+	<interaction_types>
+		<interaction_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</interaction_type>
+	</interaction_types>
+
+	<objective_status_types>
+		<objective_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<short_descriptor TYPE="string"/>
+		</objective_status_type>
+	</objective_status_types>
+
+	<objective_success_status_types>
+		<objective_success_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<short_descriptor TYPE="string"/>
+		</objective_success_status_type>
+	</objective_success_status_types>
+
+
+
+	<week_day_types>
+		<week_day_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<short_name TYPE="string" TITLE="1"/>
+			<index TYPE="integer"/>
+		</week_day_type>
+	</week_day_types>
+
+
+	<contest_types>
+		<contest_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<desc TYPE="string" TITLE="1"/>
+		</contest_type>
+	</contest_types>
+
+	<contest_states>
+		<contest_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</contest_state>
+	</contest_states>
+
+	<contest_web_templates>
+		<contest_web_template MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</contest_web_template>
+	</contest_web_templates>
+
+	<library_section_web_templates>
+		<library_section_web_template MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</library_section_web_template>
+	</library_section_web_templates>
+
+	<library_states>
+		<library_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</library_state>
+	</library_states>
+
+	<course_test_states>
+		<course_test_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</course_test_state>
+	</course_test_states>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ========================= ASSESSMENT ================================== -->
+
+	<kpi_types>
+		<kpi_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</kpi_type>
+	</kpi_types>
+
+	<kpi_states>
+		<kpi_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</kpi_state>
+	</kpi_states>
+
+	<kpi_calc_types>
+		<kpi_calc_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</kpi_calc_type>
+	</kpi_calc_types>
+
+	<assessment_appraise_participants>
+		<assessment_appraise_participant MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<index TYPE="integer"/>
+			<usable TYPE="bool" DEFAULT="true" NULL-FALSE="1"/>
+		</assessment_appraise_participant>
+	</assessment_appraise_participants>
+
+
+	<assessment_appraise_types>
+		<assessment_appraise_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<general TYPE="bool"/>
+			<index TYPE="integer"/>
+		</assessment_appraise_type>
+	</assessment_appraise_types>
+
+	<assessment_appraise_parameters>
+		<assessment_appraise_parameter MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<statuses>
+				<status MULTIPLE="1" PRIMARY-KEY="status_id">
+					<status_id TYPE="string"/>
+				</status>
+			</statuses>
+		</assessment_appraise_parameter>
+	</assessment_appraise_parameters>
+
+
+
+	<assessment_appraise_recommend_types>
+		<assessment_appraise_recommend_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</assessment_appraise_recommend_type>
+	</assessment_appraise_recommend_types>
+
+	<assessment_appraise_statuses>
+		<assessment_appraise_status MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</assessment_appraise_status>
+	</assessment_appraise_statuses>
+
+	<indicator_types>
+		<indicator_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</indicator_type>
+	</indicator_types>
+	<supplementary_question_types>
+		<supplementary_question_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</supplementary_question_type>
+	</supplementary_question_types>
+
+	<charts>
+		<chart MULTIPLE="1" PRIMARY-KEY="chart_id">
+			<chart_id TYPE="string"/>
+			<chart_type TYPE="string"/>
+			<chart_subtypes>
+				<chart_subtype MULTIPLE="1" PRIMARY-KEY="chart_subtype_id">
+					<chart_subtype_id TYPE="string"/>
+				</chart_subtype>
+			</chart_subtypes>
+			<chart_name TYPE="string" TITLE="1"/>
+			<icon TYPE="string"/>
+			<xcolor TYPE="string" DEFAULT="white"/>
+			<xcolor2 TYPE="string" DEFAULT="white"/>
+			<xoverlap TYPE="integer" DEFAULT="0"/>
+			<xcolor_line TYPE="string" DEFAULT="yellow,lime,white,red,blue,purple,orange,green,silver,aqua,maroon"/>
+			<flag_show_axis TYPE="bool" NULL-FALSE="1" DEFAULT="true"/>
+			<thickness TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<flag_color_datapoints TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+			<flag_right_angle_axes TYPE="bool" NULL-FALSE="1" DEFAULT="true"/>
+			<flag_foreign_caption TYPE="bool" NULL-FALSE="1" DEFAULT="true"/>
+			<flag_show_percent TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+		</chart>
+	</charts>
+
+	<assessment_external_types>
+		<assessment_external_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</assessment_external_type>
+	</assessment_external_types>
+
+	<assessment_stages>
+		<assessment_stage MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+			<is_period_dependent TYPE="bool" DEFAULT="false"/>
+			<access>
+				<allow_add TYPE="bool" DEFAULT="false"/>
+				<allow_delete TYPE="bool" DEFAULT="false"/>
+				<allow_plan_modify TYPE="bool" DEFAULT="false"/>
+				<allow_mark_modify TYPE="bool" DEFAULT="false"/>
+			</access>
+		</assessment_stage>
+	</assessment_stages>
+
+	<knowledge_parts_objects>
+		<knowledge_parts_object MULTIPLE="1" PRIMARY-KEY="knowledge_parts_object_id">
+			<knowledge_parts_object_id TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<form_url TYPE="string"/>
+			<is_functional TYPE="bool" DEFAULT="true"/>
+		</knowledge_parts_object>
+	</knowledge_parts_objects>
+
+	<!-- =========================================================== -->
+
+
+
+
+
+<!--  START � 2008 by Tatiyana Dobrinina  -->
+
+	<languages>
+		<language MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</language>
+	</languages>
+
+	<language_levels>
+		<language_level MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</language_level>
+	</language_levels>
+
+	<educ_types>
+		<edu_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</edu_type>
+	</educ_types>
+
+	<expended_educ_types>
+		<expended_educ_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</expended_educ_type>
+	</expended_educ_types>
+
+	<employment_kinds>
+		<employment_kind MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</employment_kind>
+	</employment_kinds>
+
+	<professional_areas>
+		<professional_area MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</professional_area>
+	</professional_areas>
+
+
+	<career_reserve_tasks_types>
+		<career_reserve_tasks_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</career_reserve_tasks_type>
+	</career_reserve_tasks_types>
+
+	<career_reserve_material_types>
+		<career_reserve_material_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</career_reserve_material_type>
+	</career_reserve_material_types>
+
+
+	<career_reserve_type_tasks_types>
+		<career_reserve_type_tasks_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</career_reserve_type_tasks_type>
+	</career_reserve_type_tasks_types>
+
+	<traning_order_states>
+		<traning_order_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<bk_color TYPE="string"/>
+		</traning_order_state>
+	</traning_order_states>
+
+	<application_states>
+		<application_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</application_state>
+	</application_states>
+
+	<server_run_modes>
+		<server_run_mode MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</server_run_mode>
+	</server_run_modes>
+
+	<possible_storages>
+		<possible_storage MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</possible_storage>
+	</possible_storages>
+
+	<oracle_db_types>
+		<oracle_db_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</oracle_db_type>
+	</oracle_db_types>
+
+	<server_settings>
+		<server_setting MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<user_name TYPE="string" TITLE="1"/>
+			<type TYPE="string"/>
+			<passive_in_modes TYPE="string"/>
+			<default_value TYPE="string"/>
+		</server_setting>
+	</server_settings>
+
+
+	<system_event_operation_types>
+		<system_event_operation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</system_event_operation_type>
+	</system_event_operation_types>
+
+	<forum_person_info_types>
+		<forum_person_info_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</forum_person_info_type>
+	</forum_person_info_types>
+<!--  END  � 2008 by Tatiyana Dobrinina   -->
+
+	<participant_states>
+		<participant_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</participant_state>
+	</participant_states>
+
+	<perioditys>
+		<periodity MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<weight TYPE="integer" TITLE="1"/>
+		</periodity>
+	</perioditys>
+
+	<submission_states>
+		<submission_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</submission_state>
+	</submission_states>
+	<collect_states>
+		<collect_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</collect_state>
+	</collect_states>
+
+	<node_types>
+		<node_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</node_type>
+	</node_types>
+
+	<resource_types>
+		<resource_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<ext TYPE="string"/>
+			<is_media TYPE="bool" NULL-FALSE="1"/>
+			<use_cache TYPE="bool" NULL-FALSE="1"/>
+		</resource_type>
+	</resource_types>
+
+	<qualification_assignment_states>
+		<qualification_assignment_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qualification_assignment_state>
+	</qualification_assignment_states>
+
+	<content_items>
+		<content_item MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<html_page TYPE="string"/>
+			<access_block TYPE="string" FOREIGN-ARRAY="common.access_block_types"/>
+		</content_item>
+	</content_items>
+
+	<covenant_status_types>
+		<covenant_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</covenant_status_type>
+	</covenant_status_types>
+
+	<course_expert_types>
+		<course_expert_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</course_expert_type>
+	</course_expert_types>
+
+	<active_notification_status_types>
+		<active_notification_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</active_notification_status_type>
+	</active_notification_status_types>
+
+	<cl_author_types>
+		<cl_author_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</cl_author_type>
+	</cl_author_types>
+
+	<cl_states>
+		<cl_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</cl_state>
+	</cl_states>
+	<cl_approval_states>
+		<cl_approval_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</cl_approval_state>
+	</cl_approval_states>
+
+	<operation_types>
+		<operation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<type TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<operation_catalog TYPE="string"/>
+		</operation_type>
+	</operation_types>
+
+	<cwt_types>
+		<cwt_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</cwt_type>
+	</cwt_types>
+	<out_types>
+		<out_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</out_type>
+	</out_types>
+	<xaml_interpreters>
+		<xaml_interpreter MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<url TYPE="string"/>
+		</xaml_interpreter>
+	</xaml_interpreters>
+
+	<period_calc_types>
+		<period_calc_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</period_calc_type>
+	</period_calc_types>
+
+	<expert_eval_types>
+		<expert_eval_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</expert_eval_type>
+	</expert_eval_types>
+
+	<vendor_status_types>
+		<vendor_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</vendor_status_type>
+	</vendor_status_types>
+	<vacancy_response_status_types>
+		<vacancy_response_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</vacancy_response_status_type>
+	</vacancy_response_status_types>
+
+
+	<join_mode_types>
+		<join_mode_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</join_mode_type>
+	</join_mode_types>
+
+
+	<eval_types>
+		<eval_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</eval_type>
+	</eval_types>
+
+
+	<template_cache_types>
+		<template_cache_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</template_cache_type>
+	</template_cache_types>
+
+
+	<budget_state_types>
+		<budget_state_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</budget_state_type>
+	</budget_state_types>
+
+	<recruitment_plan_state_types>
+		<recruitment_plan_state_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</recruitment_plan_state_type>
+	</recruitment_plan_state_types>
+
+
+	<status_in_knowledge_map_types>
+		<status_in_knowledge_map_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</status_in_knowledge_map_type>
+	</status_in_knowledge_map_types>
+
+	<stud_types>
+		<stud_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</stud_type>
+	</stud_types>
+
+	<student_states>
+		<student_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</student_state>
+	</student_states>
+
+	<stud_doc_types>
+		<stud_doc_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</stud_doc_type>
+	</stud_doc_types>
+
+	<stud_group_states>
+		<stud_group_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</stud_group_state>
+	</stud_group_states>
+
+	<work_types>
+		<work_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</work_type>
+	</work_types>
+
+	<lesson_states>
+		<lesson_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</lesson_state>
+	</lesson_states>
+
+	<stud_work_states>
+	    <stud_work_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</stud_work_state>
+	</stud_work_states>
+
+	<week_days>
+	    <week_day MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string" TITLE="1"/>
+		</week_day>
+	</week_days>
+
+	<periodicity_types>
+		<periodicity_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</periodicity_type>
+	</periodicity_types>
+
+	<registr_types>
+		<registr_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</registr_type>
+	</registr_types>
+
+	<academ_debt_states>
+	    <academ_debt_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</academ_debt_state>
+	</academ_debt_states>
+
+	<prog_discipl_states>
+	    <prog_discipl_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</prog_discipl_state>
+	</prog_discipl_states>
+
+	<curriculum_types>
+	   <curriculum_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	   </curriculum_type>
+    </curriculum_types>
+
+	<type_marks>
+	    <type_mark MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	    </type_mark>
+	</type_marks>
+
+
+	<social_avatar_priority_types>
+	    <social_avatar_priority_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	    </social_avatar_priority_type>
+	</social_avatar_priority_types>
+
+
+	<azure_role_size_types>
+		<azure_role_size_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	    </azure_role_size_type>
+	</azure_role_size_types>
+
+
+	<encoding_types>
+		<encoding_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	    </encoding_type>
+	</encoding_types>
+
+	<portal_types>
+		<portal_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	    </portal_type>
+	</portal_types>
+
+	<graph_types>
+		<graph_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	    </graph_type>
+	</graph_types>
+
+	<aggregation_types>
+		<aggregation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+	    </aggregation_type>
+	</aggregation_types>
+
+
+	<delivery_types>
+  		<delivery_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</delivery_type>
+	</delivery_types>
+
+	<good_instance_status_types>
+  		<good_instance_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</good_instance_status_type>
+	</good_instance_status_types>
+
+	<order_status_types>
+  		<order_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</order_status_type>
+	</order_status_types>
+	<outstaff_contract_types>
+  		<outstaff_contract_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</outstaff_contract_type>
+	</outstaff_contract_types>
+
+	<estaff_event_status_types>
+		<estaff_event_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<text_color TYPE="string"/>
+			<bk_color TYPE="string"/>
+		</estaff_event_status_type>
+	</estaff_event_status_types>
+
+	<access_object_types>
+		<access_object_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</access_object_type>
+	</access_object_types>
+
+	<employment_types>
+		<employment_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</employment_type>
+	</employment_types>
+
+	<learning_dynamics_category_types>
+		<learning_dynamics_category_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</learning_dynamics_category_type>
+	</learning_dynamics_category_types>
+
+	<learning_statistics_category_types>
+		<learning_statistics_category_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT="dist,test,"/>
+		</learning_statistics_category_type>
+	</learning_statistics_category_types>
+
+
+
+	<course_part_types>
+		<course_part_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<ico_url TYPE="string"/>
+		</course_part_type>
+	</course_part_types>
+
+
+
+	<position_assignment_types>
+		<position_assignment_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</position_assignment_type>
+	</position_assignment_types>
+
+
+	<day_types>
+		<day_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</day_type>
+	</day_types>
+
+
+
+	<months>
+		<month MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<days TYPE="integer" TITLE="1"/>
+			<quarter TYPE="integer" TITLE="1"/>
+		</month>
+	</months>
+
+
+	<poll_item_types>
+		<poll_item_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</poll_item_type>
+	</poll_item_types>
+
+
+	<career_transition_direction_types>
+		<career_transition_direction_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</career_transition_direction_type>
+	</career_transition_direction_types>
+
+	<outstaff_order_execution_status_types>
+		<outstaff_order_execution_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</outstaff_order_execution_status_type>
+	</outstaff_order_execution_status_types>
+
+	<keyboard_types>
+		<keyboard_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</keyboard_type>
+	</keyboard_types>
+	<service_provider_types>
+		<service_provider_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<with_date TYPE="bool" TITLE="1"/>
+		</service_provider_type>
+	</service_provider_types>
+	<payment_types>
+		<payment_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<is_can_received TYPE="bool" TITLE="1"/>
+		</payment_type>
+	</payment_types>
+
+	<qualification_statuss>
+		<qualification_status MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qualification_status>
+	</qualification_statuss>
+	<education_method_states>
+		<education_method_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</education_method_state>
+	</education_method_states>
+
+	<learning_catalogs>
+		<learning_catalog MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</learning_catalog>
+	</learning_catalogs>
+	<vclass_learning_catalogs>
+		<vclass_learning_catalog MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</vclass_learning_catalog>
+	</vclass_learning_catalogs>
+
+	<document_sent_types>
+		<document_sent_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</document_sent_type>
+	</document_sent_types>
+	<proctoring_objects>
+		<proctoring_object MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<icon_url TYPE="string"/>
+			<name TYPE="string"/>
+		</proctoring_object>
+	</proctoring_objects>
+	<learning_record_statuss>
+		<learning_record_status MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<icon_url TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</learning_record_status>
+	</learning_record_statuss>
+
+	<course_import_types>
+		<course_import_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</course_import_type>
+	</course_import_types>
+	<timezones>
+		<timezone MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<direction TYPE="integer"/>
+			<tm TYPE="real"/>
+			<name TYPE="string" TITLE="1"/>
+		</timezone>
+	</timezones>
+
+
+	<substitution_status_types>
+		<substitution_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</substitution_status_type>
+	</substitution_status_types>
+
+	<wiki_communication_types>
+		<wiki_communication_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</wiki_communication_type>
+	</wiki_communication_types>
+
+
+	<agreement_status_types>
+		<agreement_status_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</agreement_status_type>
+	</agreement_status_types>
+	<conversation_participant_states>
+		<conversation_participant_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</conversation_participant_state>
+	</conversation_participant_states>
+
+	<message_states>
+		<message_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</message_state>
+	</message_states>
+
+	<conversation_formats>
+		<conversation_format MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</conversation_format>
+	</conversation_formats>
+
+	<conversation_visible_types>
+		<conversation_visible_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</conversation_visible_type>
+	</conversation_visible_types>
+	<acquaint_types>
+		<acquaint_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</acquaint_type>
+	</acquaint_types>
+
+	<message_types>
+		<message_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</message_type>
+	</message_types>
+	<chatbot_out_types>
+		<chatbot_out_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</chatbot_out_type>
+	</chatbot_out_types>
+
+	<check_schedule_types>
+		<check_schedule_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</check_schedule_type>
+	</check_schedule_types>
+
+
+	<progress_types>
+		<progress_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</progress_type>
+	</progress_types>
+
+	<design_vscode_save_types>
+		<design_vscode_save_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</design_vscode_save_type>
+	</design_vscode_save_types>
+
+	<design_vscode_access_types>
+		<design_vscode_access_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</design_vscode_access_type>
+	</design_vscode_access_types>
+	<violation_types>
+		<violation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+			<icon_url TYPE="string"/>
+		</violation_type>
+	</violation_types>
+	<violation_states>
+		<violation_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</violation_state>
+	</violation_states>
+	<proctor_states>
+		<proctor_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</proctor_state>
+	</proctor_states>
+	<proctoring_session_states>
+		<proctoring_session_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</proctoring_session_state>
+	</proctoring_session_states>
+	<prohibition_types>
+		<prohibition_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</prohibition_type>
+	</prohibition_types>
+	<conversation_message_states>
+		<conversation_message_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</conversation_message_state>
+	</conversation_message_states>
+
+	<application_types>
+		<application_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</application_type>
+	</application_types>
+
+	<qa_test_states>
+		<qa_test_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qa_test_state>
+	</qa_test_states>
+	<qa_test_types>
+		<qa_test_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qa_test_type>
+	</qa_test_types>
+	<qa_fixture_types>
+		<qa_fixture_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qa_fixture_type>
+	</qa_fixture_types>
+	<qa_test_result_completion_states>
+		<qa_test_result_completion_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qa_test_result_completion_state>
+	</qa_test_result_completion_states>
+	<qa_test_result_states>
+		<qa_test_result_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qa_test_result_state>
+	</qa_test_result_states>
+	<qa_test_assert_types>
+		<qa_test_assert_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qa_test_assert_type>
+	</qa_test_assert_types>
+	<qa_test_assert_template_types>
+		<qa_test_assert_template_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</qa_test_assert_template_type>
+	</qa_test_assert_template_types>
+
+	<blog_types>
+		<blog_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</blog_type>
+	</blog_types>
+	<working_condition_states>
+		<working_condition_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</working_condition_state>
+	</working_condition_states>
+	<tariff_rate_types>
+		<tariff_rate_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</tariff_rate_type>
+	</tariff_rate_types>
+	<conversation_object_types>
+		<conversation_object_type MULTIPLE="1" PRIMARY-KEY="object_type">
+			<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<is_fix_participants TYPE="bool" DEFAULT="true"/>
+			<exclude_channel_participant TYPE="bool" DEFAULT="false"/>
+		</conversation_object_type>
+	</conversation_object_types>
+	<knowledge_acquaint_states>
+		<knowledge_acquaint_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</knowledge_acquaint_state>
+	</knowledge_acquaint_states>
+	<knowledge_acquaint_types>
+		<knowledge_acquaint_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</knowledge_acquaint_type>
+	</knowledge_acquaint_types>
+	<confirmation_types>
+		<confirmation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</confirmation_type>
+	</confirmation_types>
+	<acquaint_confirmation_types>
+		<acquaint_confirmation_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</acquaint_confirmation_type>
+	</acquaint_confirmation_types>
+	<confirmation_expert_types>
+		<confirmation_expert_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</confirmation_expert_type>
+	</confirmation_expert_types>
+	<willingness_travel_types>
+		<willingness_travel_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</willingness_travel_type>
+	</willingness_travel_types>
+	<statement_component_propertys>
+		<statement_component_property MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</statement_component_property>
+	</statement_component_propertys>
+	<signature_types>
+		<signature_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</signature_type>
+	</signature_types>
+	<personnel_document_states>
+		<personnel_document_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</personnel_document_state>
+	</personnel_document_states>
+	<layer_types>
+		<layer_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</layer_type>
+	</layer_types>
+	<job_transfer_types>
+		<job_transfer_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</job_transfer_type>
+	</job_transfer_types>
+	<position_common_statuss>
+		<position_common_status MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</position_common_status>
+	</position_common_statuss>
+	<typical_development_program_statuss>
+		<typical_development_program_status MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</typical_development_program_status>
+	</typical_development_program_statuss>
+	<filter_types>
+		<filter_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</filter_type>
+	</filter_types>
+	<good_states>
+		<good_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</good_state>
+	</good_states>
+	<web_person_state_types>
+		<web_person_state_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</web_person_state_type>
+	</web_person_state_types>
+	<websoft_apps>
+		<websoft_app MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+		</websoft_app>
+	</websoft_apps>
+</common>
+
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		tools.update_commons_event_types( false, TopElem );
+	}
+	catch ( err )
+	{
+	}
+
+	try
+	{
+		sBaseCommomUrl = 'x-local://wtv/wtv_common.xml';
+		if ( TopElem.Doc.Url != sBaseCommomUrl )
+		{
+			sTenantName = '';
+			teCommon = FetchDoc( sBaseCommomUrl ).TopElem;
+			for ( fldListElem in teCommon )
+			{
+				arrElems = [];
+				lngList = TopElem.Child( fldListElem.Name )
+				for ( fldElem in fldListElem )
+				{
+					lngElem = lngList.GetOptChildByKey( fldElem.PrimaryKey );
+					if ( lngElem != undefined )
+					{
+						for ( fldFieldElem in lngElem )
+							if ( fldFieldElem.Title != '1' )
+								fldFieldElem.AssignElem( fldElem.Child( fldFieldElem.Name ) );
+					}
+					else
+					{
+						_child = lngList.AddChild();
+						_child.AssignElem( fldElem );
+						arrElems.push( fldElem.PrimaryKey.Value );
+					}
+				}
+				if ( LdsIsServer &amp;&amp; ArrayCount( arrElems ) != 0 )
+				{
+					if ( LdsIsServer )
+						alert( 'Common list &quot;' + TopElem.Doc.Url + '&quot; list &quot;' + fldListElem.Name + '&quot; obtained elements: &quot;' + ArrayMerge( arrElems, 'This', '&quot;, &quot;' ) + '&quot;.' );
+				}
+			}
+		}
+	}
+	catch ( err )
+	{
+		alert( 'Common OnInit error: ' + err );
+	}
+"/>
+
+</SPXML-FORM>

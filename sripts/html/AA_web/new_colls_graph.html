@@ -1,0 +1,164 @@
+<!-- 7419255387363809706 -->
+<link rel="stylesheet" href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/fcc-desktop/css/index.css"/>
+<link rel="stylesheet" href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/fcc-desktop/reports/reports.css"/>
+
+<script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/fcc-desktop/js/jquery3.js"></script>
+<script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/fcc-desktop/js/apexcharts.min.js"></script>
+<script type="text/javascript" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/fcc-desktop/js/new_colls_graph.js"></script>
+
+<script>
+    var collaborators = {};
+
+    collaborators.hour;
+    collaborators.muc = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    collaborators.other = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+</script>
+
+<div style="font-family: 'Noto Sans', sans-serif; width: 100%; height: 550px;">
+    <div class="float-left-box" style="width: 100%;">
+        <div id="createdColls" style="margin-top: -50px;">
+            <div id="hour_datetime" class="colls-datetime" style="margin-top: 37px; margin-left: 150px;"></div>
+
+            <div id="mucCountHour" class="muc-count">0</div>
+            <div id="otherCountHour" class="other-count">0</div>
+            <div id="createdCollsHourChart" class="network-gradient"></div>
+        </div>
+    </div>
+</div>
+
+<%
+var mucList = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var otherList = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+var hourToIndexLink = {};
+
+collaboratorList = ArrayDirect(XQuery("sql: " +
+    " SELECT cs.id, cs.modification_date " +
+    " FROM [WTDB].[dbo].collaborators cs " +
+    "   INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
+    " WHERE c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime') > DATEADD(HOUR, -23, GETDATE()) " +
+    " ORDER BY cs.modification_date "));
+
+hour= Hour(Date());
+
+for(i = 23; i >= 0 ; i--) {
+    hourToIndexLink[hour] = i;
+
+    hour = hour - 1;
+
+    if(hour < 0) {
+        hour = 23;
+    }
+}
+
+for (collaborator in collaboratorList) {
+    collaboratorDoc = tools.open_doc(collaborator.id);
+
+    if(collaboratorDoc != undefined) {
+        collaboratorDocTE = collaboratorDoc.TopElem;
+
+        creationDate = Date(collaboratorDocTE.doc_info.creation.date);
+
+        hourIndex = hourToIndexLink[Hour(creationDate)];
+
+        if(StrContains(collaboratorDocTE.login, "muc")) {
+            mucList[hourIndex] = mucList[hourIndex] + 1;
+
+%>
+            <script>
+                collaborators.muc[<%=hourIndex%>] = collaborators.muc[<%=hourIndex%>] + 1;
+            </script>
+<%
+        } else {
+            otherList[hourIndex] = otherList[hourIndex] + 1;
+%>
+            <script>
+                collaborators.other[<%=hourIndex%>] = collaborators.other[<%=hourIndex%>] + 1;
+            </script>
+<%
+        }
+    }
+}
+%>
+<div class="float-left-box" style="background-color: #212529; margin-top: -22px; width: 100%; height: 567px;">
+    <%
+    orgId = 6852958430721166518;
+
+    orgDoc = tools.open_doc(orgId);
+
+    if(orgDoc != undefined) {
+    %>
+    <div style="color: mintcream; font-size: x-large; padding-left: 20px; padding-top: 10px; padding-bottom: 10px;">Будет исправлен признак "in_program"</div>
+    <div style="color: burlywood; font-size: smaller; padding-left: 20px; padding-bottom: 10px;"><%=orgDoc.TopElem.name%></div>
+    <table id="table" width="100%">
+        <tr class="header" style="background-color: rgb(255, 255, 255, 0.3)">
+            <td class="header-element">#</td>
+            <td class="header-element" style="width: 200px;">ID</td>
+            <td class="header-element">Сотрудник</td>
+            <td class="header-element header-col-size" style="width: 200px;">Дата модификации</td>
+        </tr>
+        <%
+        collaboratorList = ArrayDirect(XQuery("sql: " +
+        " SELECT cs.id, " +
+        "   cs.fullname, " +
+        "   cs.modification_date " +
+        " FROM [WTDB].[dbo].collaborators cs " +
+        "   INNER JOIN [WTDB].[dbo].collaborator c on cs.id = c.id " +
+        "   INNER JOIN [WTDB].[dbo].orgs os on cs.org_id = os.id " +
+        "   INNER JOIN [WTDB].[dbo].org o on os.id = o.id " +
+        " WHERE cs.org_id = " + orgId +
+        "   AND c.data.exist('(//custom_elems/custom_elem[name=''in_program''])') = 0 " +
+        " ORDER BY cs.modification_date"));
+
+        index = 1;
+        count = ArrayCount(collaboratorList);
+        skippedRow = false;
+
+        for(collaborator in collaboratorList) {
+            rowStyle = "";
+
+            if(index % 2 == 0) {
+                rowStyle = "background-color: rgba(255, 255, 255, 0.05);";
+            }
+
+            if(index > 11 && index < count) {
+                if(!skippedRow) {
+        %>
+                <tr class="report-data" style="<%=rowStyle%>">
+                    <td class="row-element row-pointer-cell">...</td>
+                    <td class="row-element"></td>
+                    <td class="row-element"></td>
+                    <td class="row-element"></td>
+                </tr>
+        <%
+                    skippedRow = true;
+                }
+
+                index++;
+
+                continue;
+            }
+
+            skipRowColor = "";
+
+            if(DateDiff(Date(), collaborator.modification_date) > 600) {
+                skipRowColor = "color: #ff0080";
+            }
+
+        %>
+        <tr class="report-data" style="<%=rowStyle%>">
+            <td class="row-element row-pointer-cell"><%=index%></td>
+            <td class="row-element" style="<%=skipRowColor%>"><%=collaborator.id%></td>
+            <td class="row-element" style="<%=skipRowColor%>"><%=collaborator.fullname%></td>
+            <td class="row-element" style="<%=skipRowColor%>"><%=collaborator.modification_date%></td>
+        </tr>
+        <%
+
+            index++;
+            }
+        %>
+    </table>
+    <%
+    }
+    %>
+</div>

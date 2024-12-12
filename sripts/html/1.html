@@ -1,0 +1,530 @@
+<SPXMLScreen Class="dlg_select">
+    <Edit Name="DisplayedData" Hidden="1"/>
+    <Edit Name="HTMLProcessed" Hidden="1">0</Edit>
+    <Edit Name="HTMLProcessedData" Hidden="1">0</Edit>
+    <SPXMLScreen Class="catalog_list">
+        <StackPanel Orientation="Vertical" Class="XAML-uni-content-block XAML-uni-content-std">
+            <StackPanel Class="XAML-stack-filters-container XAML-stack-filters-container-small" Orientation="Vertical" Adapt="1">
+                <Grid Width="100%" Class="XAML-grid-filter">
+                    <GridColumns>
+                        <GridColumn Width="100%"/><GridColumn/>
+                    </GridColumns>
+                    <GridRow>
+                        <Label Class="XAML-label-filters-title"/>
+                        <StackPanel Orientation="Horizontal" Class="XAML-stack-container" Adapt="true">
+                            <Label Class="XAML-label-divider"/>
+                            <ComboBox Name="CatalogListSchimeFullList" Width="200" SelectedItem="#empty#" Change="UPDATE=CatalogListDataGridFullList" Class="XAML-combo-view">
+                                <ComboBoxItem Value="#empty#" Change="UPDATE=CatalogListDataGridFullList"><![CDATA[Все фильтры]]></ComboBoxItem>
+                            </ComboBox><Label Class="XAML-label-divider"/>
+                            <StackPanel Orientation="Horizontal" Class="XAML-panel-search">
+                                <StackPanel Name="FilterSearchPanelFullList" Hidden="false" Orientation="Horizontal">
+                                    <Edit Class="XAML-input-text" Name="CatalogListSearchFullList" Change="UPDATE=CatalogListDataGridFullList" EmptyText="Поиск" KeyPress="#13:UPDATE=CatalogListDataGridFullList" Width="150"/>
+                                    <Button Class="XAML-button-view icon-arrow-right" Click="UPDATE=CatalogListDataGridFullList">
+                                        <HTMLTip><![CDATA[Искать]]></HTMLTip>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </GridRow>
+                </Grid>
+            </StackPanel>
+            <Collection Name="CatalogListCollectionFullList" Source="uni_catalog_list">
+                <Param Name="catalog_name" Value="course"/>
+                <Param Name="view_type" Value=""/>
+                <Param Name="check_access" Value="false"/>
+                <Param Name="open_doc" Value="false"/>
+                <Param Name="xquery_qual" Value="MatchSome($elem/id, (6947583353429500093,6947584845511328020,6947585836158626362,6947603231793769927,6947603823242062175,6947604012595168387,6947604271913178323,6947617168468299331,6947617395783248894,6947617623069386142,6947617920201401399,6947618890125168882,6947619165438234213,6947619453691109659,6947619669153230847,6947622133079674350,6947622696387939876,6947622941580816844,6947626987018799087,6947627222650849679,6947627786288571359,6947627978613795565,6947628185875343139,6947632788459037617,6947633055094280643,6947633265370553624,6947633958623404985,6947635070189851101,6947635469357698424,6947635821724125915,6947636956516797472,6947637239239286530,6947637715120518946,6947637969753305647,6947638162443018287,6969194298878077558,6969195912787079738,7107128344825910161,7107132953494629265,7107134500321888452,7107135415812783430,7122814365412512231,7147934975086967041,7147939099826605687,7159489696345114714,7159493296495288240,7159494136925002573,7160593696651615056,7160595736172827247,7160597818445492514,7160600868210487819,7160601740389264174,7160602398186089838,7181406472187569937,7181413623403595367,7181419854677680504,7181435773339701675,7198437704337357492,7198438421940173429,7213738149341890125,7215962808993533714,7227072063463386653,7250068842752903291,7264478050319824821,7264478599555327754,7274934263610680327,7290469104087102817,7290469202781948492,7307587817561077139,7364330214900518463))"/>
+                <Param Name="external_eval" Value=""/>
+                <Param Name="disp_array" Value="false"/>
+                <Param Name="array" Value="{DisplayedData}"/>
+                <Param Name="array_selected" Value="#empty#"/>
+                <Param Name="array_link_field" Value="id"/>
+                <Param Name="show_all" Value="true"/>
+                <Param Name="disp_sort" Value="true"/>
+                <Param Name="sort_index" Value=""/>
+                <Param Name="sort_field_name" Value=""/>
+                <Param Name="sort_direct" Value="+"/>
+                <Param Name="disp_link" Value="false"/>
+                <Param Name="link_object_field" Value="PrimaryKey"/>
+                <Param Name="link_field_index" Value=""/>
+                <Param Name="link_field_name" Value=""/>
+                <Param Name="link_mode" Value=""/>
+                <Param Name="link_prop" Value=""/>
+                <Param Name="link_action" Value=""/>
+                <Param Name="link_open" Value=""/>
+                <Param Name="disp_check_box" Value="false"/>
+                <Param Name="is_data_grid" Value="true"/>
+                <Param Name="data_fields" Value=""/>
+                <Param Name="col_headers" Value=""/>
+                <Param Name="col_cells" Value=""/>
+                <Param Name="list_headers" Value=""/>
+                <Param Name="list_columns" Value=""/>
+                <Param Name="filter_id" Value="{CatalogListSchimeFullList}"/>
+                <Param Name="filter_conditions" Value=""/>
+                <Param Name="search" Value="{CatalogListSearchFullList}"/>
+                <Param Name="disp_paging" Value="false"/>
+                <Param Name="paging_size" Value="100"/>
+                <Param Name="source_type" Value=""/>
+                <Param Name="disp_icon" Value="false"/>
+                <Param Name="secid" Value="214E46E3DA018F1B3C99691A23E88B82"/>
+                <Param Name="disp_first_only" Value="false"/>
+                <Param Name="parent_field_name" Value=""/>
+            </Collection>
+            <Action Name="CatalogListActionHideFullList" Initialize="HIDE=CatalogListGridFilterFullList,CatalogListDataGridFullList;"/>
+            <Collection Name="CatalogListMenuFullListMenu" Source="uni_catalog_list_menu">
+                <Param Name="name_id" Value="FullListMenu"/>
+                <Param Name="id_field_name" Value=""/>
+                <Param Name="selected_data" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="catalog_name" Value="course"/>
+                <Param Name="source_type" Value=""/>
+            </Collection>
+            <Edit Name="CatalogListMenuActionSuccessActionFullListMenu" Hidden="1">ALERT={!messageText};</Edit>
+            <Edit Name="CatalogListMenuActionFailureActionFullListMenu" Hidden="1">ALERT={!messageText};</Edit>
+            <Action Name="CatalogListMenuActionFullListMenu" Source="uni_catalog_list_menu_action" Success="{!CatalogListMenuActionSuccessActionFullListMenu}" Failure="{!CatalogListMenuActionFailureActionFullListMenu}">
+                <Param Name="name_id" Value="FullListMenu"/>
+                <Param Name="operation_id" Value=""/>
+                <Param Name="selected_data" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="elements_data" Value=""/><Param Name="values_data" Value=""/>
+                <Param Name="source_type" Value=""/>
+            </Action>
+            <Action Name="InviteUserActionFullListMenu" Source="communication_users_actions" Success="ALERT={messageText};">
+                <Param Name="iUserId" Value=""/><Param Name="sAction" Value=""/>
+            </Action>
+            <Action Name="DismissPersonActionFullListMenu" Source="dismiss_person_action" Success="ALERT={messageText};">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="BlockAccessPersonActionFullListMenu" Source="block_access_person" Success="ALERT={messageText};">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="SendNotificatPersonActionFullListMenu" Source="send_notification_person" Success="ALERT={messageText};">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="PersonsCompareActionFullListMenu" Source="persons_compare_action" Success="OPENURL=/persons_compare?persons={persons_ids}">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="CreateEventActionFullListMenu" Source="event_create" Success="ALERT={messageText};OPENURL=/_wt/{event_id}">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="bCreateByModel" Value=""/>
+                <Param Name="iGroupId" Value=""/>
+                <Param Name="iModelEventId" Value=""/>
+                <Param Name="iDefaultTypeId" Value=""/>
+                <Param Name="sParentId" Value=""/>
+            </Action>
+            <Action Name="DuplicateEventActionFullListMenu" Source="event_duplicate" Success="ALERT={messageText};OPENURL=/_wt/{event_id}">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="bCopyParticipants" Value=""/>
+            </Action>
+            <Action Name="DeleteEventActionFullListMenu" Source="event_delete" Success="ALERT={messageText};OPENURL=/_wt/event_calendar">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="ExcludeUserFromEventActionFullListMenu" Source="event_result_exclude_collaborator" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedObjects" Value="{CatalogListDataGridFullList}"/><Param Name="source_type" Value=""/>
+            </Action>
+            <Action Name="ToggleUserEventAssistActionFullListMenu" Source="event_result_toggle_collaborator_assist" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedObjects" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="ReplaceParticipantActionFullListMenu" Source="replace_participant_action" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="iPersonId" Value=""/>
+            </Action>
+            <Action Name="SetEventParticipantsFromWaitingListActionFullListMenu" Source="event_set_participants_from_waiting_list" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedObjects" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="sWorkflowState" Value=""/>
+                <Param Name="iEventId" Value=""/>
+                <Param Name="iRequestTypeId" Value=""/>
+            </Action>
+            <Edit Name="SelectDialogCloseActionFullListMenu" Hidden="1">SET=CatalogListMenuActionFullListMenu/elements_data,{CatalogListDataGridSelList};ACTION=CatalogListMenuActionFullListMenu</Edit>
+            <Dialog Name="SelectDialogFullListMenu" Source="dlg_select" Title="Выбор из списка" Close="{!SelectDialogCloseActionFullListMenu}">
+                <Param Name="catalog_name" Value=""/>
+                <Param Name="multi_select" Value=""/>
+                <Param Name="view_type" Value=""/>
+                <Param Name="xquery_qual" Value=""/>
+                <Param Name="check_access" Value="false"/>
+                <Param Name="selected_object_ids" Value=""/>
+                <Param Name="display_object_ids" Value=""/>
+                <Param Name="disp_filter" Value="true"/>
+                <Param Name="filter_id" Value=""/>
+                <Param Name="show_all" Value="true"/>
+                <Param Name="secid" Value="214E46E3DA018F1B3C99691A23E88B82"/>
+            </Dialog>
+            <Dialog Name="LearningParamsDialogFullListMenu" Source="dlg_set_course_test_params" Title="Параметры обучения" Close="{!ParamDlgCloseAction}">
+                <Param Name="name_id" Value="FullListMenu"/>
+                <Param Name="catalog_name" Value=""/>
+                <Param Name="multi_select" Value="1"/>
+                <Param Name="elements_data" Value=""/>
+                <Param Name="cur_index" Value="0"/>
+                <Param Name="last_action_line" Value=""/>
+            </Dialog>
+            <Dialog Name="ExcelImportCollaboratsDialogFullListMenu" Source="dlg_excel_import_collaborators" Title="Выбор файла с сотрудниками" Width="70%" Close="">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="CreateNewPersonDialogFullListMenu" Source="dlg_create_new_person" Title="Параметры сотрудника" Width="70%" Close="{!ParamDlgCloseAction}">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="CreateNewGroupDialogFullListMenu" Source="dlg_create_new_group" Title="Параметры группы" Width="70%" Close="{!ParamDlgCloseAction}">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="CreateNewDepartmentDialogFullListMenu" Source="dlg_create_new_department" Title="Параметры подразделения" Width="70%" Close="{!ParamDlgCloseAction}">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="ChangePasswordPersonDialogFullListMenu" Source="dlg_change_password_person" Title="Изменение пароля" Width="70%" Close="{!ParamDlgCloseAction}">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="PersonsImportExcelDialogFullListMenu" Source="dlg_persons_import_excel" Title="Выбор файла с сотрудниками" Width="70%" Close="{!ParamDlgCloseAction}">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="CreateNotificationDialogFullListMenu" Source="dlg_create_notification" Title="Уведомление" Close="{!ParamDlgCloseAction}">
+                <Param Name="name_id" Value="FullListMenu"/>
+            </Dialog>
+            <Dialog Name="KeyPositionSetParametersFullListMenu" Source="dlg_key_position_set_parameters" Title="Параметры ключевой должности" Width="50%" Close="{!ParamDlgCloseAction};ACTION=TalentPoolKeyPositionAction;">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="SuccessorSetParametersFullListMenu" Source="dlg_successor_set_parameters" Title="Параметры преемника" Width="50%" Close="{!ParamDlgCloseAction};ACTION=TalentPoolKeyPositionAction;">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="IncludeCollabPersonnelReserveDialogFullListMenu" Source="dlg_include_collab_personnel_reserve" Title="Выдвижение сотрудника в кадровый резерв" Width="70%" Close="{!ParamDlgCloseAction}">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="EditPersonCardDialogFullListMenu" Source="dlg_edit_person_card" Title="Редактирование параметров сотрудника" Width="70%" Close="REFRESH">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Dialog Name="EventLectorDialogFullListMenu" Source="dlg_event_lector" Title="Преподаватель" Width="500" Close="REFRESH">
+                <Param Name="select_data" Value="{CatalogListDataGridFullList}"/>
+            </Dialog>
+            <Edit Name="SetObjectStatusCloseActionFullListMenu" Hidden="1">SET=CatalogListMenuActionFullListMenu/values_data,{status};ACTION=CatalogListMenuActionFullListMenu</Edit>
+            <Dialog Name="SetObjectStatusDialogFullListMenu" Source="dlg_set_object_status" Title="Установка статуса" Close="{!SetObjectStatusCloseActionFullListMenu}">
+                <Param Name="common_status_collection_name" Value=""/>
+            </Dialog>
+            <Edit Name="SetProjectTaskStatusCloseActionFullListMenu" Hidden="1">SET=CatalogListMenuActionFullListMenu/values_data,{status};ACTION=CatalogListMenuActionFullListMenu</Edit>
+            <Dialog Name="SetProjectTaskStatusDialogFullListMenu" Source="dlg_set_project_task_status" Title="Установка статуса" Close="{!SetProjectTaskStatusCloseActionFullListMenu}"/>
+            <Edit Name="UniOperationDialogCloseActionFullListMenu" Hidden="1"/>
+            <Edit Name="UniOperationDialogSourceFullListMenu" Hidden="1"/>
+            <Dialog Name="UniOperationDialogFullListMenu" Source="{UniOperationDialogSourceFullListMenu}" Close="{!UniOperationDialogCloseActionFullListMenu}">
+                <Param Name="name_id" Value="FullListMenu"/>
+                <Param Name="selected_data" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="catalog_name" Value="course"/>
+                <Param Name="source_type" Value=""/><Param Name="Param0" Value=""/>
+                <Param Name="Param1" Value=""/>
+                <Param Name="Param2" Value=""/>
+                <Param Name="Param3" Value=""/>
+                <Param Name="Param4" Value=""/>
+                <Param Name="Param5" Value=""/>
+                <Param Name="Param6" Value=""/>
+                <Param Name="Param7" Value=""/>
+                <Param Name="Param8" Value=""/>
+                <Param Name="Param9" Value=""/>
+            </Dialog>
+            <Edit Name="UniOperationActionSourceFullListMenu" Hidden="1"/>
+            <Edit Name="UniOperationActionSuccessActionFullListMenu" Hidden="1">ALERT={messageText};</Edit>
+            <Edit Name="UniOperationActionFailureActionFullListMenu" Hidden="1">ALERT={messageText};</Edit>
+            <Action Name="UniOperationActionFullListMenu" Source="{UniOperationActionSourceFullListMenu}" Success="{!UniOperationActionSuccessActionFullListMenu}" Failure="{!UniOperationActionFailureActionFullListMenu}">
+                <Param Name="Param0" Value=""/>
+                <Param Name="Param1" Value=""/>
+                <Param Name="Param2" Value=""/>
+                <Param Name="Param3" Value=""/>
+                <Param Name="Param4" Value=""/>
+                <Param Name="Param5" Value=""/>
+                <Param Name="Param6" Value=""/>
+                <Param Name="Param7" Value=""/>
+                <Param Name="Param8" Value=""/>
+                <Param Name="Param9" Value=""/>
+                <Param Name="name_id" Value="FullListMenu"/>
+                <Param Name="selected_data" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="catalog_name" Value="course"/>
+                <Param Name="source_type" Value=""/>
+            </Action>
+            <Action Name="SendEvenNotificationsFullListMenu" Source="event_send_notifications" Success="ALERT={messageText};">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="AdjustRecruitmentPlanActionFullListMenu" Source="recruitment_plan_adjust" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="DelegateRecruitmentPlanActionFullListMenu" Source="recruitment_plan_delegate" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+                <Param Name="iUserId" Value=""/>
+            </Action>
+            <Action Name="CancelRecruitmentPlanAdjustmentActionFullListMenu" Source="recruitment_plan_cancel_adjustment" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="DeleteRecruitmentPlanActionFullListMenu" Source="recruitment_plan_delete" Success="ALERT={messageText};REFRESH;">
+                <Param Name="sSelectedData" Value="{CatalogListDataGridFullList}"/>
+            </Action>
+            <Action Name="WorckflowActionFullListMenu" Source="workflow_process" Success="{!workflow_action_success_action}" Failure="ALERT={messageText}">
+                <Param Name="object_id" Value=""/>
+                <Param Name="selected_object_ids" Value=""/>
+                <Param Name="action_id" Value=""/>
+                <Param Name="CONTEXT" Value="{CONTEXT}"/>
+            </Action>
+            <DataGrid Name="CatalogListDataGridFullList" Class="XAML-data-grid-ico-fix" Source="{CatalogListCollectionFullList}" PageSize="" Width="100%" Height="320" MaxHeight="" Selection="multiple" Hidden="false" ShowHeader="true" Categorized="">
+                <Menu>
+                    <MenuItem Title="Добавить" Click="SET=TargetData,{CatalogListDataGridSelList:*};SET=SelectedData,{CatalogListDataGridFullList};CONTEXT=NULL;UPDATE=CatalogListDataGridSelList"/>
+                </Menu>
+            </DataGrid>
+        </StackPanel>
+    </SPXMLScreen>
+
+    <Toolbar>
+        <Button Class="XAML-button XAML-button-plus" Width="100" Click="SET=TargetData,{CatalogListDataGridSelList:*};SET=SelectedData,{CatalogListDataGridFullList};CONTEXT=NULL;UPDATE=CatalogListDataGridSelList">Добавить</Button>
+        <Button Class="XAML-button XAML-button-delete" Width="100" Click="DELETE=CatalogListDataGridSelList">Удалить</Button>
+        <Button Class="XAML-button XAML-button-minus" Width="100" Click="DELETE=CatalogListDataGridSelList:*">Очистить</Button>
+        <Edit Name="SelectedData" Hidden="1">#empty#</Edit>
+        <Edit Name="TargetData" Hidden="1"/>
+    </Toolbar>
+
+    <SPXMLScreen Class="catalog_list">
+        <Collection Name="CatalogListCollectionSelList" Source="uni_catalog_list">
+            <Param Name="catalog_name" Value="course"/>
+            <Param Name="view_type" Value=""/>
+            <Param Name="check_access" Value="false"/>
+            <Param Name="open_doc" Value="false"/>
+            <Param Name="xquery_qual" Value=""/>
+            <Param Name="external_eval" Value=""/>
+            <Param Name="disp_array" Value="true"/>
+            <Param Name="array" Value="{TargetData}"/>
+            <Param Name="array_selected" Value="{SelectedData}"/>
+            <Param Name="array_link_field" Value="id"/>
+            <Param Name="show_all" Value="true"/>
+            <Param Name="disp_sort" Value="true"/>
+            <Param Name="sort_index" Value=""/>
+            <Param Name="sort_field_name" Value=""/>
+            <Param Name="sort_direct" Value="+"/>
+            <Param Name="disp_link" Value="false"/>
+            <Param Name="link_object_field" Value="PrimaryKey"/>
+            <Param Name="link_field_index" Value=""/>
+            <Param Name="link_field_name" Value=""/>
+            <Param Name="link_mode" Value=""/>
+            <Param Name="link_prop" Value=""/>
+            <Param Name="link_action" Value=""/>
+            <Param Name="link_open" Value=""/>
+            <Param Name="disp_check_box" Value="false"/>
+            <Param Name="is_data_grid" Value="true"/>
+            <Param Name="data_fields" Value=""/>
+            <Param Name="col_headers" Value=""/>
+            <Param Name="col_cells" Value=""/>
+            <Param Name="list_headers" Value=""/>
+            <Param Name="list_columns" Value=""/>
+            <Param Name="filter_id" Value="{CatalogListSchimeSelList}"/>
+            <Param Name="filter_conditions" Value=""/>
+            <Param Name="search" Value="{CatalogListSearchSelList}"/>
+            <Param Name="disp_paging" Value="false"/>
+            <Param Name="paging_size" Value="100"/>
+            <Param Name="source_type" Value=""/>
+            <Param Name="disp_icon" Value="false"/>
+            <Param Name="secid" Value="214E46E3DA018F1B3C99691A23E88B82"/>
+            <Param Name="disp_first_only" Value="false"/>
+            <Param Name="parent_field_name" Value=""/>
+        </Collection>
+        <Action Name="CatalogListActionHideSelList" Initialize="HIDE=CatalogListGridFilterSelList,CatalogListDataGridSelList;"/>
+        <Collection Name="CatalogListMenuSelListMenu" Source="uni_catalog_list_menu">
+            <Param Name="name_id" Value="SelListMenu"/>
+            <Param Name="id_field_name" Value=""/>
+            <Param Name="selected_data" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="catalog_name" Value="course"/>
+            <Param Name="source_type" Value=""/>
+        </Collection>
+        <Edit Name="CatalogListMenuActionSuccessActionSelListMenu" Hidden="1">ALERT={!messageText};</Edit>
+        <Edit Name="CatalogListMenuActionFailureActionSelListMenu" Hidden="1">ALERT={!messageText};</Edit>
+        <Action Name="CatalogListMenuActionSelListMenu" Source="uni_catalog_list_menu_action" Success="{!CatalogListMenuActionSuccessActionSelListMenu}" Failure="{!CatalogListMenuActionFailureActionSelListMenu}">
+            <Param Name="name_id" Value="SelListMenu"/>
+            <Param Name="operation_id" Value=""/>
+            <Param Name="selected_data" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="elements_data" Value=""/>
+            <Param Name="values_data" Value=""/>
+            <Param Name="source_type" Value=""/>
+        </Action>
+        <Action Name="InviteUserActionSelListMenu" Source="communication_users_actions" Success="ALERT={messageText};">
+            <Param Name="iUserId" Value=""/><Param Name="sAction" Value=""/>
+        </Action>
+        <Action Name="DismissPersonActionSelListMenu" Source="dismiss_person_action" Success="ALERT={messageText};">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="BlockAccessPersonActionSelListMenu" Source="block_access_person" Success="ALERT={messageText};">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="SendNotificatPersonActionSelListMenu" Source="send_notification_person" Success="ALERT={messageText};">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="PersonsCompareActionSelListMenu" Source="persons_compare_action" Success="OPENURL=/persons_compare?persons={persons_ids}">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="CreateEventActionSelListMenu" Source="event_create" Success="ALERT={messageText};OPENURL=/_wt/{event_id}">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="bCreateByModel" Value=""/>
+            <Param Name="iGroupId" Value=""/>
+            <Param Name="iModelEventId" Value=""/>
+            <Param Name="iDefaultTypeId" Value=""/>
+            <Param Name="sParentId" Value=""/>
+        </Action>
+        <Action Name="DuplicateEventActionSelListMenu" Source="event_duplicate" Success="ALERT={messageText};OPENURL=/_wt/{event_id}">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="bCopyParticipants" Value=""/>
+        </Action>
+        <Action Name="DeleteEventActionSelListMenu" Source="event_delete" Success="ALERT={messageText};OPENURL=/_wt/event_calendar">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="ExcludeUserFromEventActionSelListMenu" Source="event_result_exclude_collaborator" Success="ALERT={messageText};REFRESH;">
+            <Param Name="sSelectedObjects" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="source_type" Value=""/>
+        </Action>
+        <Action Name="ToggleUserEventAssistActionSelListMenu" Source="event_result_toggle_collaborator_assist" Success="ALERT={messageText};REFRESH;">
+            <Param Name="sSelectedObjects" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="ReplaceParticipantActionSelListMenu" Source="replace_participant_action" Success="ALERT={messageText};REFRESH;">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="iPersonId" Value=""/>
+        </Action>
+        <Action Name="SetEventParticipantsFromWaitingListActionSelListMenu" Source="event_set_participants_from_waiting_list" Success="ALERT={messageText};REFRESH;">
+            <Param Name="sSelectedObjects" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="sWorkflowState" Value=""/>
+            <Param Name="iEventId" Value=""/>
+            <Param Name="iRequestTypeId" Value=""/>
+        </Action>
+        <Edit Name="SelectDialogCloseActionSelListMenu" Hidden="1">SET=CatalogListMenuActionSelListMenu/elements_data,{CatalogListDataGridSelList};ACTION=CatalogListMenuActionSelListMenu</Edit>
+        <Dialog Name="SelectDialogSelListMenu" Source="dlg_select" Title="Выбор из списка" Close="{!SelectDialogCloseActionSelListMenu}">
+            <Param Name="catalog_name" Value=""/>
+            <Param Name="multi_select" Value=""/>
+            <Param Name="view_type" Value=""/>
+            <Param Name="xquery_qual" Value=""/>
+            <Param Name="check_access" Value="false"/>
+            <Param Name="selected_object_ids" Value=""/>
+            <Param Name="display_object_ids" Value=""/>
+            <Param Name="disp_filter" Value="true"/>
+            <Param Name="filter_id" Value=""/>
+            <Param Name="show_all" Value="true"/>
+            <Param Name="secid" Value="214E46E3DA018F1B3C99691A23E88B82"/>
+        </Dialog>
+        <Dialog Name="LearningParamsDialogSelListMenu" Source="dlg_set_course_test_params" Title="Параметры обучения" Close="{!ParamDlgCloseAction}">
+            <Param Name="name_id" Value="SelListMenu"/>
+            <Param Name="catalog_name" Value=""/>
+            <Param Name="multi_select" Value="1"/>
+            <Param Name="elements_data" Value=""/>
+            <Param Name="cur_index" Value="0"/>
+            <Param Name="last_action_line" Value=""/>
+        </Dialog>
+        <Dialog Name="ExcelImportCollaboratsDialogSelListMenu" Source="dlg_excel_import_collaborators" Title="Выбор файла с сотрудниками" Width="70%" Close="">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="CreateNewPersonDialogSelListMenu" Source="dlg_create_new_person" Title="Параметры сотрудника" Width="70%" Close="{!ParamDlgCloseAction}">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="CreateNewGroupDialogSelListMenu" Source="dlg_create_new_group" Title="Параметры группы" Width="70%" Close="{!ParamDlgCloseAction}">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="CreateNewDepartmentDialogSelListMenu" Source="dlg_create_new_department" Title="Параметры подразделения" Width="70%" Close="{!ParamDlgCloseAction}">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="ChangePasswordPersonDialogSelListMenu" Source="dlg_change_password_person" Title="Изменение пароля" Width="70%" Close="{!ParamDlgCloseAction}">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="PersonsImportExcelDialogSelListMenu" Source="dlg_persons_import_excel" Title="Выбор файла с сотрудниками" Width="70%" Close="{!ParamDlgCloseAction}">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="CreateNotificationDialogSelListMenu" Source="dlg_create_notification" Title="Уведомление" Close="{!ParamDlgCloseAction}">
+            <Param Name="name_id" Value="SelListMenu"/>
+        </Dialog>
+        <Dialog Name="KeyPositionSetParametersSelListMenu" Source="dlg_key_position_set_parameters" Title="Параметры ключевой должности" Width="50%" Close="{!ParamDlgCloseAction};ACTION=TalentPoolKeyPositionAction;">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="SuccessorSetParametersSelListMenu" Source="dlg_successor_set_parameters" Title="Параметры преемника" Width="50%" Close="{!ParamDlgCloseAction};ACTION=TalentPoolKeyPositionAction;">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="IncludeCollabPersonnelReserveDialogSelListMenu" Source="dlg_include_collab_personnel_reserve" Title="Выдвижение сотрудника в кадровый резерв" Width="70%" Close="{!ParamDlgCloseAction}">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="EditPersonCardDialogSelListMenu" Source="dlg_edit_person_card" Title="Редактирование параметров сотрудника" Width="70%" Close="REFRESH">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Dialog Name="EventLectorDialogSelListMenu" Source="dlg_event_lector" Title="Преподаватель" Width="500" Close="REFRESH">
+            <Param Name="select_data" Value="{CatalogListDataGridSelList}"/>
+        </Dialog>
+        <Edit Name="SetObjectStatusCloseActionSelListMenu" Hidden="1">SET=CatalogListMenuActionSelListMenu/values_data,{status};ACTION=CatalogListMenuActionSelListMenu</Edit>
+        <Dialog Name="SetObjectStatusDialogSelListMenu" Source="dlg_set_object_status" Title="Установка статуса" Close="{!SetObjectStatusCloseActionSelListMenu}">
+            <Param Name="common_status_collection_name" Value=""/>
+        </Dialog>
+        <Edit Name="SetProjectTaskStatusCloseActionSelListMenu" Hidden="1">SET=CatalogListMenuActionSelListMenu/values_data,{status};ACTION=CatalogListMenuActionSelListMenu</Edit>
+        <Dialog Name="SetProjectTaskStatusDialogSelListMenu" Source="dlg_set_project_task_status" Title="Установка статуса" Close="{!SetProjectTaskStatusCloseActionSelListMenu}"/>
+        <Edit Name="UniOperationDialogCloseActionSelListMenu" Hidden="1"/>
+        <Edit Name="UniOperationDialogSourceSelListMenu" Hidden="1"/>
+        <Dialog Name="UniOperationDialogSelListMenu" Source="{UniOperationDialogSourceSelListMenu}" Close="{!UniOperationDialogCloseActionSelListMenu}">
+            <Param Name="name_id" Value="SelListMenu"/>
+            <Param Name="selected_data" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="catalog_name" Value="course"/>
+            <Param Name="source_type" Value=""/>
+            <Param Name="Param0" Value=""/>
+            <Param Name="Param1" Value=""/>
+            <Param Name="Param2" Value=""/>
+            <Param Name="Param3" Value=""/>
+            <Param Name="Param4" Value=""/>
+            <Param Name="Param5" Value=""/>
+            <Param Name="Param6" Value=""/>
+            <Param Name="Param7" Value=""/>
+            <Param Name="Param8" Value=""/>
+            <Param Name="Param9" Value=""/>
+        </Dialog>
+        <Edit Name="UniOperationActionSourceSelListMenu" Hidden="1"/>
+        <Edit Name="UniOperationActionSuccessActionSelListMenu" Hidden="1">ALERT={messageText};</Edit>
+        <Edit Name="UniOperationActionFailureActionSelListMenu" Hidden="1">ALERT={messageText};</Edit>
+        <Action Name="UniOperationActionSelListMenu" Source="{UniOperationActionSourceSelListMenu}" Success="{!UniOperationActionSuccessActionSelListMenu}" Failure="{!UniOperationActionFailureActionSelListMenu}">
+            <Param Name="Param0" Value=""/>
+            <Param Name="Param1" Value=""/>
+            <Param Name="Param2" Value=""/>
+            <Param Name="Param3" Value=""/>
+            <Param Name="Param4" Value=""/>
+            <Param Name="Param5" Value=""/>
+            <Param Name="Param6" Value=""/>
+            <Param Name="Param7" Value=""/>
+            <Param Name="Param8" Value=""/>
+            <Param Name="Param9" Value=""/>
+            <Param Name="name_id" Value="SelListMenu"/>
+            <Param Name="selected_data" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="catalog_name" Value="course"/>
+            <Param Name="source_type" Value=""/>
+        </Action>
+        <Action Name="SendEvenNotificationsSelListMenu" Source="event_send_notifications" Success="ALERT={messageText};">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="AdjustRecruitmentPlanActionSelListMenu" Source="recruitment_plan_adjust" Success="ALERT={messageText};REFRESH;">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action>
+        <Action Name="DelegateRecruitmentPlanActionSelListMenu" Source="recruitment_plan_delegate" Success="ALERT={messageText};REFRESH;">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+            <Param Name="iUserId" Value=""/>
+        </Action><Action Name="CancelRecruitmentPlanAdjustmentActionSelListMenu" Source="recruitment_plan_cancel_adjustment" Success="ALERT={messageText};REFRESH;">
+        <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+    </Action>
+        <Action Name="DeleteRecruitmentPlanActionSelListMenu" Source="recruitment_plan_delete" Success="ALERT={messageText};REFRESH;">
+            <Param Name="sSelectedData" Value="{CatalogListDataGridSelList}"/>
+        </Action><Action Name="WorckflowActionSelListMenu" Source="workflow_process" Success="{!workflow_action_success_action}" Failure="ALERT={messageText}">
+        <Param Name="object_id" Value=""/>
+        <Param Name="selected_object_ids" Value=""/>
+        <Param Name="action_id" Value=""/>
+        <Param Name="CONTEXT" Value="{CONTEXT}"/>
+    </Action>
+        <DataGrid Name="CatalogListDataGridSelList" Class="XAML-data-grid-ico-fix" Source="{CatalogListCollectionSelList}" PageSize="" Width="100%" Height="160" MaxHeight="" Selection="multiple" Hidden="false" ShowHeader="true" Categorized="">
+            <Menu><MenuItem Title="Удалить" Click="DELETE=CatalogListDataGridSelList"/></Menu>
+        </DataGrid>
+    </SPXMLScreen>
+    <Action Name="DlgSelectCheckEmtyAction" Source="dlg_select_check_selected" Success="CONTEXT=DlgSelectContext;CLOSEDIALOG;" Failure="ALERT={messageText}">
+        <Param Name="action" Value="empty"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="selected_object_ids" Value="{CatalogListDataGridSelList:*}"/>
+        <Param Name="action" Value="empty"/>
+    </Action>
+    <Action Name="DlgSelectOkCancelAction" Source="dlg_select_check_selected" Success="SET=HTMLProcessedData,{ResultData}; SET=HTMLProcessed,{ResultFlag}; REFRESH;" Failure="ALERT=Выберите запись.">
+        <Param Name="action" Value=""/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="selected_object_ids" Value="{CatalogListDataGridSelList:*}"/>
+    </Action>
+    <ContextGroup Name="DlgSelectContext" Items="CatalogListDataGridSelList:*"/>
+    <Grid Width="100%" Class="XAML-dialog-buttons-grid XAML-grid-dialog-buttons">
+        <GridColumns>
+            <GridColumn/>
+            <GridColumn Width="100"/>
+            <GridColumn Width="100"/>
+        </GridColumns>
+        <GridRow><Label/>
+            <Button Width="100" Click="CONTEXT=DlgSelectContext;CLOSEDIALOG;">Выбрать</Button>
+            <Button Width="100" Click="CANCELDIALOG">Отмена</Button>
+        </GridRow>
+    </Grid>
+</SPXMLScreen>

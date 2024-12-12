@@ -1,0 +1,1016 @@
+/* FONTS */
+@font-face {
+    font-family: "PermanentMarker";
+    src: url("../font/PermanentMarker.ttf");
+}
+
+.permanent-marker {
+    font-family: 'PermanentMarker', serif;
+}
+
+@font-face {
+    font-family: "LilitaOne";
+    src: url("../font/LilitaOne.ttf");
+}
+
+.lilita-one {
+    font-family: 'LilitaOne', serif;
+}
+
+@font-face {
+    font-family: "UbuntuMono";
+    src: url("../font/ubuntumono.ttf");
+}
+
+.ubuntu-mono {
+    font-family: 'UbuntuMono', serif;
+}
+
+@font-face {
+    font-family: "UbuntuMonoBold";
+    src: url("../font/ubuntumonobold.ttf");
+}
+
+.ubuntu-mono-bold {
+    font-family: 'UbuntuMonoBold', serif;
+}
+
+@font-face {
+    font-family: "ArnamuMono";
+    src: url("../font/arnamu_mono.ttf");
+}
+
+.arnamu-mono {
+    font-family: 'ArnamuMono', serif;
+}
+
+@font-face {
+    font-family: "ArnamuMonoBold";
+    src: url("../font/arnamu_mono_bold.ttf");
+}
+
+.arnamu-mono-bold {
+    font-family: 'ArnamuMonoBold', serif;
+}
+
+@font-face {
+    font-family: "RockAndRoll";
+    src: url("../font/Rock_And_Roll.ttf");
+}
+
+.rock-and-roll {
+    font-family: 'RockAndRoll', serif;
+}
+
+/* CSS */
+.body {
+    font-family: 'Noto Sans', sans-serif;
+    background-color: black;
+    background-color: #baa7ce;
+    background-image: url(../images/6.png);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.thread-table {
+    padding-left: 40px;
+}
+
+.thread {
+    width: 850px;
+    height: 325px;
+    border: 1px solid #7e7e7e;
+    border-radius: 1px;
+    padding: 10px 0 0 0;
+    font-size: smaller;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    float: left;
+    margin: 0 15px 10px -27px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.statistic {
+    margin-right: 4px;
+}
+
+.ws_statistic {
+    border: 1px solid #7e7e7e;
+    border-radius: 1px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    /*background-image: linear-gradient(290deg, #212529, #5e5f5e, #212529) !important;*/
+    background-color: #212529;
+    margin-bottom: 10px;
+}
+
+.header-label {
+    margin-top: 20px;
+    margin-left: 90px;
+    color: blanchedalmond;
+    font-size: 16px;
+}
+
+.header-image {
+    margin-top: 0px;
+}
+
+.header-image-size {
+    width: 64px;
+    height: 64px;
+    margin-left: 8px;
+}
+
+.ws-server {
+    border-radius: 2rem !important;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    margin-top: 10px;
+    margin-left: 135px;
+    width: 63px;
+    color: g
+}
+
+.ws-server-active {
+    background-image: linear-gradient(290deg, #7928ca, #ff0080, #7928ca) !important;
+    color: mintcream;
+}
+
+.ws-server-inactive {
+    background-image: linear-gradient(290deg, #212529, #5e5f5e, #212529) !important;
+    color: darkgray;
+    text-indent: 16px;
+}
+
+.ws-server-unknown {
+    background-image: linear-gradient(290deg, #212529, #5e5f5e, #212529) !important;
+    color: mintcream;
+}
+
+.left-block-btn {
+    background-image: linear-gradient(-20deg, #4e4376, #2b5876, #4e4376 100%) !important;
+    color: mintcream;
+}
+
+.ws-visitors {
+    cursor: pointer;
+    border-radius: 2rem !important;
+    padding-left: 2.5rem !important;
+    padding-right: 3rem !important;
+    border: 1px solid mintcream !important;
+    margin-top: 10px;
+    margin-left: 138px;
+    width: 63px;
+}
+
+.visitors-element {
+    cursor: pointer;
+    font-size: small;
+    color: silver;
+    margin-left: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.thread-active {
+    background-image: linear-gradient(290deg, #7928ca, #ff0080, #7928ca) !important;
+}
+
+.thread-inactive {
+    background-image: linear-gradient(290deg, #212529, #5e5f5e, #212529) !important;
+}
+
+.ws-server-tooltip {
+    font-size: 10px;
+    color: silver;
+    padding-left: 185px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.owner {
+    height: 160px;
+    width: 60px;
+    margin-top: -11px;
+    margin-left: -2px;
+}
+
+.row-div {
+    padding-left: 24px;
+}
+
+.float-left-box {
+    float: left;
+}
+
+.float-right-box {
+    float: right;
+}
+
+.idbox {
+    margin-top: -8px;
+    padding-left: 6px;
+}
+
+.pointer {
+    margin-top: -1px;
+    color: green;
+}
+
+.btn {
+    color: mintcream;
+    background-image: linear-gradient(-20deg, #4e4376, #2b5876 0%, #4e4376 100%) !important;
+    cursor: pointer;
+    border-radius: 0.375rem !important;
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+    border: 1px solid mintcream !important;
+    margin-top: 4px;
+}
+
+.btn-pointer {
+    color: mintcream;
+}
+
+.device {
+    color: mintcream;
+    cursor: pointer;
+    border-radius: 0.3rem !important;
+    padding-right: 0.3rem !important;
+    padding-left: 0.3rem !important;
+    border: 1px solid mintcream !important;
+    margin-top: 4px;
+    margin-left: 5px;
+    font-family: 'RockAndRoll', serif;
+}
+
+.device-run {
+    background-color: limegreen;
+}
+
+.device-sleep {
+    background-color: #181f4a;
+}
+
+.device-wait {
+    background-color: #ffc107;
+}
+
+.device-error {
+    background-color: #fc185a;
+}
+
+.pointer-image {
+    width: 24px;
+    height: 24px;
+    padding-top: 2px;
+    margin-top: 1px;
+}
+
+.count-box {
+    border: 1px solid #7e7e7e;
+    border-radius: 4px;
+    padding-right: 5px;
+    margin-left: 5px;
+    margin-top: 4px;
+    background-color: lightgray;
+}
+
+.count-label {
+    margin-top: -3px;
+}
+
+.arrow {
+    margin-top: -3px;
+}
+
+.arrow-image {
+    width: 18px;
+    height: 18px;
+    margin-top: -20px;
+}
+
+.idbox-imagebox-copy {
+    padding-left: 3px;
+    margin-top: 5px;
+}
+
+.idbox-imagebox-image-copy {
+    width: 12px;
+    height: 12px;
+}
+
+.idbox-textbox {
+    padding-top: 4px;
+}
+
+.idbox-textbox-text {
+    font-size: 14px;
+    padding-left: 2px;
+    color: mintcream;
+}
+
+.text-align {
+    margin-top: 10px;
+}
+
+.descbox-textbox-text-color {
+    color: mintcream;
+}
+
+.tab-element {
+    height: 2270px;
+}
+
+#tabstrip_ts_active {
+    background-color: #ffe393;
+}
+
+.server-element {
+    border-color: silver;
+    background-color: #212529;
+    margin-bottom: 3px;
+    /*float: left;
+    width: 400px;
+    height: 400px;*/
+
+}
+
+.server-image {
+    height: 32px;
+}
+
+.server-duration {
+    float: left;
+}
+
+.server-info-block {
+    font-size: x-small;
+}
+
+.server-vertical-block {
+    float: left;
+}
+
+.server_min_max {
+    padding-left: 3px;
+    color: mintcream;
+}
+
+.progress-div {
+    margin-top: 1px;
+    margin-left: 13px;
+    height: 3px;
+    width: 30px;
+    color: mintcream;
+}
+
+.ping-block {
+    padding-right: 5px;
+}
+
+.ping-block-text {
+    font-size: x-small;
+    text-align: center;
+    padding-left: 10px;
+    color: mintcream;
+}
+
+.ping-prev-block-text {
+    color: darkgray;
+}
+
+.history-duration-element {
+    margin-left: 1px;
+    width: 5px;
+}
+
+.history-block {
+    padding-left: 2px;
+    padding-bottom: 3px;
+    border-style: solid;
+    border-color: mintcream;
+    border-width: 0 0 1px 1px;
+    width: 1645px;
+}
+
+.observe-button {
+    color: mintcream;
+    background-color: #0d95e8;
+}
+
+.tools-box {
+    font-size: xx-small;
+    margin-left: -12px;
+    border-radius: 2px;
+}
+
+.server-tab {
+    background-image: linear-gradient(290deg, #0dcaf0, #0d6efd) !important;
+    color: black;
+    font-size: smaller;
+    border-radius: 2px;
+    border: 1px solid mintcream;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.time-box {
+    float: left;
+    color: mintcream;
+}
+
+.server-name {
+    border-radius: 5px;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    text-align: center;
+    background-image: linear-gradient(290deg, #ffc107, #fd7e14) !important;
+    color: black;
+    margin-top: -5px;
+    font-size: x-small;
+    height: 14px;
+    margin-left: -11px;
+    font-weight: bold;
+}
+
+.server-tools {
+    padding-top: 2px;
+}
+
+.user-box {
+    padding-left: 24px;
+    margin-top: 2px;
+}
+
+.chart {
+    width: 306px;
+    height: 95px;
+    border: 1px solid #7e7e7e;
+    border-radius: 2px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: #212529;
+    margin-left: 17px;
+}
+
+.error-parent-box {
+    width: 390px;
+    height: 95px;
+    border: 1px solid #7e7e7e;
+    border-radius: 2px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: #212529;
+    color: black;
+}
+
+.error-message-box {
+    background-color: lightgray;
+    width: 400px;
+    height: 95px;
+    padding-left: 5px;
+    overflow-y: scroll;
+    font-size: smaller;
+}
+
+.agent-vs-code {
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+.agent-vs-code-id {
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 1px;
+    text-indent: 10px;
+    width: 200px;
+}
+
+.agent-vs-code-file {
+    border: 1px solid black;
+    border-radius: 1px;
+    text-indent: 10px;
+    width: 350px;
+}
+
+.agent-count-box {
+    float: right;
+    margin-right: 5px;
+    border: 1px solid #7e7e7e;
+    border-radius: 10px;
+    background-color: black;
+    font-size: x-small;
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    color: mintcream;
+}
+
+/*AA*/
+.owner-7351734047845980789 {
+    background-color: lawngreen;
+}
+
+/*Воронова Татьяна*/
+.owner-7264898128043535365 {
+    background-color: lightgreen;
+}
+
+/*Рубцова Екатерина*/
+.owner-6940257832121737591 {
+    background-color: violet;
+}
+
+/*Скрипицына Эвелина*/
+.owner-7334686017280430390 {
+    background-color: dodgerblue;
+}
+
+/*Федулов Кирилл */
+.owner-6735102903682814317 {
+    background-color: deeppink;
+}
+
+/*Птах Свелана */
+.owner-6917260073148487151 {
+    background-color: darkviolet;
+}
+
+/*Длинфинская Маргарита*/
+.owner-7094217282114117074 {
+    background-color: yellow;
+}
+
+/*Варенникова Евгения*/
+.owner-7016683244259312127 {
+    background-color: sandybrown;
+}
+
+/*Стародубцева Ольга*/
+.owner-7060363200107584343 {
+    background-color: powderblue;
+}
+
+/*Кораблева Светлана*/
+.owner-6668632305766434014 {
+    background-color: #9b0086;
+}
+
+/* Усольцева Елена */
+.owner-6626721076160829338 {
+    background-color: orangered;
+}
+
+/* Воронин Михаил */
+.owner-6924148088616675414 {
+    background-color: aquamarine;
+}
+
+/* Климов Максим */
+.owner-7060360404203351202 {
+    background-color: rosybrown;
+}
+
+/* Терентьева Ксения */
+.owner-6834093337170887006 {
+    background-color: #fd351e;
+}
+
+/*Зонова Мария Витальевна*/
+.owner-7300922775248113945 {
+    background-color: #212a5e;
+}
+
+/*Вебсофт Агент*/
+.owner-7389518304440750773 {
+    background-color: #4a4fd4;
+}
+
+.vc-box {
+    padding-left: 10px;
+}
+
+.vc-link {
+    width: 800px;
+}
+
+.header-box {
+    font-size: 11px;
+    color: greenyellow;
+    margin-right: -3px;
+    cursor: pointer;
+}
+
+.footer-box {
+    font-size: 12px;
+    color: greenyellow;
+    text-indent: 30px;
+    margin-right: -3px;
+    cursor: pointer;
+}
+
+.header-box-align {
+    margin-left: -3px;
+}
+
+.header-box-align1 {
+    margin-left: 1px;
+}
+
+.value-line {
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    height: 25px;
+    color: blanchedalmond;
+}
+
+.agent-info-block {
+    margin-right: 2px;
+    color: aquamarine;
+}
+
+.user-info-box {
+    margin-right: 2px;
+    color: gold;
+    padding-left: 85px;
+}
+
+.special-block {
+    padding-top: 5px;
+    margin-left: 55px;
+}
+
+.user-legend {
+    font-size: xx-small;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 5px;
+    border-radius: 3px;
+    border: 1px solid black;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.agent-name-box {
+    color: mediumspringgreen;
+}
+
+.user-name-box {
+    color: palegoldenrod;
+    font-size: 12px;
+}
+
+#calendar {
+    font-size: x-small;
+    margin-top: 3px;
+}
+
+.visitor-index-box {
+    width: 10px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.visitor-name-box {
+    width: 128px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.visitor-id-box {
+    width: 90px;
+    margin-left: 4px;
+    color: cornsilk;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.visitors-font {
+    font-size: xx-small;
+}
+
+.task-box {
+    border: 1px solid #7e7e7e;
+    border-radius: 1px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    height: 135px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.overload-box {
+    border: 1px solid #7e7e7e;
+    border-radius: 1px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    height: 175px;
+    background-color: #212529;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.big_right_box {
+    width: 657px;
+}
+
+.network-box {
+    border: 1px solid #7e7e7e;
+    border-radius: 1px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: #212529;
+    margin-right: 15px;
+    color: orange;
+}
+
+.network-gradient {
+    /*background-image: linear-gradient(290deg, #212529, #5e5f5e, #212529 50%) !important;*/
+    background-color: #212529;
+    border: 1px solid #7e7e7e;
+}
+
+.min-caption {
+    color: mintcream;
+    font-size: small;
+    margin-top: 2px;
+    padding-left: 25px;
+}
+
+.min-value {
+    font-size: small;
+    margin-top: 2px;
+    margin-left: 5px;
+}
+
+.max-caption {
+    color: mintcream;
+    font-size: small;
+    margin-top: 2px;
+    margin-left: 5px;
+}
+
+.max-value {
+    font-size: small;
+    margin-top: 2px;
+    margin-left: 5px;
+}
+
+.network-green-color {
+    color: #7FFF00;
+}
+
+.network-orange-color {
+    color: #ffc107;
+}
+
+.network-red-color {
+    color: coral;
+}
+
+.network_btn {
+    cursor: pointer;
+    border-radius: 2rem !important;
+    padding-left: 1.3rem !important;
+    padding-right: 1.3rem !important;
+    border: 1px solid mintcream !important;
+    margin-right: 10px;
+}
+
+.caption-box {
+    color: blanchedalmond;
+    text-indent: 8px;
+    font-family: 'RockAndRoll', serif;
+}
+
+.mismatch-pointer-image {
+    width: 8px;
+    height: 8px;
+    margin-right: 10px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.up_box {
+    color: #fc185a;
+    font-size: x-small;
+    padding-right: 10px;
+    margin-top: 5px;
+}
+
+.down_box {
+    color: #75b798;
+    font-size: x-small;
+    padding-right: 10px;
+}
+
+.nil_box {
+    color: mintcream;
+    font-size: x-small;
+    padding-right: 10px;
+    margin-top: 5px;
+}
+
+.sun_parent_box {
+    visibility: hidden;
+}
+
+.sun_image {
+    width: 16px;
+    height: 16px;
+}
+
+.count_box {
+    color: mintcream;
+    text-indent: 10px;
+    font-size: x-large;
+    margin-top: -31px;
+    margin-left: 10px;
+    width: 80px;
+}
+
+.footer_box {
+    margin-top: 10px;
+}
+
+.footer_caption {
+    padding-left: 5px;
+    color: silver;
+    font-size: xx-small;
+    text-indent: 10px;
+    margin-top: -18px;
+}
+
+.footer-date-caption {
+    margin-top: 1px;
+    float: right;
+    margin-right: 5px;
+    color: lavender;
+    font-size: xx-small;
+}
+
+.mismatch-btn {
+    color: mintcream;
+    background-image: linear-gradient(310deg, #7928ca, #ff0080) !important;
+    cursor: pointer;
+    border-radius: 2rem !important;
+    padding-right: 1.5rem !important;
+    padding-left: 1.5rem !important;
+    border: 1px solid mintcream !important;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.hours-count {
+    color: black;
+    font-size: x-small;
+    font-family: 'RockAndRoll', serif;
+    font-weight: bold;
+    position: absolute;
+    margin-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 4px;
+    width: 23px;
+    text-align: center;
+    border: 1px solid mintcream;
+}
+
+.muc-count {
+    color: black;
+    font-size: x-small;
+    font-family: 'RockAndRoll', serif;
+    font-weight: bold;
+    position: relative;
+    left: 10px;
+    background-image: linear-gradient(290deg, #fadc83, #ffc107 30%) !important;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 4px;
+    width: 40px;
+    text-align: center;
+    top: 36px;
+}
+
+.other-count {
+    color: black;
+    font-size: x-small;
+    font-family: 'RockAndRoll', serif;
+    font-weight: bold;
+    position: relative;
+    left: 75px;
+    background-image: linear-gradient(290deg, #ceff86, #7cfc00 30%) !important;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 4px;
+    width: 40px;
+    text-align: center;
+    top: 22px;
+}
+
+.created_colls-tab {
+    color: white;
+    position: absolute;
+    background-color: #212529;
+    border: 1px solid #7e7e7e;
+    margin-top: 0px;
+    padding: 2px 10px 3px;
+    cursor: pointer;
+}
+
+.created_colls-tab-day {
+    margin-left: 94px;
+}
+
+.created_colls-tab-month {
+    margin-left: 180px;
+}
+
+.created-colls-active {
+    background-color: lightyellow;
+    color: black;
+}
+
+.colls-datetime {
+    position: absolute;
+    color: silver;
+    margin-top: 400px;
+    margin-left: 554px;
+    font-size: x-small;
+}
+
+.pinned {
+    position: absolute;
+    top: 40px;
+    left: 400px;
+    border: 2px solid gold;
+    box-shadow: rgba(255, 255, 255, 0.3) 2px 2px 2px 1px;
+}
+
+.pinned-color {
+    background-image: linear-gradient(-20deg, #212a5e, #4a4fd4, #212a5e) !important;
+}
+
+.pin-btn {
+    position: absolute;
+    cursor: pointer;
+    border-radius: 2rem !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    border: 1px solid mintcream !important;
+    margin-right: 10px;
+    font-size: xx-small;
+    margin-left: 795px;
+    margin-top: -5px;
+    width: 25px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.unpinned-btn-mode {
+    background-image: linear-gradient(-20deg, #4e4376, #2b5876, #4e4376 100%) !important;
+    color: mintcream;
+}
+
+.start_datetime {
+    position: absolute;
+    color: greenyellow;
+    font-size: 9px;
+    margin-left: 5px;
+    margin-top: 100px;
+}
+
+.refresh-btn {
+    position: absolute;
+    cursor: pointer;
+    border-radius: 2rem !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    margin-left: 570px;
+    margin-top: -385px;
+    border: 1px solid mintcream !important;
+    background-image: linear-gradient(-20deg, #4e4376, #2b5876, #4e4376 100%) !important;
+    color: mintcream;
+    font-size: xx-small;
+    z-index: 1;
+}
+
+::backdrop {
+    background-image: linear-gradient(
+            45deg,
+            dimgrey,
+            dimgrey
+    );
+    opacity: 0.75;
+}
+
+#stickyNotification #closeBtn{
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px;
+}
+#stickyNotification #closeBtn:hover{
+    color: white;
+    cursor: pointer;
+}

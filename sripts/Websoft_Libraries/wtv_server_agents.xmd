@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="server_agent">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<server_agents>
+	<server_agent MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<type TYPE="string" FOREIGN-ARRAY="common.server_agent_types" TITLE="const=jzfxcjxuz8"/>
+
+		<INHERIT TYPE="ms_periodity_base"/>
+
+		<block TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=t0uzpnfv2b"/>
+
+		<check_time_step PROPERTY="1" PARAM="_cur_date" PARAM="iSleepSecParam" EXPR="
+				return tools.check_periodity( Child(0).Parent, _cur_date, iSleepSecParam );
+		"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</server_agent>
+</server_agents>
+
+</SPXML-FORM>

@@ -1,0 +1,152 @@
+<SPXMLScreen Class="divTile">
+    <%
+    var statuses = [];
+    status = {};
+    status.id = 0;
+    status.name = "Назначен";
+    statuses.push(status);
+
+    status = {};
+    status.id = 1;
+    status.name = "В процессе";
+    statuses.push(status);
+
+    status = {};
+    status.id = 2;
+    status.name = "Завершен";
+    statuses.push(status);
+
+    status = {};
+    status.id = 3;
+    status.name = "Не пройден";
+    statuses.push(status);
+
+    status = {};
+    status.id = 4;
+    status.name = "Пройден";
+    statuses.push(status);
+
+    status = {};
+    status.id = 5;
+    status.name = "Просмотрен";
+    statuses.push(status);
+
+    status = {};
+    status.id = 6;
+    status.name = "Отменен";
+    statuses.push(status);
+
+    function getStatusName(status) {
+        for(element in statuses) {
+            if(element.id == status) {
+                return element.name;
+            }
+        }
+
+        return "";
+    }
+
+    function getEventCutName(name) {
+        if(StrCharCount(name) > 39) {
+            return StrCharRangePos(name, 0, 39) + "...";
+        } else {
+            return name;
+        }
+    }
+
+    educationPlanList = ArrayDirect(XQuery("sql:" +
+        " SELECT eps.id, gs.id AS group_id, eps.object_name, eps.create_date, eps.finish_date, eps.state_id" +
+        " FROM [WTDB].[dbo].education_plans AS eps" +
+        "   INNER JOIN [WTDB].[dbo].groups AS gs ON eps.object_id = gs.id" +
+        "   INNER JOIN [WTDB].[dbo].[group] AS g ON gs.id = g.id" +
+        " WHERE (UPPER(eps.code) LIKE 'MODPROG_%' OR UPPER(eps.code) LIKE 'VTREN_CALENDAR_%')" +
+        " ORDER BY eps.code"));
+
+    //document.querySelectorAll('ul > li:last-child');
+    %>
+    <Grid Width="900" Class="grid">
+        <GridColumns>
+            <GridColumn Width="400"/>
+            <GridColumn Width="130"/>
+            <GridColumn Width="150"/>
+            <GridColumn/>
+        </GridColumns>
+        <GridRow>
+            <Label Class="header">Мероприятие</Label>
+            <Label Class="header">Дата начала</Label>
+            <Label Class="header">Дата окончания</Label>
+            <Label Class="header">Статус</Label>
+        </GridRow>
+        <%
+        for(educationPlan in educationPlanList) {
+            groupDoc = tools.open_doc(educationPlan.group_id);
+
+            if(groupDoc != undefined) {
+                collaborators = groupDoc.TopElem.collaborators;
+
+                for(collaborator in collaborators) {
+                    if(collaborator.collaborator_id == 6743923349751162819) {
+        %>
+        <GridRow>
+            <HTMLBox>
+                <![CDATA[
+                <div class="row active_cell region-link" onclick="document.getElementById('a_<%=educationPlan.id%>').click();">
+                    <%=educationPlan.object_name%><a id="a_<%=educationPlan.id%>" class="region-link" href="https://www.yaplakal.com/<%=educationPlan.id%>" target="_blank" style="display: none;"></a>
+                </div>
+                ]]>
+            </HTMLBox>
+            <Label Class="row"><%=StrDate(educationPlan.start_date, false)%></Label>
+            <Label Class="row"><%=StrDate(educationPlan.finish_date, false)%></Label>
+            <Label Class="row"><%=getStatusName(educationPlan.state_id)%></Label>
+        </GridRow>
+        <%
+                    }
+                }
+            }
+        }
+        %>
+    </Grid>
+
+    <HTMLBox Dynamic="true"><![CDATA[
+        <style>
+            .grid {
+                font-size: 17px;
+                font-family: 'Roboto', 'Open Sans', Trebuchet MS, Verdana, Tahoma, sans-serif;
+                margin-left: 80px;
+            }
+
+            .row {
+                background-color: #F3F3F4;
+                text-indent: 20px;
+                height: 40px;
+                padding-top: 10px;
+                margin-top: 3px;
+            }
+
+            .header {
+                color: #BDB7BA;
+                background-color: #F3F3F4;
+                text-indent: 20px;
+                height: 40px;
+                padding-top: 10px;
+                margin-top: 3px;
+            }
+
+            .active_cell {
+                color: #4176ea;
+                cursor: pointer;
+            }
+
+            .row:hover{
+                cursor: pointer;
+            }
+
+            .row:hover .region-link{
+                color: navajowhite;
+            }
+        </style>
+        <script>
+        </script>
+        ]]>
+    </HTMLBox>
+</SPXMLScreen>

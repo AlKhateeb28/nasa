@@ -1,0 +1,70 @@
+﻿<%
+// 221224
+if(curWebMode!=undefined)
+{
+	var bPartTracing = global_settings.settings.GetOptProperty("tracing", false);
+	var sPartTracingParam = Request.QueryString.GetOptProperty("tracing");
+	var iPartStart;
+	bPartTracing = (bPartTracing && sPartTracingParam!=undefined);
+	if(bPartTracing)
+	{
+		EnableLog("tracing");
+		iPartStart = GetCurTicks();
+		LogEvent("tracing", "\n*** PAGE PART " + curWebMode.GetOptProperty("name", "?web_mode?") + " " + curWebModeID + " zone main start ***\n");
+	}
+	var oInstructions = null;
+	try
+	{
+		oInstructions = ParseJson(curWebMode.loading_instruction);
+	}
+	catch (e)
+	{
+		oInstructions = {};
+	}
+	curWebDesignParamSets = new Object;
+
+	if(oInstructions!=null)
+	{
+		curWebDesignID = Env.GetOptProperty( "curWebDesignID", null );
+		if ( curWebDesignID != null )
+		{
+			var bParamsets = true;
+			if(oInstructions.HasProperty("paramsets"))
+			{
+				bParamsets = oInstructions.paramsets;
+			}
+			if(bParamsets)
+			{
+				curWebDesign = tools_web.get_cur_web_design( Env );
+				if ( curWebDesign.lp_custom_web_template_id != null )
+				{
+					try
+					{
+						tools_web.insert_custom_code( curWebDesign.lp_custom_web_template_id, null, {
+							'bEval': true,
+							'bNaked': false,
+							'iDepth': 0,
+							'aOfFldNativeParamsArr': null,
+							'bExternalEnvelope': true,
+							'bNoCache': false
+						} );
+					}
+					catch ( err )
+					{
+						alert( err );
+					}
+				}
+			}
+		}
+		if(bPartTracing)
+		{
+			LogEvent("tracing", "\n*** PAGE PART '" + curWebMode.GetOptProperty("name", "?web_mode?") + "' " + curWebModeID + " zone main paramsets checked " + (GetCurTicks() - iPartStart) + "ms ***\n");
+		}
+	}
+	Response.Write(tools_web.place_zone( "main" ));
+	if(bPartTracing)
+	{
+		LogEvent("tracing", "\n*** PAGE PART '" + curWebMode.GetOptProperty("name", "?web_mode?") + "' " + curWebModeID + " zone main end " + (GetCurTicks() - iPartStart) + "ms ***\n");
+	}
+}
+%>

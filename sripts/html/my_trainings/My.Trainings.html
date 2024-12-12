@@ -1,0 +1,121 @@
+<SPXMLScreen Class="divTile">
+    <%
+    var statuses = [];
+    status = {};
+    status.id = "close";
+    status.name = "Завершено";
+    statuses.push(status);
+
+    status = {};
+    status.id = "cancel";
+    status.name = "Отменено";
+    statuses.push(status);
+
+    status = {};
+    status.id = "plan";
+    status.name = "Планируется";
+    statuses.push(status);
+
+    status = {};
+    status.id = "active";
+    status.name = "Проводится";
+    statuses.push(status);
+
+    status = {};
+    status.id = "project";
+    status.name = "Проект";
+    statuses.push(status);
+
+    function getStatusName(status) {
+        for(element in statuses) {
+            if(element.id == status) {
+                return element.name;
+            }
+        }
+
+        return "";
+    }
+
+    function getEventCutName(name) {
+        if(StrCharCount(name) > 39) {
+            return StrCharRangePos(name, 0, 39) + "...";
+        } else {
+            return name;
+        }
+    }
+
+    eventResultList = ArrayDirect(XQuery("sql:" +
+    " WITH TempTable1 AS (" +
+    " SELECT c.id, c.fullname, c.login, o.code" +
+    " FROM [WTDB].[dbo].collaborators c" +
+    " INNER JOIN [WTDB].[dbo].orgs o ON c.org_id = o.id" +
+    " WHERE c.id = " + curUserID +
+    " ) " +
+    " SELECT DISTINCT ems.name, ev.start_date, ev.finish_date, ev.status_id" +
+    " FROM TempTable1" +
+    " INNER JOIN [WTDB].[dbo].collaborators c ON TempTable1.fullname = c.fullname AND c.code LIKE 'load_muc%'" +
+    " INNER JOIN [WTDB].[dbo].orgs o ON TempTable1.code = o.code" +
+    " INNER JOIN [WTDB].[dbo].event_results AS evs ON c.id = evs.person_id AND evs.is_assist = 1" +
+    " INNER JOIN [WTDB].[dbo].events AS ev ON evs.event_id = ev.id" +
+    " INNER JOIN [WTDB].[dbo].education_methods AS ems ON ev.education_method_id = ems.id" +
+    " ORDER BY ev.finish_date DESC"));
+
+    //document.querySelectorAll('ul > li:last-child');
+    %>
+    <Grid Width="900" Class="grid">
+        <GridColumns>
+            <GridColumn Width="400"/>
+            <GridColumn Width="130"/>
+            <GridColumn Width="150"/>
+            <GridColumn/>
+        </GridColumns>
+        <GridRow>
+            <Label Class="header">Мероприятие</Label>
+            <Label Class="header">Дата начала</Label>
+            <Label Class="header">Дата окончания</Label>
+            <Label Class="header">Статус</Label>
+        </GridRow>
+        <%
+        for(eventResult in eventResultList) {
+        %>
+        <GridRow>
+            <Label Class="row active_cell"><%=getEventCutName(eventResult.name)%></Label>
+            <Label Class="row"><%=StrDate(eventResult.start_date, false)%></Label>
+            <Label Class="row"><%=StrDate(eventResult.finish_date, false)%></Label>
+            <Label Class="row"><%=getStatusName(eventResult.status_id)%></Label>
+        </GridRow>
+        <%
+        }
+        %>
+    </Grid>
+
+    <HTMLBox Dynamic="true"><![CDATA[
+        <style>
+            .grid {
+                font-size: 17px;
+                font-family: 'Roboto', 'Open Sans', Trebuchet MS, Verdana, Tahoma, sans-serif;
+                margin-left: 80px;
+            }
+
+            .row {
+                background-color: #F3F3F4;
+                text-indent: 20px;
+                height: 40px;
+                padding-top: 10px;
+                margin-top: 3px;
+            }
+
+            .header {
+                color: #BDB7BA;
+                background-color: #F3F3F4;
+                text-indent: 20px;
+                height: 40px;
+                padding-top: 10px;
+                margin-top: 3px;
+            }
+        </style>
+        <script>
+        </script>
+        ]]>
+    </HTMLBox>
+</SPXMLScreen>

@@ -1,0 +1,100 @@
+.float-left-box {
+    float: left;
+}
+
+.float-right-box {
+    float: right;
+}
+
+.task_box {
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    height: 120px;
+    background-color: #212529;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.caption_box {
+    color: orange;
+    text-indent: 15px;
+}
+
+.small_caption_box {
+    color: orange;
+    font-size: small;
+    text-indent: 25px;
+}
+
+.count_box {
+    color: white;
+    text-indent: 10px;
+    font-size: x-large;
+    margin-top: -31px;
+    margin-left: 10px;
+    width: 80px;
+}
+
+.up_box {
+    color: #fc185a;
+    font-size: x-small;
+    padding-right: 10px;
+}
+
+.down_box {
+    color: #75b798;
+    font-size: x-small;
+    padding-right: 10px;
+}
+
+.nil_box {
+    color: white;
+    font-size: x-small;
+    padding-right: 10px;
+}
+
+.footer_box {
+    margin-top: 10px;
+}
+
+.footer_caption {
+    padding-left: 5px;
+    color: silver;
+    font-size: xx-small;
+    text-indent: 10px;
+    margin-top: -18px;
+}
+
+.pointer-image {
+    width: 8px;
+    height: 8px;
+    margin-right: 10px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+.pointer {
+    margin-top: -4px;
+    color: #90a4ae;
+}
+
+.btn {
+    color: white;
+    background-image: linear-gradient(310deg, #7928ca, #ff0080) !important;
+    cursor: pointer;
+    border-radius: 2rem !important;
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+    border: 0 !important;
+    margin-top: 10px;
+}
+
+.sun_parent_box {
+    visibility: hidden;
+}
+
+.sun_image {
+    width: 16px;
+    height: 16px;
+}

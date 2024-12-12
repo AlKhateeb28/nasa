@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<server_agent>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<obj TYPE="variant" TITLE="const=c_object"/>
+
+	<INHERIT TYPE="ms_periodity_base"/>
+
+	<block TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=abjv7dmw10"/>
+
+	<type TYPE="string" NOT-NULL="1" DEFAULT="code" FOREIGN-ARRAY="common.server_agent_types" TITLE="const=jzfxcjxuz8"/><!--  code, export_odbc, import_excel_person, import_excel, download_packages, upload_data, download_data  -->
+
+	<INHERIT TYPE="web_variables_base"/>
+
+	<INHERIT TYPE="exec_code_base"/>
+	<run_code_url TYPE="string"/>
+	<run_code TYPE="string" STORE-SECTION="cdata" TITLE="const=hcei2rcaye"/>
+	<run_agent PROPERTY="1" PARAM="iObjectIDParam" PARAM="sObjectsIDsParam" PARAM="dDateParam" EXPR="
+			TopElem = Child(0).Parent;
+			try
+			{
+				if ( TopElem.obj.Object.IsRunning )
+					return false;
+			}
+			catch ( err )
+			{
+				TopElem.obj = new Thread;
+			}
+			oThread = TopElem.obj.Object;
+
+			LogEvent( 'agent', 'Executing server agent &quot;' + TopElem.name + '&quot;' );
+
+			sRunUrl = TopElem.run_code_url.Value;
+			sRunCode = '';
+			switch ( TopElem.type )
+			{
+				case 'export_odbc':
+					if ( ! TopElem.discharge_id.HasValue )
+					{
+						LogEvent( 'agent', 'ERROR. The type of extract from Database is not specified.' );
+						return false;
+					}
+
+					oThread.Param.docID = TopElem.discharge_id;
+					sRunCode = ' PsDoc = OpenDoc( UrlFromDocID( ' + TopElem.discharge_id + ' ) ); Ps = PsDoc.TopElem; ';
+					sRunUrl = 'x-local://wtv/wtv_export_odbc.js';
+					break;
+
+				case 'user_assignments':
+					if ( TopElem.user_assignment_id.HasValue == false )
+					{
+						LogEvent( 'agent', 'ERROR. Type of appointment matrix is not specified.' );
+						return false;
+					}
+
+					oThread.Param.docID = TopElem.user_assignment_id;
+					sRunCode = ' CurMatrix = OpenDoc( UrlFromDocID( ' + TopElem.user_assignment_id + ' ) ).TopElem; ';
+					sRunUrl = 'x-local://wtv/wtv_user_assignment.js';
+					break;
+
+				case 'import_excel_person':
+					if ( TopElem.import_excel_person_scheme_id == '' )
+					{
+						LogEvent( 'agent', 'ERROR. Scheme of import is not specified or it\'s not created.' );
+						return false;
+					}
+
+					_err_str = tools.start_import_excel_persons( lists.import_excel_person_schemes.GetChildByKey( TopElem.import_excel_person_scheme_id ) );
+					if ( _err_str != '' )
+					{
+						LogEvent( 'agent', 'ERROR. ' + _err_str );
+						return false;
+					}
+
+					oThread.Param.sSchemeID = TopElem.import_excel_person_scheme_id;
+					sRunUrl = 'x-local://wtv/wtv_agent_import_excel_persons.js';
+					break;
+
+				case 'upload_data':
+				case 'download_data':
+				case 'download_packages':
+					if ( TopElem.exchange_server_id == null )
+					{
+						LogEvent( 'agent', 'ERROR. Exchange server is not specified.' );
+						return false;
+					}
+
+					oThread.Param.docID = TopElem.exchange_server_id;
+					sRunUrl = 'x-local://wtv/wtv_agent_' + TopElem.type + '.js';
+					break;
+			}
+
+			for ( fldWVarElem in TopElem.wvars )
+			{
+				try
+				{
+					oThread.Param.SetProperty( fldWVarElem.name, fldWVarElem.value.Value );
+				}
+				catch ( err )
+				{
+					LogEvent( 'agent', 'ERROR. Setting agent param \'' + _fldWVar.name + '\': ' + err );
+				}
+			}
+
+			try
+			{
+				iObjectIDParam = OptInt( iObjectIDParam );
+			}
+			catch ( err )
+			{
+				iObjectIDParam = undefined;
+			}
+			try
+			{
+				if ( sObjectsIDsParam == null || sObjectsIDsParam == undefined )
+					throw 'no_data';
+			}
+			catch ( err )
+			{
+				sObjectsIDsParam = '';
+			}
+			sAgentRunCode = 'OBJECT_ID = ' + ( iObjectIDParam == undefined ? 'null' : ( 'Int(&quot;' + iObjectIDParam + '&quot;)' ) ) + ';  OBJECTS_ID_STR = &quot;' + sObjectsIDsParam + '&quot;; ';
+
+			if ( LdsIsServer ) //&amp;&amp; (tools.sys_db_capability & tools.UNI_CAP_BASIC) != 0
+			{
+
+				assembly = tools.get_object_assembly( 'DatexCore' );
+				nodeId = assembly.CallClassStaticMethod('Datex.Core.StaticPrime','GetNodeId',[]);
+				roleId = assembly.CallClassStaticMethod('Datex.Core.StaticPrime','GetRoleId',[]);
+				roleUID = assembly.CallClassStaticMethod('Datex.Core.StaticPrime','GetRoleUID',[]);
+
+				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetRunMode(0); ';
+				sAgentRunCode += 'oData = new Object();'
+				sAgentRunCode += 'oData.id = \''+TopElem.id+'\';';
+				sAgentRunCode += 'oData.code = ' + CodeLiteral( TopElem.code ) + ';';
+				sAgentRunCode += 'oData.name = ' + CodeLiteral( TopElem.name ) + ';';
+				sAgentRunCode += 'oData.started = Date();';
+				sAgentRunCode += 'oData.finished = undefined;';
+				sAgentRunCode += 'oData.status = 1;'; //running
+				sAgentRunCode += 'oData.nodeId = '+nodeId+';';
+				sAgentRunCode += 'oData.roleId = '+roleId+';';
+				sAgentRunCode += 'oData.roleUID = \''+roleUID+'\';';
+				sAgentRunCode += 'oData.UniqueId = '+oThread.UniqueThreadId+';'; //unique Thread Id
+
+				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.PutMessageInQueue(\'ag_running\',\''+TopElem.id+'\');';
+				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetUserData(\'ag_status_'+TopElem.id+'\',1);';
+				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetUserData(\'ag_info_'+TopElem.id+'\',EncodeJson(oData));';
+
+				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_scheduled_spin_'+TopElem.id+'\')';
+				
+			}
+			try
+			{
+				sAgentRunCode += 'curUserID = ' + CodeLiteral( CurAuthObject.id ) + ';';
+			}
+			catch( _zzz_ )
+			{
+				sAgentRunCode += 'curUserID = ' + CodeLiteral( LdsCurUserID ) + ';';
+			}
+
+			if ( LdsIsServer &amp;&amp; (tools.sys_db_capability & tools.UNI_CAP_APP_INSIGHTS) != 0 )
+			{
+				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetCorrelationID(); tools.spxml_unibridge.Object.provider.ResetCPUThreadUsage();';
+				sAgentRunCode += '__tls= GetCurTicks();';
+				sAgentRunCode += '__start_date = Date();';
+			}
+
+			sAgentRunCode += sRunCode;
+
+			if ( sRunUrl != '' )
+			{
+				if ( ! StrBegins( sRunUrl, 'x-local://' ) &amp;&amp; ! StrBegins( sRunUrl, 'app://' ) )
+				{
+					LogEvent( 'agent', 'ERROR. Invalid run url.' );
+					return false;
+				}
+				real_code = LoadUrlText( sRunUrl );
+			}
+			else if ( Trim( TopElem.run_code ) != '' )
+			{
+				real_code = TopElem.run_code;
+			}
+
+			sAgentRunCode += 'try{
+' + real_code + '
+} catch(__cc_err__) { alert(__cc_err__) }';
+
+
+			if ( TopElem.exec_code.code_type == 'cs' ) //С#
+			{
+				wait = false;
+				single = true;
+				max_run_time = 120;
+
+				oAssembly = tools.get_object_assembly( 'DatexCore' );
+				LogEvent( 'agent', '.Net server agent &quot;' + TopElem.name + '&quot; is starting...' );
+				oParseResult = oAssembly.CallClassStaticMethod( 'Datex.Core.CSharp', 'Parse', [ 1, TopElem.id, TopElem.code, TopElem.Name, TopElem.exec_code.code_text ] ); //Server Agent
+				if ( oParseResult.Success )
+				{
+					oAssemblyResult = tools.dotnet_host.Object.GetAssembly( oParseResult.AssemblyName );
+					oAssemblyResult.CallClassStaticMethod( oParseResult.EntryPointMemberFullName, '', [], single, wait,max_run_time );
+					LogEvent( 'agent', '.Net server agent started successfully: &quot;' + TopElem.name + '&quot;' );
+				}
+				else
+				{
+					LogEvent( 'agent', '.Net server agent parsing failed: &quot;' + TopElem.name + '&quot;' );
+				}
+			}
+			else
+			{
+				if ( LdsIsServer &amp;&amp; (tools.sys_db_capability & tools.UNI_CAP_APP_INSIGHTS) != 0 )
+				{
+					sAgentRunCode += '__tlfs=GetCurTicks()-__tls;
+	__oData = new Object();
+	__oData.start_date=__start_date;
+	__oData.end_date=Date();
+	__oData.cpu_usage=tools.spxml_unibridge.Object.provider.GetCPUThreadUsage();
+	__oData.trigger_type=' + CodeLiteral( TopElem.trigger_type ) + ';
+	__oData.agent_name=' + CodeLiteral( TopElem.name ) + ';
+	__oData.agent_code=' + CodeLiteral( TopElem.code ) + ';
+	__oData.run_type=' + CodeLiteral( TopElem.type ) + ';
+	tools.spxml_unibridge.Object.provider.TrackMetrics(\'Agent\',' + CodeLiteral( TopElem.name ) + ',__tlfs,EncodeJson(__oData)); ';
+				}
+
+				if ( LdsIsServer ) //&amp;&amp; (tools.sys_db_capability & tools.UNI_CAP_BASIC) != 0
+				{
+					pAgentRunCode = '';
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.CleanUpThreadResources(); ';
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetUserData(\'ag_status_'+TopElem.id+'\',(ActiveThread.IsCancelled ? 3 : 2));';
+					pAgentRunCode += 'oData.finished = Date();';
+					pAgentRunCode += 'oData.status = ActiveThread.IsCancelled ? 3 : 2;'; //cancelled or finished
+
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.QueueRemoveMessage(\'ag_running\',\''+TopElem.id+'\');';
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.PutMessageInQueue(\'ag_finished\',EncodeJson(oData));';
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_status_'+TopElem.id+'\')';
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_info_'+TopElem.id+'\')';
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_scheduled_spin_'+TopElem.id+'\')';
+
+					iMaxFinishedAgents = 100;
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.QueueTrim(\'ag_finished\',-'+iMaxFinishedAgents+','+iMaxFinishedAgents+');';
+					oThread.SetPostCode(pAgentRunCode);
+				}
+
+				sAgentRunCode = 'try{ if ( ! LdsIsServer ) Screen = ActiveScreen; } catch(___aaa___){}; LogEvent( \'agent\', \'Starting server agent \' + ' + CodeLiteral( TopElem.name ) + ' ); try{
+				' + sAgentRunCode + '
+				} catch(___ggg___){alert(___ggg___)};LogEvent( \'agent\', \'Finished server agent \' + ' + CodeLiteral( TopElem.name ) + ' );try{ if ( ! LdsIsServer ) ActiveScreen.MsgBox( \'Finished server agent \' + ' + CodeLiteral( TopElem.name ) + ',\'Information\', \'info\', \'ok\') } catch(___aaa___){};';
+
+				//alert(sAgentRunCode);
+
+				oThread.EvalCode( sAgentRunCode );
+			}
+
+			try
+			{
+				dDateParam = Date( dDateParam );
+			}
+			catch( _neelement_ )
+			{
+				dDateParam = RValue( Date() );
+			}
+
+			if ( TopElem.trigger_type == 'period' &amp;&amp; TopElem.last_run_date.HasValue &amp;&amp; DateDiff( TopElem.last_run_date, DateOffset( dDateParam, (0-120) * TopElem.period ) ) &gt; 0 &amp;&amp; DateDiff( dDateParam, TopElem.last_run_date ) &gt; 0 )
+				dDateParam = DateOffset( TopElem.last_run_date, TopElem.period * 60 );
+
+			if(!TopElem.last_run_date.HasValue || DateDiff( dDateParam, TopElem.last_run_date ) &gt; 0) //#14220
+				TopElem.last_run_date = dDateParam;
+
+			LogEvent( 'agent', 'Execute server agent &quot;' + TopElem.name + '&quot;' );
+			return true;
+	"/>
+
+
+	<discharge_id TYPE="integer" FOREIGN-ARRAY="discharges" TITLE="const=gc4vhl41sh"/>
+	<user_assignment_id TYPE="integer" FOREIGN-ARRAY="user_assignments"/>
+	<import_excel_person_scheme_id TYPE="string" FOREIGN-ARRAY="lists.import_excel_person_schemes" TITLE="const=h8hnu4t71l"/>
+	<import_excel_id TYPE="integer" FOREIGN-ARRAY="import_excels"/>
+	<exchange_server_id TYPE="integer" FOREIGN-ARRAY="exchange_servers" TITLE="const=bzzyvmrasr"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+	</view>
+	<converter TYPE="bool" EXPR="
+			TopElem = Child(0).Parent;
+			ms_tools.convert_exec_code( TopElem.exec_code, TopElem.run_code_url, TopElem.run_code );
+	" TEMP="1"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</server_agent>
+
+<OnLoad_____ PROPERTY="1" EXPR="
+try
+{
+		if ( Topelem.run_code_url.HasValue &amp;&amp; ! TopElem.exec_code.code_url.HasValue )
+		{
+			TopElem.exec_code.code_url = Topelem.run_code_url;
+		}
+		else
+		{
+			Topelem.run_code_url = TopElem.exec_code.code_url;
+		}
+		if ( Topelem.run_code.HasValue &amp;&amp; ! TopElem.exec_code.code_text.HasValue )
+		{
+			TopElem.exec_code.code_text = Topelem.run_code;
+		}
+		else
+		{
+			Topelem.run_code = TopElem.exec_code.code_text;
+		}
+}
+catch(err)
+{
+alert(err)
+}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('bjz1uz8sf5') + ': ' + server_agent.name
+"/>
+
+</SPXML-FORM>

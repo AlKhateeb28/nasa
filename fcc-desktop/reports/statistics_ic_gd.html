@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Статискика для ИЦ ГД</title>
+
+    <link rel="icon" href="../images/favicon.ico"/>
+    <link href="../../kendo/styles/kendo.common.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="reports.css"/>
+    <link rel="stylesheet" href="../css/index.css"/>
+
+    <script type="text/javascript" src="../js/jquery3.js"></script>
+    <script type="text/javascript" src="../../kendo/js/kendo.all.min.js"></script>
+    <script type="text/javascript" src="../js/webSocket.js"></script>
+    <script type="text/javascript" src="../js/jsonReviver.js"></script>
+    <script type="text/javascript" src="../js/agent.js"></script>
+    <script type="text/javascript" src="statistics_ic_gd.js"></script>
+</head>
+<body class="body">
+<div class="report_main">
+    <div>
+        <div class="float-left-box" style="color: mintcream; font-size: x-large; font-family: 'RockAndRoll', serif;">Статистика по прохождению ЭК организациями (для ИЦ ГД)</div>
+        <div id="last_update" class="float-right-box" style="color: lavender; font-size: small; margin-top: 12px;"></div>
+    </div>
+    <table id="table" width="100%">
+        <tr class="header">
+            <td class="header-element">#</td>
+            <td class="header-element">Название курса</td>
+            <td class="header-element header-col-size">В процессе</td>
+            <td class="header-element header-col-size">Назначен</td>
+            <td class="header-element header-col-size">Не пройден</td>
+            <td class="header-element header-col-size">Пройден</td>
+            <td class="header-element header-col-size">Уникальные.<br/>Пройден</td>
+            <td class="header-element header-col-size">Общий итог</td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/x-kendo-template" id="row_template">
+    <tr class="report-data">
+        <td id="index" class="row-element row-pointer-cell"></td>
+        <td id="name" class="row-element"></td>
+        <td class="row-element">
+            <div id="value1" class="float-left-box nil-color"></div>
+            <div id="prev1" class="float-left-box prev-box"></div>
+            <div id="diff1" class="float-left-box down-color" style="font-size: x-small; margin-top: -8px; margin-left: 10px; visibility: hidden"></div>
+            <div id="diff_parent1" class="float-left-box" style="margin-left: 5px; margin-top: -14px; visibility: hidden">
+                <img id="diff_img1" src="" style="width: 8px; height: 8px;">
+            </div>
+        </td>
+        <td class="row-element">
+            <div id="value0" class="float-left-box nil-color"></div>
+            <div id="prev0" class="prev-box"></div>
+            <div id="diff0" class="float-left-box down-color" style="font-size: x-small; margin-top: -8px; margin-left: 10px; visibility: hidden;"></div>
+            <div id="diff_parent0" class="float-left-box" style="margin-left: 5px; margin-top: -14px; visibility: hidden;">
+                <img id="diff_img0" src="" style="width: 8px; height: 8px;">
+            </div>
+        </td>
+        <td class="row-element">
+            <div id="value3" class="float-left-box nil-color"></div>
+            <div id="prev3" class="prev-box"></div>
+            <div id="diff3" class="float-left-box down-color" style="font-size: x-small; margin-top: -8px; margin-left: 10px; visibility: hidden;"></div>
+            <div id="diff_parent3" class="float-left-box" style="margin-left: 5px; margin-top: -14px; visibility: hidden;">
+                <img id="diff_img3" src="" style="width: 8px; height: 8px;">
+            </div>
+        </td>
+        <td class="row-element">
+            <div id="value4" class="float-left-box nil-color"></div>
+            <div id="prev4" class="prev-box"></div>
+            <div id="diff4" class="float-left-box down-color" style="font-size: x-small; margin-top: -8px; margin-left: 10px; visibility: hidden;"></div>
+            <div id="diff_parent4" class="float-left-box" style="margin-left: 5px; margin-top: -14px; visibility: hidden;">
+                <img id="diff_img4" src="" style="width: 8px; height: 8px;">
+            </div>
+        </td>
+        <td class="row-element">
+            <div id="value6" class="float-left-box nil-color"></div>
+            <div id="prev6" class="prev-box"></div>
+            <div id="diff6" class="float-left-box down-color" style="font-size: x-small; margin-top: -8px; margin-left: 10px; visibility: hidden;"></div>
+            <div id="diff_parent6" class="float-left-box" style="margin-left: 5px; margin-top: -14px; visibility: hidden;">
+                <img id="diff_img6" src="" style="width: 8px; height: 8px;">
+            </div>
+        </td>
+        <td id="" class="row-element">
+            <div id="total" class="float-left-box nil-color"></div>
+            <div id="prev_total" class="prev-box"></div>
+            <div id="diff_total" class="float-left-box down-color" style="font-size: x-small; margin-top: -8px; margin-left: 10px; visibility: hidden;"></div>
+            <div id="diff_parent_total" class="float-left-box" style="margin-left: 5px; margin-top: -14px; visibility: hidden;">
+                <img id="diff_img_total" src="" style="width: 8px; height: 8px;">
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script type="text/x-kendo-template" id="result_row_template">
+    <tr class="report-data">
+        <td class="row-element"></td>
+        <td id="result_name" class="header-element"></td>
+        <td id="result_value1" class="header-element"></td>
+        <td id="result_value0" class="header-element"></td>
+        <td id="result_value3" class="header-element"></td>
+        <td id="result_value4" class="header-element"></td>
+        <td id="result_value6" class="header-element"></td>
+        <td id="result_total" class="header-element"></td>
+    </tr>
+</script>
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+<SPXMLScreen>
+    <%
+    curTitle = {
+    "type": "simple",
+    "title": "Кабинет ответственного за обучение РЦК"
+    }
+    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_object_title.xaml" ) );
+    %>
+
+    <%
+    //orgs_arr = XQuery( "for $elem in orgs return $elem" )
+    //org_ids = ArrayMerge( orgs_arr, "id", "," )
+
+    sXQ = "for $elem in groups where $elem/id=6974512670052992402 return $elem"
+    groups_arr = XQuery( sXQ )
+    i = 1
+    for ( group in groups_arr ) {
+    group_id = group.id
+    group_name = group.name
+    group_collaborators_arr = XQuery( "for $elem in group_collaborators where $elem/group_id=" + group_id + " return $elem" )
+    group_collaborators_display_object_ids = ArrayMerge( group_collaborators_arr, 'collaborator_id', ';' )
+    %>
+
+    <Action Name="export_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="ALERT={messageText}">
+        <Param Name="sCollection" Value="cols_from_group"/>
+        <Param Name="sMode" Value="datagrid"/>
+        <Param Name="sSearchWord" Value="{!CatalogListSearchQWE<%=i%>}"/>
+        <Param Name="curObjectID" Value="<%=group_id%>"/>
+    </Action>
+
+    <Action Name="add_cols_to_group_name<%=i%>" Source="add_cols_to_group" Success="ALERT={messageText};REFRESH;" Failure="ALERT={messageText}">
+        <Param Name="sCols" Value=""/>
+        <Param Name="iGroupID" Value="<%=group_id%>"/>
+    </Action>
+
+    <Action Name="del_cols_from_group_name<%=i%>" Source="del_cols_from_group" Success="ALERT={messageText};REFRESH;" Failure="ALERT={messageText}">
+        <Param Name="sCols" Value=""/>
+        <Param Name="iGroupID" Value="<%=group_id%>"/>
+    </Action>
+
+    <Dialog Name="col_selector_add<%=i%>" Source="dlg_select" Title="Выберите сотрудников" Close="SET=add_cols_to_group_name<%=i%>/sCols, {CatalogListDataGridSelList:*/id};ACTION=add_cols_to_group_name<%=i%>;">
+        <Param Name="catalog_name" Value="collaborator"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="view_type" Value=""/>
+        <Param Name="xquery_qual" Value="$elem/id!=<%=curUserID%> and $elem/is_dismiss=false() and contains( $elem/code, '_muc_' )=false()"/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="selected_object_ids" Value=""/>
+        <Param Name="display_object_ids" Value=""/>
+        <Param Name="disp_filter" Value="false"/>
+        <Param Name="filter_id" Value=""/>
+        <Param Name="show_all" Value="true"/>
+        <Param Name="typein" Value="false"/>
+        <Param Name="can_be_empty" Value="true"/>
+        <Param Name="secid" Value="<%=tools_web.get_secid( Session.sid )%>"/>
+        <Param Name="list_columns" Value=""/>
+        <Param Name="custom_info" Value=""/>
+        <Param Name="isEditable" Value="true"/>
+    </Dialog>
+    <Dialog Name="col_selector_del<%=i%>" Source="dlg_select" Title="Выберите сотрудников" Close="SET=del_cols_from_group_name<%=i%>/sCols, {CatalogListDataGridSelList:*/id}; ACTION=del_cols_from_group_name<%=i%>; ">
+        <Param Name="catalog_name" Value="collaborator"/>
+        <Param Name="multi_select" Value="true"/>
+        <Param Name="view_type" Value=""/>
+        <Param Name="xquery_qual" Value=""/>
+        <Param Name="check_access" Value="false"/>
+        <Param Name="selected_object_ids" Value=""/>
+        <Param Name="display_object_ids" Value="<%=group_collaborators_display_object_ids%>"/>
+        <Param Name="disp_filter" Value="false"/>
+        <Param Name="filter_id" Value=""/>
+        <Param Name="show_all" Value="true"/>
+        <Param Name="typein" Value="false"/>
+        <Param Name="can_be_empty" Value="true"/>
+        <Param Name="secid" Value="<%=tools_web.get_secid( Session.sid )%>"/>
+        <Param Name="list_columns" Value=""/>
+        <Param Name="custom_info" Value=""/>
+        <Param Name="isEditable" Value="true"/>
+    </Dialog>
+
+    <%
+    curView = {
+    "title" : group_name + " - " + ArrayCount( group_collaborators_arr ) + " участников",
+    "id": "QWE"+i,
+    "disp_selectors": false,
+    "disp_search": true,
+    "disp_filter": false,
+    "disp_paging": true,
+    "paging_size": 10,
+    "catalog_name": "collaborators",
+    "xquery_qual": "",
+    "disp_type": "data_grid",
+    "height": null,
+    "buttons": [
+    {
+    "name": "",
+    "title": "Добавить",
+    "click": ("OPENDIALOG=col_selector_add"+i)
+    }
+    ,
+    {
+    "name": "",
+    "title": "Удалить",
+    "click": ("OPENDIALOG=col_selector_del"+i)
+    }
+    ,
+    {
+    "name": "",
+    "title": "Обработать",
+    "click": ("SET=start_agent_action_name/_agent_id, 6974513176326201916;ACTION=start_agent_action_name;")//Добавить участников группы в ФР организаций с типом 'rcc' Тренеры-организаторы РЦК
+    }
+    ,
+    {
+    "name": "export_action_name"+i,
+    "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+    "click": ("ACTION=export_action_name"+i)
+    }
+    ],
+    "collection": {
+    "name": "cols_from_group",
+    "params": ([
+    {"name": "sSearchWord", "value": "{!CatalogListSearchQWE"+i+"}"},
+    {"name": "curObjectID", "value": group_id}
+    ])
+    }
+    }
+    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
+    %>
+
+    <%
+    i++
+    }
+    %>
+
+    <Action Name="start_agent_action_name" Source="start_agent" Success="ALERT={messageText};REFRESH;" Failure="ALERT={messageText}">
+        <Param Name="_agent_id" Value=""/>
+        <Param Name="_element_id" Value=""/>
+        <Param Name="_elems_id_str" Value=""/>
+        <Param Name="_wvars_obj" Value="[\{name:'curUserID', value:'<%=curUserID%>'\}]"/>
+    </Action>
+    <%
+    agent_ids_str = "6942791987897859862"
+    arr = XQuery( "for $elem in server_agents where id in (" + agent_ids_str + ") return $elem" )
+    %>
+    <Grid Width="1200">
+        <GridColumns>
+            <GridColumn Width="500" Align="left"/>
+            <GridColumn Width="200" Align="center"/>
+            <GridColumn Width="200" Align="center"/>
+            <GridColumn Width="200" Align="center"/>
+            <GridColumn Width="300" Align="right"/>
+        </GridColumns>
+        <GridRow>
+            <Label Class="grid_header">Название</Label>
+            <Label Class="grid_header">Дата запуска</Label>
+            <Label Class="grid_header">Продолжительность</Label>
+            <Label Class="grid_header">Запущен?</Label>
+            <Label Class="grid_header">Запустить</Label>
+        </GridRow>
+        <GridRow>
+            <Label></Label><Label></Label><Label></Label><Label></Label>
+        </GridRow>
+        <GridRow>
+            <Label></Label><Label></Label><Label></Label><Label></Label>
+        </GridRow>
+        <%
+        for ( elem in arr ) {
+        doc = tools.open_doc( elem.id )
+        last = ArrayOptFirstElem( XQuery( "for $elem in action_reports where object_id=" + XQueryLiteral( elem.id ) + " order by $elem/create_date descending return $elem" ) )
+
+        work_status = last != undefined ? last.completed ? "Нет" : "Да" : "Нет"
+        but_enabled = work_status == "Да" ? "0" : "1"
+        %>
+
+        <GridRow>
+            <Label><%=doc.TopElem.name%></Label>
+            <Label><%=doc.TopElem.last_run_date%></Label>
+            <Label><%=doc.TopElem.custom_elems.ObtainChildByKey( "work_duration" ).value%></Label>
+            <Label><%=work_status%></Label>
+            <Button Enabled="<%=but_enabled%>" Click="SET=start_agent_action_name/_agent_id, <%=doc.DocID%>;ACTION=start_agent_action_name;" Width="150">Построить отчет</Button>
+        </GridRow>
+
+        <%
+        }
+        %>
+    </Grid>
+
+    <Label></Label><Label></Label><Label></Label><Label></Label>
+    <Label Class="text">Отчет находится в серверной папке
+        \\WT-APP01\report_only_rck_muc.</Label>
+    <Label></Label><Label></Label><Label></Label><Label></Label>
+
+    <StackPanel Class="button_panel_rck_cab">
+        <StackPanel Orientation="Horizontal">
+            <Button Click="OPENDIALOG=DialogSetEventBlockDate;" Width="500">Запретить создание\обновление мероприятий в кабинете РЦК</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="OPENWINDOW=/_wt/custom_report/6960606812960601461;" Width="500">Отчет по результатам подготовки и сертификации ИБП</Button>
+            <Label></Label>
+            <Label></Label>
+            <Label></Label>
+            <Button Click="OPENDIALOG=DialogBlockAccessForTrainerCab" Width="500">Заблокировать доступ к кабинету организатора РЦК</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="ACTION=AddAccessForTrainerCab" Width="500">Открыть доступ к кабинету организатора РЦК</Button>
+            <Label></Label>
+            <Label></Label>
+            <Label></Label>
+            <Button Click="OPENDIALOG=CreateNotificationDialogGroup" Width="500">Отправить уведомление группе</Button>
+        </StackPanel>
+    </StackPanel>
+
+    <Action Name="AddAccessForTrainerCab" Source="add_access_for_trainer_cab" Success="ALERT={messageText};" Failure="ALERT={messageText}">
+    </Action>
+
+    <Dialog Name="DialogBlockAccessForTrainerCab" Source="dialog_block_access_for_trainer_cab" Width="600" Height="350" Title="Заблокировать доступ к кабинету организатора РЦК">
+    </Dialog>
+
+    <Dialog Name="CreateNotificationDialogGroup" Source="dialog_create_notification_for_trainer_org_group" Title="Уведомление" Close="ALERT=Уведомление отправлено.">
+        <Param Name="name_id" Value="CreateNotificationDialogGroup"/>
+    </Dialog>
+    <Dialog Name="DialogSetEventBlockDate" Source="dialog_set_event_block_date_for_trainer_cab" Width="600" Height="350" Title="Запретить создание/обновление мероприятий в кабинете РЦК">
+    </Dialog>
+
+    <HTMLBox Dynamic="true" ><![CDATA[
+        <style>
+            .grid_header{
+                background-color: #bdbdbd;
+                font-size: 22px;
+                text-align: center;
+            }
+            .text{
+                font-size: 22px;
+            }
+            .text_bold{
+                font-size: 22px;
+                font-weight: bold;
+            }
+            .my_header{
+                font-size: 48px;
+                background: linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%),
+                linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%),
+                linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%);
+                box-shadow: 0px 0px 15px 0px rgba( 255, 0, 0, 0.53 )
+            }
+            .my_editbox_class{
+                display: block;
+            }
+            .button_panel_rck_cab tbody{
+                text-align: -webkit-center !important;
+            }
+        </style>
+        <div id="my_div" >
+        </div>
+        <script>
+            $(function() {
+                $(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small").click(function() {
+                    console.log( $("textarea[name=my_editbox]").val() )
+                });
+            })
+
+        </script>
+        ]]>
+    </HTMLBox>
+</SPXMLScreen>

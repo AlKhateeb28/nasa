@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-SCREEN SOURCE="TopElem" TITLE-EXPR="server_agent.name + ' — ' + ms_tools.get_const('bjz1uz8sf5')" BEFORE-SAVE-ACTION="
+	try
+	{
+		if ( server_agent.start_time != '' )
+			Int( String( server_agent.start_time ).split( ':' )[0] );
+
+		if ( server_agent.finish_time != '' )
+			Int( String( server_agent.finish_time ).split( ':' )[0] );
+	}
+	catch ( err )
+	{
+		Screen.MsgBox( ms_tools.get_const('jym1zp768h'), ms_tools.get_const('c_error'), 'error', 'ok' );
+		Cancel();
+	}
+
+	switch ( server_agent.type )
+	{
+		case 'import_excel_person':
+			if ( ! TopElem.import_excel_person_scheme_id.HasValue )
+			{
+				Screen.MsgBox( ms_tools.get_const('zm99ee0mzn'), ms_tools.get_const('c_error'), 'error', 'ok' );
+				Cancel();
+			}
+			break;
+
+		case 'export_odbc':
+			if ( ! TopElem.discharge_id.HasValue )
+			{
+				Screen.MsgBox( ms_tools.get_const('zm99ee0mzn'), ms_tools.get_const('c_error'), 'error', 'ok' );
+				Cancel();
+			}
+			break;
+
+		case 'download_packages':
+		case 'upload_data':
+			if ( server_agent.exchange_server_id == null )
+			{
+				Screen.MsgBox( ms_tools.get_const('zm99ee0mzn'), ms_tools.get_const('c_error'), 'error', 'ok' );
+				Cancel();
+			}
+			break;
+	}
+	ms_tools.check_std( TopElem );
+" SAVE-ACTION="
+	UpdateScreens( '*', '*server_agent*' );
+" WINDOW-ICON-URL="ico/server_agent.ico" MAXIMIZED="1">
+
+<USE FORM="//wtv/ms_general.xms"/>
+
+
+<CardContainer arrToolbarButtons="
+	System.IsWebClient &amp;&amp; false ? [
+			{ 'title': ms_tools.get_const('8nenuuepqh'), 'cmd': 'StartAgent' }
+		] : [
+			{ 'title': ms_tools.get_const('8nenuuepqh'), 'cmd': 'StartAgent' },
+			{ 'title': ms_tools.get_const('421gwznzw0'), 'cmd': 'StartAgentAdmin' }
+		]
+">
+
+
+<PageContainer TITLE="##ms_tools.get_const('cavr3d3iwk')##" IMAGE-URL="ico/common.ico">
+	<ITEM TYPE="ms_code_name_base"/>
+	<BR/>
+
+	<LINE ADAPTIVE="1">
+		<ComboLabel SOURCE="TopElem.type" ELEM="ListElem.name" TITLE="##ms_tools.get_const('jzfxcjxuz8')##" WIDTH="316vpx"/>
+		<IF EXPR="TopElem.type == 'code'">
+			<EditLabel SOURCE="TopElem.exec_code.code_url" TITLE="##ms_tools.get_const('ssylkanafaylvy')##" WIDTH="482vpx"/>
+		</IF>
+		<IF EXPR="TopElem.type == 'export_odbc'">
+			<ITEM TYPE="ms_object_selector" SOURCE="TopElem.discharge_id" catalogExpr="'discharge'"/>
+		</IF>
+		<IF EXPR="TopElem.type == 'import_excel_person'">
+			<ComboLabel SOURCE="TopElem.import_excel_person_scheme_id" ELEM="ListElem.name" TITLE="##ms_tools.get_const('h8hnu4t71l')##" WIDTH="316vpx"/>
+		</IF>
+		<IF EXPR="TopElem.type == 'download_packages' || TopElem.type == 'upload_data' || TopElem.type == 'download_data'">
+			<ITEM TYPE="ms_object_selector" SOURCE="TopElem.exchange_server_id" catalogExpr="'exchange_server'" WIDTH="316vpx"/>
+		</IF>
+		<IF EXPR="TopElem.type == 'user_assignments'">
+			<ITEM TYPE="ms_object_selector" SOURCE="TopElem.user_assignment_id" catalogExpr="'user_assignment'" WIDTH="316vpx"/>
+		</IF>
+	</LINE>
+	<BR/>
+	<BR/>
+
+	<LABEL TITLE="##ms_tools.get_const('3g9pnfspl4') + ':'##"/>
+	<ITEM TYPE="ms_periodity_base"/>
+	<BR/>
+
+	<ComboLabel SOURCE="TopElem.block" ELEM="SafeEval( ListElem.name, [ { 'ms_tools': ms_tools } ] )" TITLE="##ms_tools.get_const('abjv7dmw10')##" FOREIGN-ARRAY="ArraySelect( access_blocks, 'disp==true || ! StrEnds(id,\'_settings\')' )" WIDTH="316vpx"/>
+	<BR/>
+
+	<IF EXPR="TopElem.type == 'code'">
+		<ITEM TYPE="web_and_agent_variables_base" readOnlyExpr="false"/>
+		<BR/>
+	</IF>
+
+	<ITEM TYPE="comment_base"/>
+	<BR/>
+
+	<ITEM TYPE="ms_custom_data_view"/>
+	<BR/>
+</PageContainer>
+
+
+
+<PageContainer TITLE="##ms_tools.get_const('hqyb5zxwgv')##" IMAGE-URL="ico/desc.ico">
+
+	<ITEM TYPE="ms_run_code_base" SOURCE="TopElem.exec_code" HEIGHT="100%" codeType=".js"/>
+
+</PageContainer>
+
+
+</CardContainer>
+
+
+<COMMAND-HANDLER CMD="StartAgent" ACTION="
+		if ( ! Screen.MsgBox( ms_tools.get_const('z6zdgstpb7'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+			Cancel();
+
+		Screen.SaveDoc();
+
+		CallServerMethod( 'tools', 'start_agent', [ Ps.Doc.DocID ] );
+
+		Screen.Close();
+"/>
+
+<COMMAND-HANDLER CMD="StartAgentAdmin" ACTION="
+		if ( ! Screen.MsgBox( ms_tools.get_const('kukyzyoodc'), ms_tools.get_const('7ey6j94yku'), 'question', 'yes,no,cancel' ) )
+			Cancel();
+
+		try
+		{
+			TopElem.run_agent();
+		}
+		catch( err )
+		{
+			Screen.MsgBox( ( ms_tools.get_const('js5430se7e') + ':' + err ), ms_tools.get_const('c_error'), 'error', 'ok' );
+			Cancel();
+		}
+"/>
+
+</SPXML-SCREEN>
