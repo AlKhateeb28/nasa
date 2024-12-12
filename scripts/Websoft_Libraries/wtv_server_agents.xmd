@@ -5,9 +5,9 @@
 
 <server_agents>
 	<server_agent MULTIPLE="1" PRIMARY-KEY="id">
-		<id TYPE="integer" TITLE="ID"/>
-		<name TYPE="string" TITLE="const=c_name"/>
-		<code TYPE="string" TITLE="const=c_code"/>
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
 		<type TYPE="string" FOREIGN-ARRAY="common.server_agent_types" TITLE="const=jzfxcjxuz8"/>
 
 		<INHERIT TYPE="ms_periodity_base"/>

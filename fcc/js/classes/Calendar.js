@@ -26,7 +26,7 @@ class Calendar extends Object {
 
         this.initYearEvents();
 
-        setInterval(Calendar.getNotifications, 15000);
+        setInterval(this.getNotifications, 15000);
 
         //this.refreshData(moment().format("YYYY-MM-DD"));
     }
@@ -60,10 +60,8 @@ class Calendar extends Object {
         currentYearElement.attr("month", moment(this.selectedDate).format("MM"));
         currentYearElement.attr("year", moment(this.selectedDate).format("YYYY"));
 
-        const calendarElement = $("#page" + this.pageId + "_calendar");
-
         for(let i = 0; i < 42; i++) {
-            calendarElement.append(Page.template("page" + this.pageId + "_day_template"));
+            $("#page" + this.pageId + "_calendar").append(Page.template("page" + this.pageId + "_day_template"));
 
             $("#page" + this.pageId + "_parent").attr("id", "page" + this.pageId + "_parent_" + i);
             $("#page" + this.pageId + "_parent_" + i).attr("index", i);
@@ -133,16 +131,12 @@ class Calendar extends Object {
 
         GlobalPage.sleep(1);
 
-        const firstDayElement = calendarElement.children(":first");
-        const lastDayElement = calendarElement.children(":last");
-
-        const startDate =  firstDayElement.attr("day") + "." + firstDayElement.attr("month") + "." + firstDayElement.attr("year");
-        const finishDate =  lastDayElement.attr("day") + "." + lastDayElement.attr("month") + "." + lastDayElement.attr("year");
+        const dates = Calendar.getStartFinishDates(this.pageId);
 
         let instance = this;
 
         $.ajax({
-            url: this.dataUrl + "&start=" + startDate + "&finish=" + finishDate,
+            url: this.dataUrl + "&start=" + dates.start + "&finish=" + dates.finish,
             async: false,
             type: "GET",
             dataType: "json",
@@ -354,7 +348,12 @@ class Calendar extends Object {
             <!-- DAY INFO TEMPLATE -->
             <script type="text/html" id="page` + this.pageId + `_event_info_template">
                 <div id="page` + this.pageId + `_info_box" style="padding-top: 5px;">
-                     <div id="page` + this.pageId + `_info_type" style="text-indent: 5px; font-weight: bold;"></div>
+                     <div>
+                        <div id="page` + this.pageId + `_info_type" class="float-left" style="text-indent: 5px; font-weight: bold;"></div>
+                        <div class="float-right" style="margin-top: -11px; margin-right: 10px; cursor: pointer">
+                            <img id="page` + this.pageId + `_info_img" src="./images/notification.png" title="Отключить"/>
+                        </div>
+                     </div>
                      <div id="page` + this.pageId + `_info_time" style="text-indent: 70%; margin-right: 5px; color: #ff00ff"></div>
                      <div id="page` + this.pageId + `_info_name" style="border-bottom: 1px solid #dee2e6; text-indent: 5px; padding-bottom: 2px; font-size: 0.95em;"></div>
                 </div>
@@ -405,15 +404,18 @@ class Calendar extends Object {
                 }
 
                 $("#page" + this.pageId + "_info_type").attr("id", "page" + this.pageId + "_info_type_" + index);
+                $("#page" + this.pageId + "_info_img").attr("id", "page" + this.pageId + "_info_img_" + index);
 
                 const infoTypeElement = $("#page" + this.pageId + "_info_type_" + index);
 
                 switch (parseInt(event.type)) {
                     case 0:
                         infoTypeElement.html(event.typeName);
+                        $("#page" + this.pageId + "_info_img_" + index).css("visibility", "hidden");
                         break;
                     case 1:
                         infoTypeElement.html(event.typeName);
+                        $("#page" + this.pageId + "_info_img_" + index).css("visibility", "visible");
                         break;
                     default:
                         infoTypeElement.html("Неизвестный тип");
@@ -432,7 +434,7 @@ class Calendar extends Object {
 
     goToTodayDate(element) {
         const selectedElement = $("#" + element.id);
-        selectedDate = moment(selectedElement.attr("year") + "-" + selectedElement.attr("month") + "-" + selectedElement.attr("day")).format("YYYY-MM-DD");
+        const selectedDate = moment(selectedElement.attr("year") + "-" + selectedElement.attr("month") + "-" + selectedElement.attr("day")).format("YYYY-MM-DD");
 
         this.refreshData(this.owner, selectedDate);
     }
@@ -533,9 +535,6 @@ class Calendar extends Object {
         let eventColor = colors[this.currentEventIndex];
 
         this.currentEventIndex++;
-        if(this.currentEventIndex == 10) {
-            currentEventColor = 0;
-        }
 
         calendarChildren.each(function(index, element){
             const startDate = Calendar.rotateDate(event.start.split(" ")[0]);
@@ -580,6 +579,42 @@ class Calendar extends Object {
 
                     nameElement.html(startParts[1] + " - " + finishParts[1]);
                 }
+            }
+        });
+    }
+
+    getNotifications() {
+        let userIdParameter = "";
+        const pickedId = GlobalPage.getPickedUserId();
+
+        if(pickedId !== null) {
+            userIdParameter = "&user_id=" + pickedId;
+        }
+
+        const instance = this;
+
+        const dates = Calendar.getStartFinishDates(this.pageId);
+
+        $.ajax({
+            url: this.dataUrl + "&start=" + dates.start + "&finish=" + dates.finish + userId,
+            async: false,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if(data.errorMessage.indexOf("#") < 0) {
+                    instance.events = data.events;
+
+                    instance.events.forEach((event, index) => {
+                        instance.addEventOnCalendar(event, instance.pageId, index);
+                    });
+
+                    instance.showDayEvents();
+                } else {
+                    console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+                }
+            },
+            error: function(error) {
+                console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
             }
         });
     }
@@ -704,37 +739,17 @@ class Calendar extends Object {
         return dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
     }
 
-    static getNotifications() {
-        let userIdParameter = "";
-        const pickedId = GlobalPage.getPickedUserId();
+    static getStartFinishDates(pageId) {
+        const calendarElement = $("#page" + pageId + "_calendar");
 
-        if(pickedId !== null) {
-            userIdParameter = "&user_id=" + pickedId;
-        }
+        const result = {};
 
-        $.ajax({
-            url: this.dataUrl + "&start=" + startDate + "&finish=" + finishDate,
-            async: false,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                if(data.errorMessage.indexOf("#") < 0) {
-                    instance.events = data.events;
+        const firstDayElement = calendarElement.children(":first");
+        const lastDayElement = calendarElement.children(":last");
 
-                    instance.events.forEach((event, index) => {
-                        instance.addEventOnCalendar(event, instance.pageId, index);
-                    });
+        result.start =  firstDayElement.attr("day") + "." + firstDayElement.attr("month") + "." + firstDayElement.attr("year");
+        result.finish =  lastDayElement.attr("day") + "." + lastDayElement.attr("month") + "." + lastDayElement.attr("year");
 
-                    instance.showDayEvents();
-
-                    GlobalPage.hideWaiter();
-                } else {
-                    console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
-                }
-            },
-            error: function(error) {
-                console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
-            }
-        });
+        return result;
     }
 }

@@ -21,8 +21,31 @@
 	<INHERIT TYPE="exec_code_base"/>
 	<run_code_url TYPE="string"/>
 	<run_code TYPE="string" STORE-SECTION="cdata" TITLE="const=hcei2rcaye"/>
-	<run_agent PROPERTY="1" PARAM="iObjectIDParam" PARAM="sObjectsIDsParam" PARAM="dDateParam" EXPR="
+	<run_agent PROPERTY="1" PARAM="iObjectIDParam" PARAM="sObjectsIDsParam" PARAM="dDateParam" PARAM="bInPlace" PARAM="sConfiguration" EXPR="
+
+try
+{
 			TopElem = Child(0).Parent;
+
+			try
+			{
+				bInPlace = bInPlace == true;
+			}
+			catch ( err )
+			{
+				bInPlace = false;
+			}
+
+			try
+			{
+				sConfiguration;
+			}
+			catch ( err )
+			{
+				sConfiguration = 'Release';
+			}
+
+
 			try
 			{
 				if ( TopElem.obj.Object.IsRunning )
@@ -30,7 +53,7 @@
 			}
 			catch ( err )
 			{
-				TopElem.obj = new Thread;
+				TopElem.obj = bInPlace == true ? ActiveThread : new Thread;
 			}
 			oThread = TopElem.obj.Object;
 
@@ -135,7 +158,6 @@
 				roleId = assembly.CallClassStaticMethod('Datex.Core.StaticPrime','GetRoleId',[]);
 				roleUID = assembly.CallClassStaticMethod('Datex.Core.StaticPrime','GetRoleUID',[]);
 
-				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetRunMode(0); ';
 				sAgentRunCode += 'oData = new Object();'
 				sAgentRunCode += 'oData.id = \''+TopElem.id+'\';';
 				sAgentRunCode += 'oData.code = ' + CodeLiteral( TopElem.code ) + ';';
@@ -151,9 +173,7 @@
 				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.PutMessageInQueue(\'ag_running\',\''+TopElem.id+'\');';
 				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetUserData(\'ag_status_'+TopElem.id+'\',1);';
 				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetUserData(\'ag_info_'+TopElem.id+'\',EncodeJson(oData));';
-
-				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_scheduled_spin_'+TopElem.id+'\')';
-				
+				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_scheduled_spin_'+TopElem.id+'\');';
 			}
 			try
 			{
@@ -164,15 +184,9 @@
 				sAgentRunCode += 'curUserID = ' + CodeLiteral( LdsCurUserID ) + ';';
 			}
 
-			if ( LdsIsServer &amp;&amp; (tools.sys_db_capability & tools.UNI_CAP_APP_INSIGHTS) != 0 )
-			{
-				sAgentRunCode += 'tools.spxml_unibridge.Object.provider.SetCorrelationID(); tools.spxml_unibridge.Object.provider.ResetCPUThreadUsage();';
-				sAgentRunCode += '__tls= GetCurTicks();';
-				sAgentRunCode += '__start_date = Date();';
-			}
-
 			sAgentRunCode += sRunCode;
 
+			var real_code = '';
 			if ( sRunUrl != '' )
 			{
 				if ( ! StrBegins( sRunUrl, 'x-local://' ) &amp;&amp; ! StrBegins( sRunUrl, 'app://' ) )
@@ -187,47 +201,48 @@
 				real_code = TopElem.run_code;
 			}
 
-			sAgentRunCode += 'try{
-' + real_code + '
-} catch(__cc_err__) { alert(__cc_err__) }';
-
-
-			if ( TopElem.exec_code.code_type == 'cs' ) //С#
+			if ( LdsIsServer )
 			{
-				wait = false;
-				single = true;
-				max_run_time = 120;
+				var thredId = oThread.Param.GetOptProperty('ParentTraceId')
+				if(IsEmptyValue(thredId))
+				{
+					thredId = OptInt(oThread.UniqueThreadId);
+					oThread.Param.SetProperty('ParentTraceId', thredId);
+				}
 
-				oAssembly = tools.get_object_assembly( 'DatexCore' );
-				LogEvent( 'agent', '.Net server agent &quot;' + TopElem.name + '&quot; is starting...' );
-				oParseResult = oAssembly.CallClassStaticMethod( 'Datex.Core.CSharp', 'Parse', [ 1, TopElem.id, TopElem.code, TopElem.Name, TopElem.exec_code.code_text ] ); //Server Agent
-				if ( oParseResult.Success )
-				{
-					oAssemblyResult = tools.dotnet_host.Object.GetAssembly( oParseResult.AssemblyName );
-					oAssemblyResult.CallClassStaticMethod( oParseResult.EntryPointMemberFullName, '', [], single, wait,max_run_time );
-					LogEvent( 'agent', '.Net server agent started successfully: &quot;' + TopElem.name + '&quot;' );
-				}
-				else
-				{
-					LogEvent( 'agent', '.Net server agent parsing failed: &quot;' + TopElem.name + '&quot;' );
-				}
+				sAgentRunCode += 'oActivity = tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'StartActivity\', ['+thredId+', ' + CodeLiteral (TopElem.code) + ', \'\', [
+					{\'name\':\'component\', \'value\':\'agent\'},
+					{\'name\':\'activity.name\', \'value\':'+ CodeLiteral(TopElem.name) +'}
+				], [\'hcm.agents.started\', \'hcm.agents.working\']]);';
+			
+				sAgentRunCode += 'try{
+					' + real_code + '
+					} catch(__cc_err__) { tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'SetStatus\', [oActivity, 2]); tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'AddEvent\', [oActivity, \'Exeption\', [	{\'name\':\'exception.type\', \'value\':\'agent.error.2\'},	{\'name\':\'exception.message\', \'value\':__cc_err__}], true]); alert(__cc_err__) }';
 			}
 			else
 			{
-				if ( LdsIsServer &amp;&amp; (tools.sys_db_capability & tools.UNI_CAP_APP_INSIGHTS) != 0 )
-				{
-					sAgentRunCode += '__tlfs=GetCurTicks()-__tls;
-	__oData = new Object();
-	__oData.start_date=__start_date;
-	__oData.end_date=Date();
-	__oData.cpu_usage=tools.spxml_unibridge.Object.provider.GetCPUThreadUsage();
-	__oData.trigger_type=' + CodeLiteral( TopElem.trigger_type ) + ';
-	__oData.agent_name=' + CodeLiteral( TopElem.name ) + ';
-	__oData.agent_code=' + CodeLiteral( TopElem.code ) + ';
-	__oData.run_type=' + CodeLiteral( TopElem.type ) + ';
-	tools.spxml_unibridge.Object.provider.TrackMetrics(\'Agent\',' + CodeLiteral( TopElem.name ) + ',__tlfs,EncodeJson(__oData)); ';
-				}
+				sAgentRunCode += 'try{\n
+					' + real_code + '\n
+					} catch(__cc_err__) { alert(__cc_err__) }';
+			}
 
+			if ( TopElem.exec_code.code_type == 'cs' ) //c#
+			{
+                                try
+                                {
+                                 websoft_dotnetbuild;
+                                }
+                                catch(e)
+                                {
+                                 websoft_dotnetbuild = {};
+                                }
+
+				PARAMETERS = tools.wvars_to_object( TopElem.wvars );
+				//oParseResult = tools.call_code_library_method('libDotNetBuild', 'Parse', [TopElem, 'Agents.ServerAgent.Run', [PARAMETERS], sConfiguration]);
+				oParseResult = websoft_dotnetbuild.Parse(TopElem, 'Agents.ServerAgent.Run',[PARAMETERS], sConfiguration);
+			}
+			else
+			{
 				if ( LdsIsServer ) //&amp;&amp; (tools.sys_db_capability & tools.UNI_CAP_BASIC) != 0
 				{
 					pAgentRunCode = '';
@@ -240,19 +255,30 @@
 					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.PutMessageInQueue(\'ag_finished\',EncodeJson(oData));';
 					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_status_'+TopElem.id+'\')';
 					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_info_'+TopElem.id+'\')';
-					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_scheduled_spin_'+TopElem.id+'\')';
-
-					iMaxFinishedAgents = 100;
+					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.RemoveUserData(\'ag_scheduled_spin_'+TopElem.id+'\');';
+					pAgentRunCode += 'tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'SetStatus\', [{}, 2, \'\', true]);'
+					pAgentRunCode += 'oEndRes = tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'EndActivity\', [null, true, 1, \'Post Agent Run Code\', [\'hcm.agents.working\']]);'
+					iMaxFinishedAgents = 100; 
 					pAgentRunCode += 'tools.spxml_unibridge.Object.provider.QueueTrim(\'ag_finished\',-'+iMaxFinishedAgents+','+iMaxFinishedAgents+');';
 					oThread.SetPostCode(pAgentRunCode);
-				}
+				}	
 
 				sAgentRunCode = 'try{ if ( ! LdsIsServer ) Screen = ActiveScreen; } catch(___aaa___){}; LogEvent( \'agent\', \'Starting server agent \' + ' + CodeLiteral( TopElem.name ) + ' ); try{
 				' + sAgentRunCode + '
-				} catch(___ggg___){alert(___ggg___)};LogEvent( \'agent\', \'Finished server agent \' + ' + CodeLiteral( TopElem.name ) + ' );try{ if ( ! LdsIsServer ) ActiveScreen.MsgBox( \'Finished server agent \' + ' + CodeLiteral( TopElem.name ) + ',\'Information\', \'info\', \'ok\') } catch(___aaa___){};';
+				} catch(___ggg___){
+					if ( LdsIsServer ) { 
+						tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'SetStatus\', [oActivity, 2]);tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'AddEvent\', [oActivity, \'Exeption\', [	{\'name\':\'exception.type\', \'value\':\'agent.error.1\'},	{\'name\':\'exception.message\', \'value\':___ggg___}]]);
+					}
+					alert(___ggg___)};
+				LogEvent( \'agent\', \'Finished server agent \' + ' + CodeLiteral( TopElem.name ) + ' );try{ if ( ! LdsIsServer ) ActiveScreen.MsgBox( \'Finished server agent \' + ' + CodeLiteral( TopElem.name ) + ',\'Information\', \'info\', \'ok\') } catch(___aaa___){};';
+
 
 				//alert(sAgentRunCode);
 
+				if ( LdsIsServer )
+				{
+					sAgentRunCode += 'oEndRes = tools.lite_call_code_library_method( \'//wtv/libs/open_telemetry_library.js\', \'EndActivity\', [oActivity, false, 0, \'\', [\'hcm.agents.working\']]);';
+				}
 				oThread.EvalCode( sAgentRunCode );
 			}
 
@@ -273,6 +299,13 @@
 
 			LogEvent( 'agent', 'Execute server agent &quot;' + TopElem.name + '&quot;' );
 			return true;
+}
+catch(e)
+{
+alert(e);
+throw e;
+}
+
 	"/>
 
 
@@ -324,6 +357,25 @@ catch(err)
 {
 alert(err)
 }
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( TopElem.exec_code.is_compiling && TopElem.exec_code.code_type == 'cs' ) //c#
+	{
+                try
+                {
+                 websoft_dotnetbuild;
+                }
+                catch(e)
+                {
+                 websoft_dotnetbuild = {};
+                }
+
+		//oResult = tools.call_code_library_method('libDotNetBuild', 'SaveProjectTE', [TopElem]);
+		oResult = websoft_dotnetbuild.SaveProjectTE(TopElem);
+		if(oResult.error != 0)
+			alert(oResult.errorText);
+	}
 "/>
 
 <DocDesc PROPERTY="1" EXPR="
