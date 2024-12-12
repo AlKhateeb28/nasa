@@ -40,7 +40,7 @@ class Page92 extends Page {
         {id: "7389214479898473355", color: "#4a4fd4"},
         {id: "7418487622955379774", color: "#32cd32"},
         {id: "7368463748813160933", color: "#008000"},
-        {id: "7411465386805912985", color: "#00008b"},
+        {id: "74114653868075912985", color: "#00008b"},
         {id: "7412921813726668808", color: "#ff7f50"},
         {id: "6901298909405270647", color: "#2f4f4f"},
         {id: "7097117756238813319", color: "#9f5901"},
@@ -84,14 +84,18 @@ class Page92 extends Page {
     getContent() {
         return `
             <style>
-            .page92-inf0-header {
+            .page92-info-header {
                 text-align: center;
-                background-color: var(--color-lightblue);
+                background-color: #483d8b;
                 color: var(--color-mintcream);
             }
             
             .page92-row-border {               
                 border-bottom: 1px solid var(--color-border)          
+            }
+            
+            .page92_row:nth-child(odd) {
+                background-color: #faf9f9;
             }
             </style>
             
@@ -240,7 +244,7 @@ class Page92 extends Page {
         tableElement.append(Page.template("page92_info_template"));
 
         $("#page92_row").attr("id", "page92_row_header");
-        $("#page92_row_header").addClass("page92-inf0-header");
+        $("#page92_row_header").addClass("page92-info-header");
 
         $("#page92_index").attr("id", "page92_index_header");
         $("#page92_index_header").html("#");
@@ -303,6 +307,7 @@ class Page92 extends Page {
             tableElement.append(Page.template("page92_info_template"));
 
             $("#page92_row").attr("id", "page92_row_" + index);
+            $("#page92_row_" + index).addClass("page92_row")
 
             $("#page92_index").attr("id", "page92_index_" + index);
             $("#page92_index_" + index).html(index + 1);
