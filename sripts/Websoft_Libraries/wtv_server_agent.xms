@@ -96,6 +96,11 @@
 		<BR/>
 	</IF>
 
+	<IF EXPR="TopElem.type == 'code' && TopElem.exec_code.code_type == 'cs'">
+		<ITEM TYPE="web_and_agent_bin_files_base" readOnlyExpr="false"/>
+		<BR/>
+	</IF>
+
 	<ITEM TYPE="comment_base"/>
 	<BR/>
 

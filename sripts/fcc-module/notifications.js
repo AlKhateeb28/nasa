@@ -13,30 +13,61 @@ try {
     userId = curUserID;
 
     paramUserId = OptInt(Request.Query.GetOptProperty("user_id", "0"));
-
     if (paramUserId != 0) {
         userId = paramUserId;
     }
 
-    eventList = ArrayDirect(XQuery("sql: " +
-        " SELECT name, " +
-        "       start_date AS start, " +
-        "       finish_date AS finish, " +
-        "       all_day " +
-        " FROM [WTDB].[dbo]._aa_notifications " +
-        " WHERE person_id = 7351734047845980789 " +
-        "       AND GETDATE() > start_date " +
-        "       AND active = 1 "));
+    paramId = OptInt(Request.Query.GetOptProperty("id", "0"));
+    paramType = OptInt(Request.Query.GetOptProperty("type", "0"));
 
-    if (ArrayCount(eventList) > 0) {
-        for (event in eventList) {
-            element = {};
-            element.name = event.name;
-            element.start = event.start;
-            element.finish = event.finish;
-            element.allDay = event.all_day;
-            result.notifications.push(element);
-        }
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] ID: " + paramId + " TYPE: " + paramType);
+
+    switch (paramType) {
+        case 0 :
+            // SELECT
+            eventList = ArrayDirect(XQuery("sql: " +
+                " SELECT id, " +
+                "       name, " +
+                "       start_date AS start, " +
+                "       finish_date AS finish, " +
+                "       all_day, " +
+                "       last_send " +
+                " FROM [WTDB].[dbo]._aa_notifications " +
+                " WHERE person_id = " + userId +
+                "       AND GETDATE() > start_date " +
+                "       AND active = 1 "));
+
+            if (ArrayCount(eventList) > 0) {
+                for (event in eventList) {
+                    element = {};
+                    element.id = event.id;
+                    element.name = event.name;
+                    element.start = event.start;
+                    element.finish = event.finish;
+                    element.allDay = event.all_day;
+                    element.lastSend = event.last_send;
+                    result.notifications.push(element);
+                }
+            }
+
+            break;
+        case 1:
+            // INSERT ROW
+            if(paramId !== 0) {
+
+            }
+
+            break;
+        case 2:
+            // SET LAST SEND
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] 2");
+
+            if(paramId !== 0) {
+                XQuery("sql: UPDATE [WTDB].[dbo]._aa_notifications SET last_send = GETDATE() WHERE id = " + paramId)
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] Updated");
+            }
+
+            break;
     }
 } catch (e) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);

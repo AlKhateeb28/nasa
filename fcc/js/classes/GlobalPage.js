@@ -536,6 +536,58 @@ class GlobalPage extends Page {
     }
 }
 
+function setLastSendDate(id) {
+    $.ajax({
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7101807729834720822&type=2&id=" + id,
+        async: false,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            if(data.errorMessage.indexOf("#") < 0) {
+            }  else {
+                console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+            }
+        },
+        error: function(error) {
+            console.log("GP.Process.Favorites  - State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+        }
+    });
+}
+
+function verifyNotification() {
+    let userIdParameter = "";
+    const pickedId = GlobalPage.getPickedUserId();
+
+    if(pickedId !== null) {
+        userIdParameter = "&user_id=" + pickedId;
+    }
+
+    $.ajax({
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7101807729834720822" + userIdParameter,
+        async: false,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            if(data.errorMessage.indexOf("#") < 0) {
+                data.notifications.forEach((notification, index) => {
+                    console.log("ID: " + notification.id + " Send.NULL: " + (notification.lastSend === null));
+
+                    if(notification.lastSend === null) {
+                        //Page.sendNotification("СДО", notification.name);
+
+                        setLastSendDate(notification.id);
+                    }
+                });
+            }  else {
+                console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+            }
+        },
+        error: function(error) {
+            console.log("GP.Process.Favorites  - State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+        }
+    });
+}
+
 $(document).ready(function () {
     initModalWindow("modal_box");
 
@@ -544,6 +596,9 @@ $(document).ready(function () {
     //globalPage.autoLogin();
 
     $("#user_box").css("left", $(window).width() - 540);
+
+    /*verifyNotification();
+    setInterval(verifyNotification, 30000);*/
 
     globalPage.showFavorites();
 });

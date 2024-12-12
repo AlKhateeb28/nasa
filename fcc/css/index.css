@@ -520,6 +520,15 @@
     background-color: var(--color-orange);
 }
 
+.page92_row {
+    cursor: pointer;
+}
+
+.page92_row:hover {
+    background-color: #a39ec7 !important;
+    color: var(--color-mintcream);
+}
+
 button {
     color: mintcream;
     background-image: linear-gradient(-20deg, #4e4376, #2b5876 0%, #4e4376 100%);
