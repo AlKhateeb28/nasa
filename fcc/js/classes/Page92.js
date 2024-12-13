@@ -31,6 +31,8 @@ function page90Refresh() {
 class Page92 extends Page {
     actionId = 0;
     data = [];
+    selectedId = null;
+
     static agentColors = [
         {id: "7397715395783318274", color: "#7928ca"},
         {id: "7413654006667034412", color: "#ff0080"},
@@ -51,8 +53,13 @@ class Page92 extends Page {
         {id: "7369216028941956636", color: "#1b141a"},
         {id: "7095037835551307471", color: "#b75353"},
         {id: "6974513176326201916", color: "#2f5b31"},
-        {id: "-", color: "#4e92cd"},
-        {id: "", color: "#4e92cd"}
+        {id: "7411465386805912985", color: "#4e92cd"},
+        {id: "7358373207434405549", color: "#ffff00"},
+        {id: "7361391346412363816", color: "#adff2f"},
+        {id: "7421123736934631203", color: "#00ffff"},
+        {id: "7260016733638312977", color: "#0000ff"},
+        {id: "7407324307505112574", color: "#483d8b"},
+        {id: "7365809179739829543", color: "#721c24"}
     ];
 
     constructor(actionId) {
@@ -150,7 +157,7 @@ class Page92 extends Page {
 
                     GlobalPage.hideWaiter();
                 } else {
-                    console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+                    console.log("Error: " + data.errorMessage);
                 }
             },
             error: function(error) {
@@ -233,12 +240,12 @@ class Page92 extends Page {
         $("#page92_card").attr("id", "page92_card_info");
 
         const infoCardElement = $("#page92_card_info");
-        infoCardElement.css("width", "100%");
+        infoCardElement.css("width", "99%");
         infoCardElement.css("border-radius", "0px");
 
         $("#page92_chart").attr("id", "page92_agent_info");
 
-        $("#page92_agent_info").append("<table id='page92_table' border='0' style='width: 99%'></table>");
+        $("#page92_agent_info").append("<table id='page92_table' border='0' style='width: 100%'></table>");
 
         const tableElement = $("#page92_table");
         tableElement.append(Page.template("page92_info_template"));
@@ -247,7 +254,8 @@ class Page92 extends Page {
         $("#page92_row_header").addClass("page92-info-header");
 
         $("#page92_index").attr("id", "page92_index_header");
-        $("#page92_index_header").html("#");
+        const indexElement = $("#page92_index_header");
+        indexElement.html("#");
 
         $("#page92_id").attr("id", "page92_id_header");
         const idElement = $("#page92_id_header");
@@ -307,7 +315,8 @@ class Page92 extends Page {
             tableElement.append(Page.template("page92_info_template"));
 
             $("#page92_row").attr("id", "page92_row_" + index);
-            $("#page92_row_" + index).addClass("page92_row")
+            $("#page92_row_" + index).addClass("page92_row");
+            $("#page92_row_" + index).attr("agent_id", row.id);
 
             $("#page92_index").attr("id", "page92_index_" + index);
             $("#page92_index_" + index).html(index + 1);
@@ -400,6 +409,20 @@ class Page92 extends Page {
         };
     }
 
+    static showSelectedAgent(selectedId) {
+        page92.selectedId = selectedId;
+
+        $(".page92_row").css("display", "none");
+
+        const rowElements = $("#page92_table").children(".page92_row");
+
+        rowElements.each(function (index, element) {
+            if (parseInt(selectedId) === parseInt($("#" + element.id).attr("agent_id"))) {
+                $("#" + element.id).css("display", "");
+            }
+        });
+    }
+
     static getAgentsOptions(chartSeries, categories) {
         return {
             series: chartSeries,
@@ -419,9 +442,18 @@ class Page92 extends Page {
                 toolbar: {show: false},
                 events: {
                     dataPointSelection(event, chartContext, opts) {
-                        console.log(opts.w.config.series[opts.seriesIndex])
-                        console.log(opts.w.config.series[opts.seriesIndex].name)
-                        console.log(opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex])
+                        // opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex]
+                        const selectedAgent = opts.w.config.series[opts.seriesIndex];
+
+                        if(page92.selectedId === null) {
+                            Page92.showSelectedAgent(selectedAgent.id);
+                        } else {
+                            if(selectedAgent.id === page92.selectedId) {
+                                $(".page92_row").css("display", "");
+                            } else {
+                                Page92.showSelectedAgent(selectedAgent.id);
+                            }
+                        }
                     }
                 }
             },

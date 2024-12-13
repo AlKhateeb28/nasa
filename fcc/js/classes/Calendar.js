@@ -23,10 +23,10 @@ class Calendar extends Object {
         this.contentId = contentId;
         this.dataUrl = dataUrl;
 
-
         this.initYearEvents();
 
-        setInterval(this.getNotifications, 15000);
+        //setInterval(this.getNotifications, 15000);
+        this.getNotifications()
 
         //this.refreshData(moment().format("YYYY-MM-DD"));
     }
@@ -152,7 +152,7 @@ class Calendar extends Object {
 
                     GlobalPage.hideWaiter();
                 } else {
-                    console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+                    console.log("Error: " + data.errorMessage);
                 }
             },
             error: function(error) {
@@ -320,9 +320,9 @@ class Calendar extends Object {
                 <div id="page` + this.pageId + `_info" class="float-left fcc-card" style="height: 46.5em; width: 17.6%;">
                     <div>
                         <div class="event-info">События и мероприятия</div>
-                        <div style="margin-bottom: 5px;">
+                        <!--div style="margin-bottom: 5px;">
                             <button type="button" onclick="ModalWindow.show('Some text in the Modal Window...<br>Some text in the Modal Window...');">Добавить уведомление</button>
-                        </div>
+                        </div-->
                         <div id="page` + this.pageId + `_info_content"></div>                        
                     </div>
                 </div>
@@ -596,7 +596,7 @@ class Calendar extends Object {
         const dates = Calendar.getStartFinishDates(this.pageId);
 
         $.ajax({
-            url: this.dataUrl + "&start=" + dates.start + "&finish=" + dates.finish + userId,
+            url: this.dataUrl + "&start=" + dates.start + "&finish=" + dates.finish + userIdParameter,
             async: false,
             type: "GET",
             dataType: "json",
@@ -610,7 +610,7 @@ class Calendar extends Object {
 
                     instance.showDayEvents();
                 } else {
-                    console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+                    console.log("Error: " + data.errorMessage);
                 }
             },
             error: function(error) {
