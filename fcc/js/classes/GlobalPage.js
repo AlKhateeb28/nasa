@@ -22,9 +22,17 @@ class GlobalPage extends Page {
     histories = [];
     pages = [];
     isForcingReload = false;
+    sentNotifications = [{}, {}, {}, {}, {}, {}, {}, {}];
 
     constructor(actionId) {
         super();
+
+        for(let i = 0; i < 8; i++) {
+            const element = {};
+            element.notifications = [];
+
+            this.sentNotifications[i] = element;
+        }
     }
 
     getCurrentUserId() {
@@ -306,6 +314,26 @@ class GlobalPage extends Page {
         $("#content_" + pageId).css("display", "block");
     }
 
+    hasHourNotification(hour, id) {
+        let result = false;
+
+        globalPage.sentNotifications.forEach((notification, index) => {
+            notification.notifications.forEach((element, index) => {
+               if(element === id) {
+                   result = true;
+               }
+            });
+        });
+
+        return result;
+    }
+
+    addHourNotification(hour, id) {
+        const calculatedIndex = GlobalPage.getHourRecalculatedIndex(hour);
+
+        globalPage.sentNotifications[calculatedIndex].notifications.push(id);
+    }
+
     // STATIC METHODS
     static getCurrentDateTime() {
         const currentDate = new Date();
@@ -534,9 +562,29 @@ class GlobalPage extends Page {
             }
         });
     }
+
+    static getHourRecalculatedIndex(hour) {
+        if(hour >= 0 && hour <= 2) {
+            return 0;
+        } else if(hour >= 3 && hour <= 5) {
+            return 1;
+        } else if(hour >= 6 && hour <= 8) {
+            return 2;
+        } else if(hour >= 9 && hour <= 11) {
+            return 3;
+        } else if(hour >= 12 && hour <= 14) {
+            return 4;
+        } else if(hour >= 15 && hour <= 17) {
+            return 5;
+        } else if(hour >= 18 && hour <= 20) {
+            return 6;
+        } else {
+            return 7;
+        }
+    }
 }
 
-function setLastSendDate(id) {
+/*function setLastSendDate(id) {
     $.ajax({
         url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7101807729834720822&type=2&id=" + id,
         async: false,
@@ -552,7 +600,8 @@ function setLastSendDate(id) {
             console.log("GP.Process.Favorites  - State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
         }
     });
-}
+}*/
+
 
 function verifyNotification() {
     let userIdParameter = "";
@@ -570,16 +619,19 @@ function verifyNotification() {
         success: function (data) {
             if(data.errorMessage.indexOf("#") < 0) {
                 data.notifications.forEach((notification, index) => {
-                    console.log("ID: " + notification.id + " Send.NULL: " + (notification.lastSend === null));
+                    const hour = parseInt(moment().format("HH"));
 
-                    if(notification.lastSend === null) {
-                        //Page.sendNotification("СДО", notification.name);
+                    if(!globalPage.hasHourNotification(hour, notification.id)) {
 
-                        setLastSendDate(notification.id);
+                        globalPage.addHourNotification(hour, notification.id);
+
+                        Page.sendNotification("СДО", notification.name);
+                    } else {
+                        console.log(moment().format("HH:mm:ss") + " Alraedy exist!");
                     }
                 });
             }  else {
-                console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+                console.log("Error: " + data.errorMessage);
             }
         },
         error: function(error) {
@@ -597,8 +649,8 @@ $(document).ready(function () {
 
     $("#user_box").css("left", $(window).width() - 540);
 
-    /*verifyNotification();
-    setInterval(verifyNotification, 30000);*/
+    verifyNotification();
+    setInterval(verifyNotification, 30000);
 
     globalPage.showFavorites();
 });

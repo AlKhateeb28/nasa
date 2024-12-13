@@ -100,7 +100,7 @@ class Page20 extends Page {
 
                     GlobalPage.hideWaiter();
                 } else {
-                    console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+                    console.log("Error: " + data.errorMessage);
                 }
             },
             error: function(error) {
