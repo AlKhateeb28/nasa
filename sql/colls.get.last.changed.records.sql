@@ -1,7 +1,3 @@
-
-
-
-
 SELECT cs.id,
        cs.modification_date,
        c.data.value('(//custom_elems/custom_elem[name=''in_program'']/value)[1]', 'varchar(max)') c_in_program,
