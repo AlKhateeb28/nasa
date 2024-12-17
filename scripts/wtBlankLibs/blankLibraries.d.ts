@@ -27,6 +27,7 @@ function OptDate(date: any) : string;
 function UrlFromDocID(value: number): string;
 function DeleteDoc(url: string): void;
 function ArrayOptFindByKey(list: object, key: any, field: string);
+function ArrayOptFind(array: any, expression: string);
 function StrUpperCase(value: string): string;
 function StrLowerCase(value: string): string;
 function StrCharRangePos(value: string, start: number, stop: number): string;

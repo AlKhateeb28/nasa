@@ -183,11 +183,7 @@ try {
         collPosition = Trim(excelWorkSheet.Cells.GetCell('C'+(i+1)).Value);
 
         if(isContainUmlauts(collFullname)) {
-            addLogMessage(loggerName,  "[agent.id: " + agentId + "] Collaborator " + collFullname + " (Org.INN: )" + sOrgINN + " contains wrong umlaut 'Ё' or 'ё'");
-
-            skipped++;
-
-            continue;
+            collFullname = normalizeName(collFullname);
         }
 
         if(ArrayOptFind(aNotUploadedColls, "This.fullname == " + CodeLiteral(collFullname)) != undefined) {
