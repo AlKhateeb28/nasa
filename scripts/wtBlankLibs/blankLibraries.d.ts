@@ -46,3 +46,8 @@ function Day(datetime: any): number;
 function Month(datetime: any): number;
 function Year(datetime: any): number;
 function Minute(datetime: any): number;
+function DeleteFile(url: string): void;
+function OpenDoc(url: string): object;
+function UrlToFilePath(s: string): any;
+function ObtainSessionTempFile(s: string): any;
+function UrlPathSuffix(s: string): any;
