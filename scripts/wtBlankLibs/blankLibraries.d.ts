@@ -51,3 +51,6 @@ function OpenDoc(url: string): object;
 function UrlToFilePath(s: string): any;
 function ObtainSessionTempFile(s: string): any;
 function UrlPathSuffix(s: string): any;
+function ArraySelectAll(o: object): any;
+function ArraySelectDistinct(o: object, column: string) : any;
+function ArrayMerge(a: any, column: string, s: string): any;
