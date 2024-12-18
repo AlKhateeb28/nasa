@@ -53,7 +53,7 @@ if (LdsIsServer) {
             if(eventDoc != undefined) {
                 eventDoc.TopElem.custom_elems.ObtainChildByKey('can_be_sent').value = 'true';
 
-                //eventDoc.Save();
+                eventDoc.Save();
 
                 saved++;
             } else {
