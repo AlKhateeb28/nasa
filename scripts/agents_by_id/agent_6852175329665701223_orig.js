@@ -53,26 +53,6 @@ function log(text, arFlag, alFlag) {
     }
 }
 
-function addPersonToEvent(personId, eventId, defaultEventResultTypeId) {
-    tools.add_person_to_event(personId, eventId);
-
-    if(defaultEventResultTypeId != null) {
-        dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT id " +
-            " FROM [WTDB].[dbo].event_results " +
-            " WHERE event_id = " + eventId +
-            "      AND person_id = " + personId));
-
-        if(ArrayCount(dataList) > 0) {
-            eventResultDoc = tools.open_doc(dataList[0].id);
-
-            eventResultDoc.TopElem.event_result_type_id = defaultEventResultTypeId;
-
-            eventResultDoc.Save();
-        }
-    }
-}
-
 var eventId = Int(Param.event_id);
 var agentId = 6852175329665701223;
 
@@ -219,9 +199,12 @@ for (i = 1; i <= lastExcelString; i++) {
         collPositionDoc.Save();
         collDoc.Save();
 
-        addPersonToEvent(collDoc.DocID, eventId, 7101362043897205669);
+        collId = collDoc.DocID;
+
+        tools.add_person_to_event(collDoc.DocID, eventId, null, null, null, currentUserId, null);
     } else {
-        addPersonToEvent(ArrayOptFirstElem(collArr).id, eventId, 7101362043897205669);
+        collId = ArrayOptFirstElem(collArr).id;
+        tools.add_person_to_event(ArrayOptFirstElem(collArr).id, eventId, null, null, null, currentUserId, null);
     }
 
     iNumberUploadedColls++;
