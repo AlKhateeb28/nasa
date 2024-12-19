@@ -27,8 +27,8 @@ if (LdsIsServer) {
 
     try {
         dataList = ArrayDirect(XQuery("sql: " +
-            " DECLARE @date_to " + "datetime = CAST('2024-11-30 23:59:59' AS DATETIME);" + //  --DATEADD(DAY, -3, GETDATE()); " +
-            " DECLARE @date_from " + "datetime = CAST('2024-11-01 00:00:00' AS DATETIME);" + // --CAST(CONCAT(YEAR(@date_to), '-', MONTH(@date_to), '-01') AS DATETIME); " +
+            " DECLARE @date_to " + "datetime = DATEADD(DAY, -3, GETDATE()); " +
+            " DECLARE @date_from " + "datetime = CAST(CONCAT(YEAR(@date_to), '-', MONTH(@date_to), '-01') AS DATETIME); " +
             " " +
             " SELECT DISTINCT e.id " +
             " FROM [WTDB].[dbo].event_results ers " +
