@@ -25,6 +25,8 @@ if ( LdsIsClient ) {
     var group_id = Param.group_id
     var edu_meths_arr = tools.read_object( Param.edu_meths )
     var edu_meths_str = ArrayMerge( edu_meths_arr, "This.edu_meth", "," )
+    var educationOrgId = Param.edu_org_id;
+
     switch ( Param.work_type ) {
         case 'org':
             my_id = OBJECT_ID == null ? org_id : OBJECT_ID
@@ -41,14 +43,24 @@ if ( LdsIsClient ) {
                         docCertificate.TopElem.serial = "РГ"
                         docCertificate.TopElem.delivery_date = Date()
                         docCertificate.TopElem.custom_elems.ObtainChildByKey( "edu_prog_names" ).value = unique_e_m_names_str
-                        docCertificate.Save()
+
+                        if(educationOrgId != '') {
+                            docCertificate.TopElem.education_org_id = educationOrgId;
+                        }
+
+                        docCertificate.Save();
                     }
                 } else {
                     unique_e_m_names_str = getUniqueNames( org_col.id, edu_meths_str )
                     if ( unique_e_m_names_str != "" ) {
                         docCertificate = tools.open_doc( found_col_certificate.id )
                         docCertificate.TopElem.custom_elems.ObtainChildByKey( "edu_prog_names" ).value = unique_e_m_names_str
-                        docCertificate.Save()
+
+                        if(educationOrgId != '') {
+                            docCertificate.TopElem.education_org_id = educationOrgId;
+                        }
+
+                        docCertificate.Save();
                     }
                 }
             }
@@ -96,14 +108,24 @@ if ( LdsIsClient ) {
                         docCertificate.TopElem.serial = "РГ"
                         docCertificate.TopElem.delivery_date = Date()
                         docCertificate.TopElem.custom_elems.ObtainChildByKey( "edu_prog_names" ).value = unique_e_m_names_str
-                        docCertificate.Save()
+
+                        if(educationOrgId != '') {
+                            docCertificate.TopElem.education_org_id = educationOrgId;
+                        }
+
+                        docCertificate.Save();
                     }
                 } else {
                     unique_e_m_names_str = getUniqueNames( group_col.col_id, edu_meths_str )
                     if ( unique_e_m_names_str != "" ) {
                         docCertificate = tools.open_doc( found_col_certificate.id )
                         docCertificate.TopElem.custom_elems.ObtainChildByKey( "edu_prog_names" ).value = unique_e_m_names_str
-                        docCertificate.Save()
+
+                        if(educationOrgId != '') {
+                            docCertificate.TopElem.education_org_id = educationOrgId;
+                        }
+
+                        docCertificate.Save();
                     }
                 }
             }
