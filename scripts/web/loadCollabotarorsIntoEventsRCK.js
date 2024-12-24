@@ -64,6 +64,26 @@ function log(text, arFlag, alFlag) {
     }
 }
 
+function addPersonToEvent(personId, eventId, defaultEventResultTypeId) {
+    tools.add_person_to_event(personId, eventId);
+
+    if(defaultEventResultTypeId != null) {
+        dataList = ArrayDirect(XQuery("sql: " +
+            " SELECT id " +
+            " FROM [WTDB].[dbo].event_results " +
+            " WHERE event_id = " + eventId +
+            "      AND person_id = " + personId));
+
+        if(ArrayCount(dataList) > 0) {
+            eventResultDoc = tools.open_doc(dataList[0].id);
+
+            eventResultDoc.TopElem.event_result_type_id = defaultEventResultTypeId;
+
+            eventResultDoc.Save();
+        }
+    }
+}
+
 var startDate = Date();
 var prevDate = new Date();
 var loggerName = "agent_6898265584977189358";
@@ -183,11 +203,7 @@ try {
         collPosition = Trim(excelWorkSheet.Cells.GetCell('C'+(i+1)).Value);
 
         if(isContainUmlauts(collFullname)) {
-            addLogMessage(loggerName,  "[agent.id: " + agentId + "] Collaborator " + collFullname + " (Org.INN: )" + sOrgINN + " contains wrong umlaut 'Ё' or 'ё'");
-
-            skipped++;
-
-            continue;
+            collFullname = normalizeName(collFullname);
         }
 
         if(ArrayOptFind(aNotUploadedColls, "This.fullname == " + CodeLiteral(collFullname)) != undefined) {
@@ -283,12 +299,9 @@ try {
             collPositionDoc.Save();
             collDoc.Save();
 
-            collId = collDoc.DocID;
-
-            tools.add_person_to_event(collDoc.DocID, eventId, null, null, null, currentUserId, null);
+            addPersonToEvent(collDoc.DocID, eventId, 7101361738949288137);
         } else {
-            collId = ArrayOptFirstElem(collArr).id;
-            tools.add_person_to_event(ArrayOptFirstElem(collArr).id, eventId, null, null, null, currentUserId, null);
+            addPersonToEvent(ArrayOptFirstElem(collArr).id, eventId, 7101361738949288137);
         }
 
         iNumberUploadedColls++;

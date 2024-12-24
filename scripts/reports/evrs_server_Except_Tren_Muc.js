@@ -50,56 +50,38 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
 try {
     eventResultList = ArrayDirect(XQuery("sql:
-    SET DATEFORMAT dmy
-    DECLARE @date_from datetime = '" + date_from + "'
-    DECLARE @date_to datetime = '" + date_to + "'
-    ;
-    WITH TempTable1 AS (
-        SELECT events.id AS e_id, lectors.lector_fullname AS lec_fio
-    FROM [WTDB].[dbo].events
-    INNER JOIN [WTDB].[dbo].event e ON events.id = e.id
-    CROSS APPLY e.data.nodes('event/lectors/lector') T(c)
-    INNER JOIN [WTDB].[dbo].lectors
-    ON T.c.value('lector_id[1]','varchar(max)') = lectors.id
-    WHERE
-    events.finish_date BETWEEN @date_from AND @date_to
-)
-    SELECT e_id, lec_fio_s = STUFF (
-        (
-            SELECT '|' + lec_fio
-    FROM TempTable1 tt2
-    WHERE tt2.e_id = tt1.e_id
-    FOR XML PATH ('')
-)
-, 1, 1, ''
-)
-    INTO #Table1
-    FROM TempTable1 tt1
-    GROUP BY e_id
-    ;
-    WITH TempTable2 AS (
-        SELECT events.id AS e_id, T.c.value('person_fullname[1]','varchar(max)') AS pre_fio
-    FROM [WTDB].[dbo].events
-    INNER JOIN [WTDB].[dbo].event e ON events.id = e.id
-    CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c)
-    WHERE
-    events.finish_date BETWEEN @date_from AND @date_to
-)
-    SELECT e_id, pre_fio_s = STUFF (
-        (
-            SELECT '|' + pre_fio
-    FROM TempTable2 tt2
-    WHERE tt2.e_id = tt1.e_id
-    FOR XML PATH ('')
-)
-, 1, 1, ''
-)
-    INTO #Table2
-    FROM TempTable2 tt1
-    GROUP BY e_id
-    ;
-    SELECT top 1000000
-    CONCAT( '''', event_results.id ) AS PK,
+    SET DATEFORMAT dmy;
+    DECLARE @date_from datetime = '" + date_from + "';
+    DECLARE @date_to datetime = '" + date_to + "';
+
+    SELECT lec_fio_s = STUFF (
+                    (
+                        SELECT '|' + lec_fio
+                FROM (
+                    SELECT ev1.id AS e_id, lectors.lector_fullname AS lec_fio
+                FROM [WTDB].[dbo].events ev1
+                INNER JOIN [WTDB].[dbo].event e1 ON ev1.id = e1.id
+                CROSS APPLY e1.data.nodes('event/lectors/lector') T(c)
+                INNER JOIN [WTDB].[dbo].lectors
+                ON T.c.value('lector_id[1]','varchar(max)') = lectors.id
+            ) tt2
+                WHERE tt2.e_id = events.id
+                FOR XML PATH ('')
+            ), 1, 1, ''),
+    pre_fio_s = STUFF (
+                    (
+                        SELECT '|' + pre_fio
+                FROM (
+                    SELECT ev1.id AS e_id, T.c.value('person_fullname[1]','varchar(max)') AS pre_fio
+                FROM [WTDB].[dbo].events ev1
+                INNER JOIN [WTDB].[dbo].event e1 ON ev1.id = e1.id
+                CROSS APPLY e1.data.nodes('event/even_preparations/even_preparation') T(c)
+            ) tt2
+                WHERE tt2.e_id = events.id
+                FOR XML PATH ('')
+            ), 1, 1, ''),
+    events.id,
+        CONCAT( '''', event_results.id ) AS PK,
         event_results.is_assist,
         event_results.not_participate,
         event_result_types.name AS event_result_type,
@@ -116,8 +98,6 @@ try {
         education_methods.name AS edu_meth_name,
         CONCAT( '''', education_methods.id  ) AS edu_meth_id,
         events.education_org_name AS edu_org_name,
-        #Table1.lec_fio_s AS lec_fio_s,
-        #Table2.pre_fio_s AS pre_fio_s,
         event.data.value('(event/custom_elems/custom_elem[name=''nps''])[1]/value[1]', 'varchar(max)') AS nps,
         event.data.value('(event/custom_elems/custom_elem[name=''month_otch''])[1]/value[1]', 'varchar(max)') AS month_otch,
         CONCAT( '''', orgs.code ) AS o_inn,
@@ -135,7 +115,7 @@ try {
     WHEN org.data.value('(org/custom_elems/custom_elem[name=''be_in_sr''])[1]/value[1]', 'varchar(max)') = 'true' THEN '+'
     ELSE '-'
     END AS be_in_sr,
-        ( SELECT regions.name FROM regions WHERE regions.id = org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') ) AS fact_reg_name,
+        ( SELECT regions.name FROM [WTDB].[dbo].regions WHERE regions.id = org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') ) AS fact_reg_name,
         regions.name AS reg_name,
         collaborator.data.value('(collaborator/lastname)[1]', 'varchar(max)') AS col_lastname,
         collaborator.data.value('(collaborator/firstname)[1]', 'varchar(max)') AS col_firstname,
@@ -179,18 +159,12 @@ try {
     LEFT JOIN [WTDB].[dbo].places ON events.place_id = places.id
     INNER JOIN [WTDB].[dbo].[common.event_status_types] ON events.status_id = [common.event_status_types].id
     LEFT JOIN [WTDB].[dbo].education_methods ON events.education_method_id = education_methods.id
-    INNER JOIN #Table1 ON events.id = #Table1.e_id
-    INNER JOIN #Table2 ON events.id = #Table2.e_id
     INNER JOIN [WTDB].[dbo].orgs ON collaborators.org_id = orgs.id
     INNER JOIN [WTDB].[dbo].org ON collaborators.org_id = org.id
     INNER JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id
     LEFT JOIN [WTDB].[dbo].positions ON positions.id = collaborators.position_id
-        --WHERE event_result.id = 7400775774305352841
     ORDER BY col_fullname, o_name, not_participate, f_date;
-    DROP TABLE #Table1;
-    DROP TABLE #Table2;"));
-
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] EventID: -" + eventResultList[0].e_id + "-");
+    "));
 
     total = ArrayCount(eventResultList);
 
