@@ -17,6 +17,11 @@ if(!LdsIsServer) {
     var saved = 0;
     var notFound = 0;
 
+    excel_url = Screen.AskFileOpen('', "Выбери файл *.xls*");
+    excel_object = new ActiveXObject("Excel.Application");
+    excel_file = excel_object.Workbooks.Open(excel_url);
+    excel_sheet = excel_file.Worksheets(1);
+
     agent.message = "Получение данных...";
     ws = sendMessageToWebsocket(ws, agent);
     prevDate = new Date();
@@ -26,10 +31,6 @@ if(!LdsIsServer) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
     try {
-        excel_url = Screen.AskFileOpen('', "Выбери файл *.xls*");
-        excel_object = new ActiveXObject("Excel.Application");
-        excel_file = excel_object.Workbooks.Open(excel_url);
-        excel_sheet = excel_file.Worksheets(1);
         x = 0;
 
         cur_row = 2;
@@ -50,11 +51,13 @@ if(!LdsIsServer) {
         prevDate = new Date();
 
         for (xtren in found_tren) {
-            tren = tools.open_doc(Int(xtren.id)).TopElem;
+            trenDoc = tools.open_doc(Int(xtren.id));
 
-            if(tren == undefined) {
+            if(trenDoc == undefined) {
                 continue;
             }
+
+            tren = trenDoc.TopElem;
 
             if (tren.trainer_fullname != undefined) {
                 excel_sheet.Cells(cur_row, 1).Value = tren.trainer_fullname;
@@ -278,23 +281,27 @@ if(!LdsIsServer) {
 
                 if (tren.trainer_id != undefined) {
                     excel_sheet.Cells(cur_row, 73).Value = (tren.trainer_id + ' ');
-                    trener = tools.open_doc(Int(tren.trainer_id)).TopElem;
-                    if (trener != undefined) {
-                        excel_sheet.Cells(cur_row, 74).Value = trener.fullname;
 
+                    trenerDoc = tools.open_doc(Int(tren.trainer_id));
+
+                    if (trenerDoc != undefined) {
+                        trener = trenerDoc.TopElem;
+
+                        excel_sheet.Cells(cur_row, 74).Value = trener.fullname;
                         excel_sheet.Cells(cur_row, 76).Value = trener.org_name;
 
                         if (trener.org_id != undefined) {
-                            org_ = tools.open_doc(Int(trener.org_id)).TopElem;
+                            orgDoc = tools.open_doc(Int(trener.org_id));
 
-                            if(org_ != undefined) {
-                                excel_sheet.Cells(cur_row, 75).Value = ("'" + org_.code);
+                            if(orgDoc != undefined) {
+                                excel_sheet.Cells(cur_row, 75).Value = ("'" + orgDoc.TopElem.code);
                             }
 
-                            reg_ = tools.open_doc(Int(org_.region_id)).TopElem;
+                            regDoc = tools.open_doc(Int(orgDoc.TopElem.region_id));
 
-                            if(reg_ != undefined) {
-                                excel_sheet.Cells(cur_row, 77).Value = reg_.name;
+                            if(regDoc != undefined) {
+
+                                excel_sheet.Cells(cur_row, 77).Value = regDoc.TopElem.name;
                             }
                         }
                     }
