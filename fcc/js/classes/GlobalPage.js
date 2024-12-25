@@ -626,8 +626,6 @@ function verifyNotification() {
                         globalPage.addHourNotification(hour, notification.id);
 
                         Page.sendNotification("СДО", notification.name);
-                    } else {
-                        console.log(moment().format("HH:mm:ss") + " Alraedy exist!");
                     }
                 });
             }  else {
