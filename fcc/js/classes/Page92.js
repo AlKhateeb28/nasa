@@ -63,7 +63,8 @@ class Page92 extends Page {
         {id: "7156482553976480164", color: "#00acc1"},
         {id: "7125684059657017851", color: "#2f3740"},
         {id: "7104199816568887658", color: "#849fc5"},
-        {id: "7389939808110063496", color: "#806e02"}
+        {id: "7366242919464721978", color: "#0d6efd"},
+        {id: "7407345068771463161", color: "#003c3b"}
     ];
 
     constructor(actionId) {
@@ -89,6 +90,26 @@ class Page92 extends Page {
 
         globalPage.markFavorite(this.getId());
 
+        for(let i = 6; i >= 0; i--) {
+            const localDate = moment().subtract('days', i);
+
+            $("#page92_date_box").append(Page.template("page92_date_template"));
+
+            $("#page92_date_parent").attr("id", "page92_date_parent_" + i);
+            const parentElement = $("#page92_date_parent_" + i);
+            parentElement.attr("sel_date", localDate.format("DD.MM.YYYY"));
+
+            if(i === 0) {
+                parentElement.addClass("date92_selected");
+            }
+
+            $("#page92_date").attr("id", "page92_date_" + i);
+            $("#page92_date_" + i).html(localDate.format("DD.MM.YYYY"));
+
+            $("#page92_day").attr("id", "page92_day_" + i);
+            $("#page92_day_" + i).html(Page92.getDayName(localDate));
+        }
+
         this.refreshPage(moment().format("DD.MM.YYYY"));
     }
 
@@ -108,16 +129,35 @@ class Page92 extends Page {
             .page92_row:nth-child(odd) {
                 background-color: #faf9f9;
             }
+            
+            .date92 {
+                cursor: pointer;
+            }
+            
+            .date92_selected {
+                background-color: var(--color-lightblue);
+                color: var(--color-mintcream);
+            }
             </style>
             
             <div id="page92_like_box" liked="0" class="fcc-card like-box" onclick="GlobalPage.userInfoLikePage(92)">
                 <img id="page92_like_img" src="./images/like.png" class="like-img" alt=""/>    
+            </div>
+            <div id="page92_date_box" style="height: 50px;">
+            
             </div>
             <div id="page92_box" style="padding-top: 20px">
                 <div>
                     
                 </div>
             </div>
+            
+            <script type="text/html" id="page92_date_template">
+                <div id="page92_date_parent" class="float-left fcc-card date92" style="width: 100px; height: 50px;" onclick="Page92.chooseDate(this)">
+                    <div id="page92_date" style="text-align: center; margin-top: 5px; font-weight: 600; font-size: 1.1em;"></div>                
+                    <div id="page92_day" style="text-align: center; margin-top: 5px; font-size: medium;"></div>
+                </div>
+            </script>
             
             <script type="text/html" id="page92_card_template">
                 <div id="page92_card" class="float-left fcc-card">
@@ -147,7 +187,11 @@ class Page92 extends Page {
     }
 
     refreshPage(currentDate) {
+        GlobalPage.showWaiter();
+
         const instance = this;
+
+        $("#page92_box").empty();
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7099602215400799441&cur_date=" + currentDate,
@@ -537,5 +581,36 @@ class Page92 extends Page {
         const hrs = (duration - mins) / 60;
 
         return hrs.toString().padStart(2, "0") + ':' + mins.toString().padStart(2, "0") + ':' + secs.toString().padStart(2, "0");
+    }
+
+    static getDayName(date) {
+        const dayOfWeek = moment(date).day();
+
+        switch (dayOfWeek) {
+            case 0:
+                return "ВС";
+            case 1:
+                return "ПН";
+            case 2:
+                return "ВТ";
+            case 3:
+                return "СР";
+            case 4:
+                return "ЧТ";
+            case 5:
+                return "ПТ";
+            default:
+                return "СБ";
+        }
+    }
+
+    static chooseDate(element) {
+        const selectedElement = $("#" + element.id);
+
+        $(".date92").removeClass("date92_selected");
+
+        selectedElement.addClass("date92_selected");
+
+        page92.refreshPage(selectedElement.attr("sel_date"));
     }
 }
