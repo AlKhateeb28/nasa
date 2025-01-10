@@ -24,99 +24,47 @@ try {
     dataList = ArrayDirect(XQuery("sql: " +
         " BEGIN TRY DROP TABLE _white_gray_ids; END TRY BEGIN CATCH END CATCH " +
         " " +
-        " DROP TABLE " + "_white_gray_ids; " +
-        " " +
-        " SELECT cs.id, cs.org_id, cs.fullname, cs.login, cs.is_dismiss " +
-        " INTO _tmp0 " +
+        " SELECT cs.id, cs.org_id, cs.fullname " +
+        " INTO _tmp_white " +
         " FROM [WTDB].[dbo].collaborators cs " +
-        " WHERE cs.is_dismiss = 0; " +
+        " WHERE cs.is_dismiss = 0 " +
+        "    AND cs.login NOT LIKE '%_muc_%' " +
+        "    AND cs.org_id IS NOT NULL; " +
         " " +
-        " WITH _view AS ( " +
-        "        SELECT _tmp0.id, _tmp0.org_id, _tmp0.fullname, _tmp0.login " +
-        "        FROM _tmp0 " +
-        "        WHERE _tmp0.login NOT LIKE '%_muc_%' " +
-        "    ) " +
-        " SELECT _view.id, _view.id AS white_id, _view.org_id, _view.fullname, _view.login " +
-        " INTO _tmp1 " +
-        " FROM _view; " +
+        " SELECT cs.id, cs.org_id, cs.fullname " +
+        " INTO _tmp_fcc " +
+        " FROM [WTDB].[dbo].collaborators cs " +
+        " WHERE cs.login LIKE '%load_muc%' " +
+        "    AND cs.is_dismiss = 0 " +
+        "    AND cs.org_id IS NOT NULL; " +
         " " +
-        " WITH _view AS ( " +
-        "    SELECT _tmp0.id, _tmp0.org_id, _tmp0.fullname, _tmp0.login " +
-        "    FROM _tmp0 " +
-        "    WHERE _tmp0.login LIKE '%load_muc%' " +
-        " ) " +
-        " SELECT _tmp1.id, _tmp1.white_id, _view.id AS fcc_gray_id, _tmp1.org_id, _tmp1.fullname, _tmp1.login " +
-        " INTO _tmp2 " +
-        " FROM _tmp1 " +
-        "    LEFT JOIN _view ON UPPER(_tmp1.fullname) = UPPER(_view.fullname) AND _view.org_id = _tmp1.org_id; " +
+        " SELECT cs.id, cs.org_id, cs.fullname " +
+        " INTO _tmp_rck " +
+        " FROM [WTDB].[dbo].collaborators cs " +
+        " WHERE cs.login LIKE '%rck_muc%' " +
+        "    AND cs.is_dismiss = 0 " +
+        "    AND cs.org_id IS NOT NULL; " +
         " " +
-        " WITH _view AS ( " +
-        "    SELECT _tmp0.id, _tmp0.org_id, _tmp0.fullname, _tmp0.login " +
-        "    FROM _tmp0 " +
-        "    WHERE _tmp0.login LIKE '%rck_muc%' " +
-        " ) " +
-        " SELECT _tmp2.id, _tmp2.white_id, _tmp2.fcc_gray_id, _view.id AS rck_gray_id, _tmp2.org_id, _tmp2.fullname, _tmp2.login " +
-        " INTO _tmp3 " +
-        " FROM _tmp2 " +
-        "         LEFT JOIN _view ON UPPER(_tmp2.fullname) = UPPER(_view.fullname) AND _view.org_id = _tmp2.org_id; " +
+        " SELECT cs.id, cs.org_id, cs.fullname " +
+        " INTO _tmp_tren " +
+        " FROM [WTDB].[dbo].collaborators cs " +
+        " WHERE cs.login LIKE '%tren_muc_%' " +
+        "    AND cs.is_dismiss = 0 " +
+        "    AND cs.org_id IS NOT NULL; " +
         " " +
-        " WITH _view AS ( " +
-        "    SELECT _tmp0.id, _tmp0.org_id, _tmp0.fullname, _tmp0.login " +
-        "    FROM _tmp0 " +
-        "    WHERE _tmp0.login LIKE '%tren_muc%' " +
-        " ) " +
-        " SELECT _tmp3.id, _tmp3.white_id, _tmp3.fcc_gray_id, _tmp3.rck_gray_id, _view.id AS tren_gray_id, _tmp3.org_id, _tmp3.fullname, _tmp3.login " +
-        " INTO _tmp4 " +
-        " FROM _tmp3 " +
-        "         LEFT JOIN _view ON UPPER(_tmp3.fullname) = UPPER(_view.fullname) AND _view.org_id = _tmp3.org_id; " +
-        " " +
-        " SELECT * " +
-        " INTO _tmp5 " +
-        " FROM " +
-        " (SELECT _tmp0.id, NULL AS white_id, _tmp0.id AS fcc_gray_id, NULL AS rck_gray_id, NULL AS tren_gray_id, _tmp0.org_id, _tmp0.fullname, _tmp0.login " +
-        "      FROM _tmp0 " +
-        "      WHERE (SELECT COUNT(*) " +
-        "             FROM _tmp4 " +
-        "             WHERE UPPER(_tmp4.fullname) = UPPER(_tmp0.fullname) " +
-        "               AND _tmp4.org_id = _tmp0.org_id " +
-        "               AND (_tmp4.id <> _tmp0.id OR _tmp4.fcc_gray_id <> _tmp0.id)) = 0 " +
-        "        AND _tmp0.login LIKE '%load_muc_%' " +
-        "      UNION " +
-        "      SELECT * " +
-        "      FROM _tmp4) AS _veiw; " +
-        " " +
-        " SELECT * " +
-        " INTO _tmp6 " +
-        " FROM " +
-        "    (SELECT _tmp0.id, NULL AS white_id, NULL AS fcc_gray_id, _tmp0.id AS rck_gray_id, NULL AS tren_gray_id, _tmp0.org_id, _tmp0.fullname, _tmp0.login " +
-        "     FROM _tmp0 " +
-        "     WHERE (SELECT COUNT(*) " +
-        "            FROM _tmp4 " +
-        "            WHERE UPPER(_tmp4.fullname) = UPPER(_tmp0.fullname) " +
-        "              AND _tmp4.org_id = _tmp0.org_id " +
-        "              AND (_tmp4.id <> _tmp0.id OR _tmp4.fcc_gray_id <> _tmp0.id)) = 0 " +
-        "       AND _tmp0.login LIKE '%rck_muc_%' " +
-        "     UNION " +
-        "     SELECT * " +
-        "     FROM _tmp5) AS _veiw; " +
-        " " +
-        " SELECT id, white_id, fcc_gray_id, rck_gray_id, tren_gray_id " +
+        " SELECT cs.id, _tmp_white.id AS white_id, _tmp_fcc.id AS fcc_gray_id, _tmp_rck.id AS rck_gray_id, _tmp_tren.id AS tren_gray_id " +
         " INTO _white_gray_ids " +
-        " FROM " +
-        "    (SELECT _tmp0.id, NULL AS white_id, NULL AS fcc_gray_id, NULL AS rck_gray_id, _tmp0.id AS tren_gray_id " +
-        "     FROM _tmp0 " +
-        "     WHERE (SELECT COUNT(*) " +
-        "            FROM _tmp4 " +
-        "            WHERE UPPER(_tmp4.fullname) = UPPER(_tmp0.fullname) " +
-        "              AND _tmp4.org_id = _tmp0.org_id " +
-        "              AND (_tmp4.id <> _tmp0.id OR _tmp4.fcc_gray_id <> _tmp0.id)) = 0 " +
-        "       AND _tmp0.login LIKE '%tren_muc_%' " +
-        "     UNION " +
-        "     SELECT _tmp6.id, _tmp6.white_id, _tmp6.fcc_gray_id, _tmp6.rck_gray_id, _tmp6.id AS tren_gray_id " +
-        "     FROM _tmp6) AS _veiw; " +
+        " FROM [WTDB].[dbo].collaborators cs " +
+        "    LEFT JOIN _tmp_white ON UPPER(cs.fullname) = UPPER(_tmp_white.fullname) AND cs.org_id = _tmp_white.org_id " +
+        "    LEFT JOIN _tmp_fcc ON UPPER(cs.fullname) = UPPER(_tmp_fcc.fullname) AND cs.org_id = _tmp_fcc.org_id " +
+        "    LEFT JOIN _tmp_rck ON UPPER(cs.fullname) = UPPER(_tmp_rck.fullname) AND cs.org_id = _tmp_rck.org_id " +
+        "    LEFT JOIN _tmp_tren ON UPPER(cs.fullname) = UPPER(_tmp_tren.fullname) AND cs.org_id = _tmp_tren.org_id " +
+        " WHERE cs.is_dismiss = 0 " +
+        "    AND cs.org_id IS NOT NULL; " +
         " " +
-        " DROP TABLE " + "_tmp0; DROP TABLE _tmp1; DROP TABLE _tmp2; DROP TABLE _tmp3; DROP TABLE _tmp4; DROP TABLE _tmp5; DROP TABLE _tmp6; " +
-        " SELECT * FROM " + "_white_gray_ids "));
+        "DROP TABLE " + "_tmp_white; DROP TABLE _tmp_fcc; DROP TABLE _tmp_rck; DROP TABLE _tmp_tren; " +
+        " " +
+        "SELECT * FROM " + "_white_gray_ids "));
 
     total = ArrayCount(dataList);
 
