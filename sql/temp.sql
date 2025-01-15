@@ -1,27 +1,26 @@
-SET DATEFORMAT dmy;
+/*SET DATEFORMAT dmy;
 DECLARE @date_from datetime = '01.01.2019 00:00:00';
-DECLARE @date_to datetime = '31.12.2024 23:59:59';
+DECLARE @date_to datetime = '31.12.2024 23:59:59';*/
 
-WITH TempTable1 AS (
+WITH tmp AS (
     SELECT events.id AS e_id, lectors.lector_fullname AS lec_fio
     FROM [WTDB].[dbo].events
              INNER JOIN [WTDB].[dbo].event e ON events.id = e.id
              CROSS APPLY e.data.nodes('event/lectors/lector') T(c)
              INNER JOIN [WTDB].[dbo].lectors
                         ON T.c.value('lector_id[1]','varchar(max)') = lectors.id
-    --WHERE events.finish_date BETWEEN @date_from AND @date_to
 )
 SELECT e_id, lec_fio_s = STUFF (
         (
             SELECT '|' + lec_fio
-            FROM TempTable1 tt2
-            WHERE tt2.e_id = tt1.e_id
+            FROM tmp tmp1
+            WHERE tmp1.e_id = tmp.e_id
             FOR XML PATH ('')
         )
     , 1, 1, ''
                          )
-FROM TempTable1 tt1
-WHERE e_id = 7096493754182025530
+FROM tmp
+WHERE e_id = 7411433821604300143
 GROUP BY e_id
 
 /*SELECT lec_fio_s = STUFF (
@@ -39,4 +38,3 @@ GROUP BY e_id
             WHERE tt2.e_id = 6992923133104848806
             FOR XML PATH ('')
         ), 1, 1, '')*/
-
