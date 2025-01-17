@@ -51,16 +51,16 @@ try {
             docEducationPlan = tools.open_doc(itemEducationPlanID);
 
             if(docEducationPlan != undefined) {
-                teEducationPlan = docEducationPlan.TopElem;
+                educationPlanTE = docEducationPlan.TopElem;
 
-                if (OptInt(teEducationPlan.state_id) <= 1) {
+                if (OptInt(educationPlanTE.state_id) <= 1) {
 
 
-                    addLogMessage(loggerName, "[agent.id: " + agentId + "] " + StrReplace('Обработка плана обучения "{PARAM1}".', "{PARAM1}", teEducationPlan.name.Value));
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] " + StrReplace('Обработка плана обучения "{PARAM1}".', "{PARAM1}", educationPlanTE.name.Value));
 
-                    switch (teEducationPlan.type.Value) {
+                    switch (educationPlanTE.type.Value) {
                         case "collaborator":
-                            tools.call_code_library_method('libEducation', 'update_education_plan', [teEducationPlan.id.Value, docEducationPlan, (teEducationPlan.person_id.HasValue ? teEducationPlan.person_id.Value : teEducationPlan.object_id.Value), true]);
+                            tools.call_code_library_method('libEducation', 'update_education_plan', [educationPlanTE.id.Value, docEducationPlan, (educationPlanTE.person_id.HasValue ? educationPlanTE.person_id.Value : educationPlanTE.object_id.Value), true]);
 
                             break;
                         case "group": {
@@ -94,7 +94,7 @@ try {
                                     }
 
                                     if (checkEducation) {
-                                        tools.call_code_library_method('libEducation', 'update_education_plan', [teEducationPlan.id.Value, docEducationPlan, itemCollaborator.collaborator_id.Value, true]);
+                                        tools.call_code_library_method('libEducation', 'update_education_plan', [educationPlanTE.id.Value, docEducationPlan, itemCollaborator.collaborator_id.Value, true]);
                                     }
                                 }
                             }
@@ -105,7 +105,7 @@ try {
                     tools_app.get_application_lib(sConstApplicationCode).update_events_by_model(itemEducationPlanID, docEducationPlan, null, true);
 
                     bChanged = false;
-                    for (itemProgram in teEducationPlan.programs) {
+                    for (itemProgram in educationPlanTE.programs) {
                         sMsg = null;
 
                         dStartDate = itemProgram.plan_date.HasValue ? DateNewTime(itemProgram.plan_date.Value) : (itemProgram.create_date.HasValue ? DateNewTime(itemProgram.create_date.Value) : null);
@@ -113,15 +113,15 @@ try {
                         if (OptInt(itemProgram.state_id.Value) < 2 && itemProgram.finish_date.HasValue && DateNewTime(Date()) > DateNewTime(itemProgram.finish_date.Value)) {
                             itemProgram.state_id = 2;
                             bChanged = true;
-                            sMsg = StrReplace(StrReplace(StrReplace('Изменен статус задачи [{PARAM1}] в плане обучения [{PARAM2}] на "{PARAM3}".', "{PARAM1}", itemProgram.id.Value + " : " + itemProgram.name.Value + "(" + itemProgram.type.Value + ")"), "{PARAM2}", teEducationPlan.id.Value + " : " + teEducationPlan.name.Value), "{PARAM3}", "Завершен")
+                            sMsg = StrReplace(StrReplace(StrReplace('Изменен статус задачи [{PARAM1}] в плане обучения [{PARAM2}] на "{PARAM3}".', "{PARAM1}", itemProgram.id.Value + " : " + itemProgram.name.Value + "(" + itemProgram.type.Value + ")"), "{PARAM2}", educationPlanTE.id.Value + " : " + educationPlanTE.name.Value), "{PARAM3}", "Завершен")
                         } else if (OptInt(itemProgram.state_id.Value) > 0 && dStartDate != null && DateNewTime(Date()) < dStartDate) {
                             itemProgram.state_id = 0;
                             bChanged = true;
-                            sMsg = StrReplace(StrReplace(StrReplace('Изменен статус задачи [{PARAM1}] в плане обучения [{PARAM2}] на "{PARAM3}".', "{PARAM1}", itemProgram.id.Value + " : " + itemProgram.name.Value + "(" + itemProgram.type.Value + ")"), "{PARAM2}", teEducationPlan.id.Value + " : " + teEducationPlan.name.Value), "{PARAM3}", "Назначен");
+                            sMsg = StrReplace(StrReplace(StrReplace('Изменен статус задачи [{PARAM1}] в плане обучения [{PARAM2}] на "{PARAM3}".', "{PARAM1}", itemProgram.id.Value + " : " + itemProgram.name.Value + "(" + itemProgram.type.Value + ")"), "{PARAM2}", educationPlanTE.id.Value + " : " + educationPlanTE.name.Value), "{PARAM3}", "Назначен");
                         } else if (OptInt(itemProgram.state_id.Value) != 1 && (dStartDate != null && DateNewTime(Date()) >= dStartDate) && (itemProgram.finish_date.HasValue && DateNewTime(Date()) <= DateNewTime(itemProgram.finish_date.Value))) {
                             itemProgram.state_id = 1;
                             bChanged = true;
-                            sMsg = StrReplace(StrReplace(StrReplace('Изменен статус задачи [{PARAM1}] в плане обучения [{PARAM2}] на "{PARAM3}".', "{PARAM1}", itemProgram.id.Value + " : " + itemProgram.name.Value + "(" + itemProgram.type.Value + ")"), "{PARAM2}", teEducationPlan.id.Value + " : " + teEducationPlan.name.Value), "{PARAM3}", "В процессе");
+                            sMsg = StrReplace(StrReplace(StrReplace('Изменен статус задачи [{PARAM1}] в плане обучения [{PARAM2}] на "{PARAM3}".', "{PARAM1}", itemProgram.id.Value + " : " + itemProgram.name.Value + "(" + itemProgram.type.Value + ")"), "{PARAM2}", educationPlanTE.id.Value + " : " + educationPlanTE.name.Value), "{PARAM3}", "В процессе");
                         }
 
                         if (sMsg != null) {
