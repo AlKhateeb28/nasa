@@ -18,7 +18,7 @@ function updateSingleFlag(flag) {
         "           INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "           INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
         "           INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
-        "         WHERE cs.modification_date > DATEADD(MINUTE, -120, GETDATE()) " +
+        "         WHERE cs.modification_date > DATEADD(MINUTE, -720, GETDATE()) " +
         " ) " +
         " SELECT * " +
         " FROM _view " +
