@@ -829,7 +829,7 @@ function appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, index,
     const option = {
         series: [{
             color: "#adff2f",
-            name: "",
+            name: "Count",
             data: [0, 0]
         }],
         chart: {
@@ -842,7 +842,7 @@ function appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, index,
         dataLabels: {enabled: false},
         stroke: {curve: 'smooth'},
         legend: {show: false},
-        tooltip: {enabled: false},
+        //tooltip: {enabled: false},
         grid: {show: false, xaxis: {lines: {show: false}},yaxis: {lines: {show: false}}},
         xaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false},tooltip: {enabled: false}},
         yaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false}},
