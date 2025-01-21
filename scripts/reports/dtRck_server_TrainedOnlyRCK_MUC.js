@@ -52,7 +52,7 @@ if (LdsIsServer ) {
 			" 		)" +
 			" 	, 1, 1, ''" +
 			" 	)" +
-			" INTO #Table1" +
+			" INTO [WTDB].[dbo].#Table1" +
 			" FROM TempTable1 tt1" +
 			" GROUP BY e_id;" +
 			" WITH TempTable2 AS (" +
@@ -69,7 +69,7 @@ if (LdsIsServer ) {
 			" 			FOR XML PATH ('')" +
 			" 		)" +
 			" 	, 1, 1, '')" +
-			" INTO #Table2" +
+			" INTO [WTDB].[dbo].#Table2" +
 			" FROM TempTable2 tt1" +
 			" GROUP BY e_id;" +
 			" SELECT top 1000000" +
@@ -91,8 +91,8 @@ if (LdsIsServer ) {
 			" 	[common.event_status_types].name AS status_name," +
 			" 	education_methods.name AS edu_meth_name," +
 			" 	events.education_org_name AS edu_org_name," +
-			" 	#Table1.tutor_fio_s AS tutor_fio_s," +
-			" 	#Table2.pre_fio_s AS pre_fio_s," +
+			" 	tbl1.tutor_fio_s AS tutor_fio_s," +
+			" 	tbl2.pre_fio_s AS pre_fio_s," +
 			" 	event.data.value('(event/custom_elems/custom_elem[name=''nps''])[1]/value[1]', 'varchar(max)') AS nps," +
 			" 	CONCAT( '''', orgs.code ) AS o_inn," +
 			" 	orgs.name AS o_name," +
@@ -145,15 +145,15 @@ if (LdsIsServer ) {
 			" LEFT JOIN places ON events.place_id = places.id" +
 			" LEFT JOIN [common.event_status_types] ON events.status_id = [common.event_status_types].id" +
 			" LEFT JOIN education_methods ON events.education_method_id = education_methods.id" +
-			" LEFT JOIN #Table1	ON events.id = #Table1.e_id" +
-			" LEFT JOIN #Table2	ON events.id = #Table2.e_id" +
+			" LEFT JOIN [WTDB].[dbo].#Table1 AS tbl1 ON events.id = tbl1.e_id" +
+			" LEFT JOIN [WTDB].[dbo].#Table2 AS tbl2 ON events.id = tbl2.e_id" +
 			" INNER JOIN orgs ON collaborators.org_id = orgs.id" +
 			" INNER JOIN org	ON collaborators.org_id = org.id" +
 			" LEFT JOIN regions ON orgs.region_id = regions.id" +
 			" LEFT JOIN [WTDB].[dbo].event_result_types AS evrts ON evrts.id = event_results.event_result_type_id" +
 			" WHERE collaborators.code LIKE '%rck_muc%'" +
 			//" 	AND events.finish_date BETWEEN @date_from AND @date_to" +
-			" ORDER BY col_fullname, o_name, not_participate, f_date; DROP TABLE #Table1;  DROP TABLE #Table2;"
+			" ORDER BY col_fullname, o_name, not_participate, f_date; DROP TABLE [WTDB].[dbo].#Table1;  DROP TABLE [WTDB].[dbo].#Table2;"
 		));
 
 		processed = 0;

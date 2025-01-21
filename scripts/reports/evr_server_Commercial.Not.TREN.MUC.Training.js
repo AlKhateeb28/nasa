@@ -1,4 +1,4 @@
-// AGENT 7314549822988115287
+// 7314549822988115287
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
 if (LdsIsServer) {
@@ -51,7 +51,7 @@ if (LdsIsServer) {
             " )" +
             " , 1, 1, ''" +
             " )" +
-            " INTO #Table1" +
+            " INTO [WTDB].[dbo].#Table1" +
             " FROM TempTable1 tt1" +
             " GROUP BY e_id;" +
             " WITH TempTable2 AS (" +
@@ -67,7 +67,7 @@ if (LdsIsServer) {
             " )" +
             " , 1, 1, ''" +
             " )" +
-            " INTO #Table2" +
+            " INTO [WTDB].[dbo].#Table2" +
             " FROM TempTable2 tt1" +
             " GROUP BY e_id;" +
             " SELECT CONCAT( '''', event_results.id ) AS PK," +
@@ -89,8 +89,8 @@ if (LdsIsServer) {
             "     education_methods.name AS edu_meth_name," +
             "     CONCAT( '''', education_methods.id  ) AS edu_meth_id," +
             "     events.education_org_name AS edu_org_name," +
-            "     #Table1.lec_fio_s AS lec_fio_s," +
-            "     #Table2.pre_fio_s AS pre_fio_s," +
+            "     tbl1.lec_fio_s AS lec_fio_s," +
+            "     tbl2.pre_fio_s AS pre_fio_s," +
             "     event.data.value('(event/custom_elems/custom_elem[name=''nps''])[1]/value[1]', 'varchar(max)') AS nps," +
             "     event.data.value('(event/custom_elems/custom_elem[name=''month_otch''])[1]/value[1]', 'varchar(max)') AS month_otch," +
             "     CONCAT( '''', orgs.code ) AS o_inn," +
@@ -163,8 +163,8 @@ if (LdsIsServer) {
             " LEFT JOIN [WTDB].[dbo].places ON events.place_id = places.id" +
             " LEFT JOIN [WTDB].[dbo].[common.event_status_types] ON events.status_id = [common.event_status_types].id" +
             " LEFT JOIN [WTDB].[dbo].education_methods ON events.education_method_id = education_methods.id" +
-            " LEFT JOIN #Table1 ON events.id = #Table1.e_id" +
-            " LEFT JOIN #Table2 ON events.id = #Table2.e_id" +
+            " LEFT JOIN [WTDB].[dbo].#Table1 AS tbl1 ON events.id = tbl1.e_id" +
+            " LEFT JOIN [WTDB].[dbo].#Table2 AS tbl2 ON events.id = tbl2.e_id" +
             " LEFT JOIN [WTDB].[dbo].orgs ON collaborators.org_id = orgs.id" +
             " LEFT JOIN [WTDB].[dbo].org ON collaborators.org_id = org.id" +
             " LEFT JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id" +
@@ -173,7 +173,7 @@ if (LdsIsServer) {
             " collaborators.code NOT LIKE '%tren_muc%'" +
             " AND events.finish_date BETWEEN @date_from AND @date_to" +
             " AND event_result_types.code = 'com_event_result'" +
-            " ORDER BY col_fullname, o_name, not_participate, f_date; DROP TABLE #Table1; DROP TABLE #Table2;"));
+            " ORDER BY col_fullname, o_name, not_participate, f_date; DROP TABLE [WTDB].[dbo].#Table1; DROP TABLE [WTDB].[dbo].#Table2;"));
 
         processed = 0;
         total = ArrayCount(arr);

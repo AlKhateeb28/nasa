@@ -146,7 +146,7 @@ function getTrainerRule(id) {
 function getEducationMethodsFromDts() {
     try {
         sqlQuery = " SELECT doss.id as id, evs.education_method_id AS edm_id, evrs.person_id, edms.name as edm_name , doss.programs, doss.num_trainings AS doss_count"+
-            " INTO _view_dossier" +
+            " INTO [WTDB].[dbo]._view_dossier" +
             " FROM [WTDB].[dbo].[cc_dossier_subsidized_traineds] AS doss" +
             " INNER JOIN [WTDB].[dbo].event_results AS evrs ON doss.student_id = evrs.person_id AND evrs.is_assist = 1" +
             " INNER JOIN [WTDB].[dbo].events AS evs ON evrs.event_id = evs.id AND evs.education_method_id IS NOT NULL" +
@@ -157,7 +157,7 @@ function getEducationMethodsFromDts() {
             " " +
             " SELECT _view1.id, edm_name = STUFF (" +
             " (SELECT ';' + edm_name" +
-            " FROM _view_dossier AS _view2" +
+            " FROM [WTDB].[dbo]._view_dossier AS _view2" +
             " WHERE _view2.id = _view1.id" +
             " ORDER BY edm_name" +
             " FOR XML PATH ('')" +
@@ -166,11 +166,11 @@ function getEducationMethodsFromDts() {
             " _view1.programs as programs," +
             " _view1.doss_count," +
             " _view1.person_id" +
-            " INTO _view_result" +
-            " FROM _view_dossier _view1" +
+            " INTO [WTDB].[dbo]._view_result" +
+            " FROM [WTDB].[dbo]._view_dossier _view1" +
             " GROUP BY _view1.id, programs, doss_count, person_id" +
             " HAVING doss_count < COUNT(_view1.id)" +
-            " ORDER BY id; SELECT * FROM _view_result; DROP TABLE _view_dossier; DROP TABLE _view_result;";
+            " ORDER BY id; SELECT * FROM [WTDB].[dbo]._view_result; DROP TABLE [WTDB].[dbo]._view_dossier; DROP TABLE [WTDB].[dbo]._view_result;";
 
         return ArrayDirect(XQuery( "sql:" + sqlQuery));
     } catch (e) {

@@ -32,9 +32,8 @@ function getMethodsFromDtRcc(collsId) {
             "           FOR XML PATH ('')" +
             "       ), 1, 1, '')," +
             "       COUNT(_view1.person_id) as edm_count" +
-            " INTO _tbl_result" +
             " FROM _view_cc_dossier_trained_by_rcc _view1" +
-            " GROUP BY _view1.person_id; SELECT * FROM _tbl_result; DROP TABLE _tbl_result;";
+            " GROUP BY _view1.person_id;";
 
         return ArrayDirect(XQuery( "sql:" + sqlQuery));
     } catch (e) {

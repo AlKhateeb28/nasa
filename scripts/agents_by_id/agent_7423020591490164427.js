@@ -50,7 +50,7 @@ if (LdsIsServer) {
             "       SUM(CASE WHEN year = 2022 THEN cnt ELSE 0 END) AS year22, " +
             "       SUM(CASE WHEN year = 2023 THEN cnt ELSE 0 END) AS year23, " +
             "       SUM(CASE WHEN year = 2024 THEN cnt ELSE 0 END) AS year24 " +
-            " INTO _tbl " +
+            " INTO [WTDB].[dbo]._tbl " +
             " FROM _view " +
             " GROUP BY course_id, year " +
             " ORDER BY course_id, year; " +
@@ -59,18 +59,18 @@ if (LdsIsServer) {
             "       cs.code, " +
             "       cs.name, " +
             "       c.data.value('(//custom_elems/custom_elem[name=''expluatation_date'']/value)[1]', 'varchar(max)') AS expluatation_date, " +
-            "       _tbl.year19, " +
-            "       _tbl.year20, " +
-            "       _tbl.year21, " +
-            "       _tbl.year22, " +
-            "       _tbl.year23, " +
-            "       _tbl.year24 " +
-            " INTO _tbl1 " +
-            " FROM _tbl " +
-            "         INNER JOIN [WTDB].[dbo].courses cs ON _tbl.course_id = cs.id " +
+            "       tbl.year19, " +
+            "       tbl.year20, " +
+            "       tbl.year21, " +
+            "       tbl.year22, " +
+            "       tbl.year23, " +
+            "       tbl.year24 " +
+            " INTO [WTDB].[dbo]._tbl1 " +
+            " FROM [WTDB].[dbo]._tbl AS tbl " +
+            "         INNER JOIN [WTDB].[dbo].courses cs ON [WTDB].[dbo]._tbl.course_id = cs.id " +
             "         INNER JOIN [WTDB].[dbo].course c ON cs.id = c.id " +
             " WHERE cs.code LIKE '%FCK-%' AND NOT cs.code LIKE '%-FCK-%' " +
-            " ORDER BY cs.id, _tbl.year; " +
+            " ORDER BY cs.id, tbl.year; " +
             " " +
             " SELECT id, " +
             "       code, " +
@@ -83,9 +83,9 @@ if (LdsIsServer) {
             "       SUM(year22) AS year22, " +
             "       SUM(year23) AS year23, " +
             "       SUM(year24) AS year24 " +
-            " FROM _tbl1 " +
+            " FROM [WTDB].[dbo]._tbl1 " +
             " GROUP BY id, code, name, expluatation_date " +
-            " ORDER BY exp_date; DROP TABLE _tbl; DROP TABLE _tbl1; "));
+            " ORDER BY exp_date; DROP TABLE [WTDB].[dbo]._tbl; DROP TABLE [WTDB].[dbo]._tbl1; "));
 
         total = ArrayCount(courseList);
 

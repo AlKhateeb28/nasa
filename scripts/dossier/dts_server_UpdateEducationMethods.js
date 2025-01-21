@@ -1,3 +1,4 @@
+// 7358767219045584268
 AgentUtils = OpenCodeLib("x-local://wtv/custom_libraries/AgentUtils.1.0.0.7.js");
 
 function getEducationMethodsFromDossierSubsidizedTraineds() {
@@ -26,10 +27,9 @@ function getEducationMethodsFromDossierSubsidizedTraineds() {
             " _view1.programs as programs," +
             " _view1.dts_count," +
             " _view1.person_id" +
-        " INTO _tbl_result" +
         " FROM _view_dossier_subsidized_traineds _view1" +
         " GROUP BY _view1.id, programs, dts_count, person_id" +
-        " ORDER BY id; SELECT * FROM _tbl_result; DROP TABLE _tbl_result;";
+        " ORDER BY id;";
 
         return ArrayDirect(XQuery( "sql:" + sqlQuery));
     } catch (e) {

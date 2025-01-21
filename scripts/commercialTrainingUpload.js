@@ -56,7 +56,7 @@ if (included) {
             )
             , 1, 1, ''
             )
-                INTO #Table1
+                INTO [WTDB].[dbo].#Table1
                 FROM TempTable1 tt1
                 GROUP BY e_id
                 ;
@@ -76,7 +76,7 @@ if (included) {
             )
             , 1, 1, ''
             )
-                INTO #Table2
+                INTO [WTDB].[dbo].#Table2
                 FROM TempTable2 tt1
                 GROUP BY e_id
                 ;
@@ -101,8 +101,8 @@ if (included) {
                     education_methods.name AS edu_meth_name,
                     CONCAT( '''', education_methods.id  ) AS edu_meth_id,
                     events.education_org_name AS edu_org_name,
-                    #Table1.lec_fio_s AS lec_fio_s,
-                    #Table2.pre_fio_s AS pre_fio_s,
+                    tbl1.lec_fio_s AS lec_fio_s,
+                    tbl2.pre_fio_s AS pre_fio_s,
                     event.data.value('(event/custom_elems/custom_elem[name=''contract''])[1]/value[1]', 'varchar(max)') AS contract_ev,
                     event.data.value('(event/custom_elems/custom_elem[name=''nps''])[1]/value[1]', 'varchar(max)') AS nps,
                     event.data.value('(event/custom_elems/custom_elem[name=''month_otch''])[1]/value[1]', 'varchar(max)') AS month_otch,
@@ -177,8 +177,8 @@ if (included) {
                 LEFT JOIN [WTDB].[dbo].places ON events.place_id = places.id
                 LEFT JOIN [WTDB].[dbo].[common.event_status_types] ON events.status_id = [common.event_status_types].id
                 LEFT JOIN [WTDB].[dbo].education_methods ON events.education_method_id = education_methods.id
-                LEFT JOIN #Table1 ON events.id = #Table1.e_id
-                LEFT JOIN #Table2 ON events.id = #Table2.e_id
+                LEFT JOIN [WTDB].[dbo].#Table1 ON AS tbl1 events.id = tbl1.e_id
+                LEFT JOIN [WTDB].[dbo].#Table2 ON events.id = tbl2.e_id
                 LEFT JOIN [WTDB].[dbo].orgs ON collaborators.org_id = orgs.id
                 LEFT JOIN [WTDB].[dbo].org ON collaborators.org_id = org.id
                 LEFT JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id
@@ -190,8 +190,8 @@ if (included) {
                 AND events.finish_date BETWEEN @date_from AND @date_to
                 AND event_result_types.name = 'Результат коммерческого мероприятия'
                 ORDER BY col_fullname, o_name, not_participate, f_date
-                DROP TABLE #Table1
-                DROP TABLE #Table2
+                DROP TABLE [WTDB].[dbo].#Table1
+                DROP TABLE [WTDB].[dbo].#Table2
                 "
             ))
 

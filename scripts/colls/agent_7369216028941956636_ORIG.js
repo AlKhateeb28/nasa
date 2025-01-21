@@ -1,19 +1,26 @@
 // 7369216028941956636
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
-var agentId = 7369216028941956636;
-var userId = curUserID;
-var msPerRecord = 0.001;
-
-
 if (LdsIsServer ) {
     sLogMethod = "report";
 
+    var agentId = 7369216028941956636;
+    var userId = curUserID;
+    var msPerRecord = 0.001;
+
     var startDate = Date();
-    var prevDate = new Date();
+    var prevDate = Date();
     var loggerName = "agent_7369216028941956636";
     var ws = getWebsocketClient();
     var agent = getAgentInstance(agentId, userId, loggerName);
+
+    var date_from = Param.date_from == '' ? '01.01.2010 00:00:00' : Param.date_from;
+    var date_to = Param.date_to == '' ? ParseDate(Date()) + ' 23:59:59' : Param.date_to;
+    var folder = 'E:/Websoft/Reports/report_only_rck_muc/';
+    var f_name = 'report_only_rck_muc_' + ParseDate(Date()) + '.xlsx';
+    var f_url = folder + f_name;
+    var excel = new ActiveXObject("Websoft.Office.Excel.Document");
+    var report_string = new Binary();
 
     try {
         addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
@@ -26,15 +33,6 @@ if (LdsIsServer ) {
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
-
-        var date_from = Param.date_from == '' ? '01.01.2010 00:00:00' : Param.date_from;
-        var date_to = Param.date_to == '' ? ParseDate(Date()) + ' 23:59:59' : Param.date_to;
-        var folder = 'E:/Websoft/Reports/report_only_rck_muc/';
-        var f_name = 'report_only_rck_muc_' + ParseDate(Date()) + '.xlsx';
-        var f_url = folder + f_name;
-        var excel = new ActiveXObject("Websoft.Office.Excel.Document");
-        var report_string = new Binary();
-        var currentUserId = tools.cur_user_id;
 
         arr = ArrayDirect(XQuery("sql:" +
             " SET DATEFORMAT dmy; DECLARE @date_from datetime = '" + date_from + "'; DECLARE @date_to datetime = '" + date_to + "';" +
@@ -138,23 +136,23 @@ if (LdsIsServer ) {
             " 	collaborator.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]', 'varchar(max)') AS is_dossier_rcc_exist," +
             "   event_result.data.value('(event_result/doc_info/creation)[1]/date[1]', 'varchar(max)') AS event_start_date" +
             " FROM event_results" +
-            " LEFT JOIN event_result ON event_results.id = event_result.id" +
-            " LEFT JOIN collaborators ON event_results.person_id = collaborators.id" +
-            " LEFT JOIN collaborator ON event_results.person_id = collaborator.id" +
-            " LEFT JOIN events ON event_results.event_id = events.id" +
-            " LEFT JOIN event ON event_results.event_id = event.id" +
-            " LEFT JOIN event_types	ON events.event_type_id = event_types.id" +
+            " INNER JOIN event_result ON event_results.id = event_result.id" +
+            " INNER JOIN collaborators ON event_results.person_id = collaborators.id" +
+            " INNER JOIN collaborator ON event_results.person_id = collaborator.id" +
+            " INNER JOIN events ON event_results.event_id = events.id" +
+            " INNER JOIN event ON event_results.event_id = event.id" +
+            " INNER JOIN event_types	ON events.event_type_id = event_types.id" +
             " LEFT JOIN places ON events.place_id = places.id" +
             " LEFT JOIN [common.event_status_types] ON events.status_id = [common.event_status_types].id" +
             " LEFT JOIN education_methods ON events.education_method_id = education_methods.id" +
             " LEFT JOIN [WTDB].[dbo].#Table1 AS tbl1 ON events.id = tbl1.e_id" +
             " LEFT JOIN [WTDB].[dbo].#Table2 AS tbl2 ON events.id = tbl2.e_id" +
-            " LEFT JOIN orgs ON collaborators.org_id = orgs.id" +
-            " LEFT JOIN org	ON collaborators.org_id = org.id" +
+            " INNER JOIN orgs ON collaborators.org_id = orgs.id" +
+            " INNER JOIN org	ON collaborators.org_id = org.id" +
             " LEFT JOIN regions ON orgs.region_id = regions.id" +
             " LEFT JOIN [WTDB].[dbo].event_result_types AS evrts ON evrts.id = event_results.event_result_type_id" +
             " WHERE collaborators.code LIKE '%rck_muc%'" +
-            " 	AND events.finish_date BETWEEN @date_from AND @date_to" +
+            //" 	AND events.finish_date BETWEEN @date_from AND @date_to" +
             " ORDER BY col_fullname, o_name, not_participate, f_date; DROP TABLE [WTDB].[dbo].#Table1;  DROP TABLE [WTDB].[dbo].#Table2;"
         ));
 
@@ -170,7 +168,7 @@ if (LdsIsServer ) {
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
-        prevDate = new Date();
+        prevDate = Date();
 
         report_string.AppendStr("<html><table>");
 
@@ -266,8 +264,6 @@ if (LdsIsServer ) {
                     loggerName,
                     "[agent.id: " + agentId + "] " + processed + " processed" + " remaining time: " + getDurationMessage((total - processed) * msPerRecord)
                 );
-
-                Sleep(10);
             }
         }
 
@@ -278,11 +274,16 @@ if (LdsIsServer ) {
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
-        prevDate = new Date();
+        prevDate = Date();
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Saving report's file ...");
 
         report_string.AppendStr("</table></html>");
         excel.LoadHtmlString(report_string.GetStr(), "");
         excel.SaveAs(f_url);
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Saved to " + f_url);
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished.");
 
         agent.state = 1;
         agent.savingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
@@ -293,23 +294,17 @@ if (LdsIsServer ) {
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
-
-        //saveMonitorAgents(agent, startDate);
     } catch (e) {
         agent.state = 2;
         agent.errorMessage = e;
         sendMessageToWebsocket(ws, agent);
 
-        excel.Application.Quit();
-
         addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
-
-        //saveMonitorAgents(agent, startDate);
-    } finally {
-        excel.Application.Quit();
     }
 
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Saving log ...");
     saveMonitorAgents(agent, startDate);
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Log saved!");
 
     try {
         ws.Send("close");

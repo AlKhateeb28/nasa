@@ -16,7 +16,7 @@ LogEvent(loggerName, "[agent.id: " + agentId + "] Processing...");
 try {
     courcesList = ArrayDirect(XQuery("sql: " +
         " SELECT * " +
-        " INTO #tbl1 " +
+        " INTO [WTDB].[dbo].#tbl1 " +
         " FROM ( " +
         "   SELECT c_name, 1 as type, SUM(cnt) AS cnt " +
         "   FROM " +
@@ -40,10 +40,10 @@ try {
         " ) AS view1; " +
         " " +
         " SELECT * " +
-        " INTO #tbl2 " +
+        " INTO [WTDB].[dbo].#tbl2 " +
         " FROM ( " +
         "       SELECT * " +
-        "       FROM #tbl1 " +
+        "       FROM [WTDB].[dbo].#tbl1 " +
         "   UNION " +
         "       SELECT c_name, 3 as type, SUM(cnt) AS cnt " +
         "       FROM ( " +
@@ -56,10 +56,10 @@ try {
         " ) AS view2; " +
         " " +
         " SELECT * " +
-        " INTO #tbl3 " +
+        " INTO [WTDB].[dbo].#tbl3 " +
         " FROM ( " +
         "           SELECT * " +
-        "           FROM #tbl2 " +
+        "           FROM [WTDB].[dbo].#tbl2 " +
         "       UNION " +
         "           SELECT c_name, 4 as type, SUM(cnt) AS cnt " +
         "           FROM ( " +
@@ -72,10 +72,10 @@ try {
         " ) AS view3; " +
         " " +
         " SELECT * " +
-        " INTO #result_tbl " +
+        " INTO [WTDB].[dbo].#result_tbl " +
         " FROM ( " +
         "           SELECT * " +
-        "           FROM #tbl3 " +
+        "           FROM [WTDB].[dbo].#tbl3 " +
         "       UNION " +
         "           SELECT c_name, 6 as type, SUM(cnt) AS cnt " +
         "           FROM ( " +
@@ -98,10 +98,10 @@ try {
         "   SUM(CASE WHEN type = 4 THEN cnt ELSE 0 END) AS cnt4, " +
         "   SUM(CASE WHEN type = 6 THEN cnt ELSE 0 END) AS cnt6, " +
         "   SUM(CASE WHEN type = 1 THEN cnt ELSE 0 END) + SUM(CASE WHEN type = 0 THEN cnt ELSE 0 END) + SUM(CASE WHEN type = 3 THEN cnt ELSE 0 END) + SUM(CASE WHEN type = 4 THEN cnt ELSE 0 END) AS total " +
-        " FROM #result_tbl " +
+        " FROM [WTDB].[dbo].#result_tbl " +
         " WHERE cnt > 0 " +
         " GROUP BY c_name " +
-        " ORDER BY total DESC; DROP TABLE #tbl1; DROP TABLE #tbl2; DROP TABLE #tbl3; DROP TABLE #result_tbl; "));
+        " ORDER BY total DESC; DROP TABLE [WTDB].[dbo].#tbl1; DROP TABLE [WTDB].[dbo].#tbl2; DROP TABLE [WTDB].[dbo].#tbl3; DROP TABLE [WTDB].[dbo].#result_tbl; "));
 
     for (course in courcesList) {
         courseElement = {};

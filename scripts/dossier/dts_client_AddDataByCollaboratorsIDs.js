@@ -25,9 +25,9 @@ function getMethodsFromDts(collsId) {
             "           FOR XML PATH ('')" +
             "       ), 1, 1, '')," +
             "       COUNT(_view1.id) as edm_count" +
-            " INTO _tbl_result" +
+            " INTO [WTDB].[dbo]._tbl_result" +
             " FROM _view_cc_dossier_subsidized_trained _view1" +
-            " GROUP BY _view1.id; SELECT * FROM _tbl_result; DROP TABLE _tbl_result;";
+            " GROUP BY _view1.id; SELECT * FROM [WTDB].[dbo]._tbl_result; DROP TABLE [WTDB].[dbo]._tbl_result;";
 
         return ArrayDirect(XQuery( "sql:" + sqlQuery));
     } catch (e) {
