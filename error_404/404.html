@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Ресурс не найден</title>
+
+    <style>
+        .info-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: white;
+            border-bottom: 1px solid #dee2e6 !important;
+            z-index: 10000;
+            user-select: none;
+        }
+
+        .logo {
+            float: left;
+            background-color: #002b4e;
+            width: 100%;
+            height: 40px;
+        }
+
+        .logo_img {
+            float: left;
+            margin-left: 10px;
+            margin-top: 1px;
+            color: red;
+        }
+
+        .logo-caption {
+            color: #f5ffff;
+            font-size: x-large;
+            padding-top: 4px;
+            padding-left: 260px;
+            height: 36px;
+            background-image: linear-gradient(-90deg, #f5ffff, #002b4e 15%) !important;
+        }
+
+        .float-left {
+            float: left;
+        }
+
+        .btn {
+            text-align: center;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            background-image: linear-gradient(-20deg, #4e4376, #2b5876 0%, #4e4376 100%) !important;
+            color: #f5ffff;
+            margin-left: 47%;
+            padding: 10px;
+            color: mintcream;
+        }
+
+        .btn-pointer {
+            color: mintcream;
+        }
+    </style>
+
+    <script type="application/javascript">
+        function goToMainPage() {
+            window.location.replace("https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/");
+        }
+    </script>
+</head>
+<body>
+<div id="info_box" class="info-box" >
+    <div class="logo">
+        <div class="logo_img">
+            <img src="logo-std.svg" class="float-left"/>
+        </div>
+        <div class="logo-caption">АКАДЕМИЯ ПРОИЗВОДИТЕЛЬНОСТИ</div>
+    </div>
+</div>
+<div>
+    <p><img src="404.jpg" style="padding-left: 30%"></p>
+</div>
+<div>
+    <button class="btn btn-pointer" onclick="goToMainPage()">Перейти на главную</button>
+</div>
+</body>
+</html>
