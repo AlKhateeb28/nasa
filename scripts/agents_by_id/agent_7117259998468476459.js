@@ -33,12 +33,11 @@ if (LdsIsServer) {
             " SET DATEFORMAT dmy; DECLARE @date_from datetime = '" + dateFrom + "'; DECLARE @date_to datetime = '31.12.2099 23:59:59'; " +
             " " +
             " WITH _lectors AS ( " +
-            "    SELECT events.id, lectors.lector_fullname AS lector_fio " +
-            "    FROM [WTDB].[dbo].events " +
-            "             INNER JOIN [WTDB].[dbo].event e ON events.id = e.id " +
-            "             CROSS APPLY e.data.nodes('event/lectors/lector') T(c) " +
-            "             INNER JOIN [WTDB].[dbo].lectors " +
-            "                        ON T.c.value('lector_id[1]','varchar(max)') = lectors.id " +
+            "    SELECT es.id, T.c.value('person_fullname[1]','varchar(max)') AS lector_fio " +
+            "    FROM [WTDB].[dbo].events es " +
+            "             LEFT JOIN [WTDB].[dbo].event e ON es.id = e.id " +
+            "             CROSS APPLY e.data.nodes('event/tutors/tutor') T(c) " +
+            "    WHERE es.start_date BETWEEN @date_from AND @date_to " +
             " ) " +
             " SELECT id, lector_fio = STUFF ( " +
             "        ( " +
@@ -50,13 +49,14 @@ if (LdsIsServer) {
             "    , 1, 1, '') " +
             " INTO [WTDB].[dbo]._temp_lectors " +
             " FROM _lectors ls " +
-            " GROUP BY ls.id; " +
+            " GROUP BY id; " +
             " " +
             " WITH _preparations AS ( " +
-            "    SELECT es.id, T.c.value('person_fullname[1]', 'varchar(max)') AS pre_fio " +
-            "    FROM [WTDB].[dbo].events es " +
-            "             LEFT JOIN [WTDB].[dbo].event e ON es.id = e.id " +
+            "    SELECT es.id, T.c.value('person_fullname[1]','varchar(max)') AS pre_fio " +
+            "    FROM [WTDB].[dbo].events AS es " +
+            "             LEFT JOIN [WTDB].[dbo].event AS e ON es.id = e.id " +
             "             CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c) " +
+            "    WHERE es.start_date BETWEEN @date_from AND @date_to " +
             " ) " +
             " SELECT id, preparation_fio = STUFF ( " +
             "        ( " +
@@ -102,7 +102,6 @@ if (LdsIsServer) {
             "       ers.id AS event_result_id, " +
             "       erts.name AS result_type_name, " +
             "       IIF(c.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_exist''])[1]/value[1]', 'bit') = 1, 'Истина', 'Ложь') AS is_doss_exist, " +
-            "       e.data.value('(//custom_elems/custom_elem[name=''month_otch'']/value)[1]', 'varchar(max)') AS report_month, " +
             "       ers.event_start_date " +
             " FROM [WTDB].[dbo].event_results AS ers " +
             "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id AND es.education_org_id = 6856734512956512163 AND es.start_date BETWEEN @date_from AND @date_to" +
@@ -171,7 +170,6 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>ID результата мероприятия</td>");
         reportString.AppendStr("<td class='header'>Тип результата мероприятия</td>");
         reportString.AppendStr("<td class='header'>Есть в досье</td>");
-        reportString.AppendStr("<td class='header'>Месяц отчета</td>");
         reportString.AppendStr("<td class='header'>Дата создания результата мероприятия</td>");
         reportString.AppendStr("</tr>");
 
@@ -198,8 +196,8 @@ if (LdsIsServer) {
                 "<td>'" + data.event_id + "</td>" +
                 "<td>" + data.event_code + "</td>" +
                 "<td>" + data.event_name + "</td>" +
-                "<td>" + StrDate(data.start_date, true, false) + "</td>" +
-                "<td>" + StrDate(data.finish_date, true, false) + "</td>" +
+                "<td>" + StrDate(data.start_date, false, false) + "</td>" +
+                "<td>" + StrDate(data.finish_date, false, false) + "</td>" +
                 "<td>" + data.lector_fio + "</td>" +
                 "<td>" + data.nps + "</td>" +
                 "<td>" + data.status_name + "</td>" +
@@ -211,7 +209,6 @@ if (LdsIsServer) {
                 "<td>'" + data.event_result_id + "</td>" +
                 "<td>" + data.result_type_name + "</td>" +
                 "<td>" + data.is_doss_exist + "</td>" +
-                "<td>" + data.report_month + "</td>" +
                 "<td>" + StrDate(data.event_start_date, true, false) + "</td>" +
                 "</tr>");
 
