@@ -115,7 +115,8 @@ if (LdsIsServer) {
             "       erts.name AS result_type_name, " +
             "       IIF(c.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_exist''])[1]/value[1]', 'bit') = 1, 'Истина', 'Ложь') AS is_doss_exist, " +
             "       e.data.value('(//custom_elems/custom_elem[name=''month_otch'']/value)[1]', 'varchar(max)') AS report_month, " +
-            "       ers.event_start_date " +
+            "       ers.event_start_date, " +
+            "       o.data.value('(//custom_elems/custom_elem[name=''wave'']/value)[1]', 'varchar(max)') AS wave " +
             " FROM [WTDB].[dbo].event_results AS ers " +
             "        INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id AND es.education_org_id IN (7100351150313827874, 7410749948253583035, 7100351480975785298) " +
             "        INNER JOIN [WTDB].[dbo].event AS e ON es.id = e.id " +
@@ -189,6 +190,7 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>Фамилия участника</td>");
         reportString.AppendStr("<td class='header'>Имя участника</td>");
         reportString.AppendStr("<td class='header'>Отчество участника</td>");
+        reportString.AppendStr("<td class='header'>Волна</td>");
         reportString.AppendStr("</tr>");
 
         for (data in dataList) {
@@ -233,6 +235,7 @@ if (LdsIsServer) {
                 "<td>" + fioList[0] + "</td>" +
                 "<td>" + (fioList[1] == "#empty" ? "" : fioList[1]) + "</td>" +
                 "<td>" + (fioList[2] == "#empty" ? "" : fioList[2]) + "</td>" +
+                "<td>" + data.wave + "</td>" +
                 "</tr>");
 
             processed++;
