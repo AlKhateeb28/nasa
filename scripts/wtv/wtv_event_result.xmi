@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<interface>
+	<catalog>event_result</catalog>
+	<properties/>
+	<methods>
+		<method>
+			<name>get_custom_data</name>
+			<api_name>get_custom_data</api_name>
+			<returntype>string</returntype>
+			<desc>'Получение пользовательских данных результата мероприятия с указанным ID. Возвращает значение указанного элемента'</desc>
+			<parameters>
+				<parameter>
+					<type>string</type>
+					<name>sNameParam</name>
+					<desc>'Имя элемента'</desc>
+				</parameter>
+			</parameters>
+		</method>
+		<method>
+			<name>set_custom_data</name>
+			<api_name>set_custom_data</api_name>
+			<returntype>bool</returntype>
+			<desc>'Запись пользовательских данных в результат мероприятия с указанным ID. Возвращает значения 1 или 0, в случае успешного результата и неуспеха соответственно'</desc>
+			<parameters>
+				<parameter>
+					<type>string</type>
+					<name>sNameParam</name>
+					<desc>'Имя элемента'</desc>
+				</parameter>
+				<parameter>
+					<type>string</type>
+					<name>sValueParam</name>
+					<desc>'Значение элемента'</desc>
+				</parameter>
+			</parameters>
+		</method>
+	</methods>
+</interface>

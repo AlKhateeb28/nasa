@@ -82,7 +82,8 @@ if (LdsIsServer ) {
                 "   [common.learning_states].name AS state, " +
                 "   regions.name AS region_name, " +
                 "   regions.code AS region_code, " +
-                "   org.data.value('(org/custom_elems/custom_elem[name=''format_part''])[1]/value[1]', 'varchar(max)') AS format_part" +
+                "   org.data.value('(org/custom_elems/custom_elem[name=''format_part''])[1]/value[1]', 'varchar(max)') AS format_part, " +
+                "   org.data.value('(org/custom_elems/custom_elem[name=''is_project_ended''])[1]/value[1]', 'varchar(max)') AS is_project_ended " +
                 " FROM Table_1 " +
                 "   INNER JOIN [WTDB].[dbo].courses ON Table_1.course_id = courses.id " +
                 "   INNER JOIN [WTDB].[dbo].collaborators ON Table_1.person_id = collaborators.id " +
@@ -106,13 +107,13 @@ if (LdsIsServer ) {
 
         reportString.AppendStr( "<html><table>");
         reportString.AppendStr("<tr>");
-        reportString.AppendStr(create_header(columns_arr));
+        reportString.AppendStr(create_header(columns_arr) + "<td>Проект завершен</td>");
         reportString.AppendStr("</tr>");
 
         for (elem in dataList) {
             reportString.AppendStr("<tr>");
             try {
-                reportString.AppendStr(create_row(elem, columns_arr));
+                reportString.AppendStr(create_row(elem, columns_arr) + "<td>" + elem.is_project_ended + "</td>");
             } catch(err) {
                 continuel
             }

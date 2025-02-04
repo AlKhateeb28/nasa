@@ -148,21 +148,23 @@ try {
         , event_result.data.value('(event_result/custom_elems/custom_elem[name=''event_guid''])[1]/value[1]', 'varchar(max)') AS event_guid
         , event_result.data.value('(event_result/custom_elems/custom_elem[name=''guid''])[1]/value[1]', 'varchar(max)') AS er_guid
         , collaborator.data.value('(collaborator/custom_elems/custom_elem[name=''guid''])[1]/value[1]', 'varchar(max)') AS col_guid,
-        collaborators.id AS colls_id
+        collaborators.id AS colls_id,
+        l.data.value('(lector/custom_elems/custom_elem[name=''type_trener''])[1]/value[1]', 'varchar(max)') AS trener_type
     FROM [WTDB].[dbo].event_results
-    INNER JOIN [WTDB].[dbo].event_result ON event_results.id = event_result.id
-    INNER JOIN [WTDB].[dbo].collaborators ON event_results.person_id = collaborators.id AND collaborators.code NOT LIKE '%tren_muc%'
-    INNER JOIN [WTDB].[dbo].collaborator ON event_results.person_id = collaborator.id
-    INNER JOIN [WTDB].[dbo].events ON event_results.event_id = events.id /*AND events.code LIKE '%week%'*/ AND events.finish_date BETWEEN @date_from AND @date_to
-    INNER JOIN [WTDB].[dbo].event ON event_results.event_id = event.id
-    LEFT JOIN [WTDB].[dbo].event_result_types ON event_results.event_result_type_id = event_result_types.id
-    LEFT JOIN [WTDB].[dbo].places ON events.place_id = places.id
-    INNER JOIN [WTDB].[dbo].[common.event_status_types] ON events.status_id = [common.event_status_types].id
-    LEFT JOIN [WTDB].[dbo].education_methods ON events.education_method_id = education_methods.id
-    INNER JOIN [WTDB].[dbo].orgs ON collaborators.org_id = orgs.id
-    INNER JOIN [WTDB].[dbo].org ON collaborators.org_id = org.id
-    INNER JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id
-    LEFT JOIN [WTDB].[dbo].positions ON positions.id = collaborators.position_id
+        INNER JOIN [WTDB].[dbo].event_result ON event_results.id = event_result.id
+        INNER JOIN [WTDB].[dbo].collaborators ON event_results.person_id = collaborators.id AND collaborators.code NOT LIKE '%tren_muc%'
+        INNER JOIN [WTDB].[dbo].collaborator ON event_results.person_id = collaborator.id
+        INNER JOIN [WTDB].[dbo].events ON event_results.event_id = events.id /*AND events.code LIKE '%week%'*/ AND events.finish_date BETWEEN @date_from AND @date_to
+        INNER JOIN [WTDB].[dbo].event ON event_results.event_id = event.id
+        LEFT JOIN [WTDB].[dbo].event_result_types ON event_results.event_result_type_id = event_result_types.id
+        LEFT JOIN [WTDB].[dbo].places ON events.place_id = places.id
+        INNER JOIN [WTDB].[dbo].[common.event_status_types] ON events.status_id = [common.event_status_types].id
+        LEFT JOIN [WTDB].[dbo].education_methods ON events.education_method_id = education_methods.id
+        INNER JOIN [WTDB].[dbo].orgs ON collaborators.org_id = orgs.id
+        INNER JOIN [WTDB].[dbo].org ON collaborators.org_id = org.id
+        INNER JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id
+        LEFT JOIN [WTDB].[dbo].positions ON positions.id = collaborators.position_id
+        LEFT JOIN [WTDB].[dbo].lector l ON event.data.value('(//lectors/lector)[1]/lector_id[1]', 'varchar(max)') = l.id
     ORDER BY col_fullname, o_name, not_participate, f_date;
     "));
 
@@ -214,7 +216,8 @@ try {
         "<td>Тип результата</td>" +
         "<td>Месяц отчёта</td>" +
         "<td>Есть в СР</td>" +
-        "<td>ID</td>");
+        "<td>ID</td>" +
+        "<td>Тип тренера</td>");
     reportString.AppendStr(" </tr>");
 
     for (eventResult in eventResultList) {
@@ -253,7 +256,8 @@ try {
             "<td>" + eventResult.event_result_type + "</td>" +
             "<td>" + eventResult.month_otch + "</td>" +
             "<td>" + eventResult.be_in_sr + "</td>" +
-            "<td>" + eventResult.PK + "</td>");
+            "<td>" + eventResult.PK + "</td>"+
+            "<td>" + eventResult.trener_type + "</td>");
         reportString.AppendStr(" </tr>");
 
         processed++;

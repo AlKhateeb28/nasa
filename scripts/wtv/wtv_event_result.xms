@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-SCREEN SOURCE="event_result" TITLE-EXPR="ms_tools.get_const('c_event_result')" BEFORE-INIT-ACTION="
+	ms_tools.check_doc_screen_access( TopElem );
+
+	tools.admin_access_filling( TopElem );
+" SAVE-ACTION="UpdateScreens( '*', '*event_result*' )" WINDOW-ICON-URL="ico/event_result.ico" MAXIMIZED="1">
+
+<USE FORM="//wtv/ms_general.xms"/>
+
+<ITEM TYPE="person_data_filling_base"/>
+<ITEM TYPE="event_data_filling_base"/>
+
+<ITEM TYPE="std_doc_menu"/>
+<LINE>
+	<ITEM TYPE="doc_toolbar_base"/>
+	<TOOLBAR SUNKEN-BOTTOM="1" RIGHT-LABELS="1">
+		<TOOLBAR-ENTRY SEPARATOR="1"/>
+	</TOOLBAR>
+</LINE>
+
+
+<LINE STD-MARGINS="0">
+
+
+<INHERIT TYPE="page_tree_base"/>
+
+
+
+<SELECTOR NAME="main_selector">
+<PANEL>
+
+
+<PAGE TITLE-EXPR="ms_tools.get_const('cavr3d3iwk')" IMAGE-URL="ico/common.ico" WEB-ID-EXPR="'event_result_page_tree_main'">
+<PANEL HEIGHT="100%" STD-MARGINS="1" PADDING="16vpx 16vpx 16vpx 16vpx" VERT-SCROLL="1">
+	<ComboLabel TITLE-EXPR="ms_tools.get_const('c_status')" SOURCE="Ps.status_id" WIDTH="150vpx" ELEM="ListElem.name"/>
+	<LINE MULTILINE="1">
+		<CHECK SOURCE="Ps.is_assist" WIDTH="150vpx" TITLE-EXPR="ms_tools.get_const('veresb_exist')"/>
+		<CHECK SOURCE="Ps.is_confirm" WIDTH="150vpx" TITLE-EXPR="ms_tools.get_const('veb_tip_exist_confirm')"/>
+		<CHECK SOURCE="Ps.is_banned" WIDTH="150vpx" TITLE-EXPR="ms_tools.get_const('dostupzapreshen')"/>
+	</LINE>
+	<LINE MULTILINE="1">
+		<CHECK SOURCE="Ps.not_participate" WIDTH="150vpx" TITLE-EXPR="ms_tools.get_const('otkazalsyaotucha')"/>
+		<CHECK SOURCE="Ps.is_open" TITLE-EXPR="ms_tools.get_const('publikovatmate_1')"/>
+	</LINE>
+
+	<LINE MULTILINE="1">
+		<ITEM TYPE="ms_object_selector" WIDTH="316vpx" SOURCE="Ps.person_id" catalogExpr="'collaborator'" doFillingExpr="true"/>
+
+		<ITEM TYPE="ms_object_selector" WIDTH="316vpx" SOURCE="Ps.event_id" catalogExpr="'event'" readOnlyExpr="true"/>
+	</LINE>
+	<LINE MULTILINE="1">
+		<ITEM TYPE="ms_object_selector" WIDTH="316vpx"  SOURCE="Ps.event_result_type_id" catalogExpr="'event_result_type'"/>
+		<ITEM TYPE="ms_object_selector" WIDTH="316vpx"  SOURCE="Ps.object_resource_id" catalogExpr="'object_resource'"/>
+	</LINE>
+	<LINE MULTILINE="1">
+		<ITEM TYPE="ms_object_selector" WIDTH="316vpx"  SOURCE="TopElem.certificate_id" catalogExpr="'certificate'"/>
+		
+	</LINE>
+
+	<DateLabel TITLE-EXPR="ms_tools.get_const('dataotpravleni')"  SOURCE="Ps.last_sending_date" ALLOW-NULL="1" TIME="1" WIDTH="150vpx"/>
+
+	<ITEM TYPE="comment_base"/>
+
+	<ITEM TYPE="ms_custom_data_view"/>
+</PANEL>
+</PAGE>
+
+
+
+
+<PAGE TITLE-EXPR="ms_tools.get_const('694xte2bfa')" IMAGE-URL="ico/data.ico" WEB-ID-EXPR="'event_result_page_tree_data'">
+<PANEL HEIGHT="100%" STD-MARGINS="1" PADDING="16vpx 16vpx 16vpx 16vpx" VERT-SCROLL="1">
+	<ITEM TYPE="event_data_base"/>
+</PANEL>
+</PAGE>
+
+
+
+
+<PAGE TITLE-EXPR="ms_tools.get_const('pu7nmyly91')" IMAGE-URL="ico/results.ico" WEB-ID-EXPR="'event_result_page_tree_results'">
+<PANEL HEIGHT="100%" STD-MARGINS="1" PADDING="16vpx 16vpx 16vpx 16vpx" VERT-SCROLL="1">
+	<EditLabel TITLE-EXPR="ms_tools.get_const('c_score')"  SOURCE="Ps.score" WIDTH="150vpx"/>
+	<IF EXPR="Ps.event_id.HasValue &amp;&amp; Ps.event_id.OptForeignElem != undefined &amp;&amp; ( Ps.event_id.ForeignElem.event_type_id.OptForeignElem != undefined && Ps.event_id.ForeignElem.event_type_id.OptForeignElem.online )">
+		<LINE>
+			<LABEL TITLE-EXPR="ms_tools.get_const('vremyaprovedenn') + ':'"/>
+			<LABEL TITLE-EXPR="Ps.webinar_activity_time/60"/>
+			<LABEL TITLE-EXPR="StrNonTitleCase( ms_tools.get_const('min') )"/>
+		</LINE>
+	</IF>
+	<EditLabel TITLE-EXPR="ms_tools.get_const('94u2gs22ec')"  SOURCE="Ps.collaborator_comment" MULTILINE="1" WIDTH="648vpx" HEIGHT="10gr" VERT-SCROLL="1"/>
+
+	<EditLabel TITLE-EXPR="ms_tools.get_const('4v7vklxh8l')"  SOURCE="Ps.tutor_comment" MULTILINE="1" HEIGHT="10gr" WIDTH="648vpx" VERT-SCROLL="1"/>
+
+</PANEL>
+</PAGE>
+
+
+
+
+<PAGE TITLE-EXPR="ms_tools.get_const('g4yddrywh9')" IMAGE-URL="ico/finance.ico" WEB-ID-EXPR="'event_result_page_tree_finance'">
+<PANEL HEIGHT="100%" STD-MARGINS="1" SUNKEN="1">
+
+	<ITEM TYPE="ms_object_selector" WIDTH="316vpx"  SOURCE="Ps.default_cost_center_id" catalogExpr="'cost_center'" titleExpr="ms_tools.get_const('6cpficjr42') + ':'"/>
+
+	<CHECK SOURCE="Ps.not_pay" TITLE-EXPR="ms_tools.get_const('b6wluuw7az')"/>
+
+	<ITEM TYPE="ms_object_selector" WIDTH="316vpx"  SOURCE="Ps.cost_center_id" catalogExpr="'cost_center'"/>
+
+	<ITEM TYPE="ms_object_selector" WIDTH="316vpx"  SOURCE="Ps.budget_period_id" catalogExpr="'budget_period'"/>
+
+	<ITEM TYPE="ms_expense_distribution_base"/>
+</PANEL>
+</PAGE>
+
+
+
+
+<INHERIT TYPE="ms_pages_base"/>
+
+
+
+</PANEL>
+</SELECTOR>
+
+</LINE>
+
+
+</SPXML-SCREEN>

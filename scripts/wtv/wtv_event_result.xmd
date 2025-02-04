@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<event_result>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+	<event_name TYPE="string" TITLE="const=e5i74i7omp"/>
+	<event_start_date TYPE="date" TITLE="const=laddyafkjs"/>
+	<status_id TYPE="string" DEFAULT="undefined" FOREIGN-ARRAY="common.event_result_status_types" TITLE="const=c_status"/>
+	
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<event_result_type_id TYPE="integer" FOREIGN-ARRAY="event_result_types" EXPR-INIT="global_settings.settings.default_event_result_type_id" TITLE="const=7et28oz1aj"/>
+
+	<is_assist TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=veresb_exist"/>
+	<is_confirm TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_tip_exist_confirm"/>
+	<is_banned TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dostupzapreshen"/>
+	<not_participate  TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=otkazalsyaotucha"/>
+
+	<last_sending_date TYPE="date" TITLE="ms_tools.get_const('dataotpravleni')"/>
+
+	<last_webinar_activity_date TYPE="date" TITLE="ms_tools.get_const('vremyaposledney')"/>
+	<webinar_activity_time TYPE="integer" DEFAULT="0" TITLE="ms_tools.get_const('vremyaprovedenn')"/>
+
+	<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<score TYPE="real" TITLE="const=c_score"/>
+	<tutor_comment TYPE="string" TITLE="const=veresb_t_comment"/>
+	<collaborator_comment TYPE="string" TITLE="const=veresb_p_comment"/>
+
+	<not_pay TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=b6wluuw7az"/>
+	<default_cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=6cpficjr42"/>
+	<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+	<INHERIT TYPE="expense_distribution_base"/>
+
+	<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources" TITLE="const=lmitz32f0b"/>
+	<certificate_id TYPE="integer" FOREIGN-ARRAY="certificates" TITLE="const=rgz474h7xe"/>
+	<guest TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Используется гостевой вход'##"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="custom_datas_base"/>
+
+</event_result>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		teEventResult=TopElem;
+		ms_tools.raise_system_event( 'common_save_event_result', null, TopElem.Doc.DocID, TopElem.Doc );
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_event_result') + ': ' + event_result.person_fullname + ' ' + event_result.event_name
+"/>
+
+</SPXML-FORM>
