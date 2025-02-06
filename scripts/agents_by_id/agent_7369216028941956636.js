@@ -134,7 +134,9 @@ if (LdsIsServer ) {
             "	event_result.data.value('(event_result/custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') AS month," +
             "	event_result.data.value('(event_result/custom_elems/custom_elem[name=''year_report''])[1]/value[1]', 'varchar(max)') AS year," +
             " 	collaborator.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]', 'varchar(max)') AS is_dossier_rcc_exist," +
-            "   event_result.data.value('(event_result/doc_info/creation)[1]/date[1]', 'varchar(max)') AS event_start_date" +
+            "   event_result.data.value('(event_result/doc_info/creation)[1]/date[1]', 'varchar(max)') AS event_start_date, " +
+            "	event_result.data.value('(event_result/custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') AS month," +
+            "	event_result.data.value('(event_result/custom_elems/custom_elem[name=''year_report''])[1]/value[1]', 'varchar(max)') AS year" +
             " FROM event_results" +
             " INNER JOIN event_result ON event_results.id = event_result.id" +
             " INNER JOIN collaborators ON event_results.person_id = collaborators.id" +
@@ -209,6 +211,8 @@ if (LdsIsServer ) {
             "<td>Год</td>" +
             "<td>Есть в досье РЦК</td>" +
             "<td>Дата создания</td>" +
+            "<td>Месяц отчета</td>" +
+            "<td>Год отчета</td>" +
             "</tr>");
 
         for (elem in arr) {
@@ -249,6 +253,8 @@ if (LdsIsServer ) {
                 "<td>" + elem.year + "</td>" +
                 "<td>" + elem.is_dossier_rcc_exist + "</td>" +
                 "<td>" + elem.event_start_date + "</td>" +
+                "<td>" + elem.month + "</td>" +
+                "<td>" + elem.year + "</td>" +
                 "</tr>");
 
             processed++;
