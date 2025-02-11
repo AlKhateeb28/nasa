@@ -66,7 +66,8 @@ class Page92 extends Page {
         {id: "7366242919464721978", color: "#0d6efd"},
         {id: "7407345068771463161", color: "#003c3b"},
         {id: "6801104585249797458", color: "#a39ec7"},
-        {id: "6886868605917821984", color: "#96d9a2"}
+        {id: "6886868605917821984", color: "#96d9a2"},
+        {id: "7123657382337932895", color: "#ff190c"}
     ];
 
     constructor(actionId) {
