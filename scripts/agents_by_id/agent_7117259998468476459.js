@@ -102,8 +102,11 @@ if (LdsIsServer) {
             "       ers.id AS event_result_id, " +
             "       erts.name AS result_type_name, " +
             "       IIF(c.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_exist''])[1]/value[1]', 'bit') = 1, 'Истина', 'Ложь') AS is_doss_exist, " +
-            "       ers.event_start_date " +
+            "       ers.event_start_date, " +
+            "	    er.data.value('(event_result/custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') AS month, " +
+            "	    er.data.value('(event_result/custom_elems/custom_elem[name=''year_report''])[1]/value[1]', 'varchar(max)') AS year " +
             " FROM [WTDB].[dbo].event_results AS ers " +
+            "         INNER JOIN [WTDB].[dbo].event_result AS er ON ers.id = er.id " +
             "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id AND es.education_org_id = 6856734512956512163 AND es.start_date BETWEEN @date_from AND @date_to" +
             "         INNER JOIN [WTDB].[dbo].event AS e ON es.id = e.id " +
             "         INNER JOIN [WTDB].[dbo].event_result_types AS erts ON ers.event_result_type_id = erts.id " +
@@ -171,6 +174,8 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>Тип результата мероприятия</td>");
         reportString.AppendStr("<td class='header'>Есть в досье</td>");
         reportString.AppendStr("<td class='header'>Дата создания результата мероприятия</td>");
+        reportString.AppendStr("<td class='header'>Месяц отчета</td>");
+        reportString.AppendStr("<td class='header'>Год отчета</td>");
         reportString.AppendStr("</tr>");
 
         for (data in dataList) {
@@ -210,6 +215,8 @@ if (LdsIsServer) {
                 "<td>" + data.result_type_name + "</td>" +
                 "<td>" + data.is_doss_exist + "</td>" +
                 "<td>" + StrDate(data.event_start_date, true, false) + "</td>" +
+                "<td>" + data.month + "</td>" +
+                "<td>" + data.year + "</td>" +
                 "</tr>");
 
             processed++;
