@@ -53,7 +53,7 @@ try {
     }
     prevDate = new Date();
 
-    notificationMessage = "<p>За " + StrDate(DateOffset(Date(), -86400), false) + " на платформе производительность.рф зарегистрировано " + total + " новы(й)х пользователей от РЦК.</p>";
+    notificationMessage = "<p>За " + StrDate(DateOffset(Date(), -86400), false) + " на платформе производительность.рф зарегистрировано " + total + " новых пользователей от РЦК.</p>";
 
     if(total > 0) {
         notificationMessage += "<div style='font-size: x-small'>";
