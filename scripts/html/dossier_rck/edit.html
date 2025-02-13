@@ -1,0 +1,131 @@
+<!-- 7124038211921666043 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7124038211921666043 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="shortcut icon" href="/static/ico/favicon.ico" type="image/x-icon">
+
+    <style>
+        body {
+            font-variant-caps: all-petite-caps;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(14rem, 15%) 1fr minmax(14rem, 15%);
+            grid-template-rows: auto;
+        }
+
+        .disabled-ok:disabled {
+            background-color: #aefdbc;
+            border: 1px solid black;
+        }
+
+        .label-control {
+            font-size: medium;
+        }
+
+        .edit-control {
+            padding: .2rem .75rem;
+            color: black;
+            background-clip: padding-box;
+            border: 1px solid black;
+            border-radius: 0.375rem;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+        .block-control {
+            margin-top: 10px;
+        }
+
+        .checkbox-control {
+            accent-color: #C56FFF;
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+
+    <script type="text/javascript" src="./scripts/jquery.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery.mask.js"></script>
+</head>
+<body style="'Trebuchet MS', Verdana, Tahoma, sans-serif">
+<div class="grid">
+    <div></div>
+    <div>
+        <div class="block-control">
+            <div>
+                <label for="fio" class="label-control">ФИО :</label>
+            </div>
+            <div>
+                <input id="fio" type="text" class="edit-control" size="50" style="padding-left: 10px;"/>
+            </div>
+        </div>
+        <div class="block-control">
+            <div>
+                <label for="link" class="label-control">Ссылка на :</label>
+            </div>
+            <div>
+                <input id="link" type="text" class="edit-control disabled-ok" size="50" disabled style="padding-left: 10px;"/>
+            </div>
+        </div>
+        <div class="block-control">
+            <div>
+                <label for="position" class="label-control">Должность :</label>
+            </div>
+            <div>
+                <input id="position" type="text" class="edit-control" size="50" style="padding-left: 10px;"/>
+            </div>
+        </div>
+        <div class="block-control">
+            <div>
+                <label for="inn" class="label-control">ИНН :</label>
+            </div>
+            <div>
+                <input id="inn" type="text" class="edit-control" size="25" minlength="10" maxlength="12" style="padding-left: 10px;"/>
+            </div>
+        </div>
+        <div class="block-control">
+            <div>
+                <label for="org" class="label-control">Организация :</label>
+            </div>
+            <div>
+                <textarea id="org" rows="5" cols="80" class="edit-control" disabled></textarea>
+            </div>
+        </div>
+        <div class="block-control">
+            <div>
+                <label for="region" class="label-control">Регион :</label>
+            </div>
+            <div>
+                <input id="region" type="text" class="edit-control" size="50" style="padding-left: 10px;"/>
+            </div>
+        </div>
+        <div class="block-control">
+            <div>
+                <label for="selection_date" class="label-control">Дата отбора :</label>
+            </div>
+            <div>
+                <input id="selection_date" type="text" class="edit-control" size="6" style="padding-left: 10px;"/>
+            </div>
+        </div>
+        <div class="block-control">
+            <div style="float: left;">
+                <input id="selection_result" type="checkbox" class="checkbox-control"/>
+            </div>
+            <div style="float: left; margin-top: 3px; margin-left: 5px;">отбор пройден</div>
+        </div>
+        </div>
+    </div>
+    <div></div>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+        $("#get_date").mask("99.99.9999");
+    });
+</script>
+
+</html>
