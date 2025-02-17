@@ -1,6 +1,10 @@
 // 7117259998468476459
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
+function isCollaboratorExistsInRccDossier(collsCode) {
+    return tools.get_doc_by_key("cc_dossier_trained_by_rcc", "student_code", collsCode) != null;
+}
+
 if (LdsIsServer) {
     var agentId = 7117259998468476459;
     var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
@@ -103,8 +107,8 @@ if (LdsIsServer) {
             "       erts.name AS result_type_name, " +
             "       IIF(c.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_exist''])[1]/value[1]', 'bit') = 1, 'Истина', 'Ложь') AS is_doss_exist, " +
             "       ers.event_start_date, " +
-            "	    er.data.value('(event_result/custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') AS month, " +
-            "	    er.data.value('(event_result/custom_elems/custom_elem[name=''year_report''])[1]/value[1]', 'varchar(max)') AS year " +
+            "	    er.data.value('(//custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') AS report_month, " +
+            "	    er.data.value('(//custom_elems/custom_elem[name=''year_report''])[1]/value[1]', 'varchar(max)') AS report_year " +
             " FROM [WTDB].[dbo].event_results AS ers " +
             "         INNER JOIN [WTDB].[dbo].event_result AS er ON ers.id = er.id " +
             "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id AND es.education_org_id = 6856734512956512163 AND es.start_date BETWEEN @date_from AND @date_to" +
@@ -176,6 +180,7 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>Дата создания результата мероприятия</td>");
         reportString.AppendStr("<td class='header'>Месяц отчета</td>");
         reportString.AppendStr("<td class='header'>Год отчета</td>");
+        reportString.AppendStr("<td class='header'>Есть в досье</td>");
         reportString.AppendStr("</tr>");
 
         for (data in dataList) {
@@ -215,8 +220,9 @@ if (LdsIsServer) {
                 "<td>" + data.result_type_name + "</td>" +
                 "<td>" + data.is_doss_exist + "</td>" +
                 "<td>" + StrDate(data.event_start_date, true, false) + "</td>" +
-                "<td>" + data.month + "</td>" +
-                "<td>" + data.year + "</td>" +
+                "<td>" + data.report_month + "</td>" +
+                "<td>" + data.report_year + "</td>" +
+                "<td>" + (isCollaboratorExistsInRccDossier(data.person_code) ? "Да": "Нет") + "</td>" +
                 "</tr>");
 
             processed++;
