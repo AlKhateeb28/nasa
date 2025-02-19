@@ -3,7 +3,12 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 var currentRow = Int(Param.START_ROW);
 
 function isCollaboratorExistsInRccDossier(collsCode) {
-    return tools.get_doc_by_key("cc_dossier_trained_by_rcc", "student_code", collsCode) != null;
+    dossierList = ArrayDirect(XQuery("sql: " +
+        " SELECT id " +
+        "    FROM [WTDB].[dbo].cc_dossier_trained_by_rcc " +
+        "    WHERE student_code = '" + collsCode + "'"));
+
+    return ArrayCount(dossierList) > 0;
 }
 
 function getMethodsFromDtRcc(collsId) {
@@ -21,7 +26,6 @@ function getMethodsFromDtRcc(collsId) {
             " INNER JOIN [WTDB].[dbo].education_methods AS edms ON evs.education_method_id = edms.id" +
             " WHERE evrs.person_id = " + collsId + " AND" +
             " evrs.is_assist = 1" +
-            " AND evr.data.value('(event_result/custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') != 'Не учитывать'" +
             " GROUP BY evrs.person_id, evs.education_method_id, edms.name" +
             " ) " +
             " SELECT _view1.person_id, edm_name = STUFF (" +
@@ -175,7 +179,7 @@ if (!LdsIsServer ) {
                             if (resultCount == 1) {
                                 newRccDossierTE.num_trainings = resultArray[0].edm_count;
                                 newRccDossierTE.programs = resultArray[0].edm_name;
-                            } else if (resultCount == 0) {
+                            } else {
                                 // No education methods
                                 edMethodsSkipped++;
 
@@ -185,16 +189,6 @@ if (!LdsIsServer ) {
                                 );
 
                                 saveExcel(excelFile, excelSheet, collaboratorTE.id, "Нет программ обучения", collaboratorTE.id);
-                            } else {
-                                // More education methods
-                                edMethodsSkipped++;
-
-                                addLogMessage(
-                                    loggerName,
-                                    "[agent.id: " + agentId + "] More education methods. Colls.ID: " + collaboratorTE.id + " Row: " + currentRow
-                                );
-
-                                saveExcel(excelFile, excelSheet, collaboratorTE.id, "Больше одной программы обучения", collaboratorTE.id);
                             }
 
                             newRccDossierTE.in_month = excelSheet.Cells(currentRow, 2).Value;
@@ -212,7 +206,7 @@ if (!LdsIsServer ) {
                             "[agent.id: " + agentId + "] WARNING | Excel colls.code: " + collaboratorCode + " is skipped. Row: " + currentRow
                         );
 
-                        saveExcel(excelFile, excelSheet, null, "Существует в досье. Пропущен", collaboratorCode);
+                        saveExcel(excelFile, excelSheet, null, "", collaboratorCode);
 
                         skipped++;
                     }
