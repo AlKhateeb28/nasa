@@ -5,7 +5,7 @@ var currentRow = Int(Param.START_ROW);
 function isCollaboratorExistsInRccDossier(collsCode) {
     dossierList = ArrayDirect(XQuery("sql: " +
         " SELECT id " +
-        "    FROM [WTDB].[dbo].cc_dossier_trained_by_rcc " +
+        "    FROM [WTDB].[dbo].cc_dossier_trained_by_rccs " +
         "    WHERE student_code = '" + collsCode + "'"));
 
     return ArrayCount(dossierList) > 0;

@@ -217,6 +217,11 @@ class Calendar extends Object {
             let monthlastdate = new Date(year, month, 0).getDate();
             let lit = "";
 
+            console.log("Today: " + date + "." + month +  "." + year);
+            console.log("Lastdate: " + lastdate);
+            console.log("Dayone: " + dayone);
+            console.log("Dayend: " + dayend);
+
             for (let i = dayone; i > 0; i--) {
                 lit += `<li class="inactive">${new Date(year, month, 0).getDate() - i + 1}</li>`;
                 }

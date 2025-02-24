@@ -122,7 +122,7 @@ if (LdsIsServer) {
             "         INNER JOIN [WTDB].[dbo].org AS o ON os.id = o.id " +
             "         INNER JOIN [WTDB].[dbo].regions AS rs ON os.region_id = rs.id " +
             "         INNER JOIN [WTDB].[dbo].regions AS f_rs ON o.data.value('(//custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = f_rs.id " +
-            "         INNER JOIN [WTDB].[dbo].regions AS rep_rs ON o.data.value('(org/custom_elems/custom_elem[name=''report_region_id''])[1]/value[1]', 'bigint') = rep_rs.id " +
+            "         LEFT JOIN [WTDB].[dbo].regions AS rep_rs ON o.data.value('(org/custom_elems/custom_elem[name=''report_region_id''])[1]/value[1]', 'bigint') = rep_rs.id " +
             "         LEFT JOIN [WTDB].[dbo]._temp_lectors AS tls ON e.id = tls.id " +
             "         LEFT JOIN [WTDB].[dbo]._temp_preparations AS tps ON e.id = tps.id " +
             "         INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +

@@ -55,7 +55,7 @@ function GetPersonCSInsertQuery(oOrg, sCollIds){
         // DELETE CUSTOM FIELDS
         UPDATE  collaborator
         SET     data.modify('delete
-                            (//custom_elems/custom_elem[name=''in_program'' or name=''is_rck'' or name=''is_fcc'' or name=''is_roiv'' or name=''is_partner'' or name=''is_project_ended''])
+                            (//custom_elems/custom_elem[name=''in_program'' or name=''is_rck'' or name=''is_ock'' or name=''is_fcc'' or name=''is_roiv'' or name=''is_partner'' or name=''is_project_ended''])
                 ')
         FROM
             collaborator col
@@ -84,6 +84,19 @@ function GetPersonCSInsertQuery(oOrg, sCollIds){
                 ')
         FROM collaborator col
             JOIN #t_upd_cols cols ON col.id = cols.id
+
+    // is_ock
+    UPDATE collaborator
+    SET data.modify('insert
+                        <custom_elem>
+                            <name>is_ock</name>
+                            <value>" + GetStqFromBool(oOrg.is_ock) + "</value>
+                        </custom_elem>
+                        as first into
+                        (//custom_elems)[1]
+        ')
+    FROM collaborator col
+    JOIN #t_upd_cols cols ON col.id = cols.id
 
         // is_fcc
         UPDATE collaborator
@@ -162,6 +175,7 @@ function GetModifOrgCSQuery(sTimeFormat, iNumberTime){
         "   og.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'nvarchar(1)') format_part, " +
         "   og.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'bit') is_fcc, " +
         "   og.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') is_rck, " +
+        "   og.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') is_ock, " +
         "   og.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') is_roiv, " +
         "   og.data.value('(//custom_elems/custom_elem[name=''is_partner'']/value)[1]', 'bit') is_partner, " +
         "   og.data.value('(//custom_elems/custom_elem[name=''is_a_commerce_client'']/value)[1]', 'bit') is_a_commerce_client, " +
@@ -183,6 +197,7 @@ function GetOrgCSQueryByIds(sOrgsIds){
         "       og.data.value('(//custom_elems/custom_elem[name=''in_program'']/value)[1]', 'bit') in_program, " +
         "       og.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'nvarchar(1)') format_part, " +
         "       og.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') is_rck, " +
+        "       og.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') is_ock, " +
         "       og.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') is_roiv, " +
         "       og.data.value('(//custom_elems/custom_elem[name=''is_partner'']/value)[1]', 'bit') is_partner, " +
         "       og.data.value('(//custom_elems/custom_elem[name=''is_project_ended'']/value)[1]', 'bit') is_project_ended " +

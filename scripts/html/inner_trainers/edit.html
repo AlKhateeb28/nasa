@@ -1,6 +1,8 @@
 <!-- 7124784700424928410 -->
 <!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7124784700424928410&person_id=7351734047845980789 -->
-<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7126548019478755931&person_id=7351734047845980789&active_code=5%D1%81 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7126548019478755931&person_id=7351734047845980789&active_code=%D1%815 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7127204375175819280&person_id=7351734047845980789&person_id=7351734047845980789&prog=7126181361110449745&mode=BASE&res=сертифицирован&edu=&cert=04.02.2025&serial=ВТ&noti=true&code=c5 -->
+<!-- -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,10 +25,24 @@
         .calendar {
             position: absolute;
             z-index: 1000;
-            top: 60%;
-            left: 65%;
+            top: 35%;
+            left: 51%;
             transform: translate(-50%, -50%);
         }
+
+        .message {
+            border-radius: 3px;
+            border: 1px solid dimgrey;
+        }
+
+        .success-response {
+            background-color: #78fcaf;
+        }
+
+        .error-response {
+            background-color: #ff9494;
+        }
+
     </style>
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
@@ -57,7 +73,7 @@
                 <div style="padding-top: 90px;">
                     <div class="float-left" style="margin-top: 5px; padding-left: 20px;">Программа:</div>
                     <div class="float-left dropdown" style="margin-left: 10px; width: 78%;">
-                        <select id="program" data-loaded="0" class="dropdown-select" onchange="Page.onProgramChange()">
+                        <select id="program" class="dropdown-select" onchange="Page.onProgramChange()">
                             <optgroup id="main_group" label="Основные">
                             </optgroup>
                             <optgroup id="additional_group" label="Дополнительные">
@@ -69,7 +85,7 @@
                 <div style="padding-top: 60px;">
                     <div class="float-left" style="margin-top: 5px; padding-left: 20px;">Результат сертификации:</div>
                     <div class="float-left dropdown" style="margin-left: 10px; width: 30%;">
-                        <select id="result" class="dropdown-select">
+                        <select id="result" class="dropdown-select" onchange="Page.onResultChange()">
                             <option value="сертифицирован">сертифицирован</option>
                             <option value="не сертифицирован">не сертифицирован</option>
                             <option value="не явка">не явка</option>
@@ -121,8 +137,11 @@
                 </div>
 
                 <div style="padding-top: 52px; padding-right: 30px;">
+                    <div id="message_box"class="float-left" style="width: 80%; height: 24px; display: none;">
+                        <div id="message" class="message" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px; box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;"></div>
+                    </div>
                     <div class="float-right">
-                        <button id="save_button" class="button-control enable-button" onclick="">Сохранить</button>
+                        <button id="save_button" class="button-control enable-button" onclick="Page.save()">Сохранить</button>
                     </div>
                 </div>
             </div>
