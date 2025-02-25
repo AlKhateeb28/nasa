@@ -48,14 +48,105 @@ if (!LdsIsServer) {
                     " FROM [WTDB].[dbo].collaborators " +
                     " WHERE email = '" + excelSheet.Cells(currentRow, 8) + "'"));
 
-
                 if(ArrayCount(dataList) == 1) {
+                    dossierList = ArrayDirect(XQuery("sql: " +
+                        " SELECT doss.id " +
+                        " FROM [WTDB].[dbo].cc_dossier_vntren_2025s doss " +
+                        " WHERE doss.trainer_id = " + dataList[0].id));
 
+                    dossierDoc = null;
+
+                    if(ArrayCount(dossierList) == 0) {
+                        dossierDoc = tools.new_doc_by_name( "cc_dossier_vntren_2025", false )
+                        dossierDoc.BindToDb(DefaultDb);
+                    } else {
+                        dossierDoc = tools.open_doc(dossierList[0].id);
+                    }
+
+                    dossierDocTE = dossierDoc.TopElem;
+
+                    dossierDocTE.trainer_id = dataList[0].id;
+
+                    if(excelSheet.Cells(currentRow, 1).Value != undefined) {
+                        dossierDocTE.trainer_fullname = excelSheet.Cells(currentRow, 1).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 2).Value != undefined) {
+                        dossierDocTE.position_trainer = excelSheet.Cells(currentRow, 2).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 3).Value != undefined) {
+                    dossierDocTE.organization_inn = excelSheet.Cells(currentRow, 3).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 4).Value != undefined) {
+                        dossierDocTE.organization_name = excelSheet.Cells(currentRow, 4).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 5).Value != undefined) {
+                        dossierDocTE.headcount = excelSheet.Cells(currentRow, 5).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 6).Value != undefined) {
+                        dossierDocTE.region_organization = excelSheet.Cells(currentRow, 6).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 7).Value != undefined) {
+                        dossierDocTE.region_in_reporting = excelSheet.Cells(currentRow, 7).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 8).Value != undefined) {
+                        dossierDocTE.email = excelSheet.Cells(currentRow, 8).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 9).Value != undefined) {
+                        dossierDocTE.phone = excelSheet.Cells(currentRow, 9).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 10).Value != undefined) {
+                        dossierDocTE.trainer_type = excelSheet.Cells(currentRow, 10).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 11).Value != undefined) {
+                        dossierDocTE.basic_training_program = excelSheet.Cells(currentRow, 11).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 12).Value != undefined) {
+                        dossierDocTE.support_format = excelSheet.Cells(currentRow, 12).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 13).Value != undefined) {
+                        dossierDocTE.curator_fullname = excelSheet.Cells(currentRow, 13).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 14).Value != undefined) {
+                        dossierDocTE.curator_email = excelSheet.Cells(currentRow, 14).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 15).Value != undefined) {
+                        dossierDocTE.curator_phone = excelSheet.Cells(currentRow, 15).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 16).Value != undefined) {
+                        dossierDocTE.date_selection = excelSheet.Cells(currentRow, 16).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 17).Value != undefined) {
+                        dossierDocTE.result_selection = StrLowerCase(excelSheet.Cells(currentRow, 17).Value);
+                    }
+                    if(excelSheet.Cells(currentRow, 18).Value != undefined) {
+                        dossierDocTE.wave_number = excelSheet.Cells(currentRow, 18).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 19).Value != undefined) {
+                        dossierDocTE.start_date = excelSheet.Cells(currentRow, 19).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 20).Value != undefined) {
+                        dossierDocTE.finish_date = excelSheet.Cells(currentRow, 20).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 21).Value != undefined) {
+                        dossierDocTE.fact_trained = excelSheet.Cells(currentRow, 21).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 22).Value != undefined) {
+                        dossierDocTE.status_trainer = excelSheet.Cells(currentRow, 22).Value;
+                    }
+                    if(excelSheet.Cells(currentRow, 23).Value != undefined) {
+                        dossierDocTE.comments = excelSheet.Cells(currentRow, 23).Value;
+                    }
+
+                    dossierDoc.Save();
+
+                    excelSheet.Cells(currentRow, 25).Value = "Досье создано";
+                    excelSheet.Cells(currentRow, 26).Value = "Порядок";
+                    saved++;
                 } else {
                     if(ArrayCount(dataList) == 0) {
                         excelSheet.Cells(currentRow, 24).Value = "Сотрудник не найден";
                     } else {
-                        excelSheet.Cells(currentRow, 24).Value = "Нейдено более одного сотрудника по email";
+                        excelSheet.Cells(currentRow, 24).Value = "Найдено более одного сотрудника по email";
                     }
 
                 }
