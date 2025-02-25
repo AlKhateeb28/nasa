@@ -2,9 +2,12 @@
 // 7127204375175819280
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
-function save(dossierDoc, dossierDocTE, mode, code, programId, certificationResult, certificateDate, educationDate, serial) {
+function save(dossierDoc, dossierDocTE, personId, mode, code, programId, certificationResult, certificateDate, educationDate, serial, sendNotification) {
     eval("dossierDocTE." + code + " = " + programId);
     eval("dossierDocTE." + code + "_result = '" + certificationResult + "'");
+
+    certificateDoc = null;
+
     if (certificationResult == "сертифицирован") {
         programList = ArrayDirect(XQuery("sql: " +
             " SELECT ems.name " +
@@ -54,6 +57,25 @@ function save(dossierDoc, dossierDocTE, mode, code, programId, certificationResu
     }
 
     dossierDoc.Save();
+
+    if(sendNotification == "true") {
+        if (certificationResult == "сертифицирован") {
+            tools.create_notification("cert_vn_tr_print", OptInt(personId), "", OptInt(certificateDoc.DocID));
+        } else {
+            educationMethodList = ArrayDirect(XQuery("sql: " +
+                " SELECT ems.name " +
+                " FROM [WTDB].[dbo].education_methods ems" +
+                " WHERE ems.id = " + programId));
+
+            message = "???";
+
+            if(ArrayCount(educationMethodList) > 0) {
+                message = educationMethodList[0].name;
+            }
+
+            tools.create_notification("cert_vn_tr_cancel", OptInt(personId), message);
+        }
+    }
 }
 
 agentId = 7127204375175819280;
@@ -172,7 +194,7 @@ try {
             " SELECT doss.id, dos.data.exist('(//" + code + ")') AS code FROM [WTDB].[dbo].cc_dossier_vntren_2025s doss INNER JOIN [WTDB].[dbo].cc_dossier_vntren_2025 dos ON doss.id = dos.id WHERE doss.trainer_id = " + personId));
 
         if (ArrayCount(personDossiers) == 1 && !personDossiers[0].code) {
-            save(dossierDoc, dossierDocTE, mode, code, programId, certificationResult, certificateDate, educationDate, serial);
+            save(dossierDoc, dossierDocTE, personId, mode, code, programId, certificationResult, certificateDate, educationDate, serial, sendNotification);
         } else {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] BASE. Wrong sql result for code = " + code + ". SQL statement MUST returns 1 record.");
 
@@ -196,7 +218,7 @@ try {
                 if(eval("personDossiers[0].dop" + i + " == ''")) {
                     result.activeCode = "dop_" + i;
 
-                    save(dossierDoc, dossierDocTE, mode, result.activeCode, programId, certificationResult, certificateDate, educationDate, serial);
+                    save(dossierDoc, dossierDocTE, personId, mode, result.activeCode, programId, certificationResult, certificateDate, educationDate, serial, sendNotification);
 
                     break;
                 }
