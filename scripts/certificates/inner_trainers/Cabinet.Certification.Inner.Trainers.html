@@ -2,25 +2,26 @@
     <%
     // 7057406356164475612
     curTitle = {
-    "type": "simple",
-    "title": "Кабинет сертификации внутренних тренеров"
+        "type": "simple",
+        "title": "Кабинет сертификации внутренних тренеров"
     }
+
     Response.Write( EvalCodePageUrl( global_settings.web_path + "view_object_title.xaml" ) );
     %>
     <%
     orgs_arr = XQuery( "for $elem in func_managers where $elem/catalog='org' and $elem/person_id=7036680427249492033 return $elem" )
     org_ids = ArrayMerge( orgs_arr, "object_id", "," )
-    sXQ = "for $elem in func_managers
-    where $elem/catalog='group' and $elem/person_id=7036680427249492033 and $elem/boss_type_id=7057423221619905635
-    order by $elem/object_name
-    return $elem"
+
+    sXQ = "for $elem in func_managers where $elem/catalog='group' and $elem/person_id=7036680427249492033 and $elem/boss_type_id=7057423221619905635 order by $elem/object_name return $elem"
     func_manager_arr = XQuery( sXQ )
+
     i = 1
+
     for ( func_manager in func_manager_arr ) {
-    group_id = func_manager.object_id
-    group_name = func_manager.object_name
-    group_collaborators_arr = XQuery( "for $elem in group_collaborators where $elem/group_id=" + group_id + " return $elem" )
-    group_collaborators_display_object_ids = ArrayMerge( group_collaborators_arr, 'collaborator_id', ';' )
+        group_id = func_manager.object_id
+        group_name = func_manager.object_name
+        group_collaborators_arr = XQuery( "for $elem in group_collaborators where $elem/group_id=" + group_id + " return $elem" )
+        group_collaborators_display_object_ids = ArrayMerge( group_collaborators_arr, 'collaborator_id', ';' )
     %>
     <Action Name="export_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="ALERT={messageText};">
         <Param Name="sCollection" Value="cols_from_group_cert"/>
@@ -89,51 +90,51 @@
         <Param Name="isEditable" Value="true"/>
     </Dialog>
     <%
-    curView = {
-        "title" : group_name + " - " + ArrayCount( group_collaborators_arr ) + " участников",
-        "id": "QWE"+i,
-        "disp_selectors": false,
-        "disp_search": true,
-        "disp_filter": true,
-        "filter_mode": "standart",
-        "disp_paging": true,
-        "paging_size": 10,
-        "catalog_name": "collaborators",
-        "xquery_qual": "",
-        "disp_type": "data_grid",
-        "height": null,
-        "buttons": [
-            /*{
-                "name": "",
-                "title": "Добавить",
-                "click": ("OPENDIALOG=col_selector_add"+i)
-            },
-            {
-                "name": "",
-                "title": "Удалить",
-                "click": ("OPENDIALOG=col_selector_del"+i)
-            },*/
+        curView = {
+            "title" : group_name + " - " + ArrayCount( group_collaborators_arr ) + " участников",
+            "id": "QWE"+i,
+            "disp_selectors": false,
+            "disp_search": true,
+            "disp_filter": true,
+            "filter_mode": "standart",
+            "disp_paging": true,
+            "paging_size": 10,
+            "catalog_name": "collaborators",
+            "xquery_qual": "",
+            "disp_type": "data_grid",
+            "height": null,
+            "buttons": [
+                /*{
+                    "name": "",
+                    "title": "Добавить",
+                    "click": ("OPENDIALOG=col_selector_add"+i)
+                },
+                {
+                    "name": "",
+                    "title": "Удалить",
+                    "click": ("OPENDIALOG=col_selector_del"+i)
+                },*/
 
-            {
-                "name": "report_action_name"+i,
-                "title": "Отчет",
-                "click": ("ACTION=report_action_name"+i)
+                {
+                    "name": "report_action_name"+i,
+                    "title": "Отчет",
+                    "click": ("ACTION=report_action_name"+i)
+                }
+            ],
+            "collection": {
+            "name": "cols_from_group_cert_vn_tr",
+            "params": ([
+                {"name": "sSearchWord", "value": "{!CatalogListSearchQWE"+i+"}"},
+                {"name": "curObjectID", "value": group_id}
+            ])
             }
-        ],
-        "collection": {
-        "name": "cols_from_group_cert_vn_tr",
-        "params": ([
-            {"name": "sSearchWord", "value": "{!CatalogListSearchQWE"+i+"}"},
-            {"name": "curObjectID", "value": group_id}
-        ])
-    }
-    }
+        }
 
-    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
+        Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
     %>
 
     <%
-    i++
+        i++
     }
     %>
 
