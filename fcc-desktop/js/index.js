@@ -489,7 +489,6 @@ function changeFinishedAgentId(agent, stackAgent) {
     $("#message" + agent.getId()).attr("id",   "message" + newAgentId);
     $("#duration" + agent.getId()).attr("id",   "duration" + newAgentId);
     $("#msPerRow_" + agent.getId()).attr("id",   "msPerRow_" + newAgentId);
-    $("#dateTime_" + agent.getId()).attr("id",   "dateTime_" + newAgentId);
 
     const expectedElement = $("#expected_" + agent.getId());
     expectedElement.html("00:00:00");
