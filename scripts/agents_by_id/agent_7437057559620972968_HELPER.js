@@ -10,7 +10,6 @@ function updateSingleFlag(flag) {
         " WITH _view AS ( " +
         " SELECT cs.id AS cs_id, " +
         "       os.id AS org_id, " +
-        "       o.data.exist('(//custom_elems/custom_elem[name=''format_part''])') AS format_part, " +
         "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''" + flag + "'']/value)[1]', 'bit') AS INT)) AS cs_flag, " +
         "       IIF(o.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''" + flag + "'']/value)[1]', 'bit') AS INT)) AS org_flag, " +
         "       cs.modification_date " +
@@ -38,15 +37,7 @@ function updateSingleFlag(flag) {
         collaboratorDoc = tools.open_doc(data.cs_id);
 
         if(collaboratorDoc != undefined) {
-            if(flag == "in_program") {
-                if(data.format_part) {
-                    collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = 'true';
-                } else {
-                    collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = 'false';
-                }
-            } else {
-                collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = data.org_flag;
-            }
+            collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = data.org_flag;
 
             collaboratorDoc.Save();
 
@@ -78,80 +69,77 @@ function updateSingleFlag(flag) {
     return ArrayCount(dataList);
 }
 
-if (LdsIsServer) {
-    var agentId = 7437057559620972968;
-    var userId = curUserID; //7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
-    var msPerRecord = 0.001;
+var agentId = 7437057559620972968;
+var userId = 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
+var msPerRecord = 0.001;
 
-    var startDate = Date();
-    var prevDate;
-    var loggerName = "agent_7437057559620972968";
-    var ws = getWebsocketClient();
-    var agent = getAgentInstance(agentId, userId, loggerName);
+var startDate = Date();
+var prevDate;
+var loggerName = "agent_7437057559620972968";
+var ws = getWebsocketClient();
+var agent = getAgentInstance(agentId, userId, loggerName);
 
-    var total = 0;
-    var processed = 0;
-    var saved = 0;
-    var skipped = 0;
+var total = 0;
+var processed = 0;
+var saved = 0;
+var skipped = 0;
 
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-    var flags = [
-        {flag: "in_program"},
-        {flag: "is_fcc"},
-        {flag: "is_rck"},
-        {flag: "is_roiv"},
-        {flag: "is_partner"},
-        {flag: "is_a_commerce_client"},
-        {flag: "is_project_ended"}
-    ];
+var flags = [
+    {flag: "in_program"},
+    {flag: "is_fcc"},
+    {flag: "is_rck"},
+    {flag: "is_ock"},
+    {flag: "is_roiv"},
+    {flag: "is_partner"},
+    {flag: "is_a_commerce_client"},
+    {flag: "is_project_ended"}
+];
 
-    try {
-        for(element in flags) {
-            count = updateSingleFlag(element.flag);
+try {
+    for(element in flags) {
+        count = updateSingleFlag(element.flag);
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed " + element.flag + " : " + count);
-        }
-
-        agent.state = 1;
-        agent.processed = processed;
-        agent.saved = saved;
-        agent.skipped = skipped;
-        agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        refreshMsPerRow(agent, startDate, total);
-        agent.message = "Закончено";
-        if (ws != null) {
-            ws = sendMessageToWebsocket(ws, agent);
-        }
-
-        addLogResultMessage(
-            loggerName,
-            "[agent.id: " + agentId + "]",
-            total + " total, ",
-            processed + " processed",
-            saved + " saved, ",
-            skipped + " skipped"
-        );
-
-        addLogMessage(
-            loggerName,
-            "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
-        );
-    } catch (e) {
-        agent.state = 2;
-        agent.errorMessage = e;
-        sendMessageToWebsocket(ws, agent);
-
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed " + element.flag + " : " + count);
     }
 
-    saveMonitorAgents(agent, startDate);
+    agent.state = 1;
+    agent.processed = processed;
+    agent.saved = saved;
+    agent.skipped = skipped;
+    agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+    refreshMsPerRow(agent, startDate, total);
+    agent.message = "Закончено";
+    if (ws != null) {
+        ws = sendMessageToWebsocket(ws, agent);
+    }
 
-    try {
-        ws.Send("close");
-    } catch (e) {}
-} else {
-    Screen.MsgBox("Запустите агент на стороне сервера!", ms_tools.get_const('c_info'), 'info', 'ok');
+    addLogResultMessage(
+        loggerName,
+        "[agent.id: " + agentId + "]",
+        total + " total, ",
+        processed + " processed",
+        saved + " saved, ",
+        skipped + " skipped"
+    );
+
+    addLogMessage(
+        loggerName,
+        "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
+    );
+} catch (e) {
+    agent.state = 2;
+    agent.errorMessage = e;
+    sendMessageToWebsocket(ws, agent);
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
 }
+
+saveMonitorAgents(agent, startDate);
+
+try {
+    ws.Send("close");
+} catch (e) {}

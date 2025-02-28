@@ -10,11 +10,10 @@ function updateSingleFlag(flag) {
         " WITH _view AS ( " +
         " SELECT cs.id AS cs_id, " +
         "       os.id AS org_id, " +
-        "       o.data.exist('(//custom_elems/custom_elem[name=''format_part''])') AS format_part, " +
         "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''" + flag + "'']/value)[1]', 'bit') AS INT)) AS cs_flag, " +
         "       IIF(o.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''" + flag + "'']/value)[1]', 'bit') AS INT)) AS org_flag, " +
         "       cs.modification_date " +
-        "         FROM [WTDB].[dbo].collaborators cs " +
+        " FROM [WTDB].[dbo].collaborators cs " +
         "           INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "           INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
         "           INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
@@ -37,15 +36,7 @@ function updateSingleFlag(flag) {
         collaboratorDoc = tools.open_doc(data.cs_id);
 
         if(collaboratorDoc != undefined) {
-            if(flag == "in_program") {
-                if(data.format_part) {
-                    collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = 'true';
-                } else {
-                    collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = 'false';
-                }
-            } else {
-                collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = data.org_flag;
-            }
+            collaboratorDoc.TopElem.custom_elems.ObtainChildByKey(flag).value = data.org_flag;
 
             collaboratorDoc.Save();
 
@@ -100,6 +91,7 @@ var flags = [
     {flag: "in_program"},
     {flag: "is_fcc"},
     {flag: "is_rck"},
+    {flag: "is_ock"},
     {flag: "is_roiv"},
     {flag: "is_partner"},
     {flag: "is_a_commerce_client"},
