@@ -26,6 +26,7 @@ try {
     dataList = ArrayDirect(XQuery("sql: " +
         " SELECT cs.id, " +
         "       cs.fullname, " +
+        "       cs.email, " +
         "       os.code, " +
         "       os.name AS org_name, " +
         "       rs.name AS region_name" +
@@ -61,6 +62,7 @@ try {
         notificationMessage += "<tr>";
         notificationMessage += "<th>ID</th>";
         notificationMessage += "<th>ФИО</th>";
+        notificationMessage += "<th>Email</th>";
         notificationMessage += "<th>ИНН</th>";
         notificationMessage += "<th>Организация</th>";
         notificationMessage += "<th>Регион</th>";
@@ -70,6 +72,7 @@ try {
             notificationMessage += "<tr>";
             notificationMessage += "<td>" + data.id + "</td>";
             notificationMessage += "<td>" + data.fullname + "</td>";
+            notificationMessage += "<td>" + data.email + "</td>";
             notificationMessage += "<td>" + data.code + "</td>";
             notificationMessage += "<td>" + data.org_name + "</td>";
             notificationMessage += "<td>" + data.region_name + "</td>";
