@@ -6,6 +6,14 @@
     height: 307px;
 }
 
+.flat-card {
+    border-radius: 50px;
+    background: #e0e0e0;
+    box-shadow:  7px 7px 14px #bebebe,
+    -7px -7px 14px #ffffff;
+    height: 307px;
+}
+
 .float-left {
     float: left;
 }
@@ -229,4 +237,22 @@
 /* Focus */
 .checkbox-ios.focused .checkbox-ios-switch:before {
     box-shadow: inset 0px 0px 4px #ff5623;
+}
+
+/* BLINK */
+@keyframes shimmer{
+    0% {background-position-x: 150%;}
+    40%, 100% {background-position-x: -150%;}
+}
+
+.blink {
+    background-color: #0086cd;
+    background-image: linear-gradient(-60deg,
+    #ffffff00 0%, #ffffff00 40%,
+    #ffffff44 40%, #ffffff44 60%,
+    #ffffff00 60%, #ffffff00 100%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: shimmer 2s infinite;
 }

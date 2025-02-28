@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<custom_web_template>
+	<INHERIT TYPE="object_code_name_base"/>
+	<category TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="exec_code_base"/>
+	<html TYPE="string" STORE-SECTION_="cdata" TITLE="const=c_code"/>
+	<url TYPE="string" TITLE="const=gwdslrn9x8"/>
+	<use_session_cache TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=keshirovatrezul"/>
+
+	<cwt_type TYPE="string" NOT-NULL="1" DEFAULT="default" FOREIGN-ARRAY="common.cwt_types"/>
+	<out_type TYPE="string" NOT-NULL="1" FOREIGN-ARRAY="common.out_types" DEFAULT="undefined"/>
+
+	<mode TYPE="string" TITLE="mode"/>
+	<template TYPE="string" TITLE="const=ht649j6ygr"/>
+
+	<tuning>
+		<height TYPE="integer"/>
+	</tuning>
+
+	<INHERIT TYPE="zones_base"/>
+	<zone_selector TYPE="string" TEMP="1"/>
+
+	<include_custom_web_templates>
+		<include_custom_web_template MULTIPLE="1" PRIMARY-KEY="include_custom_web_template_id">
+			<include_custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+		</include_custom_web_template>
+	</include_custom_web_templates>
+
+	<INHERIT TYPE="i18n_base"/>
+
+	<INHERIT TYPE="web_variables_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	<converter TYPE="bool" EXPR="
+			TopElem = Child(0).Parent;
+			ms_tools.convert_exec_code( TopElem.exec_code, TopElem.url, TopElem.html );
+	" TEMP="1"/>
+
+	<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=zeta4i89wg"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</custom_web_template>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('edrtujohut') + ': ' + custom_web_template.name
+"/>
+
+</SPXML-FORM>

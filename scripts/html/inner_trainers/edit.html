@@ -42,7 +42,6 @@
         .error-response {
             background-color: #ff9494;
         }
-
     </style>
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
@@ -73,7 +72,7 @@
                 <div style="padding-top: 90px;">
                     <div class="float-left" style="margin-top: 5px; padding-left: 20px;">Программа:</div>
                     <div class="float-left dropdown" style="margin-left: 10px; width: 78%;">
-                        <select id="program" class="dropdown-select" onchange="Page.onProgramChange()">
+                        <select id="program" class="dropdown-select" onchange="EditPage.onProgramChange()">
                             <optgroup id="main_group" label="Основные">
                             </optgroup>
                             <optgroup id="additional_group" label="Дополнительные">
@@ -85,7 +84,7 @@
                 <div style="padding-top: 60px;">
                     <div class="float-left" style="margin-top: 5px; padding-left: 20px;">Результат сертификации:</div>
                     <div class="float-left dropdown" style="margin-left: 10px; width: 30%;">
-                        <select id="result" class="dropdown-select" onchange="Page.onResultChange()">
+                        <select id="result" class="dropdown-select" onchange="EditPage.onResultChange()">
                             <option value="сертифицирован">сертифицирован</option>
                             <option value="не сертифицирован">не сертифицирован</option>
                             <option value="не явка">не явка</option>
@@ -141,7 +140,7 @@
                         <div id="message" class="message" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px; box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;"></div>
                     </div>
                     <div class="float-right">
-                        <button id="save_button" class="button-control enable-button" onclick="Page.save()">Сохранить</button>
+                        <button id="save_button" class="button-control enable-button" onclick="EditPage.save()">Сохранить</button>
                     </div>
                 </div>
             </div>
@@ -171,7 +170,7 @@
         Calendar.initialize();
         Calendar.hide();
 
-        Page.getJson();
+        EditPage.getJson();
     });
 </script>
 

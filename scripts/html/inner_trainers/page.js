@@ -1,6 +1,6 @@
 var selectedOption = null;
 
-class Page extends Object {
+class EditPage extends Object {
     constructor() {
         super();
     }
@@ -8,8 +8,8 @@ class Page extends Object {
     static afterLoad() {
         $("#date").mask("99.99.9999");
 
-        Page.addOption("serial", "ВТ", "ВТ");
-        Page.addOption("serial", "К", "К");
+        EditPage.addOption("serial", "ВТ", "ВТ");
+        EditPage.addOption("serial", "К", "К");
     }
 
     static addOption(elementId, name, value, code, type) {
@@ -41,11 +41,11 @@ class Page extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    Page.refreshElements("disable-button", "enable-button", false);
+                    EditPage.refreshElements("disable-button", "enable-button", false);
                     if($('#program').find(":selected").attr("data-type") === "BASE") {
-                        Page.refreshEducationBlock("disable-button", "enable-button", false);
+                        EditPage.refreshEducationBlock("disable-button", "enable-button", false);
                     } else {
-                        Page.refreshEducationBlock("disable-button", "enable-button", false);
+                        EditPage.refreshEducationBlock("disable-button", "enable-button", false);
                     }
 
                     $("#person").html(data.personName);
@@ -57,13 +57,13 @@ class Page extends Object {
                     $("#main_group").empty();
 
                     data.baseProgram.forEach((element, index) => {
-                        Page.addOption("main_group", element.name, element.id, element.code, element.type);
+                        EditPage.addOption("main_group", element.name, element.id, element.code, element.type);
                     });
 
                     $("#additional_group").empty();
 
                     data.extraProgram.forEach((element, index) => {
-                        const optionElement = Page.addOption("additional_group", element.name, element.id, element.code, element.type);
+                        const optionElement = EditPage.addOption("additional_group", element.name, element.id, element.code, element.type);
 
                         if (data.takenCount === 6 && parseInt(element.isTaken) == 0) {
                             optionElement.attr("disabled", true);
@@ -82,20 +82,20 @@ class Page extends Object {
 
                     if(data.certificate_result.toString().length > 0) {
                         if(data.certificate_result === "сертифицирован") {
-                            Page.refreshElements("enable-button", "disable-button", true);
-                            Page.refreshEducationBlock("enable-button", "disable-button", true);
+                            EditPage.refreshElements("enable-button", "disable-button", true);
+                            EditPage.refreshEducationBlock("enable-button", "disable-button", true);
 
                             serialElement.val(data.serial);
                         } else {
                             serialElement.val("ВТ");
                         }
                     } else {
-                        Page.refreshElements("disable-button", "enable-button", false);
+                        EditPage.refreshElements("disable-button", "enable-button", false);
 
                         if($('#program').find(":selected").attr("data-type") === "BASE") {
-                            Page.refreshEducationBlock("enable-button", "disable-button", true);
+                            EditPage.refreshEducationBlock("enable-button", "disable-button", true);
                         } else {
-                            Page.refreshEducationBlock("disable-button", "enable-button", false);
+                            EditPage.refreshEducationBlock("disable-button", "enable-button", false);
                         }
 
                         serialElement.val("ВТ");
@@ -109,18 +109,18 @@ class Page extends Object {
                         $("#person").attr("data-exist", 0);
 
 
-                        Page.showMessageBox("success-response",  "error-response", "Сотрудник не найден!");
+                        EditPage.showMessageBox("success-response",  "error-response", "Сотрудник не найден!");
 
-                        Page.disableAllElements();
+                        EditPage.disableAllElements();
                     }
                 } else {
                     console.log("Error: " + data.errorMessage);
                 }
 
                 if(parseInt(data.sameDossiers) > 1) {
-                    Page.showMessageBox("success-response",  "error-response", "Проверьте сотрудника с ID " + data.personId + ". Найдено <b>" + data.sameDossiers + "</b> досье!");
+                    EditPage.showMessageBox("success-response",  "error-response", "Проверьте сотрудника с ID " + data.personId + ". Найдено <b>" + data.sameDossiers + "</b> досье!");
 
-                    Page.disableAllElements();
+                    EditPage.disableAllElements();
                 }
             },
             error: function(error) {
@@ -200,18 +200,18 @@ class Page extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    Page.showMessageBox("error-response", "success-response", "Досье сохранено.");
+                    EditPage.showMessageBox("error-response", "success-response", "Досье сохранено.");
 
-                    Page.setTimeoutOnMessageBox();
+                    EditPage.setTimeoutOnMessageBox();
 
                     $("#main_group").empty();
                     $("#additional_group").empty();
 
-                    Page.getJson(data.activeCode, selectedOption.val());
+                    EditPage.getJson(data.activeCode, selectedOption.val());
                 } else {
-                    Page.showMessageBox("success-response",  "error-response", "Ошибка. Детали в логе!");
+                    EditPage.showMessageBox("success-response",  "error-response", "Ошибка. Детали в логе!");
 
-                    Page.setTimeoutOnMessageBox();
+                    EditPage.setTimeoutOnMessageBox();
 
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
@@ -223,7 +223,7 @@ class Page extends Object {
     }
 
     static setTimeoutOnMessageBox() {
-        setTimeout(Page.hideMessageBox, 10000);
+        setTimeout(EditPage.hideMessageBox, 10000);
     }
 
     static hideMessageBox() {
@@ -249,15 +249,6 @@ class Page extends Object {
             $("#notification").attr("disabled", false);
             $("#certificate_date").attr("disabled", false);
             $("#serial").attr("disabled", false);
-        }/* else {
-            const certificateButton = $("#certificate_button");
-            certificateButton.attr("disabled", true);
-            certificateButton.removeClass("enable-button");
-            certificateButton.addClass("disable-button");
-
-            $("#notification").attr("disabled", true);
-            $("#certificate_date").attr("disabled", true);
-            $("#serial").attr("disabled", true);
-        }*/
+        }
     }
 }

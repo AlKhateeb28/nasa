@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-SCREEN SOURCE="TopElem" TITLE-EXPR="TopElem.name + ' — ' + ms_tools.get_const('3nlwugilns')" BEFORE-SAVE-ACTION="
+	if ( TopElem.url.HasValue &amp;&amp; TopElem.html.HasValue )
+	{
+		if ( Screen.MsgBox( 'Указана ссылка на шаблон и заполнен программный код шаблона. Приоритет при выполнении шаблона по ссылке. Очистить поле с программным кодом?', ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+		{
+			TopElem.html.Clear();
+			TopElem.exec_code.code_text.Clear();
+		}
+	}
+
+	TopElem.view.desc_save();
+	ms_tools.check_std( TopElem );
+" SAVE-ACTION="
+	tools_web.drop_active_web_templates();
+	UpdateScreens( '*', '*custom_web_template*' );
+" WINDOW-ICON-URL="ico/custom_web_template.ico" MAXIMIZED="1">
+
+<USE FORM="//wtv/ms_general.xms"/>
+
+
+<UNIT NAME="hier_zone_node" SAMPLE="1" VALUE-EXPR="sParentName">
+	<LOOP EXPR="ArraySort( ArraySelectByKey( Ps.Parent.zones, sParentName, 'parent_zone' ), 'position', '+' )" VAR="ListElem">
+		<TREE-ENTRY TITLE-EXPR="ListElem.name" VALUE-EXPR="ListElem.name" IMAGE-URL="ico/zone.ico" EXPANDED="1">
+			<SUBST UNIT="hier_zone_node" VAR="sParentName" EXPR="ListElem.name"/>
+		</TREE-ENTRY>
+	</LOOP>
+</UNIT>
+
+
+
+<CardContainer>
+
+
+<PageContainer TITLE="##ms_tools.get_const('cavr3d3iwk')##" IMAGE-URL="ico/common.ico">
+	<ITEM TYPE="ms_code_name_base"/>
+	<BR/>
+
+	<LINE ADAPTIVE="1">
+		<ComboLabel SOURCE="TopElem.cwt_type" ELEM="ListElem.name" TITLE="##ms_tools.get_const('izklzzozlo')##" WIDTH="150vpx"/>
+		<EditLabel SOURCE="TopElem.exec_code.code_url" TITLE="##ms_tools.get_const('gwdslrn9x8')##" WIDTH="482vpx"/>
+		<ComboLabel SOURCE="TopElem.out_type" ELEM="ListElem.name" TITLE="##ms_tools.get_const('xpbpsanwaw')##" WIDTH="150vpx"/>
+		<TitleLabel TITLE=" ">
+			<CHECK SOURCE="TopElem.use_session_cache" TITLE="##ms_tools.get_const('keshirovatrezul')##"/>
+		</TitleLabel>
+	</LINE>
+
+	<IF EXPR="TopElem.cwt_type == 'portlet'">
+		<EditLabel SOURCE="TopElem.tuning.height" TITLE="##ms_tools.get_const('veb_mat_h')##" WIDTH="150vpx"/>
+	</IF>
+	<BR/>
+
+	<ITEM TYPE="web_and_agent_variables_base" readOnlyExpr="false" dispWvarConditionsExpr="true"/>
+	<BR/>
+
+	<ITEM TYPE="comment_base"/>
+	<BR/>
+</PageContainer>
+
+
+
+
+<PageContainer TITLE="##ms_tools.get_const('zonyrazmetki')##" IMAGE-URL="ico/processing.ico">
+	<WITH VAR="fldZone" EXPR="Ps.zones.GetOptChildByKey( Ps.zone_selector )">
+	<TitleLine TITLE="##ms_tools.get_const('zonyrazmetki')##" HEIGHT="20gr">
+		<LINE NAME="zone_button" HORIZ-SPACING="8vpx" ALIGN="right">
+			<LINE HORIZ-SPACING="4vpx" ALIGN="right">
+				<PrimaryImageButton TIP-TEXT="##ms_tools.get_const('c_move_up')##" IMAGE-URL="//wtv/svg/up.svg" ENABLE-EXPR="fldZone != undefined &amp;&amp; ( ! fldZone.parent_zone.HasValue || ArrayOptFindByKey( Ps.zones, fldZone.parent_zone, 'name' ) != undefined )" ACTION="
+						iID = fldZone.PrimaryKey.Value;
+						iPosition = fldZone.position.Value;
+						iParentID = fldZone.parent_zone.Value;
+						arrDocuments = ArraySelect( Ps.zones, 'parent_zone==iParentID&amp;&amp;position&lt;' + iPosition );
+						if ( ArrayCount( arrDocuments ) == 0 )
+						{
+							Cancel();
+						}
+						else
+						{
+							fldLastDocument = ArrayMax( arrDocuments, 'position' );
+							fldZone.position = fldLastDocument.position.Value;
+							fldLastDocument.position.Value = iPosition;
+							TopElem.Doc.SetChanged( true );
+						}
+				" WIDTH="button" HEIGHT="edit"/>
+				<PrimaryImageButton TIP-TEXT="##ms_tools.get_const('c_move_down')##" IMAGE-URL="//wtv/svg/down.svg" ENABLE-EXPR="fldZone != undefined &amp;&amp; ( ! fldZone.parent_zone.HasValue || ArrayOptFindByKey( Ps.zones, fldZone.parent_zone, 'name' ) != undefined )" ACTION="
+						iID = fldZone.PrimaryKey.Value;
+						iPosition = fldZone.position.Value;
+						iParentID = fldZone.parent_zone.Value;
+						arrDocuments = ArraySelect( Ps.zones, 'parent_zone==iParentID&amp;&amp;position&gt;' + iPosition );
+						if ( ArrayCount( arrDocuments ) == 0 )
+						{
+							Cancel();
+						}
+						else
+						{
+							fldLastDocument = ArrayMin( arrDocuments, 'position' );
+							fldZone.position = fldLastDocument.position.Value;
+							fldLastDocument.position.Value = iPosition;
+							TopElem.Doc.SetChanged( true );
+						}
+				" WIDTH="button" HEIGHT="edit"/>
+			</LINE>
+			<LINE HORIZ-SPACING="4vpx" ALIGN="right">
+				<PrimaryImageButton IMAGE-URL="//wtv/svg/del.svg" ACTION="
+						if ( ArrayOptFirstElem( ArraySelectByKey( Ps.zones, fldZone.name, 'parent_zone' ) ) != undefined )
+						{
+							Screen.MsgBox( ms_tools.get_const('neobhodimoudal'), ms_tools.get_const('c_error'), 'error', 'ok' );
+							Cancel();
+						}
+
+						fldZone.Delete();
+						Ps.zone_selector.Clear();
+						TopElem.Doc.SetChanged( true );
+				" TIP-TEXT="##ms_tools.get_const('c_delete')##" ENABLE-EXPR="fldZone != undefined" WIDTH="button" HEIGHT="edit"/>
+				<PrimaryImageButton IMAGE-URL="//wtv/svg/add.svg" ACTION="
+						_new_var = Ps.zones.AddChild();
+						var iX = Ps.zones.ChildNum;
+						while ( Ps.zones.GetOptChildByKey( 'ZONE' + iX ) != undefined )
+							iX++;
+
+						_new_var.name = 'ZONE' + iX;
+						if ( fldZone != undefined )
+							_new_var.parent_zone = fldZone.name;
+
+						arrParams = ArraySort( ArraySelectByKey( Ps.zones, ( fldZone == undefined ? '' : fldZone.name ), 'parent_zone' ), 'position', '+' );
+						iParamsCount = ArrayCount( arrParams );
+						for ( i=0; i &lt; iParamsCount; i++ )
+							arrParams[ i ].position = i;
+						_new_var.position = iParamsCount;
+
+						Ps.zone_selector = _new_var.name;
+						TopElem.Doc.SetChanged( true );
+				" TIP-TEXT="##ms_tools.get_const('veb_add')##" WIDTH="button" HEIGHT="edit"/>
+			</LINE>
+		</LINE>
+
+		<LINE STD-MARGINS="0" WIDTH="100%">
+			<PANEL WIDTH="custom" HEIGHT="100%">
+				<TREE SWITCH-TYPE="source" SOURCE="Ps.zone_selector" WIDTH="100%" HEIGHT="100%" SET-VALUE-ACTION="
+						Ps.zone_selector = NewValue;
+				">
+					<TREE-ENTRY TITLE="##ms_tools.get_const('zonyrazmetki')##" VALUE="" IMAGE-URL="ico/folder.ico" EXPANDED="1">
+						<SUBST UNIT="hier_zone_node" VAR="sParentName" EXPR="''"/>
+
+						<LOOP EXPR="ArraySelect( Ps.Parent.zones, 'This.parent_zone.HasValue&amp;&amp;ArrayOptFindByKey(Ps.Parent.zones,This.parent_zone,\'name\')==undefined' )" VAR="ListElem">
+							<TREE-ENTRY TITLE-EXPR="( '[*] ' + ListElem.name )" VALUE-EXPR="ListElem.name" IMAGE-URL="ico/zone.ico" EXPANDED="1">
+								<SUBST UNIT="
+								" VAR="sParentName" EXPR="ListElem.name"/>
+							</TREE-ENTRY>
+						</LOOP>
+					</TREE-ENTRY>
+				</TREE>
+			</PANEL>
+
+			<SPLIT WIDTH="1px"/>
+
+			<PANEL HEIGHT="100%" WIDTH="100%" VERT-SCROLL="1">
+				<IF EXPR="fldZone != undefined">
+					<LINE ADAPTIVE="1">
+						<EditLabel SOURCE="fldZone.name" TITLE="##ms_tools.get_const('js5lpan3l7')##" SET-VALUE-ACTION="
+								var sStr = Trim(NewValue);
+								if (sStr == '') return;
+								var iStrLength = StrLen(sStr);
+								var i, sLetter, bErrFlag=false;
+								for (i = 0; i &lt; iStrLength; i++)
+								{
+									sLetter=sStr.charAt(i);
+									if (!((sLetter &gt;= 'a' &amp;&amp; sLetter &lt;= 'z') || (sLetter &gt;= 'A' &amp;&amp; sLetter &lt;= 'Z') || (sLetter &gt;= '0' &amp;&amp; sLetter &lt;= '9') || (sLetter == '_') || (sLetter == '.')))
+									{
+										bErrFlag = true;
+										break;
+									}
+								}
+
+								if (bErrFlag)
+								{
+									Screen.MsgBox(ms_tools.get_const('nazvaniemozhets'), ms_tools.get_const('c_error'), 'error', 'ok');
+								}
+								else
+								{
+									var fldCloneWVar = fldZone.Parent.GetOptChildByKey(sStr);
+									if (fldCloneWVar == undefined || fldCloneWVar.ChildIndex == fldZone.ChildIndex)
+									{
+										fldZone.name = sStr;
+										TopElem.zone_selector = sStr;
+									}
+									else
+									{
+										Screen.MsgBox(ms_tools.get_const('zapisstakimnaz'), ms_tools.get_const('c_error'), 'error', 'ok');
+									}
+								}
+
+								TopElem.Doc.SetChanged(true);
+						" WIDTH="150vpx"/>
+						<TitleLabel TITLE=" ">
+							<CHECK SOURCE="fldZone.is_mandatory" TITLE="##ms_tools.get_const('7df3q17dhk')##"/>
+						</TitleLabel>
+					</LINE>
+					<LINE ADAPTIVE="1">
+						<EditLabel SOURCE="fldZone.tag_id" TITLE="##ms_tools.get_const('idtega')##" WIDTH="150vpx"/>
+						<EditLabel SOURCE="fldZone.class" TITLE="##ms_tools.get_const('klass')##" WIDTH="150vpx"/>
+						<EditLabel SOURCE="fldZone.style" TITLE="##ms_tools.get_const('stil')##" WIDTH="482vpx"/>
+					</LINE>
+
+<IF EXPR="global_settings.debug">
+	<BR/>
+	<BR/>
+	<TABLE>
+		<COLUMNS>
+			<COL WIDTH="10zr"/>
+			<COL WIDTH="20zr"/>
+			<COL WIDTH="20zr"/>
+		</COLUMNS>
+		<LABEL TITLE="Parent:"/>
+		<COMBO SOURCE="fldZone.parent_zone" ELEM="ListElem.name" FOREIGN-ARRAY="Ps.zones" EDITABLE="1"/>
+		<EDIT SOURCE="fldZone.parent_zone"/>
+	</TABLE>
+</IF>
+				</IF>
+			</PANEL>
+		</LINE>
+	</TitleLine>
+	</WITH>
+</PageContainer>
+
+
+
+
+<PageContainer TITLE="##ms_tools.get_const('hqyb5zxwgv')##" IMAGE-URL="ico/processing.ico">
+	<IF EXPR="ArrayCount( TopElem.include_custom_web_templates ) != 0">
+		<ITEM TYPE="ms_list_catalog_base" titleExpr="ms_tools.get_const('podklyuchaemyeel')" arrayExpr="TopElem.include_custom_web_templates" catalogExpr="'custom_web_template'" addButtonTitleExpr="ms_tools.get_const('irszek32w2') + '...'" HEIGHT="10gr"/>
+		<BR/>
+	</IF>
+
+	<LABEL TITLE="##'Программный код'##"/>
+	<ITEM TYPE="ms_run_code_base" SOURCE="TopElem.exec_code" HEIGHT="20gr" codeType=".js"/>
+	<BR/>
+</PageContainer>
+
+
+</CardContainer>
+
+</SPXML-SCREEN>
