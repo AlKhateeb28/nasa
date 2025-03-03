@@ -2,6 +2,12 @@ var groups = [];
 var pagingSize = 20;
 var foundGroups = [];
 
+function getCurrentDate() {
+    const currentDate = new Date();
+
+    return currentDate.toLocaleString("ru-RU").split(",")[0];
+}
+
 class IndexPage extends Object {
     constructor() {
         super();
@@ -200,7 +206,7 @@ class IndexPage extends Object {
 
         return null;
     }
-    
+
     static showPageButtons(groupId, selectedIndex, group) {
         if(group === undefined) {
             group = IndexPage.getGroupById(groupId);
@@ -220,9 +226,14 @@ class IndexPage extends Object {
                     const buttonElement = $("#page_button_" + groupId + "_" + i);
 
                     buttonElement.html("+ " + (memberLength - i * pagingSize) + " страниц");
+                    buttonElement.attr("title", "Воспользуйтесь поиском");
 
                     buttonElement.addClass("unselected-button");
                     buttonElement.addClass("last-page-button");
+
+                    buttonElement.on( "click", function() {
+                        $("#card_find_" + groupId).focus();
+                    });
 
                     break;
                 } else {
@@ -382,6 +393,9 @@ class IndexPage extends Object {
     }
 
     static startAgent() {
+        $("#report_message").css("display", "none");
+        $("#report_file").css("display", "none");
+
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7129036886315589942&agent_id=7128692997944933910",
             async: false,
@@ -389,7 +403,19 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
+                    $("#report_message").css("display", "block");
 
+                    const reportFileElement = $("#report_file");
+                    reportFileElement.html("E:/Websoft/WebSoftServer/<br/>wt/web/Reports/inner_trainers/<br/>dossier_vt_" + getCurrentDate() + ".xlsx");
+                    reportFileElement.css("display", "block");
+
+                    const fileURL = "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/Reports/inner_trainers/dossier_vt_" + getCurrentDate() + ".xlsx";
+
+                    var link= document.createElement('a');
+                    document.body.appendChild(link);
+                    link.href = fileURL;
+                    link.rel = "nofollow";
+                    link.click();
                 } else {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }

@@ -88,9 +88,14 @@
             z-index: 10000;
             user-select: none;
         }
+
+        input {
+            caret-color: #ff6f61;
+        }
     </style>
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
+    <script type="text/javascript" src="./fcc/js/webSocket.js"></script>
     <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
     <script type="text/javascript" src="./fcc/js/common_classes.js"></script>
     <script type="text/javascript" src="./fcc/inner_trainer_certificate/index.js"></script>
@@ -102,10 +107,12 @@
 </div>
 
 <script type="text/html" id="report_template">
-<div class="flat-card" style="width: 90%; margin-left: 19px; margin-top: 18%;">
+<div class="flat-card" style="width: 90%; margin-left: 19px; margin-top: 18%; height: 150px;">
     <div style="padding-top: 20px;">
         <button id="report_button" class="blink button-control enable-button" style="margin-left: 15%; margin-right: 5%;" onclick="IndexPage.startAgent()">Общая выгрузка</button>
     </div>
+    <div id="report_message" style="display: none; margin-left: 10px;">Выгрузка завершена</div>
+    <div id="report_file" style="font-size: small; margin-left: 10px;"></div>
 </div>
 </script>
 
@@ -118,7 +125,7 @@
 </script>
 
 <script type="text/html" id="card_template">
-    <div id="card" class="card" style="width: 100%; height: 99%">
+    <div id="card" class="flat-card" style="width: 100%; height: 99%">
         <h6 id="group" style="padding-top: 20px; padding-left: 40px;"></h6>
         <hr style="margin-top: -20px;">
         <div>
