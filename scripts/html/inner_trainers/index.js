@@ -393,8 +393,10 @@ class IndexPage extends Object {
     }
 
     static startAgent() {
-        $("#report_message").css("display", "none");
-        $("#report_file").css("display", "none");
+        const messageBox = $("#report_message");
+        messageBox.html("Выгрузка ...");
+        messageBox.css("display", "none");
+
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7129036886315589942&agent_id=7128692997944933910",
@@ -405,10 +407,6 @@ class IndexPage extends Object {
                 if(data.errorMessage.indexOf("#") < 0) {
                     $("#report_message").css("display", "block");
 
-                    const reportFileElement = $("#report_file");
-                    reportFileElement.html("E:/Websoft/WebSoftServer/<br/>wt/web/Reports/inner_trainers/<br/>dossier_vt_" + getCurrentDate() + ".xlsx");
-                    reportFileElement.css("display", "block");
-
                     const fileURL = "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/Reports/inner_trainers/dossier_vt_" + getCurrentDate() + ".xlsx";
 
                     var link= document.createElement('a');
@@ -416,6 +414,8 @@ class IndexPage extends Object {
                     link.href = fileURL;
                     link.rel = "nofollow";
                     link.click();
+
+                    setTimeout(IndexPage.hideMessageBox, 15000);
                 } else {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
@@ -424,5 +424,9 @@ class IndexPage extends Object {
                 console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
             }
         });
+    }
+
+    static hideMessageBox() {
+        $("#report_message").css("display", "none");
     }
 }
