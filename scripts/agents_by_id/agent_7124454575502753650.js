@@ -8,6 +8,8 @@ var msPerRecord = 0.001;
 var startDate = Date();
 var prevDate;
 var loggerName = "agent_7124454575502753650";
+var userLoggerName = "new_user_by_inn";
+
 var ws = getWebsocketClient();
 var agent = getAgentInstance(agentId, userId, loggerName);
 
@@ -77,6 +79,8 @@ try {
             notificationMessage += "<td>" + data.code + "</td>";
             notificationMessage += "<td>" + data.org_name + "</td>";
             notificationMessage += "<td>" + data.region_name + "</td>";
+
+            addLogMessage(userLoggerName, data.id + " - " + data.fullname + " - " + data.code + " - " + data.org_name + " - " + data.region_name);
 
             processed++;
 
