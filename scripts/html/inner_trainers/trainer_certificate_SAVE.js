@@ -191,12 +191,24 @@ try {
 
     if(mode == "BASE") {
         personDossiers = ArrayDirect(XQuery("sql: " +
-            " SELECT doss.id, dos.data.exist('(//" + code + ")') AS code FROM [WTDB].[dbo].cc_dossier_vntren_2025s doss INNER JOIN [WTDB].[dbo].cc_dossier_vntren_2025 dos ON doss.id = dos.id WHERE doss.trainer_id = " + personId));
+            " SELECT doss.id, " +
+            "       dos.data.value('(//" + code + "_result)[1]', 'varchar(max)') AS result " +
+            " FROM [WTDB].[dbo].cc_dossier_vntren_2025s doss " +
+            "    INNER JOIN [WTDB].[dbo].cc_dossier_vntren_2025 dos ON doss.id = dos.id " +
+            " WHERE doss.trainer_id = " + personId));
 
-        if (ArrayCount(personDossiers) == 1 && !personDossiers[0].code) {
+        if (ArrayCount(personDossiers) == 0) {
             save(dossierDoc, dossierDocTE, personId, mode, code, programId, certificationResult, certificateDate, educationDate, serial, sendNotification);
+        } else if(ArrayCount(personDossiers) == 1) {
+            if(personDossiers[0].result != "сертифицирован") {
+                save(dossierDoc, dossierDocTE, personId, mode, code, programId, certificationResult, certificateDate, educationDate, serial, sendNotification);
+            } else {
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] BASE. Can't save certificated document!");
+
+                throw new Exception("BASE. Can't save certificated document!");
+            }
         } else {
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] BASE. Wrong sql result for code = " + code + ". SQL statement MUST returns 1 record.");
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] BASE. Wrong sql result for code = " + code + ". SQL statement MUST returns 1 record. Found: " + ArrayCount(personDossiers));
 
             throw new Exception("BASE. Wrong sql result for code = " + code + ". SQL statement must returns 1 record.");
         }
