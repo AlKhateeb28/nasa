@@ -89,6 +89,7 @@ if (LdsIsServer) {
         dataList = ArrayDirect(XQuery("sql: " +
             " SELECT ds.id, " +
             "    cs.code, " +
+            "    cs.fullname, " +
             "    ds.subdivision_inn AS inn, " +
             "    os.name AS org_name, " +
             "    ds.student_fullname AS fio, " +
@@ -193,7 +194,12 @@ if (LdsIsServer) {
         reportString.AppendStr("<th class='header'>ТЛП дата статус</th>");
         reportString.AppendStr("<th class='header'>Серт_АМ дата дата</th>");
         reportString.AppendStr("<th class='header'>Серт_АМ дата статус</th>");
+        reportString.AppendStr("</tr>");
 
+        reportString.AppendStr("<tr>");
+        for(i = 1; i <= 67; i++) {
+            reportString.AppendStr("<td style='text-align: center; font-weight: bold;'>" + i + "</td>");
+        }
         reportString.AppendStr("</tr>");
 
         for (data in dataList) {
@@ -229,7 +235,7 @@ if (LdsIsServer) {
                 reportString.AppendStr("<td>" + data.inn + "</td>");
                 reportString.AppendStr("<td>" + data.org_name + "</td>");
                 reportString.AppendStr("<td>" + data.fio + "</td>");
-                reportString.AppendStr("<td>'" + data.student_id + "</td>");
+                reportString.AppendStr("<td>'" + data.fullname + "</td>");
                 reportString.AppendStr("<td>" + data.student_position + "</td>")
                 reportString.AppendStr("<td>" + StrDate(data.date_selection, false, false) + "</td>");
                 reportString.AppendStr("<td>" + StrDate(data.date_position, false, false) + "</td>");
