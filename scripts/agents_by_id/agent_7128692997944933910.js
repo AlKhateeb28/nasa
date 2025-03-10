@@ -1,6 +1,10 @@
 // 7128692997944933910
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
+function normalizeWaveNumber(wave) {
+    return StrReplace(wave, "/", "\\");
+}
+
 function getBaseCertificateCount(value1, value2, value3, value4, value5, value6, value7,) {
     count = 0;
 
@@ -262,64 +266,64 @@ try {
             "<td>" + data.curator_fio + "</td>" +
             "<td>" + data.curator_email + "</td>" +
             "<td>" + data.curator_phone + "</td>" +
-            "<td>" + data.date_selection + "</td>" +
+            "<td>" + (data.date_selection == "" ? "" : StrDate(Date(data.date_selection), false, false)) + "</td>" +
             "<td>" + data.result_selection + "</td>" +
-            "<td>" + data.wave_number + "</td>" +
+            "<td>" + normalizeWaveNumber(data.wave_number) + "</td>" +
             "<td>" + data.start + "</td>" +
             "<td>" + data.finish + "</td>" +
             "<td>" + data.trained + "</td>" +
             "<td>" + data.status + "</td>" +
             "<td>" + data.comment + "</td>" +
             "<td>" + data.obp_result + "</td>" +
-            "<td>" + data.obp_cert_date + "</td>" +
+            "<td>" + (data.obp_cert_date == "" ? "" : StrDate(Date(data.obp_cert_date), false, false)) + "</td>" +
             "<td>" + data.obp_cert + "</td>" +
             "<td>" + data.mrp_result + "</td>" +
-            "<td>" + data.mrp_cert_date + "</td>" +
+            "<td>" + (data.mrp_cert_date == "" ? "" : StrDate(Date(data.mrp_cert_date), false, false)) + "</td>" +
             "<td>" + data.mrp_cert + "</td>" +
             "<td>" + data.kart_result + "</td>" +
-            "<td>" + data.kart_cert_date + "</td>" +
+            "<td>" + (data.kart_cert_date == "" ? "" : StrDate(Date(data.kart_cert_date), false, false)) + "</td>" +
             "<td>" + data.kart_cert + "</td>" +
             "<td>" + data.pa_result + "</td>" +
-            "<td>" + data.pa_cert_date + "</td>" +
+            "<td>" + (data.pa_cert_date == "" ? "" : StrDate(Date(data.pa_cert_date), false, false)) + "</td>" +
             "<td>" + data.pa_cert + "</td>" +
             "<td>" + data.vp7_result + "</td>" +
-            "<td>" + data.vp7_cert_date + "</td>" +
+            "<td>" + (data.vp7_cert_date == "" ? "" : StrDate(Date(data.vp7_cert_date), false, false)) + "</td>" +
             "<td>" + data.vp7_cert + "</td>" +
             "<td>" + data.rpu_result + "</td>" +
-            "<td>" + data.rpu_cert_date + "</td>" +
+            "<td>" + (data.rpu_cert_date == "" ? "" : StrDate(Date(data.rpu_cert_date), false, false)) + "</td>" +
             "<td>" + data.rpu_cert + "</td>" +
             "<td>" + data.c5_result + "</td>" +
-            "<td>" + data.c5_cert_date + "</td>" +
+            "<td>" + (data.c5_cert_date == "" ? "" : StrDate(Date(data.c5_cert_date), false, false)) + "</td>" +
             "<td>" + data.c5_cert + "</td>" +
             "<td>" + getBaseCertificateCount(data.obp_cert, data.mrp_cert, data.kart_cert, data.pa_cert, data.vp7_cert, data.rpu_cert, data.c5_cert) + "</td>" +
             "<td>" + data.dop_1_name + "</td>" +
-            "<td>" + data.dop_1_event_date + "</td>" +
-            "<td>" + data.dop_1_cert_date + "</td>" +
+            "<td>" + (data.dop_1_event_date == "" ? "" : StrDate(Date(data.dop_1_event_date), false, false)) + "</td>" +
+            "<td>" + (data.dop_1_cert_date == "" ? "" : StrDate(Date(data.dop_1_cert_date), false, false)) + "</td>" +
             "<td>" + data.dop_1_result + "</td>" +
             "<td>" + data.dop_1_cert + "</td>" +
             "<td>" + data.dop_2_name + "</td>" +
-            "<td>" + data.dop_2_event_date + "</td>" +
-            "<td>" + data.dop_2_cert_date + "</td>" +
+            "<td>" + (data.dop_2_event_date == "" ? "" : StrDate(Date(data.dop_2_event_date), false, false)) + "</td>" +
+            "<td>" + (data.dop_2_cert_date == "" ? "" : StrDate(Date(data.dop_2_cert_date), false, false)) + "</td>" +
             "<td>" + data.dop_2_result + "</td>" +
             "<td>" + data.dop_2_cert + "</td>" +
             "<td>" + data.dop_3_name + "</td>" +
-            "<td>" + data.dop_3_event_date + "</td>" +
-            "<td>" + data.dop_3_cert_date + "</td>" +
+            "<td>" + (data.dop_3_event_date == "" ? "" : StrDate(Date(data.dop_3_event_date), false, false)) + "</td>" +
+            "<td>" + (data.dop_3_cert_date == "" ? "" : StrDate(Date(data.dop_3_cert_date), false, false)) + "</td>" +
             "<td>" + data.dop_3_result + "</td>" +
             "<td>" + data.dop_3_cert + "</td>" +
             "<td>" + data.dop_4_name + "</td>" +
-            "<td>" + data.dop_4_event_date + "</td>" +
-            "<td>" + data.dop_4_cert_date + "</td>" +
+            "<td>" + (data.dop_4_event_date == "" ? "" : StrDate(Date(data.dop_4_event_date), false, false)) + "</td>" +
+            "<td>" + (data.dop_4_cert_date == "" ? "" : StrDate(Date(data.dop_4_cert_date), false, false)) + "</td>" +
             "<td>" + data.dop_4_result + "</td>" +
             "<td>" + data.dop_4_cert + "</td>" +
             "<td>" + data.dop_5_name + "</td>" +
-            "<td>" + data.dop_5_event_date + "</td>" +
-            "<td>" + data.dop_5_cert_date + "</td>" +
+            "<td>" + (data.dop_5_event_date == "" ? "" : StrDate(Date(data.dop_5_event_date), false, false)) + "</td>" +
+            "<td>" + (data.dop_5_cert_date == "" ? "" : StrDate(Date(data.dop_5_cert_date), false, false)) + "</td>" +
             "<td>" + data.dop_5_result + "</td>" +
             "<td>" + data.dop_5_cert + "</td>" +
             "<td>" + data.dop_6_name + "</td>" +
-            "<td>" + data.dop_6_event_date + "</td>" +
-            "<td>" + data.dop_6_cert_date + "</td>" +
+            "<td>" + (data.dop_6_event_date == "" ? "" : StrDate(Date(data.dop_6_event_date), false, false)) + "</td>" +
+            "<td>" + (data.dop_6_cert_date == "" ? "": StrDate(Date(data.dop_6_cert_date), false, false)) + "</td>" +
             "<td>" + data.dop_6_result + "</td>" +
             "<td>" + data.dop_6_cert + "</td>" +
             "<td>" + getBaseCertificateCount(data.dop_1_cert, data.dop_2_cert, data.dop_3_cert, data.dop_4_cert, data.dop_5_cert, data.dop_6_cert) + "</td>" +
