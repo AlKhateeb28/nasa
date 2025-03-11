@@ -16,6 +16,8 @@ function addAccessGroupsToObject(docId, newGroupDocId) {
         if (isExistInCatalogById("group", newGroupDocId) && isNotExistInAccessGroup(docObjectTE, newGroupDocId)) {
             docObjectTE.access.access_groups.ObtainChildByKey(newGroupDocId);
             docObject.Save();
+
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] addAccessGroupsToObject. Дали доступ. DocID: " + docId + " NewGroupID: " + newGroupDocId);
         }
 }
 
@@ -25,8 +27,9 @@ function addGroups(id) {
     indOrderCardTE = indOrderCardDoc.TopElem;
 
     for (stageNum = 1; stageNum <= 9; stageNum++) {
-
         if (indOrderCardTE.OptChild("stage_" + stageNum + "_start_date") != null && indOrderCardTE.OptChild("stage_" + stageNum + "_finish_date") != null && ArrayCount(indOrderCardTE.OptChild("stage_" + stageNum + "_documents")) != 0) {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] addGroups. stageNum: " + stageNum + " Условия выполняются");
+
             groupId = null;
 
             if (indOrderCardTE.OptChild("stage_" + stageNum + "_group_id") == null) {
@@ -77,21 +80,29 @@ function addGroups(id) {
             for (docId in docIds) {
                 addAccessGroupsToObject(docId, groupId);
             }
+        } else {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] addGroups. Условия не выполняются");
         }
     }
 
     indOrderCardTE.status = "Заказ на исполнении";
     indOrderCardDoc.Save();
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] addGroups. Сохранили indOrderCard");
 }
 
 function bossPanel(id) {
     indOrderCardDoc = tools.open_doc(id);
     indOrderCardTE = indOrderCardDoc.TopElem;
 
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Обрабатываем " + ArrayCount(indOrderCardTE.boss_panel_orgs) + " boss_panel_orgs");
+
     for (bossPanelOrg in indOrderCardTE.boss_panel_orgs) {
         foundCard = ArrayOptFirstElem(XQuery("for $elem in cc_boss_panel_org_courses where org_id=" + bossPanelOrg.boss_panel_org_id + " return $elem"));
 
         if (foundCard == undefined) {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Новая запись в cc_boss_panel_org_courses");
+
             codeName = indOrderCardTE.num + "_" + tools.get_doc_by_key("org", "id", bossPanelOrg.boss_panel_org_id).TopElem.code +
                 "_" + StrDate(OptDate(indOrderCardTE.start_date), false, false);
             newBossPanelOrgCourseDoc = tools.new_doc_by_name("cc_boss_panel_org_course", false);
@@ -135,6 +146,8 @@ function bossPanel(id) {
 
             newGroupDoc.Save();
 
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Сохранили новую группу");
+
             newCCBossPanelOrgCourseTE.group_id = newGroupDoc.DocID;
             newBossPanelOrgCourseDoc.Save();
 
@@ -162,11 +175,14 @@ function bossPanel(id) {
             }
 
             orgDoc.Save();
+
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Сохранили организацию с ID: " + id);
         }
     }
 
     indOrderCardDoc.Save();
 
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Сохранили indOrderCardDoc");
 }
 
 function isOrgsExistInConditions(conditions, orgId) {
@@ -202,6 +218,8 @@ function addCondition(doc, orgId) {
             }*/
 
             doc.Save();
+
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] addCondition. Добавили условие для организации с ID: " + orgId);
         }
     } else {
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Document with ID " + orgId + " not exist!");
@@ -254,7 +272,10 @@ if (!LdsIsServer) {
         }
         prevDate = new Date();
 
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Найдено " + ArrayCount(indOrderCards) + " cc_ind_order_cards");
+
         for (indOrderCard in indOrderCards) {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] >>>> indOrderCard.org_id: " + indOrderCard.org_id);
             addGroups(indOrderCard.id);
             bossPanel(indOrderCard.id);
 

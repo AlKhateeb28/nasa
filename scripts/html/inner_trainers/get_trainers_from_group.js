@@ -11,8 +11,7 @@ result.trainerGroups = [];
 
 try {
     result.groups = [];
-    result.groups.push(7122453257583417322);
-    result.groups.push(7218108427424307474);
+    result.groups.push(7131073379825245059);
 
     for(group in result.groups) {
         groupDoc = tools.open_doc(group);

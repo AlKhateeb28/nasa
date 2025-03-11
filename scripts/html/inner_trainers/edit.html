@@ -100,7 +100,9 @@
                             <input id="education_date" type="text" class="input-control" size="6" style="margin-top: -1px;" disabled/>
                         </div>
                         <div class="float-left" style="margin-left: 95px;">
-                            <button id="education_button" class="button-control disable-button" disabled onclick="event.stopPropagation(); showCalendar('education_date')">...</button>
+                            <button id="education_button" class="button-control disable-button" disabled onclick="event.stopPropagation(); showCalendar('education_date')">
+                                <div class="text">...</div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -111,7 +113,9 @@
                         <input id="certificate_date" type="text" class="input-control" size="6"/>
                     </div>
                     <div class="float-left" style="margin-left: 71px;">
-                        <button id="certificate_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('certificate_date')">...</button>
+                        <button id="certificate_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('certificate_date')">
+                            <div class="text">...</div>
+                        </button>
                     </div>
                 </div>
 
@@ -140,7 +144,9 @@
                         <div id="message" class="message" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px; box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;"></div>
                     </div>
                     <div class="float-right">
-                        <button id="save_button" class="button-control enable-button" onclick="EditPage.save()">Сохранить</button>
+                        <button id="save_button" class="button-control enable-button" onclick="EditPage.save()">
+                            <div class="text">Сохранить</div>
+                        </button>
                     </div>
                 </div>
             </div>

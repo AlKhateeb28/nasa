@@ -92,6 +92,16 @@
         input {
             caret-color: #ff6f61;
         }
+
+        .item:not(:last-child) {
+            border-inline-end: solid 2px #888888;
+        }
+
+        .sort_image {
+            width: 16px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
     </style>
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
@@ -102,6 +112,15 @@
 </head>
 <body>
 
+<div style="cursor: pointer; position: absolute; top: 20px; left: 20px;">
+    <div id="home" class="float-left" onclick="IndexPage.goHome()">
+        <img src="./fcc/images/home.png">
+    </div >
+    <div class="float-left">
+
+    </div>
+</div>
+
 <div id="grid" class="grid">
 
 </div>
@@ -109,7 +128,9 @@
 <script type="text/html" id="report_template">
 <div class="flat-card" style="width: 90%; margin-left: 19px; margin-top: 18%; height: 150px;">
     <div style="padding-top: 20px;">
-        <button id="report_button" class="blink button-control enable-button" style="margin-left: 15%; margin-right: 5%;" onclick="IndexPage.startAgent()">Общая выгрузка</button>
+        <button id="report_button" class="blink button-control enable-button" style="margin-left: 15%; margin-right: 5%;" onclick="IndexPage.startAgent()">
+            <div class="text">Общая выгрузка</div>
+        </button>
     </div>
     <div id="report_message" style="display: none; margin-left: 19%; margin-right: 5%;">Выгрузка завершена</div>
 </div>
@@ -147,11 +168,25 @@
 
 <script type="text/html" id="header_row_template">
     <tr>
-        <th style="width: 20%; padding-top: 3px; padding-bottom: 3px;">ФИО</th>
-        <th>Email</th>
-        <th style="text-align: center; width: 95px;">ИНН</th>
-        <th>Организация</th>
-        <th style="text-align: center;">Уволен</th>
+        <td style="width: 20%; padding-top: 3px; padding-bottom: 3px; font-weight: bold;">
+            <div class="float-left">ФИО</div>
+            <div class="float-right"><img id="sort_1" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 0);"/></div>
+        </td>
+        <td style="font-weight: bold;">
+            <div class="float-left">Email</div>
+            <div class="float-right"><img id="sort_2" src="./fcc/js/images/sort_none.png" class="sort_image"  data-sort="none" onclick="IndexPage.sortData(this, 1);"/></div>
+        </td>
+        <td style="text-align: center; width: 95px; font-weight: bold;">
+            <div class="float-left">ИНН</div>
+            <div class="float-right"><img id="sort_3" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 2);"/></div>
+        </td>
+        <td style="font-weight: bold;">
+            <div class="float-left">Организация</div>
+            <div class="float-right"><img id="sort_4" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 3);"/></div>
+        </td>
+        <td style="text-align: center; font-weight: bold;">
+            <div class="float-left">Уволен</div>
+        </td>
     </tr>
 </script>
 
@@ -176,4 +211,4 @@
 </script>
 
 </body>
-</html>7
+</html>

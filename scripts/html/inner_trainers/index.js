@@ -367,7 +367,7 @@ class IndexPage extends Object {
             const group = IndexPage.getGroupById(groupId);
 
             group.members.forEach((member, index) => {
-                if (member.fio.toUpperCase().indexOf(findElement.val().toUpperCase()) >= 0 ) {
+                if (member.fio.toUpperCase().indexOf(findElement.val().toUpperCase()) >= 0 || member.email.toUpperCase().indexOf(findElement.val().toUpperCase()) >= 0) {
                     const element = {};
                     element.fio = member.fio;
                     element.email = member.email;
@@ -388,15 +388,13 @@ class IndexPage extends Object {
     }
 
     static goToUserCertificate(element) {
-
         window.open("https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7124784700424928410&person_id=" + $("#" + element.id).attr("data-id"), "_blank");
     }
 
     static startAgent() {
         const messageBox = $("#report_message");
         messageBox.html("Выгрузка ...");
-        messageBox.css("display", "none");
-
+        //messageBox.css("display", "none");
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7129036886315589942&agent_id=7128692997944933910",
@@ -405,6 +403,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
+                    messageBox.html("Выгрузка завершена");
                     $("#report_message").css("display", "block");
 
                     const fileURL = "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/Reports/inner_trainers/dossier_vt_" + getCurrentDate() + ".xlsx";
@@ -428,5 +427,43 @@ class IndexPage extends Object {
 
     static hideMessageBox() {
         $("#report_message").css("display", "none");
+    }
+
+    static goHome() {
+        document.location.href = "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/";
+    }
+
+    static sortData(element, type) {
+        const sortElement = $("#" + element.id);
+        const sortOrder = sortElement.attr("data-sort");
+
+        let order = "none";
+
+        if(sortOrder === "none") {
+            $(".sort_image").attr("src", "./fcc/js/images/sort_none.png");
+            $(".sort_image").attr("data-sort", "none");
+
+            sortElement.attr("src", "./fcc/js/images/sort_asc.png");
+            sortElement.attr("data-sort", "asc");
+
+            order = "asc";
+        } else {
+            if(sortOrder === "asc") {
+                sortElement.attr("src", "./fcc/js/images/sort_desc.png");
+                sortElement.attr("data-sort", "desc");
+
+                order = "desc";
+            } else {
+                sortElement.attr("src", "./fcc/js/images/sort_asc.png");
+                sortElement.attr("data-sort", "asc");
+
+                order = "asc";
+            }
+        }
+
+        /*$("#card_table_" + groupId).empty();
+        $("#page_box_" + groupId).empty();
+
+        IndexPage.initialize(order, type)*/;
     }
 }

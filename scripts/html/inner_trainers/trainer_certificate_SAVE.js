@@ -5,6 +5,7 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 function save(dossierDoc, dossierDocTE, personId, mode, code, programId, certificationResult, certificateDate, educationDate, serial, sendNotification) {
     eval("dossierDocTE." + code + " = " + programId);
     eval("dossierDocTE." + code + "_result = '" + certificationResult + "'");
+    eval("dossierDocTE." + code + "_cert_date = Date('" + certificateDate + "')");
 
     certificateDoc = null;
 
@@ -47,7 +48,6 @@ function save(dossierDoc, dossierDocTE, personId, mode, code, programId, certifi
 
         certificateNumber = serial + "-" + createdCrtificateDocTE.number + "/" + splittedDate[2];
 
-        eval("dossierDocTE." + code + "_cert_date = Date('" + certificateDate + "')");
         eval("dossierDocTE." + code + "_cert_id = " + certificateDoc.DocID);
         eval("dossierDocTE." + code + "_cert = '" + certificateNumber + "'");
     }

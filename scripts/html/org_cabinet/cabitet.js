@@ -1,0 +1,237 @@
+<SPXMLScreen>
+    <%
+    // 6849987408304366977
+
+    sTitleLabel = "";
+    if ( sTitleLabel != '' )
+    {
+        %>
+        <Label Class="XAML-object-title-label"><%=sTitleLabel%></Label>
+        <%
+    }
+
+    sDispType = tools_web.get_web_param( curParams, 'template_container.disp_type', 'tree', true );
+    //sDispType = 'statistic';
+    if ( curUrlQuery.GetOptProperty( 'tabs' ) == '1')
+    {
+        sDispType = 'tab';
+    }
+    iTemplateGroupID = OptInt( tools_web.get_web_param( curParams, 'template_container.custom_web_template_group', '', true ), '' );
+    if ( iTemplateGroupID == '' )
+    {
+        curMessageBox = {
+            "type": "error",
+            "text": tools_web.get_web_const( 'neukazanidobek', curLngWeb )
+        };
+        Response.Write( EvalCodePageUrl( global_settings.web_path + "view_message_box.xaml" ) );
+        %>
+        </SPXMLScreen>
+        <%
+        Cancel();
+    }
+
+    teTemplateGroup = OpenDoc( UrlFromDocID( iTemplateGroupID ) ).TopElem;
+    arrTemplates = ArraySort( ArraySelect(teTemplateGroup.templates, "tools_web.check_access(tools.open_doc(This.custom_web_template_id).TopElem, curUserID, OpenDoc( UrlFromDocID( curUserID ) ).TopElem)"), "position", "+" );
+
+
+    if ( sDispType == 'tab' )
+    {
+        iDefaultTab = OptInt( CONTEXT.GetOptProperty( 'MyAccountBodyTab' ) );
+        if ( iDefaultTab == undefined )
+    {
+        iTemplateID = OptInt( curUrlQuery.GetOptProperty( 'custom_web_template_id' ) );
+        if ( iTemplateID != undefined )
+    {
+        iTemplateCounter = 0;
+        for ( fldTemplateElem in arrTemplates )
+    {
+        if ( fldTemplateElem.custom_web_template_id == iTemplateID )
+    {
+        iDefaultTab = iTemplateCounter;
+        break;
+    }
+        iTemplateCounter++;
+    }
+    }
+        if ( iDefaultTab == undefined )
+        iDefaultTab = OptInt( curUrlQuery.GetOptProperty( 'tab' ), 0 );
+    }
+
+        sTabsDispType = tools_web.get_web_param( curParams, 'template_container.tabs_disp_type', 'w', true );
+        if ( curUrlQuery.GetOptProperty( 'tabs' ) == '1')
+    {
+        %>
+        <StackPanel Orientation="Horizontal" Class="XAML-panel-back">
+        <Link Click="OPENURL=view_doc.html?mode=my_account" Class="icon-arrow-left"></Link><Link Class="XAML-back-link" Click="OPENURL=view_doc.html?mode=my_account" Name="currentlySelectedSubTitle" Editable="0"><%=tools_web.get_web_const( "vernutsyanazad", curLngWeb )%></Link>
+        </StackPanel>
+        <%
+    }
+        %>
+        <TabControl Name="MyAccountBodyTab" ActiveTab="<%=iDefaultTab%>" Width="100%" TabsLocation="<%=( curDevice.disp_type == "" ? sTabsDispType : 'n' )%>">
+        <%
+        iCurTab = 0-1;
+        for ( fldTemplateElem in arrTemplates )
+    {
+        if ( fldTemplateElem.custom_web_template_id.HasValue )
+    {
+        iCurTab++;
+        teTemplateContainerCustomWebTemplate = OpenDoc( UrlFromDocID( fldTemplateElem.custom_web_template_id ) ).TopElem;
+        sTemplateContainerCustomWebTemplateClass = teTemplateContainerCustomWebTemplate.code.Value;
+        switch ( sTemplateContainerCustomWebTemplateClass )
+    {
+        case 'list_learnings':
+        fldWvarCatalogName = ArrayOptFindByKey( fldTemplateElem.wvars, 'list_learnings.catalog_name', 'name' );
+        if ( fldWvarCatalogName != undefined && fldWvarCatalogName.value.HasValue )
+        sTemplateContainerCustomWebTemplateClass += '_' + fldWvarCatalogName.value;
+        break;
+    }
+        %>
+        <TabItem Title="<%=XmlAttrEncode( tools_web.get_cur_lng_name( fldTemplateElem.name, curLng.short_id ) )%>" Reload="1" Class="XAML-tab-template-container <%=XmlAttrEncode( sTemplateContainerCustomWebTemplateClass )%>">
+        <%
+        if ( iDefaultTab == iCurTab )
+    {
+        curListemplateID = fldTemplateElem.PrimaryKey.Value;
+        tools_web.set_web_params( curParams, fldTemplateElem.wvars, true );
+        Response.Write( tools_web.place_xaml( fldTemplateElem.custom_web_template_id, teTemplateContainerCustomWebTemplate ) );
+    }
+        %>
+        </TabItem>
+        <%
+    }
+    }
+        %>
+        </TabControl>
+        <%
+    }
+
+
+    if ( sDispType == 'tree' )
+    {
+        %>
+        <Collection Name="TemplatesTreeCollection">
+        <Data>
+        <%
+        for ( fldTemplateElem in arrTemplates )
+    {
+        %>
+        <Row>
+        <Cell Id="id" Value="<%=fldTemplateElem.PrimaryKey%>"/>
+        <Cell Id="name" Value="<%=XmlAttrEncode( tools_web.get_cur_lng_name( fldTemplateElem.name, curLng.short_id ) )%>"/>
+        <%
+        if ( fldTemplateElem.parent_template_id.HasValue )
+    {
+        %>
+        <Cell Id="parent_id" Value="<%=fldTemplateElem.parent_template_id%>"/>
+        <%
+    }
+        %>
+        <Cell Id="hasChildren" Value="<%=( ArrayCount( ArraySelectByKey( teTemplateGroup.templates, fldTemplateElem.PrimaryKey, 'parent_template_id' ) ) != 0 )%>"/>
+        </Row>
+        <%
+    }
+        %>
+        </Data>
+        </Collection>
+        <Edit Name="tab_id" Hidden="1"><%=CONTEXT.GetOptProperty( "tab_id", curUrlQuery.GetOptProperty( "tab", "" ) )%></Edit>
+        <Grid Width="100%">
+        <GridColumns>
+        <GridColumn Width="250"/>
+        <GridColumn/>
+        </GridColumns>
+
+        <GridRow>
+        <Tree Class="XAML-tree" Name="TemplatesTree" Source="{TemplatesTreeCollection}" DataID="id" DataParent="parent_id" DataTitle="name" DataFatherhood="hasChildren" Click="SET=tab_id,{id};REFRESH"/>
+        <StackPanel Orientation="Vertical">
+        <%
+        sTab = CONTEXT.GetOptProperty( "tab_id", curUrlQuery.GetOptProperty( 'tab' ) );
+        if ( sTab != undefined )
+    {
+        fldTemplateChild = teTemplateGroup.templates.GetOptChildByKey( sTab );
+        %>
+        <Label Class="XAML-object-title-label"><%=tools_web.get_cur_lng_name( fldTemplateChild.name, curLng.short_id )%></Label>
+        <%
+        tools_web.set_web_params( curParams, fldTemplateChild.wvars, true );
+        Response.Write( tools_web.place_xaml( fldTemplateChild.custom_web_template_id ) );
+    }
+    %>
+</StackPanel>
+</GridRow>
+</Grid>
+<%
+}
+
+
+
+if ( sDispType == 'list' )
+{
+    for ( fldTemplateElem in arrTemplates )
+    {
+        if ( fldTemplateElem.custom_web_template_id.HasValue )
+        {
+        %>
+        <Panel Title="<%=XmlAttrEncode( tools_web.get_cur_lng_name( fldTemplateElem.name, curLng.short_id ) )%>">
+            <%
+            tools_web.set_web_params( curParams, fldTemplateElem.wvars, true );
+            Response.Write( tools_web.place_xaml( fldTemplateElem.custom_web_template_id ) );
+        %>
+        </Panel>
+            <%
+        }
+    }
+}
+
+
+if ( sDispType == 'statistic' )
+{
+    iCustomWebTemplateID = OptInt( CONTEXT.GetOptProperty( "ContainerTemplateID" ), null );
+%>
+<Edit Name="ContainerTemplateID" Hidden="true"><%=iCustomWebTemplateID%></Edit>
+    <%
+	if ( iCustomWebTemplateID == null )
+    {
+        if ( curMode = 'my_account' )
+        {
+            curStatistics = {
+                "object_id": curUserID,
+                "te_object": curUser
+            }
+            curStatistics.statistics_recrs = [];
+            iCount = 0;
+
+            for ( elem in arrTemplates )
+            {
+                if (elem.statistic_rec_id.HasValue)
+                {
+                    curStatistics.statistics_recrs.push({'id':elem.statistic_rec_id.Value,'position':elem.ChildIndex,'action':(elem.custom_web_template_id.HasValue?'OPENURL=view_doc.html?mode=my_account&tabs=1&tab='+iCount:'')});
+                }
+                iCount++;
+            }
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_cur_statistics.xaml" ) );
+        }
+        else
+        {
+            curStatistics = {
+                "object_id": curUserID,
+                "te_object": curUser,
+                "statistics_recrs": ArrayExtract( ArraySelect( arrTemplates, "This.statistic_rec_id.HasValue" ), "({'id':This.statistic_rec_id.Value,'action':(This.custom_web_template_id.HasValue?'SET=ContainerTemplateID,'+This.custom_web_template_id+';REFRESH;':'')})" )
+            };
+            Response.Write( EvalCodePageUrl( global_settings.web_path + "view_cur_statistics.xaml" ) );
+        }
+    }
+    else
+    {
+        fldTemplateElem = ArrayOptFindByKey( teTemplateGroup.templates, iCustomWebTemplateID, 'custom_web_template_id' );
+
+        var curTitle = {
+            "type": "simple",
+            "title": tools_web.get_cur_lng_name( fldTemplateElem.name, curLng.short_id )
+        }
+        Response.Write( EvalCodePageUrl( global_settings.web_path + "view_object_title.xaml" ) );
+
+        teTemplateContainerCustomWebTemplate = OpenDoc( UrlFromDocID( iCustomWebTemplateID ) ).TopElem;
+        tools_web.set_web_params( curParams, fldTemplateElem.wvars, true );
+        Response.Write( tools_web.place_xaml( fldTemplateElem.custom_web_template_id, teTemplateContainerCustomWebTemplate ) );
+    }
+}
+%>
+</SPXMLScreen>

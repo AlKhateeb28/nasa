@@ -18,7 +18,11 @@ function create_row(_elem, columns_arr) {
     row_str = "";
     for ( colmn in columns_arr ) {
         if (_elem.ChildExists(colmn)) {
-            row_str += "<td>" + _elem.Child( colmn ) + "</td>";
+            if(colmn == "course_name") {
+                row_str += "<td>" + StrReplace(_elem.Child(colmn), ",", " ") + "</td>";
+            } else {
+                row_str += "<td>" + _elem.Child(colmn) + "</td>";
+            }
         }
     }
 

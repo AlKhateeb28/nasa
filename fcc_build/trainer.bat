@@ -7,6 +7,8 @@ xcopy c:\FCC\Projects\sdo\scripts\html\calendar\calendar.js f:\js /s /e /h /y
 xcopy c:\FCC\Projects\sdo\scripts\html\calendar\close.png f:\js\images /s /e /h /y
 xcopy c:\FCC\Projects\sdo\scripts\html\calendar\prev.png f:\js\images /s /e /h /y
 xcopy c:\FCC\Projects\sdo\scripts\html\calendar\next.png f:\js\images /s /e /h /y
-xcopy c:\FCC\Projects\sdo\scripts\html\inner_trainers\home.png f:\js\images /s /e /h /y
+xcopy c:\FCC\Projects\sdo\scripts\html\inner_trainers\sort_none.png f:\js\images /s /e /h /y
+xcopy c:\FCC\Projects\sdo\scripts\html\inner_trainers\sort_asc.png f:\js\images /s /e /h /y
+xcopy c:\FCC\Projects\sdo\scripts\html\inner_trainers\sort_desc.png f:\js\images /s /e /h /y
 
 echo FCC DONE !!!
