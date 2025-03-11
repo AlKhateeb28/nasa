@@ -1,0 +1,184 @@
+<!-- 7124784700424928410 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7124784700424928410&person_id=7351734047845980789 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7126548019478755931&person_id=7351734047845980789&active_code=%D1%815 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7127204375175819280&person_id=7351734047845980789&person_id=7351734047845980789&prog=7126181361110449745&mode=BASE&res=сертифицирован&edu=&cert=04.02.2025&serial=ВТ&noti=true&code=c5 -->
+<!-- -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Сертификат</title>
+
+    <link rel="stylesheet" href="./fcc/css/common.css"/>
+
+    <style>
+        body {
+            font-family: 'Trebuchet MS', Verdana, Tahoma, sans-serif;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(14rem, 15%) 1fr minmax(14rem, 15%);
+            grid-template-rows: auto;
+        }
+
+        .calendar {
+            position: absolute;
+            z-index: 1000;
+            top: 35%;
+            left: 51%;
+            transform: translate(-50%, -50%);
+        }
+
+        .message {
+            border-radius: 3px;
+            border: 1px solid dimgrey;
+        }
+
+        .success-response {
+            background-color: #78fcaf;
+        }
+
+        .error-response {
+            background-color: #ff9494;
+        }
+    </style>
+
+    <script type="text/javascript" src="./scripts/jquery.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery.mask.js"></script>
+    <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./fcc/js/common_classes.js"></script>
+    <script type="text/javascript" src="./fcc/js/calendar.js"></script>
+    <script type="text/javascript" src="./fcc/inner_trainer_certificate/page.js"></script>
+
+</head>
+<body style="background-color: #e4e4e4;">
+<div class="grid">
+    <div></div>
+    <div onclick="if(Calendar.isActive) Calendar.hide()">
+        <div id="card" class="card position-center" style="top: 35%; height: 575px;">
+            <div style="margin-top: 4%; margin-left: 7%;">
+                <div>
+                    <%
+                        personId = OptInt(Request.Query.GetOptProperty("person_id"));
+                    %>
+                    <div id="person" data-id="<%=personId%>" сlass="float-left" style="margin-top: 5px; padding-left: 20px; font-weight: 600;"></div>
+                </div>
+
+                <div style="padding-top: 30px;">
+                    <div id="organization" class="float-left" style="margin-top: 5px; padding-left: 20px; width: 80%"></div>
+                </div>
+
+                <div style="padding-top: 90px;">
+                    <div class="float-left" style="margin-top: 5px; padding-left: 20px;">Программа:</div>
+                    <div class="float-left dropdown" style="margin-left: 10px; width: 78%;">
+                        <select id="program" class="dropdown-select" onchange="EditPage.onProgramChange()">
+                            <optgroup id="main_group" label="Основные">
+                            </optgroup>
+                            <optgroup id="additional_group" label="Дополнительные">
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="padding-top: 60px;">
+                    <div class="float-left" style="margin-top: 5px; padding-left: 20px;">Результат сертификации:</div>
+                    <div class="float-left dropdown" style="margin-left: 10px; width: 30%;">
+                        <select id="result" class="dropdown-select" onchange="EditPage.onResultChange()">
+                            <option value="сертифицирован">сертифицирован</option>
+                            <option value="не сертифицирован">не сертифицирован</option>
+                            <option value="не явка">не явка</option>
+                            <option value="отказ">отказ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="padding-top: 60px;">
+                    <div id="education_block" class="float-left">
+                        <div class="float-left" style="margin-top: 5px; padding-left: 22px;">Дата обучения: </div>
+                        <div class="float-left" style="margin-left: 83px; width: 7%;">
+                            <input id="education_date" type="text" class="input-control" size="6" style="margin-top: -1px;" disabled/>
+                        </div>
+                        <div class="float-left" style="margin-left: 95px;">
+                            <button id="education_button" class="button-control disable-button" disabled onclick="event.stopPropagation(); showCalendar('education_date')">
+                                <div class="text">...</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding-top: 60px;">
+                    <div class="float-left" style="margin-top: 5px; margin-left: 21px;">Дата сертификации: </div>
+                    <div class="float-left" style="margin-left: 48px; width: 7%;">
+                        <input id="certificate_date" type="text" class="input-control" size="6"/>
+                    </div>
+                    <div class="float-left" style="margin-left: 71px;">
+                        <button id="certificate_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('certificate_date')">
+                            <div class="text">...</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="padding-top: 60px;">
+                    <div class="float-left" style="margin-top: 5px; padding-left: 24px;">Серия: </div>
+                    <div class="float-left dropdown" style="margin-left: 47px; width: 10%;">
+                        <select id="serial" class="dropdown-select">
+                            <option value="ВТ">ВТ</option>
+                            <option value="К">К</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="padding-top: 60px;">
+                    <div class="float-left" style="margin-top: 5px; padding-left: 24px;">Отправить уведомление:</div>
+                    <div class="float-left" style="margin-left: 11px;">
+                        <label class="checkbox-ios">
+                            <input id="notification" type="checkbox" style="margin-top: 5px; margin-left: 10px;"/>
+                            <span class="checkbox-ios-switch"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="padding-top: 52px; padding-right: 30px;">
+                    <div id="message_box"class="float-left" style="width: 80%; height: 24px; display: none;">
+                        <div id="message" class="message" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px; box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;"></div>
+                    </div>
+                    <div class="float-right">
+                        <button id="save_button" class="button-control enable-button" onclick="EditPage.save()">
+                            <div class="text">Сохранить</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="calendar_element" class="calendar">
+
+    </div>
+    <div></div>
+</div>
+
+<script type="text/html" id="option_element_template">
+    <option id="option" value="#"></option>
+</script>
+
+<script>
+    function showCalendar(elementId) {
+        Calendar.afterSelectAction = elementId;
+        Calendar.show();
+    }
+
+    $(document).ready(function () {
+        $("#education_date_date").mask("99.99.9999");
+        $("#certificate_date").mask("99.99.9999");
+
+        $("#calendar_element").html(Calendar.getContent());
+        Calendar.initialize();
+        Calendar.hide();
+
+        EditPage.getJson();
+    });
+</script>
+
+</body>
+</html>
