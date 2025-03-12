@@ -9,7 +9,7 @@ function getEventData(eventResultId) {
 
     resultList = ArrayDirect(XQuery("sql: " +
         " SELECT es.finish_date, " +
-        "   er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)') AS event_result " +
+        "   er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)') AS event_result, " +
         "   er.data.value('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]', 'varchar(max)') AS cert_date " +
         " FROM [WTDB].[dbo].event_results ers " +
         "   INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
@@ -17,9 +17,9 @@ function getEventData(eventResultId) {
         " WHERE ers.id = " + eventResultId));
 
     if(ArrayCount(resultList) > 0) {
-        result.eventResult = resultList[0].finishDate;
+        result.eventResult = resultList[0].finish_date;
 
-        if(resultList[0].sert_date != "") {
+        if(resultList[0].cert_date != "") {
             result.certificateDate = StrDate(Date(resultList[0].cert_date), false, false);
         }
 
@@ -96,7 +96,7 @@ if (LdsIsServer) {
             "       ds.subdivision_inn AS inn, " +
             "       os.name AS org_name, " +
             "       ds.student_fullname AS fio, " +
-            "       ds.student_id, " +
+            "       cs.fullname AS student_name, " +
             "       ds.student_position, " +
             "       ds.date_selection, " +
             "       ds.result_selection, " +
@@ -210,16 +210,21 @@ if (LdsIsServer) {
                 reportString.AppendStr("<td>" + data.inn + "</td>");
                 reportString.AppendStr("<td>" + data.org_name + "</td>");
                 reportString.AppendStr("<td>" + data.fio + "</td>");
-                reportString.AppendStr("<td>'" + data.student_id + "</td>");
+                reportString.AppendStr("<td>'" + data.student_name + "</td>");
                 reportString.AppendStr("<td>'" + data.student_position + "</td>");
                 reportString.AppendStr("<td class='align-center'>" + StrDate(data.date_selection, false, false) + "</td>");
                 reportString.AppendStr("<td>'" + data.result_selection + "</td>");
                 reportString.AppendStr("<td>" + StrDate(data.date_position, false, false) + "</td>");
+                reportString.AppendStr("<td>'" + data.type_position + "</td>");
                 reportString.AppendStr("<td>" + typeValue + "</td>");
                 reportString.AppendStr("<td class='align-center'>" + (data.dismiss_date == "" ? "" : StrDate(Date(data.dismiss_date), false, false)) + "</td>");
                 reportString.AppendStr("<td class='align-center'>" + ArrayCount(dossierDocTE.ock_rp_programs_m1s) + "</td>");
                 reportString.AppendStr("<td class='align-center'>" + ArrayCount(dossierDocTE.ock_rp_programs_m2s) + "</td>");
                 reportString.AppendStr("<td class='align-center'>" + ArrayCount(dossierDocTE.ock_rp_programs_m3s) + "</td>");
+
+                if(data.id == 7130033509317443225) {
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] ock_rp_review: " + dossierDocTE.ock_rp_review);
+                }
 
                 if(dossierDocTE.ock_rp_review != "") {
                     eventResultData = getEventData(OptInt(dossierDocTE.ock_rp_review));
@@ -240,8 +245,8 @@ if (LdsIsServer) {
                 reportString.AppendStr("<td>" + data.curator_name_rp + "</td>");
                 reportString.AppendStr("<td class='align-center'>" + data.cs_flag + "</td>");
 
-                if(dossierDocTE.ock_rp_review != "") {
-                    eventResultData = getEventData(OptInt(dossierDocTE.ock_rp_review));
+                if(dossierDocTE.ock_rp_certification != "") {
+                    eventResultData = getEventData(OptInt(dossierDocTE.ock_rp_certification));
                     reportString.AppendStr("<td>" + eventResultData.eventResult + "</td>");
                     reportString.AppendStr("<td class='align-center'>" + eventResultData.certificateDate + "</td>");
                 } else {
@@ -272,7 +277,6 @@ if (LdsIsServer) {
                     reportString.AppendStr("<td></td>");
                 }
 
-                reportString.AppendStr("<td class='align-center'>" + data.tren_flag + "</td>");
 
                 if(dossierDocTE.ock_am_documents != "") {
                     reportString.AppendStr("<td>" + getCertificateNumber(OptInt(dossierDocTE.ock_am_documents)) + "</td>");
