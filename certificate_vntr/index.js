@@ -215,7 +215,7 @@ class IndexPage extends Object {
         const memberLength = group.members.length;
 
         if(memberLength > pagingSize) {
-            const pageCount = Math.round(memberLength / pagingSize) + 1;
+            const pageCount = Math.ceil(memberLength / pagingSize);
 
             for(let i = 0; i < pageCount; i++) {
                 if(i === 6) {
