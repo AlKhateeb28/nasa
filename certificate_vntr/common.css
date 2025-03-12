@@ -272,3 +272,69 @@
     background-repeat: no-repeat;
     animation: shimmer 2s infinite;
 }
+
+/* SCROLLBAR ELEMENT */
+.scrollbar-control {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px solid #ddd;
+}
+
+.scrollbar-control::-webkit-scrollbar {
+    display: block;
+    width: 5px;
+}
+.scrollbar-control::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-control::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-right: none;
+    border-left: none;
+}
+
+.scrollbar-control::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+    margin-bottom: 10px;
+}
+
+.scrollbar-control::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+    margin-top: 10px;
+}
+
+/* LOADER ELEMENT */
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    color: darkslategray;
+    border: 2px solid;
+    display: grid;
+    box-sizing: border-box;
+    animation: l1 4s infinite linear;
+}
+.loader::before,
+.loader::after {
+    content: "";
+    grid-area: 1/1;
+    margin: auto;
+    width: 70.7%;
+    aspect-ratio: 1;
+    border: 2px solid;
+    box-sizing: content-box;
+    animation: inherit;
+}
+.loader::after {
+    width: 50%;
+    aspect-ratio: 1;
+    border: 2px solid;
+    animation-duration: 2s;
+}
+@keyframes l1{
+    100% {transform:rotate(1turn)}
+}

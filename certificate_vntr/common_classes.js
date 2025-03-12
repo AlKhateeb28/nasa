@@ -12,7 +12,8 @@ const blackNameList = [
     "ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ УНИТАРНОЕ ПРЕДПРИЯТИЕ ",
     "ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ НАУЧНОЕ УЧРЕЖДЕНИЕ ",
     "МУНИЦИПАЛЬНОЕ ПРЕДПРИЯТИЕ ГОРОДА ВЛАДИВОСТОКА ",
-    "ФЕДЕРАЛЬНОЕ КАЗЕННОЕ ПРЕДПРИЯТИЕ "
+    "ФЕДЕРАЛЬНОЕ КАЗЕННОЕ ПРЕДПРИЯТИЕ ",
+    "МОСКОВСКИЙ ОРДЕНА ЛЕНИНА И ОРДЕНА ТРУДОВОГО КРАСНОГО ЗНАМЕНИ "
 ];
 
 class Common extends Object {
@@ -29,11 +30,11 @@ class Common extends Object {
             name = name.toUpperCase().substring(name.indexOf('"'), name.lastIndexOf('"') + 1);
         } else if(name.indexOf('«') >= 0) {
             name = name.toUpperCase().substring(name.indexOf('«'), name.lastIndexOf('»') + 1);
-        } else {
-            blackNameList.forEach((element, index) => {
-                //.replaceAll(element, "");
-            });
         }
+
+        blackNameList.forEach((element, index) => {
+            name.replaceAll(element, "");
+        });
 
         return name;
     }
