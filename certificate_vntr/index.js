@@ -388,6 +388,9 @@ class IndexPage extends Object {
     }
 
     static goToUserCertificate(element) {
+        $(".row").removeClass("selected-row");
+        $("#" + element.id).addClass("selected-row");
+
         window.open("https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7124784700424928410&person_id=" + $("#" + element.id).attr("data-id"), "_blank");
     }
 
