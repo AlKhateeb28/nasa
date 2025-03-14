@@ -1,0 +1,290 @@
+<!-- 7134636995086104263 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7134636995086104263&person_id=7229745221079289242&type=1 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7134672182251616310&person_id=7229745221079289242&type=1 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Коммерция</title>
+
+    <link rel="icon" href="./fcc/images/commerce.ico"/>
+
+    <link rel="stylesheet" href="./fcc/css/common.css"/>
+    <style>
+        body {
+            font-family: 'Trebuchet MS', Verdana, Tahoma, sans-serif;
+            background-color: #e4e4e4;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(1rem, 3%) 1fr minmax(1rem, 3%);
+            grid-template-rows: auto;
+        }
+
+        .immovable {
+            position: sticky; top: 0;
+        }
+
+        td {
+            cursor: pointer;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #eaeaea;
+        }
+
+        tr:nth-child(even) {
+            background-color: #cacaca;
+        }
+
+        .row:hover {
+            background-color: #0086cd !important;
+            color: mintcream;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: white;
+            box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(159, 89, 1);
+            border-bottom: 1px solid var(--color-border) !important;
+            z-index: 10000;
+            user-select: none;
+        }
+
+        input {
+            caret-color: #ff6f61;
+        }
+
+        .item:not(:last-child) {
+            border-inline-end: solid 2px #888888;
+        }
+
+        .sort_image {
+            width: 16px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .loader-view {
+            cursor: pointer;
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .calendar {
+            position: absolute;
+            z-index: 1000;
+            top: 55%;
+            left: 33%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+
+    <script type="text/javascript" src="./scripts/jquery.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery.mask.js"></script>
+    <script type="text/javascript" src="./fcc/js/webSocket.js"></script>
+    <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./fcc/js/common_classes.js"></script>
+    <script type="text/javascript" src="./fcc/js/calendar.js"></script>
+    <script type="text/javascript" src="./fcc/certificate_commerce/edit.js"></script>
+</head>
+<body>
+
+<div style="cursor: pointer; position: absolute; top: 20px; left: 20px;">
+    <div id="home" class="float-left" onclick="IndexPage.goHome()">
+        <img src="./fcc/images/home.png">
+    </div >
+</div>
+
+<div id="loader" class="loader loader-view" style="visibility: hidden;"></div>
+
+<div id="grid" class="grid">
+    <div id="left_box"></div>
+    <div id="grid_box">
+        <!-- CARD -->
+        <div id="card" class="flat-card" style="width: 100%; height: 850px; margin-top: 20px;">
+            <%
+            paramId = Request.Query.GetOptProperty("person_id", null);
+            paramType = OptInt(Request.Query.GetOptProperty("type", -1));
+            %>
+            <div id="params" data-id="<%=paramId%>" data-type="<%=paramType%>"></div>
+
+            <div id="person_name" style="font-weight: bold; padding-top: 40px; margin-left: 20px;"></div>
+            <div id="position_name" style="margin-top: 20px; margin-left: 20px;"></div>
+            <div id="inn_org_name" style="margin-top: 20px; margin-left: 20px;"></div>
+            <div id="cert_type" style="margin-top: 20px; margin-left: 20px; margin-bottom: 20px; font-weight: bold;"></div>
+            <!-- CERTIFICATES LIST -->
+            <div class="scrollbar-control" style="height: 30%; width: 99%;">
+                <table id="card_table" border="0" style="width: 100%; padding-left: 20px; padding-right: 20px;"></table>
+            </div>
+            <!-- CREATE, DELETE AND PDF BUTTONS -->
+            <div id="buttons_box" style="height: 40px; display: none; margin-top: 10px; background-image: linear-gradient(90deg, #f5f5f5ff 99.7%, #c9c9c9)">
+                <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                    <button id="create_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onCreate()">
+                        <div class="text">Создать</div>
+                    </button>
+                </div>
+                <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                    <button id="delete_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onDelete()">
+                        <div class="text">Удалить</div>
+                    </button>
+                </div>
+                <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                    <button id="pdf_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onPDF()">
+                        <div class="text">Распечать PDF</div>
+                    </button>
+                </div>
+                <div id="message_box"class="float-right" style="width: 30%; height: 24px; margin-top: 5px; margin-right: 10px; display: none;">
+                    <div id="message" class="message" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px; box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;"></div>
+                </div>
+            </div>
+
+            <div id="edit_box" style="display: none; margin-left: 10px;">
+                <!-- SERIAL AND NUMBER -->
+                <div style="margin-top: 20px;">
+                    <div class="float-left" style="margin-top: 5px; margin-left: 21px;">Серия:</div>
+                    <div class="float-left dropdown" style="width: 70px; margin-left: 10px;">
+                        <select id="edit_serial" class="dropdown-select">
+                            <option value="К">К</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- DELIVERY, EXPIRE AND VALID -->
+                <div style="padding-top: 40px;">
+                    <div class="float-left" style="margin-top: 6px; margin-left: 21px;">Дата выдачи: </div>
+                    <div class="float-left" style="margin-left: 10px; width: 7%;">
+                        <input id="edit_delivery_date" type="text" class="input-control" size="6"/>
+                    </div>
+                    <div class="float-left">
+                        <button id="delivery_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('edit_delivery_date')">
+                            <div class="text">...</div>
+                        </button>
+                    </div>
+                    <div class="float-left" style="margin-top: 6px; margin-left: 21px;">Истекает: </div>
+                    <div class="float-left" style="margin-left: 10px; width: 7%;">
+                        <input id="edit_expire_date" type="text" class="input-control" size="6"/>
+                    </div>
+                    <div class="float-left">
+                        <button id="expire_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('edit_expire_date')">
+                            <div class="text">...</div>
+                        </button>
+                    </div>
+                    <div class="float-left" style="margin-top: 5px; padding-left: 24px;">Действителен:</div>
+                    <div class="float-left" style="margin-left: 11px;">
+                        <label class="checkbox-ios">
+                            <input id="edit_valid" type="checkbox" style="margin-top: 5px; margin-left: 10px;"/>
+                            <span class="checkbox-ios-switch"></span>
+                        </label>
+                    </div>
+                </div>
+                <!-- CONTRACT -->
+                <div style="padding-top: 50px;">
+                    <div style="margin-left: 21px;">Формулировка в соответствии с договором:</div>
+                    <div style="margin-left: 21px; margin-top: 10px;">
+                        <input id="edit_contract" type="text" class="input-control" size="120"/>
+                    </div>
+                </div>
+                <!-- PROGRAMS -->
+                <div style="padding-top: 18px;">
+                    <div style="margin-left: 21px;">Названия учебных программ:</div>
+                    <div style="margin-left: 21px; margin-top: 10px;">
+                        <input id="edit_programs" type="text" class="input-control" size="120"/>
+                    </div>
+                </div>
+                <!-- SAVE BUTTON -->
+                <div id="edit_buttons_box" style="height: 40px; margin-left: -10px; margin-top: 25px; background-image: linear-gradient(90deg, #f5f5f5ff 99.7%, #c9c9c9)">
+                    <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                        <button id="save_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onSave()">
+                            <div class="text">Сохранить</div>
+                        </button>
+                    </div>
+                    <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                        <button id="close_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onClose()">
+                            <div class="text">Закрыть</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="calendar_element" class="calendar">
+
+        </div>
+    </div>
+    <div id="right_box"></div>
+</div>
+
+<script type="text/html" id="header_row_template">
+    <tr class="immovable">
+        <th style="padding-top: 3px; padding-bottom: 3px; font-weight: bold;">
+            <div class="float-left">Серия</div>
+        </th>
+        <th style="font-weight: bold;">
+            <div class="float-left">Номер</div>
+        </th>
+        <th style="text-align: center; width: 250px; font-weight: bold;">
+            <div class="float-left">Дата выдачи</div>
+        </th>
+        <th style="text-align: center; font-weight: bold;">
+            <div class="float-left">Истекает</div>
+        </th>
+        <th style="font-weight: bold;">
+            <div class="float-left">Действителен</div>
+        </th>
+        <th style="font-weight: bold;">
+            <div class="float-left">Формулировка</div>
+        </th>
+        <th style="font-weight: bold;">
+            <div class="float-left">Учебные программы</div>
+        </th>
+    </tr>
+</script>
+
+<script type="text/html" id="certificate_row_template">
+    <tr id="row" class="row" onclick="EditPage.onChooseCertificate(this)">
+        <td id="serial" style="text-indent: 5px; padding-top: 3px; padding-bottom: 3px;"></td>
+        <td id="number" style="text-align: center"></td>
+        <td id="delivery" style="text-align: center"></td>
+        <td id="expire" style="text-align: center"></td>
+        <td id="valid" style="text-align: center"></td>
+        <td id="contract"></td>
+        <td id="programs"></td>
+    </tr>
+</script>
+
+<script type="text/html" id="checkbox_template">
+    <div>
+        <label class="checkbox-ios">
+            <input id="check" type="checkbox"/>
+            <span class="checkbox-ios-switch"></span>
+        </label>
+    </div>
+</script>
+
+<script>
+    function showCalendar(elementId) {
+        Calendar.afterSelectAction = elementId;
+        Calendar.show();
+    }
+
+    $(document).ready(function () {
+        $("#delivery_date").mask("99.99.9999");
+
+        $("#calendar_element").html(Calendar.getContent());
+        Calendar.initialize();
+        Calendar.hide();
+
+        EditPage.initialize();
+    });
+</script>
+
+</body>
+</html>

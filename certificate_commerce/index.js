@@ -92,7 +92,7 @@ class IndexPage extends Object {
     }
 
     static createRow(person, index) {
-        $("#card_table").append(Common.getTemplate("member_row_template"));
+        $("#card_table").append(Common.getTemplate("person_row_template"));
 
         $("#row").attr("id", "row_" + index);
         $("#row_" + index).attr("data-id", person.id);
@@ -253,7 +253,11 @@ class IndexPage extends Object {
         $(".row").removeClass("selected-row");
         selectedRow.addClass("selected-row");
 
-        alert(selectedRow.attr("data-id"));
+        window.open(
+            "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7134636995086104263" +
+                "&person_id=" + selectedRow.attr("data-id") + "&type=" + $("#type").val(),
+            "_blank"
+        );
     }
 
     static sortData(element, type) {

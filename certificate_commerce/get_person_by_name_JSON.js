@@ -49,6 +49,8 @@ try {
 
             result.persons.push(element);
         }
+    } else {
+        throw new Error("Wrong or empty incoming parameters!");
     }
 
     Response.Write(EncodeJson(result));

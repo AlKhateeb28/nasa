@@ -209,7 +209,7 @@ class EditPage extends Object {
 
                     EditPage.getJson(data.activeCode, selectedOption.val());
                 } else {
-                    EditPage.showMessageBox("success-response",  "error-response", "Ошибка. Детали в логе!");
+                    EditPage.showMessageBox("success-response",  "error-response", "Ошибка. Детали в логе 'agent_7127204375175819280'!");
 
                     EditPage.setTimeoutOnMessageBox();
 

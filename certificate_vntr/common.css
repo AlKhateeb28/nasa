@@ -29,6 +29,24 @@
     position: absolute;
 }
 
+.selected-row {
+    background-color: #02486e !important;
+    color: mintcream !important;
+}
+
+.message {
+    border-radius: 3px;
+    border: 1px solid dimgrey;
+}
+
+.success-response {
+    background-color: #78fcaf;
+}
+
+.error-response {
+    background-color: #ff9494;
+}
+
 /* SELECT ELEMENT*/
 .dropdown {
     position: relative;
@@ -167,6 +185,12 @@
 
 .button-control:hover .text {
     transform: scale(0.9);
+    color: cyan;
+}
+
+.button-control:hover:disabled .text {
+    transform: scale(0.9);
+    color: mintcream;
 }
 
 .button-control:active .text {
@@ -281,7 +305,6 @@
     padding: 0;
     overflow-y: scroll;
     overflow-x: hidden;
-    border: 1px solid #ddd;
 }
 
 .scrollbar-control::-webkit-scrollbar {
