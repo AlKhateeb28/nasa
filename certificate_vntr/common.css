@@ -1,3 +1,9 @@
+:root {
+    --color-mintcream: #f5ffff;
+    --color-lightblue: #008cff;
+    --color-floralwhite: #ffefd5;
+}
+
 .card {
     border-radius: 50px;
     background: linear-gradient(145deg, #cacaca, #f0f0f0);
@@ -45,6 +51,27 @@
 
 .error-response {
     background-color: #ff9494;
+}
+
+.preferences {
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 5px 10px;
+    font-size: small;
+    cursor: pointer;
+    user-select: none;
+    background-color: var(--color-mintcream);
+}
+
+.preferences-picked {
+    background-color: var(--color-lightblue);
+    color: var(--color-mintcream);
+}
+
+.preferences:hover {
+    background-color: var(--color-lightblue);
+    color: var(--color-mintcream);
 }
 
 /* SELECT ELEMENT*/

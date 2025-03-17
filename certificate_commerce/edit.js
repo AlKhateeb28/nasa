@@ -48,16 +48,10 @@ class EditPage extends Object {
                         $("#expire_" + index).html(certificate.expireDate);
 
                         $("#valid").attr("id", "valid_" + index);
-                        $("#valid_" + index).append(Common.getTemplate("checkbox_template"));
-
-                        $("#check").attr("id", "check_" + index);
-
-                        const checkElement = $("#check_" + index);
-                        checkElement.prop("disabled", true);
                         if (certificate.isValid) {
-                            checkElement.prop("checked", true)
+                            $("#valid_" + index).html("Да");
                         } else {
-                            checkElement.prop("checked", false)
+                            $("#valid_" + index).html("Нет");
                         }
 
                         $("#contract").attr("id", "contract_" + index);
@@ -70,6 +64,7 @@ class EditPage extends Object {
                     if(data.certificates.length === 0) {
                         EditPage.disableButton("delete_button");
                         EditPage.disableButton("pdf_button");
+                        EditPage.disableButton("word_button");
                     }
 
                     if(isSelectRow !== undefined && isSelectRow) {
@@ -96,12 +91,16 @@ class EditPage extends Object {
     static enableButton(id) {
         const buttonElement = $("#" + id);
         buttonElement.prop("disabled", false);
+        buttonElement.removeClass("enable-button");
+        buttonElement.removeClass("disable-button");
         buttonElement.addClass("enable-button");
     }
 
     static disableButton(id) {
         const buttonElement = $("#" + id);
         buttonElement.prop("disabled", true);
+        buttonElement.removeClass("enable-button");
+        buttonElement.removeClass("disable-button");
         buttonElement.addClass("disable-button");
     }
 
@@ -164,7 +163,19 @@ class EditPage extends Object {
         }
 
         window.open(
-            "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/view_print_form.html?print_form_id=7058806960858407022&object_id=" + selectedCertificateId + "&sid=7168804713293750382",
+            "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/view_print_form.html?print_form_id=7264581159128683792&object_id=" + selectedCertificateId + "&sid=7863045222699914512",
+            "_blank"
+        );
+    }
+
+    static onWord() {
+        if(selectedCertificateId === null) {
+            alert("Выберите сертификат!");
+            return;
+        }
+
+        window.open(
+            "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/view_print_form.html?print_form_id=7265701810242785209&object_id=" + selectedCertificateId + "&sid=7635850167628340003",
             "_blank"
         );
     }
@@ -172,13 +183,22 @@ class EditPage extends Object {
     static openCertificate() {
         $("#edit_box").css("display", "block");
 
-        $("#edit_delivery_date").val("");
+        const deliveryDateElement = $("#edit_delivery_date");
+
+        deliveryDateElement.val("");
         $("#edit_expire_date").val("");
         $("#edit_contract").val("");
         $("#edit_programs").val("");
-        $("#edit_valid").prop("checked", false);
+        $("#edit_valid").prop("checked", true);
 
-        $("#edit_delivery_date").focus();
+        programs.forEach((program, index) => {
+            $("#pref_parent").append(Common.getTemplate("pref_template"));
+
+            $("#pref").attr("id", "pref_" + index);
+            $("#pref_" + index).html(program);
+        });
+
+        deliveryDateElement.focus();
     }
 
     static onClose() {
@@ -230,6 +250,10 @@ class EditPage extends Object {
                 }
 
                 $("#loader").css("visibility", "hidden");
+
+                EditPage.enableButton("delete_button");
+                EditPage.enableButton("pdf_button");
+                EditPage.enableButton("word_button");
             },
             error: function(error) {
                 console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
@@ -254,5 +278,39 @@ class EditPage extends Object {
 
     static hideMessageBox() {
         $("#message_box").css("display", "none");
+    }
+
+    static selectPreference(element) {
+        const preferenceElement = $("#" + element.id);
+
+        if(parseInt(preferenceElement.attr("picked")) === 0) {
+            preferenceElement.attr("picked", 1);
+            preferenceElement.addClass("preferences-picked");
+
+            const programsElement = $("#edit_programs");
+        } else {
+            preferenceElement.attr("picked", 0);
+            preferenceElement.removeClass("preferences-picked");
+        }
+
+        let pickedCount = 0;
+
+        for(let i = 0; i < $("#pref_parent").children().length; i++) {
+            if(parseInt($("#" + $("#pref_parent").children()[i].id).attr("picked")) === 1) {
+                pickedCount++;
+
+                break;
+            }
+            //console.log("ID: " + $("#pref_parent").children()[i].id + " Picked: " + $("#" + $("#pref_parent").children()[i].id).attr("picked"));
+        };
+
+        const programsElement =  $("#edit_programs");
+
+        if(pickedCount > 0) {
+            programsElement.val("");
+            programsElement.prop("disabled", true);
+        } else {
+            programsElement.prop("disabled", false);
+        }
     }
 }

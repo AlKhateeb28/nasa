@@ -29,14 +29,6 @@
             cursor: pointer;
         }
 
-        tr:nth-child(odd) {
-            background-color: #eaeaea;
-        }
-
-        tr:nth-child(even) {
-            background-color: #cacaca;
-        }
-
         .row:hover {
             background-color: #0086cd !important;
             color: mintcream;
@@ -105,6 +97,11 @@
             width: 24px;
             height: 24px;
         }
+
+        .header-colors {
+            background-color: #0086cd;
+            color: mintcream;
+        }
     </style>
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
@@ -168,12 +165,12 @@
 </script>
 
 <script type="text/html" id="header_row_template">
-    <tr class="immovable">
+    <tr class="immovable header-colors">
         <th style="width: 20%; padding-top: 3px; padding-bottom: 3px; font-weight: bold;">
             <div class="float-left">ФИО</div>
             <div class="float-right"><img id="sort_1" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 0);"/></div>
         </th>
-        <th style="font-weight: bold;">
+        <th style="font-weight: bold; width: 250px;">
             <div class="float-left">Email</div>
             <div class="float-right"><img id="sort_2" src="./fcc/js/images/sort_none.png" class="sort_image"  data-sort="none" onclick="IndexPage.sortData(this, 1);"/></div>
         </th>

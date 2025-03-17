@@ -95,6 +95,18 @@
     <script type="text/javascript" src="./fcc/js/common_classes.js"></script>
     <script type="text/javascript" src="./fcc/js/calendar.js"></script>
     <script type="text/javascript" src="./fcc/certificate_commerce/edit.js"></script>
+
+    <script>
+        var programs = ["5С в офисе", "5С на производстве", "Автономное обслуживание", "Анализ эффективности оборудования (OEE)", "Быстрая переналадка SMED", "Встроенное качество",
+                        "Выпрямление потоков", "Инструменты вытягивания (Канбан, Супермаркет, адресное хранение)", "Эффективный инфоцентр", "Как сделать проект успешным", "Каракури",
+                        "Картирование (офис)", "Картирование (производство)", "Клиентоориентированность", "Коммуникации", "Культура непрерывных улучшений", "Маркетинг и продажи",
+                        "Матрица компетенций", "Методика решения проблем", "Наставничество и обучение (TWI)", "Организация проектной деятельности на предприятии", "Основы бережливого производства (офис)",
+                        "Основы ТРМ", "Практики повышения производственной эффективности", "Производственное планирование", "Производственный анализ", "Работа с предложениями по улучшению",
+                        "Расчет экономического эффекта", "Реализация проекта по улучшению (офис)", "Реализация проекта по улучшению (производство)", "Система КПЭ и премирование",
+                        "Система обучения БП", "Система предложений по улучшению", "Система управления эффективностью", "Стандартизированная работа", "Стратегическое и операционное планирование",
+                        "Управление вовлеченностью", "Управление запасами и логистика склада", "Управление изменениями (офис)", "Управление изменениями (производство)", "Фабрика логистических процессов",
+                        "Фабрика офисных процессов", "Фабрика производственных процессов", "Эффективный инфоцентр"];
+    </script>
 </head>
 <body>
 
@@ -126,7 +138,7 @@
                 <table id="card_table" border="0" style="width: 100%; padding-left: 20px; padding-right: 20px;"></table>
             </div>
             <!-- CREATE, DELETE AND PDF BUTTONS -->
-            <div id="buttons_box" style="height: 40px; display: none; margin-top: 10px; background-image: linear-gradient(90deg, #f5f5f5ff 99.7%, #c9c9c9)">
+            <div id="buttons_box" style="height: 40px; display: none; margin-top: 10px; background-image: linear-gradient(90deg, #ffefd5 99.7%, #c9c9c9)">
                 <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
                     <button id="create_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onCreate()">
                         <div class="text">Создать</div>
@@ -142,85 +154,97 @@
                         <div class="text">Распечать PDF</div>
                     </button>
                 </div>
+                <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                    <button id="word_button" class="button-control enable-button" style="width: 185px;" onclick="EditPage.onWord()">
+                        <div class="text">Распечать WORD</div>
+                    </button>
+                </div>
                 <div id="message_box"class="float-right" style="width: 30%; height: 24px; margin-top: 5px; margin-right: 10px; display: none;">
                     <div id="message" class="message" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px; box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;"></div>
                 </div>
             </div>
 
             <div id="edit_box" style="display: none; margin-left: 10px;">
-                <!-- SERIAL AND NUMBER -->
-                <div style="margin-top: 20px;">
-                    <div class="float-left" style="margin-top: 5px; margin-left: 21px;">Серия:</div>
-                    <div class="float-left dropdown" style="width: 70px; margin-left: 10px;">
-                        <select id="edit_serial" class="dropdown-select">
-                            <option value="К">К</option>
-                        </select>
+                <div class="float-left" style="width: 48%">
+                    <!-- SERIAL AND NUMBER -->
+                    <div style="margin-top: 20px;">
+                        <div class="float-left" style="margin-top: 5px; margin-left: 21px;">Серия:</div>
+                        <div class="float-left dropdown" style="width: 70px; margin-left: 10px;">
+                            <select id="edit_serial" class="dropdown-select">
+                                <option value="К">К</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- DELIVERY, EXPIRE AND VALID -->
+                    <div style="padding-top: 40px;">
+                        <div class="float-left" style="margin-top: 6px; margin-left: 21px;">Дата выдачи: </div>
+                        <div class="float-left" style="margin-left: 10px; width: 7%;">
+                            <input id="edit_delivery_date" type="text" class="input-control" size="6"/>
+                        </div>
+                        <div class="float-left" style="margin-left: 65px;">
+                            <button id="delivery_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('edit_delivery_date')">
+                                <div class="text">...</div>
+                            </button>
+                        </div>
+                        <div class="float-left" style="margin-top: 6px; margin-left: 21px;">Истекает: </div>
+                        <div class="float-left" style="margin-left: 10px; width: 7%;">
+                            <input id="edit_expire_date" type="text" class="input-control" size="6"/>
+                        </div>
+                        <div class="float-left" style="margin-left: 65px;">
+                            <button id="expire_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('edit_expire_date')">
+                                <div class="text">...</div>
+                            </button>
+                        </div>
+                        <div class="float-left" style="margin-top: 5px; padding-left: 24px;">Действителен:</div>
+                        <div class="float-left" style="margin-left: 11px;">
+                            <label class="checkbox-ios">
+                                <input id="edit_valid" type="checkbox" style="margin-top: 5px; margin-left: 10px;"/>
+                                <span class="checkbox-ios-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- CONTRACT -->
+                    <div style="padding-top: 50px;">
+                        <div style="margin-left: 21px;">Формулировка в соответствии с договором:</div>
+                        <div style="margin-left: 21px; margin-top: 10px;">
+                            <input id="edit_contract" type="text" class="input-control" size="90"/>
+                        </div>
+                    </div>
+                    <!-- PROGRAMS -->
+                    <div style="padding-top: 18px;">
+                        <div style="margin-left: 21px;">Названия учебных программ:</div>
+                        <div style="margin-left: 21px; margin-top: 10px;">
+                            <input id="edit_programs" type="text" class="input-control" size="90"/>
+                        </div>
+                    </div>
+                    <!-- SAVE BUTTON -->
+                    <div id="edit_buttons_box" style="height: 40px; margin-left: -10px; margin-top: 25px; background-image: linear-gradient(90deg, #ffefd5 99.7%, #c9c9c9)">
+                        <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                            <button id="save_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onSave()">
+                                <div class="text">Сохранить</div>
+                            </button>
+                        </div>
+                        <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
+                            <button id="close_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onClose()">
+                                <div class="text">Закрыть</div>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <!-- DELIVERY, EXPIRE AND VALID -->
-                <div style="padding-top: 40px;">
-                    <div class="float-left" style="margin-top: 6px; margin-left: 21px;">Дата выдачи: </div>
-                    <div class="float-left" style="margin-left: 10px; width: 7%;">
-                        <input id="edit_delivery_date" type="text" class="input-control" size="6"/>
-                    </div>
-                    <div class="float-left">
-                        <button id="delivery_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('edit_delivery_date')">
-                            <div class="text">...</div>
-                        </button>
-                    </div>
-                    <div class="float-left" style="margin-top: 6px; margin-left: 21px;">Истекает: </div>
-                    <div class="float-left" style="margin-left: 10px; width: 7%;">
-                        <input id="edit_expire_date" type="text" class="input-control" size="6"/>
-                    </div>
-                    <div class="float-left">
-                        <button id="expire_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('edit_expire_date')">
-                            <div class="text">...</div>
-                        </button>
-                    </div>
-                    <div class="float-left" style="margin-top: 5px; padding-left: 24px;">Действителен:</div>
-                    <div class="float-left" style="margin-left: 11px;">
-                        <label class="checkbox-ios">
-                            <input id="edit_valid" type="checkbox" style="margin-top: 5px; margin-left: 10px;"/>
-                            <span class="checkbox-ios-switch"></span>
-                        </label>
-                    </div>
-                </div>
-                <!-- CONTRACT -->
-                <div style="padding-top: 50px;">
-                    <div style="margin-left: 21px;">Формулировка в соответствии с договором:</div>
-                    <div style="margin-left: 21px; margin-top: 10px;">
-                        <input id="edit_contract" type="text" class="input-control" size="120"/>
-                    </div>
-                </div>
-                <!-- PROGRAMS -->
-                <div style="padding-top: 18px;">
-                    <div style="margin-left: 21px;">Названия учебных программ:</div>
-                    <div style="margin-left: 21px; margin-top: 10px;">
-                        <input id="edit_programs" type="text" class="input-control" size="120"/>
-                    </div>
-                </div>
-                <!-- SAVE BUTTON -->
-                <div id="edit_buttons_box" style="height: 40px; margin-left: -10px; margin-top: 25px; background-image: linear-gradient(90deg, #f5f5f5ff 99.7%, #c9c9c9)">
-                    <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
-                        <button id="save_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onSave()">
-                            <div class="text">Сохранить</div>
-                        </button>
-                    </div>
-                    <div class="float-left" style="margin-left: 10px; margin-top: 6px;">
-                        <button id="close_button" class="button-control enable-button" style="width: 165px;" onclick="EditPage.onClose()">
-                            <div class="text">Закрыть</div>
-                        </button>
-                    </div>
+                <div id="pref_parent" class="float-left" style="width: 48%">
                 </div>
             </div>
         </div>
 
         <div id="calendar_element" class="calendar">
-
         </div>
     </div>
     <div id="right_box"></div>
 </div>
+
+<script type="text/html" id="pref_template">
+    <div id="pref" picked="0" class="float-left preferences" onclick="EditPage.selectPreference(this)"></div>
+</script>
 
 <script type="text/html" id="header_row_template">
     <tr class="immovable">

@@ -110,9 +110,7 @@ class Calendar extends Object {
                     cursor: pointer;
                 }
         
-                .calendar-dates li.inactive {
-                    color: #aaa;
-                }
+                
         
                 .calendar-dates li.active {
                     color: #fff;
@@ -134,9 +132,13 @@ class Calendar extends Object {
                     background: #49aff2;
                 }
         
-                .calendar-dates li:not(.active):hover::before {
+                .calendar-dates li:not(.inactive):hover::before {
                     background: #e4e1e1;
                 }        
+                
+                .alien {
+                    background: #f5f5f5 !important;
+                }
             </style>
         
             <script type="text/javascript" src="./scripts/jquery.js"></script>
@@ -217,56 +219,55 @@ class Calendar extends Object {
             let monthlastdate = new Date(year, month, 0).getDate();
             let lit = "";
 
-            console.log("Today: " + date + "." + month +  "." + year);
-            console.log("Lastdate: " + lastdate);
-            console.log("Dayone: " + dayone);
-            console.log("Dayend: " + dayend);
-
-            for (let i = dayone; i > 0; i--) {
-                lit += `<li class="inactive">${new Date(year, month, 0).getDate() - i + 1}</li>`;
-                }
-
-                for (let i = 1; i <= lastdate; i++) {
-                    let isToday = i === date.getDate() && month === new Date().getMonth() && year === new Date().getFullYear() ? "active" : "";
-
-                    lit += `<li class="${isToday}" onclick="Calendar.onSelectDate(${i})">${i}</li>`;
-                }
-
-                for (let i = dayend; i < 6; i++) {
-                    lit += `<li class="inactive">${i - dayend + 1}</li>`
-                }
-
-                currdate.innerText = `${months[month]} ${year}`;
-
-                day.innerHTML = lit;
+            if(dayone != 0) {
+                dayone--;
             }
 
-            manipulate();
+            for (let i = dayone; i > 0; i--) {
+                lit += `<li class="alien"></li>`;
+            }
 
-            prenexIcons.forEach(icon => {
-                icon.addEventListener("click", () => {
-                    event.stopPropagation();
+            for (let i = 1; i <= lastdate; i++) {
+                let isToday = i === date.getDate() && month === new Date().getMonth() && year === new Date().getFullYear() ? "active" : "inactive";
 
-                    if(icon.id !== "calendar-close") {
-                        month = icon.id === "calendar-prev" ? month - 1 : month + 1;
+                lit += `<li class="${isToday}" onclick="Calendar.onSelectDate(${i})">${i}</li>`;
+            }
 
-                        if (month < 0 || month > 11) {
-                            date = new Date(year, month, new Date().getDate());
+            for (let i = dayend; i < 6; i++) {
+                lit += `<li class="alien"></li>`
+            }
 
-                            year = date.getFullYear();
+            currdate.innerText = `${months[month]} ${year}`;
 
-                            month = date.getMonth();
-                        } else {
-                            date = new Date();
-                        }
+            day.innerHTML = lit;
+        }
 
-                        selectedMonth = month + 1;
-                        selectedYear = year;
+        manipulate();
 
-                        manipulate();
+        prenexIcons.forEach(icon => {
+            icon.addEventListener("click", () => {
+                event.stopPropagation();
+
+                if(icon.id !== "calendar-close") {
+                    month = icon.id === "calendar-prev" ? month - 1 : month + 1;
+
+                    if (month < 0 || month > 11) {
+                        date = new Date(year, month, new Date().getDate());
+
+                        year = date.getFullYear();
+
+                        month = date.getMonth();
+                    } else {
+                        date = new Date();
                     }
-                });
+
+                    selectedMonth = month + 1;
+                    selectedYear = year;
+
+                    manipulate();
+                }
             });
+        });
 
         setTimeout(function() {
             $("#navigation").css("display", "block");

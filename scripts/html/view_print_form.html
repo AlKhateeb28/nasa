@@ -1,0 +1,84 @@
+﻿<%
+//Response.ContentType="application/microsoft-word";
+curObjectEnvSave = false;
+Server.Execute("include/access_init.html");
+
+sForm = Request.Query.GetOptProperty('template', '');
+fldPrintFormType = undefined;
+if ( sForm != '' ) {
+	if ( StrContains( sForm, "../" ) || StrContains( sForm, "..\\")) {
+		curErrorText = "Template is not correct.";
+		Server.Execute( "view_access_panel.html" );
+		Cancel();
+	}
+
+	sFileName = UrlFileName( sForm );
+	iPrintFormID = sFileName;
+} else {
+	iPrintFormID = null;
+	sFormCode = Request.Query.GetOptProperty( 'print_form_code', '' );
+	if ( sFormCode == '' ) {
+		iPrintFormID = OptInt( Request.Query.GetOptProperty( 'print_form_id' ), null );
+	} else {
+		catPrintForm = ArrayOptFirstElem( XQuery( "for $elem in print_forms where $elem/code = " + XQueryLiteral( sFormCode ) + " return $elem" ) );
+		if ( catPrintForm != undefined )
+			iPrintFormID = catPrintForm.id.Value;
+	}
+
+	if (iPrintFormID == null) {
+		Server.Execute( "view_access_panel.html" );
+		Cancel();
+	}
+
+	try {
+		curSid = Request.Query.GetOptProperty( 'sid' );
+		iSumSid = sFormCode == '' ? iPrintFormID : curObjectID;
+
+		if ( ! tools_web.check_sum_sid( iSumSid, curSid, Session.sid ) ) {
+			//throw "error_check_sum_sid";
+		}
+	} catch ( ehuu ) {
+		Server.Execute( "view_access_panel.html" );
+		Cancel();
+	}
+
+	tePrintForm = OpenDoc( UrlFromDocID( iPrintFormID ) ).TopElem;
+	fldPrintFormType = tePrintForm.type.OptForeignElem;
+	sFileName = tePrintForm.file_name.Value;
+	if (StrBegins( sFileName, "=")) {
+		try {
+			sFileName = SafeEval( StrRightRangePos( sFileName, 1 ), [ { "curObject": curObject, "curObjectID": curObjectID } ] );
+		} catch ( err ) {
+			alert( err );
+		}
+	}
+}
+if ( fldPrintFormType == undefined )
+	fldPrintFormType = common.print_form_types.GetChildByKey( 'html' );
+
+if ( fldPrintFormType.content_type.HasValue )
+	Response.ContentType = fldPrintFormType.content_type;
+
+sTypeExtension = fldPrintFormType.extension.HasValue ? '.' + fldPrintFormType.extension : '';
+if ( UrlPathSuffix( sFileName ) != "" && sTypeExtension != "" && !StrContains( UrlPathSuffix( sFileName ), sTypeExtension ) ) {
+	sFileName = StrReplace( sFileName, UrlPathSuffix( sFileName ), sTypeExtension );
+} else if ( UrlPathSuffix( sFileName ) == "" && sTypeExtension != "" ) {
+	sFileName = sFileName + sTypeExtension;
+}
+
+
+if ( tePrintForm.type == "word_pdf" ) {
+	sPrintFileName = tools.process_print_form( iPrintFormID, curObjectID, true, null );
+	sFileName = StrReplace( sFileName, UrlPathSuffix( sFileName ), UrlPathSuffix( sPrintFileName ) );
+	Response.AddHeader( "Content-Disposition", "inline; filename*=UTF-8''" + UrlEncode( sFileName ) );
+	temp_sRes = LoadUrlData( sPrintFileName );
+	try {
+		DeleteUrl( sPrintFileName );
+	} catch ( err ) {
+	}
+	Response.Write( temp_sRes );
+} else {
+	Response.AddHeader( "Content-Disposition", "inline; filename*=UTF-8''" + UrlEncode( sFileName ) );
+	Response.Write( tools.process_print_form( iPrintFormID, curObjectID ) );
+}
+%>
