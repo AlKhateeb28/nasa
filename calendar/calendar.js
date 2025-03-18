@@ -132,7 +132,7 @@ class Calendar extends Object {
                     background: #49aff2;
                 }
         
-                .calendar-dates li:not(.inactive):hover::before {
+                .calendar-dates li:not(.active):hover::before {
                     background: #e4e1e1;
                 }        
                 

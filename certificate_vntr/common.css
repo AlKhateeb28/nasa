@@ -2,6 +2,8 @@
     --color-mintcream: #f5ffff;
     --color-lightblue: #008cff;
     --color-floralwhite: #ffefd5;
+    --color-fcc-red: #e23d64;
+    --color-whitesmoke: #f5f5f5ff;
 }
 
 .card {
@@ -10,6 +12,7 @@
     box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;
     width: 800px;
     height: 307px;
+    color: whitesmoke;
 }
 
 .flat-card {
@@ -66,12 +69,12 @@
 
 .preferences-picked {
     background-color: var(--color-lightblue);
-    color: var(--color-mintcream);
+    color: var(--color-whitesmoke);
 }
 
 .preferences:hover {
     background-color: var(--color-lightblue);
-    color: var(--color-mintcream);
+    color: var(--color-whitesmoke);;
 }
 
 /* SELECT ELEMENT*/
@@ -185,7 +188,7 @@
 
 /* CHECKBOX ELEMENT */
 .checkbox-control {
-    accent-color: #c56fff;
+    accent-color: var(--color-fcc-red);
     width: 20px;
     height: 20px;
 }
@@ -280,7 +283,7 @@
     box-shadow: inset 0 0 2px rgba(0, 0, 0, .3);
 }
 .checkbox-ios input[type=checkbox]:checked + .checkbox-ios-switch {
-    background: #e23d64;
+    background: var(--color-fcc-red);
 }
 .checkbox-ios input[type=checkbox]:checked + .checkbox-ios-switch:before {
     transform:translateX(28px);

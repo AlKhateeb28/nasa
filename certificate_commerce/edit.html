@@ -86,6 +86,16 @@
             left: 33%;
             transform: translate(-50%, -50%);
         }
+
+        .row-checkbox {
+            width: 16px;
+        }
+
+        .checkbox-cell {
+            padding-left: 21px;
+            padding-top: 5px;
+        }
+
     </style>
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
@@ -243,37 +253,47 @@
 </div>
 
 <script type="text/html" id="pref_template">
-    <div id="pref" picked="0" class="float-left preferences" onclick="EditPage.selectPreference(this)"></div>
+    <div id="pref" picked="0" class="float-left preferences" style="font-size: 10px;" onclick="EditPage.selectPreference(this)"></div>
 </script>
 
 <script type="text/html" id="header_row_template">
-    <tr class="immovable">
-        <th style="padding-top: 3px; padding-bottom: 3px; font-weight: bold;">
+    <tr class="immovable" style="background-color: #0086cd !important; color: whitesmoke">
+        <td style="width: 56px;">
+            <div class="checkbox-cell">
+                <input id="header_check" type="checkbox" class="checkbox-control row-checkbox" onchange="EditPage.onHeaderCheckBoxChange(event)"/>
+            </div>
+        </td>
+        <td style="padding-top: 3px; padding-bottom: 3px; font-weight: bold; text-indent: 10px;">
             <div class="float-left">Серия</div>
-        </th>
-        <th style="font-weight: bold;">
+        </td>
+        <td style="font-weight: bold; text-indent: 10px;">
             <div class="float-left">Номер</div>
-        </th>
-        <th style="text-align: center; width: 250px; font-weight: bold;">
+        </td>
+        <td style="text-align: center; width: 250px; font-weight: bold; text-indent: 10px;">
             <div class="float-left">Дата выдачи</div>
-        </th>
-        <th style="text-align: center; font-weight: bold;">
+        </td>
+        <td style="text-align: center; font-weight: bold; text-indent: 10px;">
             <div class="float-left">Истекает</div>
-        </th>
-        <th style="font-weight: bold;">
+        </td>
+        <td style="font-weight: bold; text-indent: 10px;">
             <div class="float-left">Действителен</div>
-        </th>
-        <th style="font-weight: bold;">
+        </td>
+        <td style="font-weight: bold; text-indent: 10px;">
             <div class="float-left">Формулировка</div>
-        </th>
-        <th style="font-weight: bold;">
+        </td>
+        <td style="font-weight: bold; text-indent: 10px;">
             <div class="float-left">Учебные программы</div>
-        </th>
+        </td>
     </tr>
 </script>
 
 <script type="text/html" id="certificate_row_template">
     <tr id="row" class="row" onclick="EditPage.onChooseCertificate(this)">
+        <td>
+            <div class="checkbox-cell">
+                <input id="row_check" type="checkbox" class="checkbox-control row-checkbox" onchange="EditPage.onRowCheckBoxChange(this, event)">
+            </div>
+        </td>
         <td id="serial" style="text-indent: 5px; padding-top: 3px; padding-bottom: 3px;"></td>
         <td id="number" style="text-align: center"></td>
         <td id="delivery" style="text-align: center"></td>
