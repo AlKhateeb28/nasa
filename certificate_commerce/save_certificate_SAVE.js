@@ -9,6 +9,7 @@ var result = {};
 result.errorMessage = "";
 result.message = "";
 result.id = "";
+result.certificatesIds = [];
 
 try {
     addLogMessage(loggerName, "----------");
@@ -64,19 +65,24 @@ try {
         throw new Error("Type ID is empty!");
     }
 
-    certificateDoc = tools.create_certificate_to_person(OptInt(personId), OptInt(typeId));
-    certificateDoc.TopElem.serial = serial;
-    certificateDoc.TopElem.delivery_date = Date(delivery);
-    if(StrCharCount(expire) > 0) {
-        certificateDoc.TopElem.expire_date = Date(expire);
+    programNames = programs.split(",");
+
+    for(programName in programNames) {
+        certificateDoc = tools.create_certificate_to_person(OptInt(personId), OptInt(typeId));
+        certificateDoc.TopElem.serial = serial;
+        certificateDoc.TopElem.delivery_date = Date(delivery);
+        if (StrCharCount(expire) > 0) {
+            certificateDoc.TopElem.expire_date = Date(expire);
+        }
+        certificateDoc.TopElem.valid = valid;
+        certificateDoc.TopElem.custom_elems.ObtainChildByKey("form_dogovor_sootvet").value = contract;
+        certificateDoc.TopElem.custom_elems.ObtainChildByKey("edu_prog_names").value = programName;
+
+        certificateDoc.Save();
+
+        result.certificatesIds.push("" + certificateDoc.DocID);
     }
-    certificateDoc.TopElem.valid = valid;
-    certificateDoc.TopElem.custom_elems.ObtainChildByKey("form_dogovor_sootvet").value = contract;
-    certificateDoc.TopElem.custom_elems.ObtainChildByKey("edu_prog_names").value = programs;
 
-    certificateDoc.Save();
-
-    result.id = "" + certificateDoc.DocID;
     result.message = "SAVED";
 
     Response.Write(EncodeJson(result));
