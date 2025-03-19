@@ -21,10 +21,6 @@
             grid-template-rows: auto;
         }
 
-        .immovable {
-            position: sticky; top: 0;
-        }
-
         td {
             cursor: pointer;
         }
@@ -97,11 +93,6 @@
             width: 24px;
             height: 24px;
         }
-
-        .header-colors {
-            background-color: #0086cd;
-            color: mintcream;
-        }
     </style>
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
@@ -165,7 +156,7 @@
 </script>
 
 <script type="text/html" id="header_row_template">
-    <tr class="immovable header-colors">
+    <tr class="sticky header-colors">
         <th style="width: 20%; padding-top: 3px; padding-bottom: 3px; font-weight: bold;">
             <div class="float-left">ФИО</div>
             <div class="float-right"><img id="sort_1" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 0);"/></div>

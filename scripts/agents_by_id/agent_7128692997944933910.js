@@ -62,7 +62,7 @@ try {
         " SELECT ds.trainer_fullname AS fullname, " +
         "    d.data.value('(//position_trainer)[1]', 'varchar(max)') AS position, " +
         "    d.data.value('(//organization_inn)[1]', 'varchar(max)') AS inn, " +
-        "    d.data.value('(//organization_name)[1]', 'varchar(max)') AS org_name, " +
+        "    os.name AS org_name, " +
         "    d.data.value('(//headcount)[1]', 'varchar(max)') AS headcount, " +
         "    d.data.value('(//region_organization)[1]', 'varchar(max)') AS region, " +
         "    d.data.value('(//region_in_reporting)[1]', 'varchar(max)') AS report_region, " +
@@ -141,10 +141,10 @@ try {
         "    rs.name AS region_name, " +
         "    ds.id " +
         " FROM [WTDB].[dbo].cc_dossier_vntren_2025s ds " +
-        "    INNER JOIN [WTDB].[dbo].cc_dossier_vntren_2025 d ON ds.id = d.id " +
-        "    INNER JOIN [WTDB].[dbo].collaborators cs ON ds.trainer_id = cs.id " +
-        "    INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
-        "    INNER JOIN [WTDB].[dbo].regions rs ON os.region_id = rs.id " +
+        "    LEFT JOIN [WTDB].[dbo].cc_dossier_vntren_2025 d ON ds.id = d.id " +
+        "    LEFT JOIN [WTDB].[dbo].collaborators cs ON ds.trainer_id = cs.id " +
+        "    LEFT JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
+        "    LEFT JOIN [WTDB].[dbo].regions rs ON os.region_id = rs.id " +
         "    LEFT JOIN [WTDB].[dbo].education_methods ems1 ON d.data.value('(//dop_1)[1]', 'bigint') = ems1.id " +
         "    LEFT JOIN [WTDB].[dbo].education_methods ems2 ON d.data.value('(//dop_2)[1]', 'bigint') = ems2.id " +
         "    LEFT JOIN [WTDB].[dbo].education_methods ems3 ON d.data.value('(//dop_3)[1]', 'bigint') = ems3.id " +

@@ -128,7 +128,7 @@
 </div>
 
 <script type="text/html" id="report_template">
-<div class="flat-card" style="width: 90%; margin-left: 19px; margin-top: 18%; height: 150px;">
+<div class="flat-card" style="width: 90%; margin-left: 19px; margin-top: 18%; height: 70px;">
     <div style="padding-top: 20px;">
         <button id="report_button" class="blink button-control enable-button" style="margin-left: 15%; margin-right: 5%;" onclick="IndexPage.startAgent()">
             <div class="text">Общая выгрузка</div>
@@ -157,8 +157,8 @@
             </div>
         </div>
         <hr style="margin-top: 64px;">
-        <div>
-            <table id="card_table" border="0" style="width: 100%; padding-left: 20px; padding-right: 20px;"></table>
+        <div class="scrollbar-control">
+            <table id="card_table" border="0" style="width: 99%; padding-left: 20px; padding-right: 20px;"></table>
         </div>
         <div id="paging" style="margin-top: 10px;">
             <div id="page_message" class="float-left" style="margin-left: 20px;"></div>
@@ -169,22 +169,19 @@
 </script>
 
 <script type="text/html" id="header_row_template">
-    <tr>
+    <tr class="sticky header-colors">
         <td style="width: 20%; padding-top: 3px; padding-bottom: 3px; font-weight: bold;">
             <div class="float-left">ФИО</div>
-            <div class="float-right"><img id="sort_1" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 0);"/></div>
+            <!-- div class="float-right"><img id="sort_1" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 0);"/></div-->
         </td>
         <td style="font-weight: bold;">
             <div class="float-left">Email</div>
-            <div class="float-right"><img id="sort_2" src="./fcc/js/images/sort_none.png" class="sort_image"  data-sort="none" onclick="IndexPage.sortData(this, 1);"/></div>
         </td>
         <td style="text-align: center; width: 95px; font-weight: bold;">
             <div class="float-left">ИНН</div>
-            <div class="float-right"><img id="sort_3" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 2);"/></div>
         </td>
         <td style="font-weight: bold;">
             <div class="float-left">Организация</div>
-            <div class="float-right"><img id="sort_4" src="./fcc/js/images/sort_none.png" class="sort_image" data-sort="none" onclick="IndexPage.sortData(this, 3);"/></div>
         </td>
         <td style="text-align: center; font-weight: bold;">
             <div class="float-left">Уволен</div>

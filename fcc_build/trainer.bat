@@ -10,5 +10,6 @@ xcopy c:\FCC\Projects\sdo\calendar\next.png f:\js\images /s /e /h /y
 xcopy c:\FCC\Projects\sdo\certificate_vntr\sort_none.png f:\js\images /s /e /h /y
 xcopy c:\FCC\Projects\sdo\certificate_vntr\sort_asc.png f:\js\images /s /e /h /y
 xcopy c:\FCC\Projects\sdo\certificate_vntr\sort_desc.png f:\js\images /s /e /h /y
+xcopy c:\FCC\Projects\sdo\certificate_vntr\delete.png f:\js\images /s /e /h /y
 
 echo FCC DONE !!!

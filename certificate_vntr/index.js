@@ -149,7 +149,7 @@ class IndexPage extends Object {
         $("#inn_" + groupId + "_" + index).html(member.inn);
 
         $("#name").attr("id", "name_" + groupId + "_" + index);
-        $("#name_" + groupId + "_" + index).html(Common.normalizeOrganisationName(member.name));
+        $("#name_" + groupId + "_" + index).html(member.name);
 
         $("#dismiss").attr("id", "dismiss_" + groupId + "_" + index);
         if(member.isDismiss) {
