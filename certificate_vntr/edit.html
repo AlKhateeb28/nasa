@@ -142,13 +142,20 @@
                 </div>
 
                 <div style="padding-top: 52px; padding-right: 30px;">
-                    <div id="message_box"class="float-left" style="width: 80%; height: 24px; display: none;">
+                    <div id="message_box"class="float-left" style="width: 60%; height: 24px; display: none;">
                         <div id="message" class="message" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px; box-shadow:  21px 21px 42px #bebebe, -21px -21px 42px #ffffff;"></div>
                     </div>
                     <div class="float-right">
-                        <button id="save_button" class="button-control enable-button" onclick="EditPage.save()">
-                            <div class="text">Сохранить</div>
-                        </button>
+                        <div class="float-left" style="margin-right: 10px;">
+                            <button id="save_button" class="button-control enable-button" onclick="EditPage.save()">
+                                <div class="text">Сохранить</div>
+                            </button>
+                        </div>
+                        <div class="float-left">
+                            <button id="delete_button" class="button-control enable-button" onclick="EditPage.delete()">
+                                <div class="text">Удалить</div>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

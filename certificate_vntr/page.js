@@ -57,13 +57,17 @@ class EditPage extends Object {
                     $("#main_group").empty();
 
                     data.baseProgram.forEach((element, index) => {
-                        EditPage.addOption("main_group", element.name, element.id, element.code, element.type);
+                        const optionElement = EditPage.addOption("main_group", element.name, element.id, element.code, element.type);
+
+                        optionElement.attr("data-issued", element.issued);
                     });
 
                     $("#additional_group").empty();
 
                     data.extraProgram.forEach((element, index) => {
                         const optionElement = EditPage.addOption("additional_group", element.name, element.id, element.code, element.type);
+
+                        optionElement.attr("data-issued", element.issued);
 
                         if (data.takenCount === 6 && parseInt(element.isTaken) == 0) {
                             optionElement.attr("disabled", true);
@@ -101,7 +105,7 @@ class EditPage extends Object {
                         serialElement.val("ВТ");
                     }
 
-                    $("#notification").prop("checked", false);
+                    $("#notification").prop("checked", true);
 
                     if(data.isCollaboratorExist) {
                         $("#person").attr("data-exist", 1);
@@ -113,6 +117,8 @@ class EditPage extends Object {
 
                         EditPage.disableAllElements();
                     }
+
+                    EditPage.validateDeleteButtonAccess();
                 } else {
                     console.log("Error: " + data.errorMessage);
                 }
@@ -140,7 +146,6 @@ class EditPage extends Object {
         saveButton.removeClass(removedClass);
         saveButton.addClass(enabledClass);
 
-        $("#notification").attr("disabled", disable);
         $("#certificate_date").attr("disabled", disable);
         $("#result").attr("disabled", disable);
         $("#serial").attr("disabled", disable);
@@ -222,6 +227,50 @@ class EditPage extends Object {
         });
     }
 
+    static delete() {
+        if(!confirm("Удалить ошибочный сертификат?")) {
+            return;
+        }
+
+        const programElement = $("#program");
+
+        selectedOption = programElement.find(":selected");
+
+        const programMode = selectedOption.attr("data-type");
+
+
+        const parameters = `&person_id=${$("#person").attr("data-id")}&mode=${programMode}` +
+            `&code=${selectedOption.attr("data-code")}&noti=${$("#notification").prop("checked")}&text=${selectedOption.html()}`;
+
+        $.ajax({
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7136806679986788131" + parameters,
+            async: false,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if(data.errorMessage.indexOf("#") < 0) {
+                    EditPage.showMessageBox("error-response", "success-response", "Сертификат удален.");
+
+                    EditPage.setTimeoutOnMessageBox();
+
+                    $("#main_group").empty();
+                    $("#additional_group").empty();
+
+                    EditPage.getJson(data.activeCode, selectedOption.val());
+                } else {
+                    EditPage.showMessageBox("success-response",  "error-response", "Ошибка. Детали в логе 'agent_7136806679986788131'!");
+
+                    EditPage.setTimeoutOnMessageBox();
+
+                    console.log("Error: " + data.errorMessage.indexOf("#"));
+                }
+            },
+            error: function(error) {
+                console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+            }
+        });
+    }
+
     static setTimeoutOnMessageBox() {
         setTimeout(EditPage.hideMessageBox, 10000);
     }
@@ -246,9 +295,22 @@ class EditPage extends Object {
             certificateButton.removeClass("disable-button");
             certificateButton.addClass("enable-button");
 
-            $("#notification").attr("disabled", false);
             $("#certificate_date").attr("disabled", false);
             $("#serial").attr("disabled", false);
+        }
+    }
+
+    static validateDeleteButtonAccess() {
+        const deleteButtonElement = $("#delete_button");
+
+        if(parseInt($("#program").find(":selected").attr("data-issued")) === 0) {
+            deleteButtonElement.attr("disabled", true);
+            deleteButtonElement.removeClass("enable-button");
+            deleteButtonElement.addClass("disable-button");
+        } else {
+            deleteButtonElement.attr("disabled", false);
+            deleteButtonElement.removeClass("disable-button");
+            deleteButtonElement.addClass("enable-button");
         }
     }
 }

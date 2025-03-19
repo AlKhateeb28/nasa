@@ -48,7 +48,7 @@ try {
         " FROM [WTDB].[dbo].education_methods ems" +
         "       INNER JOIN [WTDB].[dbo].education_method em ON ems.id = em.id " +
         " WHERE ems.code = 'cert_vn_tren_base' " +
-        " ORDER BY ems.name "));
+        " ORDER BY ems.sort "));
 
     count = 0;
 
@@ -60,6 +60,8 @@ try {
         if (activeCode == null && count == 0) {
             activeCode = base.code;
         }
+
+        issued = 0;
 
         if (result.isCollaboratorExist) {
             dossierList = ArrayDirect(XQuery("sql: " +
@@ -77,6 +79,7 @@ try {
 
                 if (StrCharCount(dossierList[0].certificate_id) > 0) {
                     name = "&#9873; " + name;
+                    issued = 1;
                 } else {
                     if (dossierList[0].result != "" && dossierList[0].result != "сертифицирован") {
                         name = "&#9872; " + name;
@@ -90,6 +93,7 @@ try {
         element.name = name;
         element.code = base.code;
         element.type = "BASE";
+        element.issued = issued;
 
         result.baseProgram.push(element);
 
@@ -107,6 +111,7 @@ try {
 
     if(ArrayCount(extraList) > 0) {
         takenCount = 0;
+        issued = 0;
 
         for(extra in extraList) {
             isTaken = 0;
@@ -131,6 +136,7 @@ try {
                             name = "&#9873; " + name;
                             code = "dop_" + i;
 
+                            issued = 1;
                             isTaken = 1;
                             takenCount++;
                         } else {
@@ -154,6 +160,7 @@ try {
             element.code = code;
             element.type = "EXTRA";
             element.isTaken = isTaken;
+            element.issued = issued;
 
             result.extraProgram.push(element);
         }

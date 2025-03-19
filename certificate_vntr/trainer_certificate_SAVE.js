@@ -5,7 +5,9 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 function save(dossierDoc, dossierDocTE, personId, mode, code, programId, certificationResult, certificateDate, educationDate, serial, sendNotification) {
     eval("dossierDocTE." + code + " = " + programId);
     eval("dossierDocTE." + code + "_result = '" + certificationResult + "'");
-    eval("dossierDocTE." + code + "_cert_date = Date('" + certificateDate + "')");
+    if(certificateDate != "") {
+        eval("dossierDocTE." + code + "_cert_date = Date('" + certificateDate + "')");
+    }
 
     certificateDoc = null;
 
@@ -52,7 +54,7 @@ function save(dossierDoc, dossierDocTE, personId, mode, code, programId, certifi
         eval("dossierDocTE." + code + "_cert = '" + certificateNumber + "'");
     }
 
-    if (mode == "EXTRA" && ArrayCount(educationDate.split(".")) == 3) {
+    if (mode == "EXTRA" && educationDate != "" && ArrayCount(educationDate.split(".")) == 3) {
         eval("dossierDocTE." + code + "_event_date = Date('" + educationDate + "')");
     }
 
