@@ -194,6 +194,56 @@ try {
     agent.processed = processed;
     refreshMsPerRow(agent, startDate, processed);
     ws = sendMessageToWebsocket(ws, agent);
+
+    // IS_OCK
+    agent.message = "Получение данных is_ock сотрудников...";
+    ws = sendMessageToWebsocket(ws, agent);
+
+    mismatch.state = 0;
+    mismatch.mismatchType = "IS_OCK";
+    mismatch.dateTime = Date();
+    sendMismatchMessageToWebsocket(mismatchWS, mismatch);
+
+    collaboratorList = getCollaboratorsByFlag("is_ock");
+    wrongCount = ArrayCount(collaboratorList);
+
+    result += ", is_ock: " + wrongCount;
+
+    mismatch.state = 1;
+    mismatch.dateTime = Date();
+    mismatch.count = wrongCount;
+    sendMismatchMessageToWebsocket(mismatchWS, mismatch);
+
+    processed += mismatch.count;
+
+    agent.processed = processed;
+    refreshMsPerRow(agent, startDate, processed);
+    ws = sendMessageToWebsocket(ws, agent);
+
+    // IS_PROJECT
+    agent.message = "Получение данных is_project_ended сотрудников...";
+    ws = sendMessageToWebsocket(ws, agent);
+
+    mismatch.state = 0;
+    mismatch.mismatchType = "IS_PROJECT";
+    mismatch.dateTime = Date();
+    sendMismatchMessageToWebsocket(mismatchWS, mismatch);
+
+    collaboratorList = getCollaboratorsByFlag("is_project_ended");
+    wrongCount = ArrayCount(collaboratorList);
+
+    result += ", is_project: " + wrongCount;
+
+    mismatch.state = 1;
+    mismatch.dateTime = Date();
+    mismatch.count = wrongCount;
+    sendMismatchMessageToWebsocket(mismatchWS, mismatch);
+
+    processed += mismatch.count;
+
+    agent.processed = processed;
+    refreshMsPerRow(agent, startDate, processed);
+    ws = sendMessageToWebsocket(ws, agent);
     //
 
     agent.state = 1;

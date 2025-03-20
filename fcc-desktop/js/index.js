@@ -972,6 +972,16 @@ function processMismatchMessage(agent) {
             mismatchIndex = 11;
             break;
         }
+
+        case "IS_OCK": {
+            mismatchIndex = 12;
+            break;
+        }
+
+        case "IS_PROJECT": {
+            mismatchIndex = 13;
+            break;
+        }
     }
 
     if(mismatchIndex > -1) {
@@ -1721,6 +1731,8 @@ $(document).ready(function () {
     appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 9, "Признак: is_roiv", "Не верный признак <b>is_roiv</b> сотрудника", 7397671274748933246, "#4a4e50");
     appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 10, "Признак: is_partner", "Не верный признак <b>is_partner</b> сотрудника", 7397671274748933246, "#4a4e50");
     appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 11, "Признак: is_a_commerce_client", "Не верный признак <b>is_a_commerce_client</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 12, "Признак: is_ock", "Не верный признак <b>is_ock</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 13, "Признак: is_project_ended", "Не верный признак <b>is_project_ended</b> сотрудника", 7397671274748933246, "#4a4e50");
 
     setInterval(refreshDuration, 1000);
     setInterval(pingServers, 1000);
