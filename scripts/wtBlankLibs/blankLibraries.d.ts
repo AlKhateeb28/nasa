@@ -5,6 +5,7 @@ function ArrayDirect(array: any): object;
 function ArrayCount(array: any): number;
 function ArrayOptFirstElem(value: object): object; // undefined
 function ArrayOptFirstElem(value: object, type: string): object;
+function ArraySort(array: any, field: string, orderBy: string): any;
 function DateToRawSeconds(date: any): number;
 function StrReal(number: number, digits: number): string;
 function OpenNewDoc(path: string): object;

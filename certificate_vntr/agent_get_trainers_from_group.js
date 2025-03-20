@@ -56,7 +56,7 @@ try {
             }
         }
 
-        sortGroup = ArraySort(members, "fio", '+' );
+        sortGroup = ArraySort(members, "fio", "+");
 
         for(member in sortGroup) {
             trainersGroup.members.push(member);
