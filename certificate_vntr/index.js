@@ -369,6 +369,7 @@ class IndexPage extends Object {
             group.members.forEach((member, index) => {
                 if (member.fio.toUpperCase().indexOf(findElement.val().toUpperCase()) >= 0 || member.email.toUpperCase().indexOf(findElement.val().toUpperCase()) >= 0) {
                     const element = {};
+                    element.id = member.id;
                     element.fio = member.fio;
                     element.email = member.email;
                     element.inn = member.inn;

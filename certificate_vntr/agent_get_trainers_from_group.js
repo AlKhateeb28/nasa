@@ -27,6 +27,8 @@ try {
         trainersGroup.name = groupDoc.TopElem.name;
         trainersGroup.members = [];
 
+        members = [];
+
         for (collaborator in groupDoc.TopElem.collaborators) {
             dataList = ArrayDirect(XQuery("sql: " +
                 " SELECT cs.fullname, " +
@@ -36,7 +38,7 @@ try {
                 "       cs.is_dismiss, " +
                 "       cs.id" +
                 " FROM [WTDB].[dbo].collaborators cs " +
-                "    INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
+                "       INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
                 " WHERE cs.id = " + OptInt(collaborator.collaborator_id)));
 
             if (ArrayCount(dataList) > 0) {
@@ -48,14 +50,21 @@ try {
                 element.inn = dataList[0].code;
                 element.isDismiss = dataList[0].is_dismiss;
 
-                trainersGroup.members.push(element);
+                members.push(element);
             } else {
                 addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID " + collaborator.collaborator_id + " is not exist");
             }
         }
 
+        sortGroup = ArraySort(members, "fio", '+' );
+
+        for(member in sortGroup) {
+            trainersGroup.members.push(member);
+        }
+
         result.trainerGroups.push(trainersGroup);
     }
+
     Response.Write(EncodeJson(result));
 } catch (e) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
