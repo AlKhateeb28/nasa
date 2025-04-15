@@ -401,7 +401,7 @@ class IndexPage extends Object {
         //messageBox.css("display", "none");
 
         $.ajax({
-            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7129036886315589942&agent_id=7128692997944933910",
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7129036886315589942",
             async: false,
             type: "GET",
             dataType: "json",

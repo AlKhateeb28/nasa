@@ -36,15 +36,11 @@ if (included) {
                 group_doc = tools.open_doc( group_id )
 
                 arr = ArraySelectAll( XQuery( "sql: DECLARE @curdate datetime; SET @curdate = GETDATE(); " +
-                    " SELECT" +
-                    " collaborators.id, collaborator.created" +
-                    " FROM [WTDB].[dbo].collaborators" +
-                    " LEFT JOIN [WTDB].[dbo].orgs" +
-                    " ON collaborators.org_id = orgs.id" +
-                    " LEFT JOIN [WTDB].[dbo].org" +
-                    " ON collaborators.org_id = org.id" +
-                    " LEFT JOIN [WTDB].[dbo].collaborator" +
-                    " ON collaborators.id = collaborator.id" +
+                    " SELECT collaborators.id, collaborator.created " +
+                    " FROM [WTDB].[dbo].collaborators " +
+                    " LEFT JOIN [WTDB].[dbo].orgs ON collaborators.org_id = orgs.id " +
+                    " LEFT JOIN [WTDB].[dbo].org ON collaborators.org_id = org.id " +
+                    " LEFT JOIN [WTDB].[dbo].collaborator ON collaborators.id = collaborator.id " +
                     " WHERE" +
                     " (" +
                     " org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') = 'true'" +

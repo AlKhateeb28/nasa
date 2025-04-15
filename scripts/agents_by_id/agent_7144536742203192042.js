@@ -1,7 +1,7 @@
-// 6974513176326201916
+// 7144536742203192042
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
-var agentId = 6974513176326201916;
+var agentId = 7144536742203192042;
 var userId = 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS;
 var msPerRecord = 0.001;
 
@@ -9,7 +9,7 @@ sLogMethod = "report";
 
 var startDate = Date();
 var prevDate= Date();
-var loggerName = "agent_6974513176326201916";
+var loggerName = "agent_7144536742203192042";
 var ws = getWebsocketClient();
 var agent = getAgentInstance(agentId, userId, loggerName);
 
@@ -22,12 +22,17 @@ try {
     ws = sendMessageToWebsocket(ws, agent);
 
     groupCollaboratorsList = ArrayDirect(XQuery("sql: " +
-        " SELECT group_collaborators.collaborator_id AS colls_id" +
-        " FROM [WTDB].[dbo].group_collaborators" +
-        " LEFT JOIN [WTDB].[dbo].collaborators ON collaborators.id = group_collaborators.collaborator_id" +
-        " LEFT JOIN [WTDB].[dbo].org ON collaborators.org_id = org.id" +
-        " WHERE group_collaborators.group_id = " + Param.group_id +
-        " AND org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') = 'true'"));
+        " SELECT gcs.collaborator_id AS colls_id, " +
+        "       org.id AS org_id, " +
+        "       org.data.value('(//custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') AS fact_region_id, " +
+        "       c.data.value('(//access/access_role)[1]', 'varchar(max)') AS access_role " +
+        " FROM [WTDB].[dbo].group_collaborators AS gcs " +
+        "       INNER JOIN [WTDB].[dbo].collaborators AS cs ON gcs.collaborator_id = cs.id " +
+        "       INNER JOIN [WTDB].[dbo].collaborator AS c ON cs.id = c.id " +
+        "       INNER JOIN [WTDB].[dbo].org ON cs.org_id = org.id " +
+        " WHERE gcs.group_id =  " + Param.group_id +
+        "       AND org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') = 'true' "));
+
 
     total = ArrayCount(groupCollaboratorsList);
     processed = 0;
@@ -63,7 +68,7 @@ try {
         collaboratorTE.access.access_role = "OrganizingTrainerRCK"; // Тренер-организатор РЦК
         collaboratorDoc.Save();
 
-        collsOrganization = tools.open_doc(collaboratorTE.org_id);
+        collsOrganization = tools.open_doc(groupCollaborator.org_id);
 
         if (collsOrganization != undefined) {
             collsOrganizationTE = collsOrganization.TopElem;
@@ -72,8 +77,7 @@ try {
                 " SELECT orgs.id " +
                 " FROM [WTDB].[dbo].orgs " +
                 "   INNER JOIN [WTDB].[dbo].org  ON orgs.id = org.id " +
-                " WHERE " +
-                "   org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') = " + collsOrganizationTE.custom_elems.ObtainChildByKey("fact_region_id").value +
+                " WHERE org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') = " + collsOrganizationTE.custom_elems.ObtainChildByKey("fact_region_id").value +
                 "   AND org.data.value('(org/custom_elems/custom_elem[name=''format_part''])[1]/value[1]', 'varchar(max)') = 'rcc'"));
 
             organizationCount += ArrayCount(organizationList);
@@ -82,27 +86,44 @@ try {
                 organization = tools.open_doc(organizationResult.id);
 
                 organizationTE = organization.TopElem;
-                fmCollaborator = organizationTE.func_managers.GetOptChildByKey(groupCollaborator.colls_id);
 
-                if (fmCollaborator == undefined) {
-                    fm = organizationTE.func_managers.ObtainChildByKey(groupCollaborator.colls_id, "person_id");
-
-                    fm.person_fullname = collaboratorTE.fullname;
-                    fm.person_position_id = collaboratorTE.position_id;
-                    fm.person_position_name = collaboratorTE.position_name;
-                    fm.person_position_code = collaboratorTE.position_id.ForeignElem.code;
-                    fm.person_org_id = collaboratorTE.org_id;
-                    fm.person_org_name = collaboratorTE.org_name;
-                    fm.person_org_code = collaboratorTE.org_id.ForeignElem.code;
-                    fm.person_code = collaboratorTE.code;
-                    fm.is_native = "0";
-                    fm.boss_type_id = 6878899960667451125; // RCK_Collaborator Сотрудник РЦК
+                if (organizationTE.custom_elems.ObtainChildByKey('is_project_ended').value == 'true') {
+                    organizationTE.func_managers.DeleteChildByKey(groupCollaborator.colls_id);
 
                     organization.Save();
 
-                    saved++;
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] Remove from func_managers because ORG: " + organizationResult.id + " the project_ended");
+                } else {
+                    fmCollaborator = organizationTE.func_managers.GetOptChildByKey(groupCollaborator.colls_id);
 
-                    agent.optionalData.value1 = saved + " / " + organizationCount;
+                    if (collaboratorTE.is_dismiss) {
+                        organizationTE.func_managers.DeleteChildByKey(collaboratorTE.id);
+
+                        organization.Save();
+
+                        addLogMessage(loggerName, "[agent.id: " + agentId + "] Remove from func_managers because Coll.ID: " + collaboratorTE.id + " is dismiss");
+                    } else {
+                        if (fmCollaborator == undefined) {
+                            fm = organizationTE.func_managers.ObtainChildByKey(groupCollaborator.colls_id, "person_id");
+
+                            fm.person_fullname = collaboratorTE.fullname;
+                            fm.person_position_id = collaboratorTE.position_id;
+                            fm.person_position_name = collaboratorTE.position_name;
+                            fm.person_position_code = collaboratorTE.position_id.ForeignElem.code;
+                            fm.person_org_id = collaboratorTE.org_id;
+                            fm.person_org_name = collaboratorTE.org_name;
+                            fm.person_org_code = collaboratorTE.org_id.ForeignElem.code;
+                            fm.person_code = collaboratorTE.code;
+                            fm.is_native = "0";
+                            fm.boss_type_id = 6878899960667451125; // RCK_Collaborator Сотрудник РЦК
+
+                            organization.Save();
+
+                            saved++;
+
+                            agent.optionalData.value1 = saved + " / " + organizationCount;
+                        }
+                    }
                 }
 
                 count++;
@@ -169,7 +190,7 @@ try {
         }
     }
 
-    //addLogMessage(loggerName, "[agent.id: " + agentId + "] " + fullDeleted + " deleted");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] " + fullDeleted + " deleted");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] " + total + " total, " + processed + " processed, " + saved + " saved");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished.");
 
