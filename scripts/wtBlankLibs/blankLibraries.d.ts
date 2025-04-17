@@ -42,6 +42,7 @@ function StrToCharArray(value: string): any;
 function ArrayExtractKeys(array: any, tagName: string): any;
 function StrContains(targetString: string, searchString: string): boolean;
 function StrContains(targetString: string, searchString: string, ignoreCase: boolean): boolean;
+function StrRangePos(targetString: string, start: number, finish: number): string;
 function Hour(datetime: any): number;
 function Day(datetime: any): number;
 function Month(datetime: any): number;
