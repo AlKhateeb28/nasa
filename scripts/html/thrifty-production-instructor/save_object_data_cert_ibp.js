@@ -64,6 +64,7 @@ function validateAllowableDateInterval(type, personId, incomingDate, prefix, pro
             }
 
             if (start != null) {
+                start = DateOffset(start, -21 * 86400);
                 last = DateOffset(start, 50 * 86400);
 
                 if (incomingDate < start || incomingDate > last) {
