@@ -21,6 +21,7 @@ function Trim(value: string): string;
 function OptReal(value: any): number;
 function Date(): any;
 function Date(value: string): any;
+function DateOffset(date: any, seconds: number);
 function StrDate(date: any): any;
 function StrDate(date: any, showTime: boolean): any;
 function StrDate(date: any, showTime: boolean, showSeconds: boolean): any;
