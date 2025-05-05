@@ -118,7 +118,7 @@
             transform: translate(-50%, -50%) rotateX(90deg) translateZ(-40px);
         }
 
-        .panel-1 {
+        .panel_OCK_1 {
             display: inline-block;
             position: absolute;
             top: 50%;
@@ -135,7 +135,7 @@
             box-shadow: 0px 0px 0px 20px red;
         }
 
-        .panel-2 {
+        .panel_OCK_2 {
             display: inline-block;
             position: absolute;
             top: 50%;
@@ -148,7 +148,7 @@
             border: solid 5px rgb(247, 243, 33);
         }
 
-        .panel-1::after {
+        .panel_OCK_1::after {
             content: "ОЦК";
             margin-top: 2px;
             display: inline-block;
@@ -164,7 +164,7 @@
             background-color: red;
         }
 
-        .panel-1::before {
+        .panel_OCK_1::before {
             content: "Выгрузка";
             margin-top: 2px;
             display: inline-block;
@@ -178,6 +178,68 @@
             transform: translate(-50%, -50%) rotateZ(90deg) translateY(170px);
             font-size: larger;
             background-color: red;
+        }
+
+        .panel_OCK_BNO_1 {
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 250px;
+            width: 250px;
+            background-color: rgb(166, 255, 0);
+            background: repeating-linear-gradient(
+                    45deg,
+                    rgb(247, 243, 33) 0% 2%,
+                    black 2% 4%
+            );
+            box-shadow: 0px 0px 0px 20px red;
+        }
+
+        .panel_OCK_BNO_2 {
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 200px;
+            width: 200px;
+            background-color: rgb(0, 0, 0);
+            background: linear-gradient(-135deg, rgb(43, 42, 42), black);
+            border: solid 5px rgb(247, 243, 33);
+        }
+
+        .panel_OCK_BNO_1::after {
+            content: "ОЦК БНО";
+            margin-top: 2px;
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 290px;
+            height: 25px;
+            color: white;
+            font-weight: bold;
+            transform: translate(-50%, -50%) translateY(170px);
+            font-size: larger;
+            background-color: orange;
+        }
+
+        .panel_OCK_BNO_1::before {
+            content: "Выгрузка";
+            margin-top: 2px;
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 290px;
+            height: 25px;
+            color: white;
+            font-weight: bold;
+            transform: translate(-50%, -50%) rotateZ(90deg) translateY(170px);
+            font-size: larger;
+            background-color: orange;
         }
 
         .btn-trigger {
@@ -261,7 +323,7 @@
 
 <div class="float-left">
     <div id="ock_report">
-        <div class="float-left" style="top: 50%; left: 50%; transform: translate(-50%, -50%); position: absolute;">
+        <div class="float-left" style="top: 50%; left: 35%; transform: translate(-50%, -50%); position: absolute;">
             <button class="button">
                 <div class="lid">
                     <span class="side top"></span>
@@ -271,9 +333,9 @@
                     <span class="side right"></span>
                 </div>
                 <div class="panels">
-                    <div class="panel-1">
-                        <div class="panel-2">
-                            <div class="btn-trigger" onclick="IndexPage.onDownload()">
+                    <div class="panel_OCK_1">
+                        <div class="panel_OCK_2">
+                            <div class="btn-trigger" onclick="IndexPage.onDownloadOCK()">
                                 <span class="btn-trigger-1"></span>
                                 <span class="btn-trigger-2"></span>
                             </div>
@@ -281,7 +343,28 @@
                     </div>
                 </div>
             </button>
+        </div>
 
+        <div class="float-left" style="top: 50%; left: 65%; transform: translate(-50%, -50%); position: absolute;">
+            <button class="button">
+                <div class="lid">
+                    <span class="side top"></span>
+                    <span class="side front"></span>
+                    <span class="side back"> </span>
+                    <span class="side left"></span>
+                    <span class="side right"></span>
+                </div>
+                <div class="panels">
+                    <div class="panel_OCK_BNO_1">
+                        <div class="panel_OCK_BNO_2">
+                            <div class="btn-trigger" onclick="IndexPage.onDownloadOCKBNO()">
+                                <span class="btn-trigger-1"></span>
+                                <span class="btn-trigger-2"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </button>
         </div>
     </div>
 </div>

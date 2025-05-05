@@ -388,7 +388,7 @@ try {
     // SAVE EXCEL FILE
     reportString.AppendStr("</table></html>");
     excel.LoadHtmlString(reportString.GetStr(), "");
-    excel.SaveAs("E:/Websoft/WebSoftServer/wt/web/Reports/report_ock_2025/report_ock_" + ParseDate(Date()) + ".xlsx");
+    excel.SaveAs("E:/Websoft/Reports/report_ock_2025/report_ock_" + ParseDate(Date()) + ".xlsx");
 
     agent.state = 1;
     agent.processed = processed;
