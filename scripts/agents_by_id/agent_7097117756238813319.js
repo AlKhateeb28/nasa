@@ -1,6 +1,14 @@
 // 7097117756238813319
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
+function isEmpty(value) {
+    if(value == null || value == undefined || value == "") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function from_str_to_header(_str) {
     return param_columns.ObtainChildByKey( _str ).name;
 }
@@ -70,7 +78,7 @@ if (LdsIsServer ) {
             " FROM [WTDB].[dbo].active_learnings " +
             " WHERE active_learnings.state_id > 0 " +
             " ) " +
-            " SELECT TOP 1040000_view.id, " +
+            " SELECT TOP 1045000 _view.id, " +
             "   collaborators.fullname AS fullname, " +
             "   collaborators.email AS email, " +
             "   orgs.name AS org_name, " +
@@ -90,6 +98,8 @@ if (LdsIsServer ) {
             "   INNER JOIN [WTDB].[dbo].org ON orgs.id = org.id" +
             "   INNER JOIN [WTDB].[dbo].[common.learning_states] ON _view.state_id = [common.learning_states].id " +
             " ORDER BY fullname"));
+
+        // TOP 1040000
 
         total = ArrayCount(dataList);
 
@@ -129,25 +139,22 @@ if (LdsIsServer ) {
         count = 0;
 
         for (data in dataList) {
-            //1010000
-            //if(count < 1045000) {
-                reportString.AppendStr(
-                    "<tr>" +
-                    "<td>'" + data.id + "</td>" +
-                    "<td>'" + data.fullname + "</td>" +
-                    "<td>'" + data.email + "</td>" +
-                    "<td>'" + data.inn + "</td>" +
-                    "<td>'" + data.org_name + "</td>" +
-                    "<td>'" + data.course_code + "</td>" +
-                    "<td>'" + data.course_name + "</td>" +
-                    "<td>'" + (data.finish == "" ? "" : StrDate(data.finish, false, false)) + "</td>" +
-                    "<td>'" + data.state + "</td>" +
-                    "<td>'" + (data.start == "" ? "" : StrDate(data.start, false, false)) + "</td>" +
-                    "<td>'" + data.score + "</td>" +
-                    "<td>'" + data.format_part + "</td>" +
-                    "<td>'" + data.is_project_ended + "</td>" +
-                    "</tr>");
-            //}
+            reportString.AppendStr(
+                "<tr>" +
+                "<td>'" + data.id + "</td>" +
+                "<td>'" + data.fullname + "</td>" +
+                "<td>'" + data.email + "</td>" +
+                "<td>'" + data.inn + "</td>" +
+                "<td>'" + data.org_name + "</td>" +
+                "<td>'" + data.course_code + "</td>" +
+                "<td>'" + data.course_name + "</td>" +
+                "<td>'" + (data.finish == "" ? "" : StrDate(data.finish, false, false)) + "</td>" +
+                "<td>'" + data.state + "</td>" +
+                "<td>'" + (data.start == "" ? "" : StrDate(data.start, false, false)) + "</td>" +
+                "<td>'" + data.score + "</td>" +
+                "<td>'" + data.format_part + "</td>" +
+                "<td>'" + data.is_project_ended + "</td>" +
+                "</tr>");
 
             processed++;
 
