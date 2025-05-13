@@ -139,8 +139,6 @@ try {
         "       AND rs.name LIKE '%" + StrDate(Date(), false, false) + "%' "));
 
     if(ArrayCount(currentWave) > 0) {
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Checking organization...");
-
         dataList = ArrayDirect(XQuery("sql: " +
             " SELECT rs.id, " +
             "       rs.name" +
