@@ -57,39 +57,44 @@ function createNotificationMessage(currentWave) {
     content = new Binary();
 
     for(data in orgsList) {
-        if(data.currentWaveCount + data.otherWaveCount >= 4) {
-            isShowNotification = true;
+        waveCount = data.currentWaveCount + data.otherWaveCount;
 
+        if(waveCount >= 4) {
             organizations = ArrayDirect(XQuery("sql: " +
                 " SELECT os.code, " +
                 "       os.name AS org_name, " +
-                "       rs.name AS region_name " +
+                "       rs.name AS region_name, " +
+                "       o.data.value('(org/custom_elems/custom_elem[name=''allowed_ibp_count''])[1]/value[1]', 'varchar(max)') AS allowed " +
                 " FROM [WTDB].[dbo].orgs AS os " +
                 "    INNER JOIN [WTDB].[dbo].org AS o ON os.id = o.id " +
                 "    INNER JOIN [WTDB].[dbo].regions AS rs ON o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = rs.id " +
                 " WHERE os.id = " + data.orgId));
 
-            for(organization in organizations) {
-                content.AppendStr("<tr>");
-                content.AppendStr("<td style='text-align: center'>");
-                content.AppendStr(organization.code);
-                content.AppendStr("</td>");
-                content.AppendStr("<td>");
-                content.AppendStr(organization.org_name);
-                content.AppendStr("</td>");
-                content.AppendStr("<td>");
-                content.AppendStr(organization.region_name);
-                content.AppendStr("</td>");
-                content.AppendStr("<td style='text-align: center'>");
-                content.AppendStr(data.currentWaveCount);
-                content.AppendStr("</td>");
-                content.AppendStr("<td style='text-align: center'>");
-                content.AppendStr(data.otherWaveCount);
-                content.AppendStr("</td>");
-                content.AppendStr("<td>");
-                content.AppendStr(data.wave);
-                content.AppendStr("</td>")
-                content.AppendStr("</tr>");
+            for (organization in organizations) {
+                if(organization.allowed == "" || waveCount > OptInt(organization.allowed)) {
+                    isShowNotification = true;
+
+                    content.AppendStr("<tr>");
+                    content.AppendStr("<td style='text-align: center'>");
+                    content.AppendStr(organization.code);
+                    content.AppendStr("</td>");
+                    content.AppendStr("<td>");
+                    content.AppendStr(organization.org_name);
+                    content.AppendStr("</td>");
+                    content.AppendStr("<td>");
+                    content.AppendStr(organization.region_name);
+                    content.AppendStr("</td>");
+                    content.AppendStr("<td style='text-align: center'>");
+                    content.AppendStr(data.currentWaveCount);
+                    content.AppendStr("</td>");
+                    content.AppendStr("<td style='text-align: center'>");
+                    content.AppendStr(data.otherWaveCount);
+                    content.AppendStr("</td>");
+                    content.AppendStr("<td>");
+                    content.AppendStr(data.wave);
+                    content.AppendStr("</td>")
+                    content.AppendStr("</tr>");
+                }
             }
         }
     }
@@ -134,6 +139,8 @@ try {
         "       AND rs.name LIKE '%" + StrDate(Date(), false, false) + "%' "));
 
     if(ArrayCount(currentWave) > 0) {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Checking organization...");
+
         dataList = ArrayDirect(XQuery("sql: " +
             " SELECT rs.id, " +
             "       rs.name" +
