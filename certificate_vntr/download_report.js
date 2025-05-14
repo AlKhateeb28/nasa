@@ -274,8 +274,8 @@ try {
             "<td>" + (data.date_selection == "" ? "" : StrDate(Date(data.date_selection), false, false)) + "</td>" +
             "<td>" + data.result_selection + "</td>" +
             "<td>" + normalizeWaveNumber(data.wave_number) + "</td>" +
-            "<td>" + data.start + "</td>" +
-            "<td>" + data.finish + "</td>" +
+            "<td>" + (data.start == "" ? "" : StrDate(Date(data.start), false, false)) + "</td>" +
+            "<td>" + (data.finish == "" ? "" : StrDate(Date(data.finish), false, false)) + "</td>" +
             "<td>" + data.trained + "</td>" +
             "<td>" + data.status + "</td>" +
             "<td>" + data.comment + "</td>" +
