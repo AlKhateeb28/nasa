@@ -20,19 +20,32 @@ function save(dossierDoc, dossierDocTE, personId, mode, code, programId, certifi
         if(ArrayCount(programList) == 0) {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] Education method with ID " + programId + " is not exist!");
 
+            throw new Exception("Education method with ID " + programId + " is not exist!");
+        }
+
+        dataList = ArrayDirect(XQuery("sql: " +
+            " SELECT os.name " +
+            " FROM [WTDB].[dbo].collaborators cs" +
+            "       INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
+            " WHERE cs.id = " + personId));
+
+        if(ArrayCount(dataList) == 0) {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Person with ID " + personId + " is not exist!");
+
             throw new Exception("Person with ID " + personId + " is not exist!");
         }
 
-        certificateDoc = tools.create_certificate_to_person(personId, 7057492735637724805);
+        certificateDoc = tools.create_certificate_to_person(personId, 7156911123344357706);
         certificateDoc.TopElem.serial = serial;
         certificateDoc.TopElem.delivery_date = Date(certificateDate);
-        certificateDoc.TopElem.custom_elems.ObtainChildByKey( "programm_name" ).value = programList[0].name;
+        certificateDoc.TopElem.custom_elems.ObtainChildByKey("programm_name").value = programList[0].name;
+        certificateDoc.TopElem.custom_elems.ObtainChildByKey("org_name").value = dataList[0].name;
 
         certificateDoc.Save();
 
         createdCrtificateDoc = tools.open_doc(certificateDoc.DocID);
 
-        if(createdCrtificateDoc == undefined) {
+        if (createdCrtificateDoc == undefined) {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] Created certificate with ID " + certificateDoc.DocID + " is not exist!");
 
             throw new Exception("Created certificate with ID " + certificateDoc.DocID + " is not exist!");
@@ -42,7 +55,7 @@ function save(dossierDoc, dossierDocTE, personId, mode, code, programId, certifi
 
         splittedDate = certificateDate.split(".");
 
-        if(ArrayCount(splittedDate) != 3) {
+        if (ArrayCount(splittedDate) != 3) {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] Wrong certificate date: " + certificateDate);
 
             throw new Exception("Wrong certificate date: " + certificateDate);
