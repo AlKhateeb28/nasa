@@ -2,17 +2,45 @@
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
 function createCertificate (_MyDate, _curDoc, i, programName) {
-    docCertificate = tools.create_certificate_to_person(object_id, certificate_type_id);
-    docCertificate.TopElem.serial = "И";
-    docCertificate.TopElem.delivery_date = _MyDate;
-    docCertificate.TopElem.custom_elems.ObtainChildByKey("programm_name").value = programName;
-    docCertificate.TopElem.custom_elems.ObtainChildByKey("object_data").value = _curDoc.DocID;
-    docCertificate.Save();
-    _curDoc.TopElem.custom_elems.ObtainChildByKey("certificate_" + i).value = docCertificate.DocID;
-    _curDoc.Save();
-    tools.create_notification("cert_ibp_print", object_id, programName, docCertificate.DocID);
+    dataList = ArrayDirect(XQuery("sql: " +
+        " SELECT cs.org_id " +
+        " FROM [WTDB].[dbo].collaborators cs" +
+        " WHERE cs.id = " + _curDoc.TopElem.object_id));
 
-    return docCertificate.DocID;
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Coll.ID: " + _curDoc.TopElem.object_id);
+
+    if(ArrayCount(dataList) > 0) {
+        orgDoc = tools.open_doc(dataList[0].org_id);
+
+        if(orgDoc != undefined) {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Org.ID: " + orgDoc.DocID);
+
+            docCertificate = tools.create_certificate_to_person(object_id, certificate_type_id);
+            docCertificate.TopElem.serial = "И";
+            docCertificate.TopElem.delivery_date = _MyDate;
+            docCertificate.TopElem.custom_elems.ObtainChildByKey("programm_name").value = programName;
+            docCertificate.TopElem.custom_elems.ObtainChildByKey("object_data").value = _curDoc.DocID;
+            docCertificate.TopElem.custom_elems.ObtainChildByKey("org_name").value = orgDoc.TopElem.name;
+
+            docCertificate.Save();
+
+            _curDoc.TopElem.custom_elems.ObtainChildByKey("certificate_" + i).value = docCertificate.DocID;
+            _curDoc.Save();
+            tools.create_notification("cert_ibp_print", object_id, programName, docCertificate.DocID);
+
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Certificate created. ID: " + docCertificate.DocID);
+
+            return docCertificate.DocID;
+        } else {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Organization with ID " + dataList[0].org_id + " is not exist");
+
+            showException("Организация не найдена");
+        }
+    } else {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID " + _curDoc.TopElem.object_id + " is not exist");
+
+        showException("Сотрудник не найден");
+    }
 }
 
 function validateAllowableDateInterval(type, personId, incomingDate, prefix, programName) {
@@ -118,7 +146,9 @@ function check_combo(_MyCombo, _MyDate, _curDoc, i, programName) {
         programName = StrContains(programName, "«") && StrContains(programName, "»") ? StrRangePos(programName, programName.indexOf("«")+2, programName.indexOf("»")) : programName;
         certificateDocId = createCertificate(_MyDate, _curDoc, i, programName);
 
-        addToDossier = true;
+        if(certificateDocId != null) {
+            addToDossier = true;
+        }
     } else if(_MyCombo == "Не сертифицировать") {
         addToDossier = true;
     }
@@ -280,7 +310,7 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
     showException("Не сохранено. Сотрудник не допущен к сертификации");
 }*/
 
-var certificate_type_id = 5293675553778464279; // Подготовка инструкторов по БП
+var certificate_type_id = 7156641934046394931; // Подготовка инструкторов по БП
 var cert_object_data_type_id = 6966499755925068211; // Сертификация инструкторов по БП
 object_id = OptInt(object_id);
 
@@ -394,6 +424,10 @@ if (checkbox1 != "") {
     check_combo(MyCombo4, MyDate4, curDoc, 4, custom_templates.object_data_type.items[0].sheets[4].title);
     check_combo(MyCombo5, MyDate5, curDoc, 5, custom_templates.object_data_type.items[0].sheets[5].title);
     check_combo(MyCombo6, MyDate6, curDoc, 6, custom_templates.object_data_type.items[0].sheets[6].title);
+} else {
+    showException("Для создания сертификата установите галочку 'Пройдена подготовка / Допущен к сертификации'");
 }
+
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished");
 
 MESSAGE = '<span style="color:green;font-weight:bold">Сохранено</span>';

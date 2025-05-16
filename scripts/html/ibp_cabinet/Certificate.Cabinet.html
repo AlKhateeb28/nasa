@@ -40,6 +40,11 @@
         <Param Name="sSearchWord" Value="{!CatalogListSearchQWE<%=i%>}"/>
         <Param Name="curObjectID" Value="<%=group_id%>"/>
     </Action>
+    <Action Name="report_2024_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="">
+        <Param Name="sCollection" Value="report_cert_ibp_all_2024"/>
+        <Param Name="sMode" Value="datagrid"/>
+        <Param Name="curObjectID" Value="<%=group_id%>"/>
+    </Action>
     <Action Name="report_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="">
         <Param Name="sCollection" Value="report_cert_ibp"/>
         <Param Name="sMode" Value="datagrid"/>
@@ -145,6 +150,13 @@
     }
     ,
     {
+    "name": "report_2024_action_name"+i,
+    "title": "Отчет 2024",
+    "click": ("ACTION=report_2024_action_name"+i)
+
+    }
+    ,
+    {
     "name": "report_action_name"+i,
     "title": "Отчет",
     "click": ("ACTION=report_action_name"+i)
@@ -196,6 +208,13 @@
     "name": "export_action_name"+i,
     "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
     "click": ("ACTION=export_action_name"+i)
+    }
+    ,
+    {
+    "name": "report_2024_action_name"+i,
+    "title": "Отчет 2024",
+    "click": ("ACTION=report_2024_action_name"+i)
+
     }
     ,
     {

@@ -1,3 +1,4 @@
+// 7085721910666027817
 function get_cert_number( _cert_id ){
     if ( _cert_id == '' ) { return '' }
     te_cert = tools.open_doc( _cert_id ).TopElem
@@ -131,8 +132,8 @@ for ( elem in arr ){
     " ) )
     final_courses_arr = ArraySelectDistinct( courses_arr, "This.course_id" )
     courses_num = 0
-    for ( elem in final_courses_arr ) {
-        if ( elem.state_name == "Пройден" ) courses_num++
+    for ( element in final_courses_arr ) {
+        if ( element.state_name == "Пройден" ) courses_num++
     }
     obj.SetProperty( "courses_num", String( courses_num ) )
     // Пройдено ЭК из 8
@@ -173,8 +174,8 @@ for ( elem in arr ){
     " ) )
     final_videocourses_arr = ArraySelectDistinct( videocourses_arr, "This.course_id" )
     videocourses_num = 0
-    for ( elem in final_videocourses_arr ) {
-        if ( elem.state_name == "Пройден" ) videocourses_num++
+    for ( element in final_videocourses_arr ) {
+        if ( element.state_name == "Пройден" ) videocourses_num++
     }
 
     obj.SetProperty( "videocourses_num", String( videocourses_num ) )
