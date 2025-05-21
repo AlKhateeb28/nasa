@@ -92,11 +92,11 @@ function validateAllowableDateInterval(type, personId, incomingDate, prefix, pro
             }
 
             if (start != null) {
-                start = DateOffset(start, -21 * 86400);
                 last = DateOffset(start, 50 * 86400);
+                start = DateOffset(start, -21 * 86400);
 
                 if (incomingDate < start || incomingDate > last) {
-                    showException("Не сохранено. Выбранная дата за пределами срока сертификации!");
+                    showException("Не сохранено. Сертификация возможна с " + StrDate(start, false, false) + " по " + StrDate(last, false, false) + " !" );
                 }
             } else {
                 showException("Не сохранено. Сотрудник не участвовал в программе подготовки!");
