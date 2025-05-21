@@ -277,6 +277,10 @@
         <Param Name="curObjectID" Value="<%=object_id%>"/>
     </Action>
 
+    <Action Name="reassign_seminars_action" Source="reassignSeminarsAction" Success="REFRESH;" Failure="">
+        <Param Name="curObjectID" Value="<%=object_id%>"/>
+    </Action>
+
     <Action Name="export_action_name_3" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}ALERT={messageText}" Failure="">
         <Param Name="sCollection" Value="col_videolearnings_cert_ibp"/>
         <Param Name="sMode" Value="datagrid"/>
@@ -485,6 +489,11 @@
                     "disp_type": "data_grid",
                     "height": null,
                     "buttons": [
+                    {
+                    "name": "reassign_seminars",
+                    "title": "Переназначить",
+                    "click": ("CONFIRM=Вы действительно хотите переназначить данному сотруднику семинары и методические разборы?;ACTION=reassign_seminars_action")
+                    },
                     {
                     "name": "export_action_name_3",
                     "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
