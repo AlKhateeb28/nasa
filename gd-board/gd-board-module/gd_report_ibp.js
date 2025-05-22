@@ -1,5 +1,5 @@
 <%
-// 7425618304446911712
+// 7425602477515813645
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
 function hasAdminAccess(userId) {
@@ -33,8 +33,8 @@ var literals = [
     'GA', 'GB', 'GC', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GJ', 'GK', 'GL', 'GM', 'GN', 'GO', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GV', 'GW', 'GX', 'GY', 'GZ'
 ];
 
-var agentId = 7425618304446911712;
-var loggerName = "aa_agent_7425618304446911712";
+var agentId = 7425602477515813645;
+var loggerName = "aa_agent_7425602477515813645";
 
 var result = [];
 
@@ -49,9 +49,9 @@ try {
     if(ArrayCount(collaboratorList) > 0) {
         excel = new ActiveXObject("Websoft.Office.Excel.Document");
         excel.Open("E:/Websoft/Reports/gd/data.xlsx");
-        excelSheet = excel.GetWorksheet(4);
+        excelSheet = excel.GetWorksheet(2);
 
-        for (i = 3; i <= 88; i++) {
+        for (i = 3; i <= 77; i++) {
             data = {};
 
             data.name = excelSheet.Cells.GetCell('A' + i).Value;

@@ -1,5 +1,5 @@
 <%
-// 7425602477515813645
+// 7424484892990776274
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
 function hasAdminAccess(userId) {
@@ -33,12 +33,51 @@ var literals = [
     'GA', 'GB', 'GC', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GJ', 'GK', 'GL', 'GM', 'GN', 'GO', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GV', 'GW', 'GX', 'GY', 'GZ'
 ];
 
-var agentId = 7425602477515813645;
-var loggerName = "aa_agent_7425602477515813645";
+var agentId = 7424484892990776274;
+var loggerName = "aa_agent_7424484892990776274";
 
-var result = [];
+var result = {};
+result.errorMessage = "";
+result.list =  [];
+result.regionGoals = [];
 
 try {
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] ---------------");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+
+    regionsList = ArrayDirect(XQuery("sql: " +
+        " SELECT rs.name, " +
+        "       r.data.value('(//custom_elems/custom_elem[name=''rcc_trained_goal'']/value)[1]', 'varchar(max)') AS goal " +
+        " FROM regions rs " +
+        "    INNER JOIN [WTDB].[dbo].region r ON rs.id = r.id " +
+        " ORDER BY name "));
+
+    if(ArrayCount(regionsList) > 0) {
+        total = 0;
+
+        for(region in regionsList) {
+            goalRegion = {};
+
+            goalRegion.name = region.name;
+
+            if(region.goal == '') {
+                goalRegion.goal = 0;
+            } else {
+                goalRegion.goal = OptInt(region.goal);
+            }
+
+            total += OptInt(goalRegion.goal);
+
+            result.regionGoals.push(goalRegion);
+        }
+
+        goalRegion = {};
+        goalRegion.name = "Итого";
+        goalRegion.goal = total;
+
+        result.regionGoals.push(goalRegion);
+    }
+
     collaboratorList = ArrayDirect(XQuery("sql: " +
         " SELECT  rs.name " +
         "    FROM [WTDB].[dbo].collaborators cs " +
@@ -49,9 +88,9 @@ try {
     if(ArrayCount(collaboratorList) > 0) {
         excel = new ActiveXObject("Websoft.Office.Excel.Document");
         excel.Open("E:/Websoft/Reports/gd/data.xlsx");
-        excelSheet = excel.GetWorksheet(3);
+        excelSheet = excel.GetWorksheet(1);
 
-        for (i = 3; i <= 77; i++) {
+        for(i = 3; i <= 75; i++) {
             data = {};
 
             data.name = excelSheet.Cells.GetCell('A' + i).Value;
@@ -60,14 +99,14 @@ try {
             data.mode = collaboratorList[0].name;
             data.elements = [];
 
-            for (literal in literals) {
-                if (excelSheet.Cells.GetCell(literal + 2).Value == undefined) {
+            for(literal in literals) {
+                if(excelSheet.Cells.GetCell(literal + 2).Value == undefined) {
                     break;
                 }
 
                 element = {};
                 element.datetime = excelSheet.Cells.GetCell(literal + 2).Value;
-                if (excelSheet.Cells.GetCell(literal + i).Value == undefined) {
+                if(excelSheet.Cells.GetCell(literal + i).Value == undefined) {
                     element.value = 0;
                 } else {
                     element.value = excelSheet.Cells.GetCell(literal + i).Value;
@@ -76,7 +115,7 @@ try {
                 data.elements.push(element);
             }
 
-            result.push(data);
+            result.list.push(data);
         }
     } else {
         result = "#Сотрудник с ID " + curUserID + " не найден!";
@@ -86,6 +125,8 @@ try {
 } catch (e) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
 
-    Response.Write(EncodeJson("#" + e));
+    result.errorMessage = "#" + e;
+
+    Response.Write(EncodeJson(result));
 }
 %>

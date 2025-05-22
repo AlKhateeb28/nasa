@@ -201,9 +201,9 @@ function normalizeIbpData() {
 }
 
 function processIbp(isChangeYearColor) {
-    ibpYears = [];
-
-    let result = [];
+    ibpYears = [2024];
+    let yearCount = [0];
+    let currentYear = 2024;
 
     clearIbpMonthBoxesByName();
 
@@ -216,21 +216,22 @@ function processIbp(isChangeYearColor) {
                 ibpRegions.push(ibpData[i].name);
             }
 
+            if(currentYear !== getYearFromDatetime(ibpData[i].start_datetime)) {
+                currentYear = getYearFromDatetime(ibpData[i].start_datetime);
+                ibpYears.push(currentYear);
+            }
+
             if (ibpData[i].name === ibpMode) {
+                ibpYears.push(getYearFromDatetime(ibpData[i].start_datetime));
+
+                total = 0;
+
                 ibpData[i].elements.forEach((element, index) => {
-                    // Generate char data
-                    if (getMonthFromDatetime(element.datetime) === 12) {
-                        result.push(element.value);
-                        ibpYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    if (index === ibpData[i].elements.length - 1 && getMonthFromDatetime(element.datetime) !== 12) {
-                        result.push(element.value);
-                        ibpYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    $("#ibp_count").html(element.value);
+                    total += element.value;
                 });
+
+                $("#ibp_count").html(total);
+                yearCount.push(total);
 
                 fillIbpMonthBoxesByName(ibpData[i].elements, ibpYear);
             }
@@ -238,7 +239,7 @@ function processIbp(isChangeYearColor) {
     }
 
     ibpChart.updateSeries([
-        {data: result}
+        {data: yearCount}
     ]);
 
     if(isChangeYearColor) {
@@ -396,7 +397,14 @@ function getIbpTopFive() {
         const element = {}
 
         element.name = ibpData[i].name;
-        element.value = ibpData[i].elements[ibpData[i].elements.length - 1].value;
+
+        let total = 0;
+
+        ibpData[i].elements.forEach((element, index) => {
+            total += element.value;
+        });
+
+        element.value = total;
         element.checked = false;
 
         results.push(element);
@@ -477,7 +485,7 @@ function ibpRefresh() {
                 processIbp(true);
 
                 if (ibpData.length > 0) {
-                    $("#ibp_count").html(ibpData[ibpData.length - 1].elements[ibpData[ibpData.length - 1].elements.length - 1].value);
+                    $("#ibp_count").html(getRegionTotalCount(ibpData[ibpData.length - 1].elements));
                 } else {
                     $("#ibp_count").html(0);
                 }
@@ -502,6 +510,16 @@ function ibpRefresh() {
             showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
         }
     });
+}
+
+function getRegionTotalCount(yearMonthElements) {
+    let total = 0;
+
+    yearMonthElements.forEach((element, index) => {
+        total += element.value;
+    });
+
+    return total;
 }
 
 $(document).ready(function () {

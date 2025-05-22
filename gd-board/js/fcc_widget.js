@@ -152,7 +152,7 @@ var fccYears = [];
 var fccRegions = [];
 var fccYear;
 var fccMode = fccModeName;
-var fccStartYear = 2018;
+var fccStartYear = 2024;
 var fccAdmin = 0;
 
 const fccWidgetColor = "#0dcaf0";
@@ -196,13 +196,13 @@ function normalizeFccData() {
 }
 
 function processFcc(isChangeYearColor) {
-    fccYears = [];
-
-    let result = [];
+    fccYears = [2024];
+    let yearCount = [0];
+    let currentYear = 2024;
 
     clearFccMonthBoxesByName();
 
-    fccStartYear = getYearFromDatetime(fccData[0].start_datetime);
+    //fccStartYear = getYearFromDatetime(fccData[0].start_datetime);
     fccAdmin = fccData[0].is_admin;
 
     for(let i = 0; i < fccData.length; i++) {
@@ -211,21 +211,22 @@ function processFcc(isChangeYearColor) {
                 fccRegions.push(fccData[i].name);
             }
 
+            if(currentYear !== getYearFromDatetime(fccData[i].start_datetime)) {
+                currentYear = getYearFromDatetime(fccData[i].start_datetime);
+                fccYears.push(currentYear);
+            }
+
             if (fccData[i].name === fccMode) {
+                fccYears.push(getYearFromDatetime(fccData[i].start_datetime));
+
+                total = 0;
+
                 fccData[i].elements.forEach((element, index) => {
-                    // Generate char data
-                    if (getMonthFromDatetime(element.datetime) === 12) {
-                        result.push(element.value);
-                        fccYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    if (index === fccData[i].elements.length - 1 && getMonthFromDatetime(element.datetime) !== 12) {
-                        result.push(element.value);
-                        fccYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    $("#fcc_count").html(element.value);
+                    total += element.value;
                 });
+
+                $("#fcc_count").html(total);
+                yearCount.push(total);
 
                 fillFccMonthBoxesByName(fccData[i].elements, fccYear);
             }
@@ -233,7 +234,7 @@ function processFcc(isChangeYearColor) {
     }
 
     fccChart.updateSeries([
-        {data: result}
+        {data: yearCount}
     ]);
 
     if(isChangeYearColor) {
@@ -241,8 +242,7 @@ function processFcc(isChangeYearColor) {
 
         fccYears.forEach((element, index) => {
             if (element === fccYear) {
-                colors.push(fccWidgetColor
-                );
+                colors.push(fccWidgetColor);
             } else {
                 colors.push("black");
             }
@@ -391,7 +391,14 @@ function getFccTopFive() {
         const element = {}
 
         element.name = fccData[i].name;
-        element.value = fccData[i].elements[fccData[i].elements.length - 1].value;
+
+        let total = 0;
+
+        fccData[i].elements.forEach((element, index) => {
+            total += element.value;
+        });
+
+        element.value = total;
         element.checked = false;
 
         results.push(element);
@@ -409,8 +416,8 @@ function getFccTopFive() {
             if (!element.checked && element.value > maxValue) {
                 regionName = element.name;
                 regionValue = element.value;
-                maxIndex = index;
 
+                maxIndex = index;
                 maxValue = element.value;
             }
         });
@@ -421,7 +428,7 @@ function getFccTopFive() {
 
         top5List.push(result);
 
-        results[maxIndex].checked = true
+        results[maxIndex].checked = true;
     }
 
     const fccTop5Element = $("#fcc_top5");
@@ -472,7 +479,7 @@ function fccRefresh() {
                 processFcc(true);
 
                 if (fccData.length > 0) {
-                    $("#fcc_count").html(fccData[fccData.length - 1].elements[fccData[fccData.length - 1].elements.length - 1].value);
+                    $("#fcc_count").html(getRegionTotalCount(fccData[fccData.length - 1].elements));
                 } else {
                     $("#fcc_count").html(0);
                 }
@@ -495,6 +502,16 @@ function fccRefresh() {
             showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
         }
     });
+}
+
+function getRegionTotalCount(yearMonthElements) {
+    let total = 0;
+
+    yearMonthElements.forEach((element, index) => {
+        total += element.value;
+    });
+
+    return total;
 }
 
 $(document).ready(function () {

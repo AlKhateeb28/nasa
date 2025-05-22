@@ -196,9 +196,9 @@ function normalizeTrenData() {
 }
 
 function processTren(isChangeYearColor) {
-    trenYears = [];
-
-    let result = [];
+    trenYears = [2024];
+    let yearCount = [0];
+    let currentYear = 2024;
 
     clearTrenMonthBoxesByName();
 
@@ -211,21 +211,20 @@ function processTren(isChangeYearColor) {
                 trenRegions.push(trenData[i].name);
             }
 
+            if(currentYear !== getYearFromDatetime(trenData[i].start_datetime)) {
+                currentYear = getYearFromDatetime(trenData[i].start_datetime);
+                trenYears.push(currentYear);
+            }
+
             if (trenData[i].name === trenMode) {
+                total = 0;
+
                 trenData[i].elements.forEach((element, index) => {
-                    // Generate char data
-                    if (getMonthFromDatetime(element.datetime) === 12) {
-                        result.push(element.value);
-                        trenYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    if (index === trenData[i].elements.length - 1 && getMonthFromDatetime(element.datetime) !== 12) {
-                        result.push(element.value);
-                        trenYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    $("#tren_count").html(element.value);
+                    total += element.value;
                 });
+
+                $("#tren_count").html(total);
+                yearCount.push(total);
 
                 fillTrenMonthBoxesByName(trenData[i].elements, trenYear);
             }
@@ -233,7 +232,7 @@ function processTren(isChangeYearColor) {
     }
 
     trenChart.updateSeries([
-        {data: result}
+        {data: yearCount}
     ]);
 
     if(isChangeYearColor) {
@@ -391,7 +390,14 @@ function getTrenTopFive() {
         const element = {}
 
         element.name = trenData[i].name;
-        element.value = trenData[i].elements[trenData[i].elements.length - 1].value;
+
+        let total = 0;
+
+        trenData[i].elements.forEach((element, index) => {
+            total += element.value;
+        });
+
+        element.value = total;
         element.checked = false;
 
         results.push(element);
@@ -472,7 +478,7 @@ function trenRefresh() {
                 processTren(true);
 
                 if (trenData.length > 0) {
-                    $("#tren_count").html(trenData[trenData.length - 1].elements[trenData[trenData.length - 1].elements.length - 1].value);
+                    $("#tren_count").html(getRegionTotalCount(trenData[trenData.length - 1].elements));
                 } else {
                     $("#tren_count").html(0);
                 }
@@ -490,6 +496,8 @@ function trenRefresh() {
                 showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7421809736986544030</div>" +
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
             }
+
+            $("#wait").css("visibility", "hidden");
         },
         error: function() {
             $("#tren_wait").css("visibility", "hidden");
@@ -497,6 +505,16 @@ function trenRefresh() {
             showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
         }
     });
+}
+
+function getRegionTotalCount(yearMonthElements) {
+    let total = 0;
+
+    yearMonthElements.forEach((element, index) => {
+        total += element.value;
+    });
+
+    return total;
 }
 
 $(document).ready(function () {

@@ -268,9 +268,9 @@ function updateRckChartOptions(isChangeYearColor) {
 }
 
 function processRck(isChangeYearColor) {
-    rckYears = [];
-
-    let result = [];
+    rckYears = [2024];
+    let yearCount = [0];
+    let currentYear = 2024;
 
     clearRckMonthBoxesByName();
 
@@ -278,34 +278,34 @@ function processRck(isChangeYearColor) {
     rckAdmin = rckData[0].is_admin;
 
     for(let i = 0; i < rckData.length; i++) {
-
         if (parseInt(rckData[i].is_admin) == 1  ||  rckData[i].mode.indexOf(rckMode) > 0) {
             if (i < rckData.length - 1) {
                 rckRegions.push(rckData[i].name);
             }
 
+            if(currentYear !== getYearFromDatetime(rckData[i].start_datetime)) {
+                currentYear = getYearFromDatetime(rckData[i].start_datetime);
+                rckYears.push(currentYear);
+            }
+
             if (rckData[i].name === rckMode) {
+                rckYears.push(getYearFromDatetime(rckData[i].start_datetime));
+
+                total = 0;
+
                 rckData[i].elements.forEach((element, index) => {
-                    // Generate char data
-                    if (getMonthFromDatetime(element.datetime) === 12) {
-                        result.push(element.value);
-                        rckYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    if (index === rckData[i].elements.length - 1 && getMonthFromDatetime(element.datetime) !== 12) {
-                        result.push(element.value);
-                        rckYears.push(getYearFromDatetime(element.datetime));
-                    }
-
-                    $("#rck_count").html(element.value);
+                    total += element.value;
                 });
+
+                $("#rck_count").html(total);
+                yearCount.push(total);
 
                 fillRckMonthBoxesByName(rckData[i].elements, rckYear);
             }
         }
     }
 
-    updateRckChartSeries(result);
+    updateRckChartSeries(yearCount);
     updateRckChartOptions(isChangeYearColor);
 }
 
@@ -480,7 +480,14 @@ function getRckTopFive() {
         const element = {}
 
         element.name = rckData[i].name;
-        element.value = rckData[i].elements[rckData[i].elements.length - 1].value;
+
+        let total = 0;
+
+        rckData[i].elements.forEach((element, index) => {
+            total += element.value;
+        });
+
+        element.value = total;
         element.checked = false;
 
         results.push(element);
@@ -566,7 +573,7 @@ function rckRefresh() {
                 processRck(true);
 
                 if (rckData.length > 0) {
-                    $("#rck_count").html(rckData[rckData.length - 1].elements[rckData[rckData.length - 1].elements.length - 1].value);
+                    $("#rck_count").html(getRegionTotalCount(rckData[rckData.length - 1].elements));
                 } else {
                     $("#rck_count").html(0);
                 }
@@ -591,6 +598,16 @@ function rckRefresh() {
             showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
         }
     });
+}
+
+function getRegionTotalCount(yearMonthElements) {
+    let total = 0;
+
+    yearMonthElements.forEach((element, index) => {
+        total += element.value;
+    });
+
+    return total;
 }
 
 $(document).ready(function () {
