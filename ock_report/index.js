@@ -19,7 +19,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("Выгрузка ОЦК БНО сформирована!", "report_ock_2025/report_ock_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport("Выгрузка ОЦК сформирована!", "report_ock_2025/report_ock_" + getCurrentDate() + ".xlsx");
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7137494958071545430'");
@@ -47,6 +47,30 @@ class IndexPage extends Object {
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7151616261867663994'");
+
+                    console.log("Error: " + data.errorMessage.indexOf("#"));
+                }
+            },
+            error: function(error) {
+                IndexPage.onError();
+            }
+        });
+    }
+
+    static onDownloadRCK() {
+        IndexPage.beforeReport("Формируется выгрузка РЦК...");
+
+        $.ajax({
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7159099470552366682",
+            async: true,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if(data.errorMessage.indexOf("#") < 0) {
+                    IndexPage.afterReport("Выгрузка РЦКсформирована!", "report_ock_2025/report_rck_" + getCurrentDate() + ".xlsx");
+                } else {
+                    messageElement.css("color", "hotpink");
+                    messageElement.html("Ошибка! Подробности в логе 'agent_7159099470552366682'");
 
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
