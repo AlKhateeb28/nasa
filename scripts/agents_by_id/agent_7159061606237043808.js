@@ -147,7 +147,13 @@ if (LdsIsServer) {
                 reportString.AppendStr("<td>" + (data.cert_date == "" ? "" : StrDate(Date(data.cert_date), false, false)) + "</td>");
 
                 if(dossierDocTE.rcc_pr_qualification != null) {
-                    reportString.AppendStr("<td style='text-align: center;'>Да</td>");
+                    qualificationDoc = tools.open_doc(dossierDocTE.rcc_pr_qualification);
+
+                    if(qualificationDoc != undefined) {
+                        reportString.AppendStr("<td style='text-align: center;'>" + qualificationDoc.TopElem.custom_elems.ObtainChildByKey("f_l99s").value + "</td>");
+                    } else {
+                        reportString.AppendStr("<td style='text-align: center;'>Не найдена</td>");
+                    }
                 } else {
                     reportString.AppendStr("<td style='text-align: center;'>Нет</td>");
                 }
@@ -156,7 +162,13 @@ if (LdsIsServer) {
                 reportString.AppendStr("<td style='text-align: center;'>" + ArrayCount(dossierDocTE.rcc_tren_programss) + "</td>");
 
                 if(dossierDocTE.rcc_tren_qualification != null) {
-                    reportString.AppendStr("<td style='text-align: center;'>Да</td>");
+                    qualificationDoc = tools.open_doc(dossierDocTE.rcc_tren_qualification);
+
+                    if(qualificationDoc != undefined) {
+                        reportString.AppendStr("<td style='text-align: center;'>" + qualificationDoc.TopElem.custom_elems.ObtainChildByKey("f_l99s").value + "</td>");
+                    } else {
+                        reportString.AppendStr("<td style='text-align: center;'>Не найдена</td>");
+                    }
                 } else {
                     reportString.AppendStr("<td style='text-align: center;'>Нет</td>");
                 }
@@ -165,7 +177,13 @@ if (LdsIsServer) {
                 reportString.AppendStr("<td style='text-align: center;'>" + ArrayCount(dossierDocTE.rcc_dc_programss) + "</td>");
 
                 if(dossierDocTE.rcc_dc_qualification != null) {
-                    reportString.AppendStr("<td style='text-align: center;'>Да</td>");
+                    qualificationDoc = tools.open_doc(dossierDocTE.rcc_dc_qualification);
+
+                    if(qualificationDoc != undefined) {
+                        reportString.AppendStr("<td style='text-align: center;'>" + qualificationDoc.TopElem.custom_elems.ObtainChildByKey("f_l99s").value + "</td>");
+                    } else {
+                        reportString.AppendStr("<td style='text-align: center;'>Не найдена</td>");
+                    }
                 } else {
                     reportString.AppendStr("<td style='text-align: center;'>Нет</td>");
                 }
@@ -174,7 +192,13 @@ if (LdsIsServer) {
                 reportString.AppendStr("<td style='text-align: center;'>" + ArrayCount(dossierDocTE.rcc_ui_programss) + "</td>");
 
                 if(dossierDocTE.rcc_ui_qualification != null) {
-                    reportString.AppendStr("<td style='text-align: center;'>Да</td>");
+                    qualificationDoc = tools.open_doc(dossierDocTE.rcc_ui_qualification);
+
+                    if(qualificationDoc != undefined) {
+                        reportString.AppendStr("<td style='text-align: center;'>" + qualificationDoc.TopElem.custom_elems.ObtainChildByKey("f_l99s").value + "</td>");
+                    } else {
+                        reportString.AppendStr("<td style='text-align: center;'>Не найдена</td>");
+                    }
                 } else {
                     reportString.AppendStr("<td style='text-align: center;'>Нет</td>");
                 }
