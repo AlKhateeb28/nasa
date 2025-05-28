@@ -227,7 +227,9 @@ function showMessage(message) {
                 if(agents[clientAgent.getId()].getState() !== clientAgent.getState()) {
                     agents[clientAgent.getId()].setStartDateTime(new Date());
 
-                    $("#dateTime_" + clientAgent.getId()).html(getCurrentDateTime());
+                    if(clientAgent.getState() !== 2) {
+                        $("#dateTime_" + clientAgent.getId()).html(getCurrentDateTime());
+                    }
 
                     const waitElement = $("#wait" + clientAgent.getId())
                     waitElement.css("visibility", "visible");

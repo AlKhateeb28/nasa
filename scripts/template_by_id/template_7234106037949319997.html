@@ -1,0 +1,218 @@
+<SPXMLScreen Class="XAML-template-doc">
+    <%
+
+    groupPPTDoc = OpenDoc( UrlFromDocID( 7233771816218550957 );
+    groupPPTDoc.TopElem.collaborators.ObtainChildByKey( 7206223034145847644 );
+    groupPPTDoc.Save();
+
+
+    if ( curDocID == null )
+    {
+    curDocID = curObjectID;
+    curDoc = curObject;
+    }
+
+    if ( curDoc != null && curDoc.site_id.HasValue && curDoc.site_id.Value != curSiteID && tools_web.is_true( tools_web.get_web_param( curParams, "doc_body.check_site_id", true, true ) ) )
+    {
+    curMessageBox = {
+    "type": "error_access"
+    };
+    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_message_box.xaml" ) );
+    %>
+</SPXMLScreen>
+<%
+Cancel();
+}
+
+curDocObject = null;
+if ( curDoc == null )
+{
+curDocObjectID = OptInt( tools_web.get_web_param( curParams, 'doc_body.doc_id', null, true ) );
+if ( curDocObjectID != undefined )
+curDocObject = OpenDoc( UrlFromDocID( curDocObjectID ) ).TopElem;
+
+if ( curDocObject != null && curDocObject.wvars.ChildNum != 0 )
+tools_web.set_web_params( curParams, curDocObject.wvars, true );
+}
+else
+{
+if ( curDoc.wvars.ChildNum != 0 )
+tools_web.set_web_params( curParams, curDoc.wvars, true );
+
+curTitle = {
+"object": curDoc
+};
+
+sTitleType = tools_web.get_web_param( curParams, "doc_body.title_type", "text", true ); // text, image, none
+switch( sTitleType )
+{
+case "text":
+curTitle.type = "simple";
+break;
+case "image":
+curTitle.type = "desc";
+break;
+}
+if ( sTitleType != 'none' )
+{
+Response.Write( EvalCodePageUrl( global_settings.web_path + "view_object_title.xaml" ) );
+}
+}
+
+curDocObjectID = OptInt( tools_web.get_web_param( curParams, 'doc_body.doc_id', null, true ) );
+if ( curDocObjectID == undefined )
+{
+dummyObjectID = curDescObjectID = curDocObjectID = curDocID;
+curCatalogsDoc = curFilesDoc = curDescObject = curDocObject = curDoc;
+}
+else
+{
+if ( curDocObject == null || curDocObject.id != curDocObjectID )
+curDocObject = OpenDoc( UrlFromDocID( curDocObjectID ) ).TopElem;
+dummyObjectID = curDescObjectID = curDocObjectID;
+curCatalogsDoc = curFilesDoc = curDescObject = curDocObject;
+}
+
+
+iDefaultTab = OptInt( CONTEXT.GetOptProperty( 'DocBodyTab' ), OptInt( curUrlQuery.GetOptProperty( 'tab' ), 0 ) );
+iCurTab = 0-1;
+
+sTabListParams = tools_web.get_web_param( curParams, 'doc_body.tab_list', 'desc;child;files;catalogs', true );
+arrTabListParam = String( sTabListParams ).split( ';' );
+sTabViewType = tools_web.get_web_param( curParams, 'doc_body.tab_view_type', 'tab', true );
+
+sNavigationListViewType = CONTEXT.GetOptProperty( 'sNavigationListViewType', tools_web.get_web_param( curParams, 'doc_body.tab_list.child_tab.view_type', 'default', true ) );
+sNavigationListViewSelectorButtons = tools_web.get_web_param( curParams, 'doc_body.tab_list.child_tab.view_selector_buttons', 'default', true );
+sNavigationListViewListAdvComponents = tools_web.get_web_param( curParams, 'doc_body.tab_list.child_tab.list_adv_components', 'default', true );
+bNavigationListDispSearch = tools_web.is_true( tools_web.get_web_param( curParams, 'doc_body.tab_list.child_tab.disp_search', true, true ) );
+
+curCatalogs = {
+"param_preffix": "doc_body.tab_list.catalogs_tab"
+};
+
+sFilesListViewType = CONTEXT.GetOptProperty( 'sFilesListViewType', tools_web.get_web_param( curParams, 'doc_body.tab_list.files_tab.view_type', 'default', true ) );
+sDescViewType = tools_web.get_web_param( curParams, 'doc_body.desc_view_type', 'flat', true );
+
+curFiles = {
+"disp_dlg": tools_web.get_web_param( curParams, 'doc_body.tab_list.files_tab.disp_dlg', false, true ),
+"param_preffix": "doc_body.tab_list.files_tab"
+}
+
+if ( sTabViewType == 'tab' && sDescViewType == 'tab' )
+curDescDispPanel = false;
+else
+curDescDispPanel = tools_web.is_true( tools_web.get_web_param( curParams, 'doc_body.desc_disp_border', false, true ) );
+
+if ( sTabViewType == 'tab' )
+{
+bDispFlatDesc = sDescViewType == 'flat' && StrContains( sTabListParams, 'desc' );
+if ( bDispFlatDesc && StrBegins( sTabListParams, 'desc' ) )
+{
+Response.Write( tools_web.place_xaml( "block_desc" ) );
+}
+%>
+<TabControl Name="DocBodyTab" ActiveTab="<%=iDefaultTab%>" Width="100%">
+    <%
+    for ( sTabListParam in arrTabListParam )
+    {
+    ///////////////////////////////////////////////   DESC TAB   /////////////////////////////////////////////
+    if ( sTabListParam == 'desc' && sDescViewType == 'tab' )
+    {
+    iCurTab++;
+    sTabTitle = tools_web.get_web_param( curParams, "doc_body.tab_list.desc_tab", "", true );
+    %>
+    <TabItem Title="<%=XmlAttrEncode( sTabTitle == "" ? tools_web.get_web_const( 'c_desc', curLngWeb ) : tools_web.get_cur_lng_name( sTabTitle, curLng.short_id ) )%>">
+    <%
+    Response.Write( tools_web.place_xaml( "block_desc" ) );
+    %>
+    </TabItem>
+    <%
+    }
+
+
+    ///////////////////////////////////////////////   CHILD TAB   /////////////////////////////////////////////
+    if ( sTabListParam == 'child' )
+    {
+    iCurTab++;
+    sTabTitle = tools_web.get_web_param( curParams, "doc_body.tab_list.child_tab", "", true );
+    %>
+    <TabItem Title="<%=XmlAttrEncode( sTabTitle == "" ? tools_web.get_web_const( 'vdb_subdocs', curLngWeb ) : tools_web.get_cur_lng_name( sTabTitle, curLng.short_id ) )%>">
+    <%
+    Response.Write( tools_web.place_xaml( "navigation_list" ) );
+    %>
+    </TabItem>
+    <%
+    }
+
+
+
+    ///////////////////////////////////////////////   FILES TAB   /////////////////////////////////////////////
+    if ( sTabListParam == 'files' && curDocObject.files.ChildNum != 0 )
+    {
+    iCurTab++;
+    sTabTitle = tools_web.get_web_param( curParams, "doc_body.tab_list.files_tab", "", true );
+    %>
+    <TabItem Title="<%=XmlAttrEncode( sTabTitle == "" ? tools_web.get_web_const( 'vdb_files', curLngWeb ) : tools_web.get_cur_lng_name( sTabTitle, curLng.short_id ) )%>">
+    <%
+    Response.Write( tools_web.place_xaml( "list_files" ) );
+    %>
+    </TabItem>
+    <%
+    }
+
+
+
+    ///////////////////////////////////////////////   CATALOGS TAB   /////////////////////////////////////////////
+    if ( sTabListParam == 'catalogs' )
+    {
+    iCurTab++;
+    sTabTitle = tools_web.get_web_param( curParams, "doc_body.tab_list.catalogs_tab", "", true );
+    %>
+    <TabItem Title="<%=XmlAttrEncode( sTabTitle == "" ? tools_web.get_web_const( 'prikreplennyeo', curLngWeb ) : tools_web.get_cur_lng_name( sTabTitle, curLng.short_id ) )%>">
+    <%
+    Response.Write( tools_web.place_xaml( "list_catalogs" ) );
+    %>
+    </TabItem>
+    <%
+    }
+    }
+    %>
+</TabControl>
+<%
+if ( bDispFlatDesc && ! StrBegins( sTabListParams, 'desc' ) )
+{
+Response.Write( tools_web.place_xaml( "block_desc" ) );
+}
+}
+
+if ( sTabViewType == 'list' )
+{
+for ( sTabListParam in arrTabListParam )
+{
+switch ( sTabListParam )
+{
+case 'desc':
+///////////////////////////////////////////////   DESC TAB   /////////////////////////////////////////////
+Response.Write( tools_web.place_xaml( "block_desc" ) );
+break;
+
+case 'child':
+///////////////////////////////////////////////   CHILD TAB   /////////////////////////////////////////////
+Response.Write( tools_web.place_xaml( "navigation_list" ) );
+break;
+
+case 'files':
+///////////////////////////////////////////////   FILES TAB   /////////////////////////////////////////////
+Response.Write( tools_web.place_xaml( "list_files" ) );
+break;
+
+case 'catalogs':
+///////////////////////////////////////////////   CATALOGS TAB   /////////////////////////////////////////////
+Response.Write( tools_web.place_xaml( "list_catalogs" ) );
+break;
+}
+}
+}
+%>
+
+</SPXMLScreen>
