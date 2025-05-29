@@ -28,7 +28,7 @@ class IndexPage extends Object {
                 }
             },
             error: function(error) {
-                IndexPage.onError();
+                IndexPage.onError(7137494958071545430);
             }
         });
     }
@@ -52,7 +52,7 @@ class IndexPage extends Object {
                 }
             },
             error: function(error) {
-                IndexPage.onError();
+                IndexPage.onError(7151616261867663994);
             }
         });
     }
@@ -76,7 +76,7 @@ class IndexPage extends Object {
                 }
             },
             error: function(error) {
-                IndexPage.onError();
+                IndexPage.onError(7159099470552366682);
             }
         });
     }
@@ -110,11 +110,13 @@ class IndexPage extends Object {
         setTimeout(IndexPage.hideMessageBox, 15000);
     }
 
-    static onError() {
+    static onError(id) {
         $("#loader").css("visibility", "hidden");
 
+        const messageElement = $("#message");
+
         messageElement.css("color", "hotpink");
-        messageElement.html("Системная ошибка!");
+        messageElement.html("Системная ошибка! Смотрите лог шаблона документа " + id);
 
         console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
     }
