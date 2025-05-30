@@ -124,7 +124,7 @@ if (LdsIsServer) {
             "         LEFT JOIN [WTDB].[dbo].orgs os ON ds.subdivision_inn = os.code " +
             "         LEFT JOIN [WTDB].[dbo].org o ON os.id = o.id " +
             "         LEFT JOIN [WTDB].[dbo].collaborators cs ON ds.student_id = cs.id " +
-            " WHERE o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') = 1 " +
+            " WHERE o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 1 " +
             "       OR o.data.value('(//custom_elems/custom_elem[name=''is_ock_bno'']/value)[1]', 'bit') = 1 " +
             " ORDER BY fio  "));
 
