@@ -1,19 +1,37 @@
 <SPXMLScreen>
     <%
+    // 7379865894595348650
+    // Related to 7161947550370233006
+
     function isRegionVisible() {
-    // 6743923349751162819 FK
-    // 6940257832121737591 RE
-    // 7056951664027461636 SE
-    // 7351734047845980789 AA
-    if(curUserID == 6743923349751162819 || curUserID == 6940257832121737591 || curUserID == 7056951664027461636) {
-    return true;
+        // 6743923349751162819 FK
+        // 6940257832121737591 RE
+        // 7056951664027461636 SE
+        // 7351734047845980789 AA
+        if(curUserID == 6743923349751162819 || curUserID == 6940257832121737591 || curUserID == 7056951664027461636 || curUserID == 7351734047845980789) {
+            return true;
+        }
+
+        if(result.id == organisationTE.custom_elems.ObtainChildByKey("fact_region_id").value) {
+            return true;
+        }
+
+        return false;
     }
 
-    if(result.id == organisationTE.custom_elems.ObtainChildByKey("fact_region_id").value) {
-    return true;
-    }
+    function isOutcast(regionId) {
+        outcastList = [];
 
-    return false;
+        outcastList.push(6659322042133322565); // Тюменская область
+        outcastList.push(6652240967037451456); // Калужская область
+
+        for(i = 0; i < ArrayCount(outcastList); i++) {
+            if(OptInt(regionId) == outcastList[i]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     var regionsList = [];
@@ -123,7 +141,18 @@
             <HTMLBox>
                 <![CDATA[
                 <div class="row region-link" onclick="document.getElementById('a_<%=result.reportId%>').click();">
-                    <%=result.name%><a id="a_<%=result.reportId%>" class="region-link" href="_wt/custom_report/<%=result.reportId%>" target="_blank" style="display: none;"></a>
+                    <%
+                        if(!isOutcast(result.id)) {
+                        //if(OptInt(result.id) != 6659322042133322565) {
+                    %>
+                        <%=result.name%><a id="a_<%=result.reportId%>" class="region-link" href="_wt/custom_report/<%=result.reportId%>" target="_blank" style="display: none;"></a>
+                    <%
+                        } else {
+                    %>
+                        <%=result.name%><a id="a_<%=result.reportId%>" class="region-link" href="custom_web_template.html?object_id=7161947550370233006&region_id=<%=result.id%>" target="_blank" style="display: none;"></a>
+                    <%
+                        }
+                    %>
                 </div>
                 ]]>
             </HTMLBox>
