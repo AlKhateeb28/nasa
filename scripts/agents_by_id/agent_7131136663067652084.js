@@ -101,7 +101,7 @@ try {
         " FROM [WTDB].[dbo].cc_dossier_rcc_employees ds " +
         "    INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employee d ON ds.id = d.id " +
         "    LEFT JOIN [WTDB].[dbo].orgs os ON ds.subdivision_inn = os.code " +
-        "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id AND o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') = 1 " +
+        "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id AND o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 1 " +
         "    LEFT JOIN [WTDB].[dbo].collaborators cs ON ds.student_id = cs.id " +
         " ORDER BY fio "));
 
