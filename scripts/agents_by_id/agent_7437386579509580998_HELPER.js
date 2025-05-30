@@ -79,6 +79,7 @@ function upWithNoRightFlag() {
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''With_no_right''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''With_no_right'']/value)[1]', 'bit') AS INT)) AS with_no_right, " +
         "           o.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'varchar(max)') AS format_part, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_rck''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') AS INT)) AS is_rck, " +
+        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_ock''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') AS INT)) AS is_ock, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_roiv''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') AS INT)) AS is_roiv, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_partner''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_partner'']/value)[1]', 'bit') AS INT)) AS is_partner, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_fcc''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'bit') AS INT)) AS is_fcc " +
@@ -92,6 +93,7 @@ function upWithNoRightFlag() {
         " FROM _view " +
         " WHERE format_part IS NULL " +
         "    AND is_rck = 0 " +
+        "    AND is_ock = 0 " +
         "    AND is_roiv = 0 " +
         "    AND is_partner = 0 " +
         "    AND is_fcc = 0 " +
@@ -171,6 +173,7 @@ function clearSpecialFlags() {
         "           o.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'varchar(max)') AS format_part, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_project_ended''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_project_ended'']/value)[1]', 'bit') AS INT)) AS is_project_ended, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_rck''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') AS INT)) AS is_rck, " +
+        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_ock''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') AS INT)) AS is_ock, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_roiv''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') AS INT)) AS is_roiv, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_partner''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_partner'']/value)[1]', 'bit') AS INT)) AS is_partner " +
         "    FROM [WTDB].[dbo].collaborators cs " +
@@ -185,6 +188,7 @@ function clearSpecialFlags() {
         "       AND ((format_part IS NOT NULL " +
         "       AND format_part != '') " +
         "       OR is_rck > 0 " +
+        "       OR is_ock > 0 " +
         "       OR is_roiv > 0 " +
         "       OR is_partner > 0) " +
         " GROUP BY org_id "));
@@ -205,6 +209,7 @@ function clearSpecialFlags() {
         if (orgDoc != undefined) {
             orgDoc.TopElem.custom_elems.ObtainChildByKey("format_part").value = "";
             orgDoc.TopElem.custom_elems.ObtainChildByKey("is_rck").value = "false";
+            orgDoc.TopElem.custom_elems.ObtainChildByKey("is_ock").value = "false";
             orgDoc.TopElem.custom_elems.ObtainChildByKey("is_roiv").value = "false";
             orgDoc.TopElem.custom_elems.ObtainChildByKey("is_partner").value = "false";
             orgDoc.TopElem.custom_elems.ObtainChildByKey("in_program").value = "false";
