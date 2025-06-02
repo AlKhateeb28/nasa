@@ -19,7 +19,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("outcast_report/participant_report_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport("Reports/outcast_report/participant_report_" + getCurrentDate() + ".xlsx");
                 } else {
                     const messageElement = $("#message");
 
