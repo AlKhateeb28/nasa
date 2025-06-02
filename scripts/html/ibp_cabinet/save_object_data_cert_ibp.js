@@ -266,7 +266,7 @@ function createDossier(personId, isSelection, selectionDate) {
         dossierDocTE.phone = personData[0].phone;
         dossierDocTE.trainer_type = "ИБП";
         dossierDocTE.finish_date = selectionDate;
-        dossierDocTE.result_selection = "пройден";
+        dossierDocTE.fact_trained = "да";
 
         dossierDoc.Save();
     }
