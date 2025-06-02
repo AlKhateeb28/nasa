@@ -14,7 +14,8 @@ function getEventData(personId, educationMethodId, isAssessment) {
         "   INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
         "   INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id " +
         " WHERE ers.person_id = " + personId +
-        "   AND es.education_method_id = " + educationMethodId));
+        "   AND es.education_method_id = " + educationMethodId +
+        " ORDER BY es.start_date DESC"));
 
     if(ArrayCount(resultList) > 0) {
         if(isAssessment) {
@@ -27,8 +28,12 @@ function getEventData(personId, educationMethodId, isAssessment) {
             }
         }
 
-        if(resultList[0].start_date != "") {
-            result.startDate = StrDate(resultList[0].start_date, false, false);
+        if(resultList[0].start_date != null) {
+            if(resultList[0].start_date <= Date()) {
+                result.startDate = StrDate(resultList[0].start_date, false, false);
+            } else {
+                result.startDate = "Запланировано";
+            }
         }
     }
 
