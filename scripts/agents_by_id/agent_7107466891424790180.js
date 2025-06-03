@@ -89,6 +89,20 @@ function addGroups(id) {
     indOrderCardDoc.Save();
 
     addLogMessage(loggerName, "[agent.id: " + agentId + "] addGroups. Сохранили indOrderCard");
+
+    if(indOrderCardTE.org_id != null && indOrderCardTE.start_date != null && indOrderCardTE.finish_date != null) {
+        orgDoc = tools.open_doc(indOrderCardTE.org_id);
+
+        if(orgDoc != undefined) {
+            if(indOrderCardTE.start_date <= Date() && Date() <= indOrderCardTE.finish_date) {
+                orgDoc.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "true";
+
+                orgDoc.Save();
+            }
+        } else {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Organization with ID " + indOrderCardTE.org_id + " is not exist!");
+        }
+    }
 }
 
 function bossPanel(id) {

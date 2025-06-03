@@ -146,6 +146,20 @@ if (!LdsIsServer) {
                 indOrderCardTE.status = "Заказ исполнен";
                 indOrderCardDoc.Save();
 
+                if(indOrderCardTE.org_id != null && indOrderCardTE.finish_date != null) {
+                    orgDoc = tools.open_doc(indOrderCardTE.org_id);
+
+                    if(orgDoc != undefined) {
+                        if(Date() > indOrderCardTE.finish_date) {
+                            orgDoc.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "false";
+
+                            orgDoc.Save();
+                        }
+                    } else {
+                        addLogMessage(loggerName, "[agent.id: " + agentId + "] Organization with ID " + indOrderCardTE.org_id + " is not exist!");
+                    }
+                }
+
                 removeCondition(tools.open_doc(7247017380757573251), indOrderCard.org_id);
                 removeCondition(tools.open_doc(7247026493378216428), indOrderCard.org_id);
             } else {
