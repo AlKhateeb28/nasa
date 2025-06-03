@@ -89,7 +89,7 @@ if (LdsIsServer) {
             "    LEFT JOIN [WTDB].[dbo].collaborators cs ON doss.student_id = cs.id " +
             "    INNER JOIN [WTDB].[dbo].orgs os ON doss.subdivision_name = os.id " +
             "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id AND o.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'bit') = 1 " +
-            "    INNER JOIN [WTDB].[dbo].regions rs ON os.region_id = rs.id " +
+            "    INNER JOIN [WTDB].[dbo].regions rs ON o.data.value('(//custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = rs.id " +
             "    LEFT JOIN [WTDB].[dbo].positions ps ON cs.position_id = ps.id " +
             "    LEFT JOIN [WTDB].[dbo].event_results ers ON doss.rcc_rp_cert = ers.id " +
             "    LEFT JOIN [WTDB].[dbo].event_result er ON ers.id = er.id "));
