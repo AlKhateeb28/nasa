@@ -2,6 +2,10 @@
 // 7137494958071545430
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
+function getDateWithoutTime(datetime) {
+    return Date(StrDate(datetime, false, false));
+}
+
 function getEventData(personId, educationMethodId, isAssessment) {
     result = {};
     result.eventResult = "";
@@ -15,7 +19,8 @@ function getEventData(personId, educationMethodId, isAssessment) {
         "   INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
         "   INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id " +
         " WHERE ers.person_id = " + personId +
-        "   AND es.education_method_id = " + educationMethodId));
+        "   AND es.education_method_id = " + educationMethodId +
+        " ORDER BY es.start_date DESC"));
 
     if(ArrayCount(resultList) > 0) {
         if(isAssessment) {
@@ -28,8 +33,12 @@ function getEventData(personId, educationMethodId, isAssessment) {
             }
         }
 
-        if(resultList[0].start_date != "") {
+        if(resultList[0].start_date != null) {
             result.startDate = StrDate(resultList[0].start_date, false, false);
+
+            if(getDateWithoutTime(resultList[0].start_date) > getDateWithoutTime(Date())) {
+                result.eventResult = "Запланировано";
+            }
         }
     }
 
@@ -102,13 +111,13 @@ try {
         "    ds.date_selection, " +
         "    ds.date_position, " +
         "    '' AS training_type, " +
-        "    '' AS isInGroup " +
+        "    '' AS isInGroup, " +
+        "    ds.dismiss_date " +
         " FROM [WTDB].[dbo].cc_dossier_rcc_employees ds " +
         "    INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employee d ON ds.id = d.id " +
         "    LEFT JOIN [WTDB].[dbo].orgs os ON ds.subdivision_inn = os.code " +
-        "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
+        "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id AND o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 1 " +
         "    LEFT JOIN [WTDB].[dbo].collaborators cs ON ds.student_id = cs.id " +
-        " WHERE o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 1 " +
         " ORDER BY fio "));
 
     total = ArrayCount(dataList);
@@ -198,6 +207,8 @@ try {
     reportString.AppendStr("<th class='header'>ТЛП дата статус</th>");
     reportString.AppendStr("<th class='header'>Серт_АМ дата дата</th>");
     reportString.AppendStr("<th class='header'>Серт_АМ дата статус</th>");
+    reportString.AppendStr("<th class='header'>Дата увольнения</th>");
+
     reportString.AppendStr("</tr>");
 
     reportString.AppendStr("<tr>");
@@ -357,6 +368,8 @@ try {
             certificateData = getCertificationData( data.student_id, 7131096832623867767);
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
+            // dismiss_date
+            reportString.AppendStr("<td class='align-center'>" + (data.dismiss_date == null ? "" : StrDate(data.dismiss_date, false, false))  + "</td>");
 
             reportString.AppendStr("</tr>");
         } else {
