@@ -242,7 +242,7 @@ if (LdsIsServer) {
         // SAVE EXCEL FILE
         reportString.AppendStr("</table></html>");
         excel.LoadHtmlString(reportString.GetStr(), "");
-        excel.SaveAs("E:/Websoft/Reports/report_ock_2025/col_ock_" + ParseDate(Date()) + ".xlsx");
+        excel.SaveAs("E:/Websoft/Reports/report_col_ock_rck/col_ock_" + ParseDate(Date()) + ".xlsx");
 
         agent.state = 1;
         agent.processed = processed;
