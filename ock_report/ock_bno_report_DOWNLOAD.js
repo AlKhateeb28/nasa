@@ -102,7 +102,8 @@ try {
         "    ds.date_selection, " +
         "    ds.date_position, " +
         "    '' AS training_type, " +
-        "    '' AS isInGroup " +
+        "    '' AS isInGroup, " +
+        "    ds.dismiss_date " +
         " FROM [WTDB].[dbo].cc_dossier_rcc_employees ds " +
         "    INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employee d ON ds.id = d.id " +
         "    LEFT JOIN [WTDB].[dbo].orgs os ON ds.subdivision_inn = os.code " +
@@ -199,6 +200,7 @@ try {
     reportString.AppendStr("<th class='header'>ТТ_РТК дата статус</th>");
     reportString.AppendStr("<th class='header'>Серт_РП_БНО дата дата</th>");
     reportString.AppendStr("<th class='header'>Серт_РП_БНО дата статус</th>");
+    reportString.AppendStr("<th class='header'>Дата увольнения</th>");
     reportString.AppendStr("</tr>");
 
     reportString.AppendStr("<tr>");
@@ -362,6 +364,8 @@ try {
             certificateData = getCertificationData( data.student_id, 7143846913328314346);
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
+            // dismiss_date
+            reportString.AppendStr("<td class='align-center'>" + (data.dismiss_date == null ? "" : StrDate(data.dismiss_date, false, false))  + "</td>");
 
             reportString.AppendStr("</tr>");
         } else {
