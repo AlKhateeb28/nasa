@@ -103,7 +103,7 @@ try {
         result.block2Data.push(element);
     }
 
-    // Block3 (Размещено курсов)
+    // Block3 (Назначено)
     block3List = ArrayDirect(XQuery("sql: " +
         " SELECT YEAR(courses.start_usage_date) AS year, COUNT(courses.id) AS cnt " +
         " FROM [WTDB].[dbo].active_learnings courses " +
@@ -123,7 +123,7 @@ try {
         result.block3Data.push(element);
     }
 
-    // Block4 (Размещено курсов)
+    // Block4 (Назначено)
     block4List = ArrayDirect(XQuery("sql: " +
         " SELECT YEAR(courses.start_usage_date) AS year, COUNT(courses.id) AS cnt " +
         " FROM [WTDB].[dbo].active_learnings courses " +
