@@ -168,7 +168,7 @@ try {
         // SAVE EXCEL FILE
         reportString.AppendStr("</table></html>");
         excel.LoadHtmlString(reportString.GetStr(), "");
-        excel.SaveAs("E:/Websoft/Reports/import/person_to_library_" + ParseDate(Date()) + ".xlsx");
+        excel.SaveAs("E:/Websoft/Reports/import_bibl/person_to_library_" + ParseDate(Date()) + ".xlsx");
 
         reservedGroupDoc = tools.open_doc(7164400604808986532);
 
