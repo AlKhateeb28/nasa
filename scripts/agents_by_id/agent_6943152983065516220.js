@@ -30,78 +30,61 @@ if (LdsIsServer) {
         var excel = new ActiveXObject("Websoft.Office.Excel.Document");
         var reportString = new Binary();
 
-        extraCondition = ( Param.with_muc == '0' ) ? " AND collaborators.code NOT LIKE '%_muc%' " : "";
+        extraCondition = ( Param.with_muc == '0' ) ? " AND cs.code NOT LIKE '%_muc%' " : "";
 
-        dataList = ArraySelectAll( XQuery( "sql:
-        SET DATEFORMAT dmy;
-        DECLARE @date_from datetime = '" + fromDate + "';
-        DECLARE @date_to datetime = '" + toDate + "';
+        dataList = ArraySelectAll( XQuery( "sql: " +
+            " SET DATEFORMAT dmy; " +
+            " DECLARE @date_from " + "datetime = '" + fromDate + "';" +
+            " DECLARE @date_to " + "datetime = '" + toDate + "';" +
+            " " +
+            " SELECT CONCAT( '''', cs.id ) AS PK," +
+            "       cs.code AS col_code," +
+            "       cs.fullname AS col_fullname," +
+            "       cs.login AS col_login," +
+            "       cs.email AS col_email," +
+            "       c.data.value('(collaborator/system_email)[1]', 'varchar(max)') AS col_system_email," +
+            "       cs.position_name AS position_name," +
+            "       orgs.name AS o_name," +
+            "       CONCAT( '''', orgs.code ) AS o_inn," +
+            "       CASE" +
+            "           WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') = 'true' THEN '+'" +
+            "           ELSE '-'" +
+            "           END AS is_rck" +
+            "        , CASE" +
+            "              WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_roiv''])[1]/value[1]', 'varchar(max)') = 'true' THEN '+'" +
+            "              ELSE '-'" +
+            "           END AS is_roiv" +
+            "        , CASE" +
+            "              WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_partner''])[1]/value[1]', 'varchar(max)') = 'true' THEN '+'" +
+            "              ELSE '-'" +
+            "           END AS is_partner" +
+            "        , org.data.value('(org/custom_elems/custom_elem[name=''format_part''])[1]/value[1]', 'varchar(max)') AS format_part" +
+            "        , org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') AS fact_region_id" +
+            "        ,CASE" +
+            "             WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_past_member''])[1]/value[1]', 'varchar(max)') = 'true' THEN 'Да'" +
+            "             ELSE 'Нет'" +
+            "           END AS is_past_member" +
+            "        ,CASE" +
+            "             WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_project_ended''])[1]/value[1]', 'varchar(max)') = 'true' THEN 'Да'" +
+            "             ELSE 'Нет'" +
+            "           END AS is_project_ended," +
+            "       c.created AS col_created," +
+            "       c.data.value('(collaborator/custom_elems/custom_elem[name=''guid''])[1]/value[1]', 'varchar(max)') AS guid," +
+            "       c.data.value('(collaborator/doc_info/creation/user_login)[1]', 'varchar(max)') AS col_created_by," +
+            "       cs.modification_date AS col_modificated," +
+            "       regions.code AS region_code," +
+            "       regions.name AS region_name," +
+            "       '' AS ar_id," +
+            "       '' AS ar_name," +
+            "       cs.is_dismiss" +
+            " FROM [WTDB].[dbo].collaborators cs" +
+            "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id" +
+            "         INNER JOIN [WTDB].[dbo].orgs ON orgs.id = cs.org_id" +
+            "         INNER JOIN [WTDB].[dbo].org ON org.id = orgs.id" +
+            "         INNER JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id" +
+            " WHERE c.created BETWEEN @date_from AND @date_to" + extraCondition));
 
-        WITH withtable1 AS (
-            SELECT
-        CONVERT(xml,(data )) as xml_data
-        FROM [(spxml_blobs)]
-        WHERE url like '%access_roles%'
-    )
-        SELECT
-        T.Loc.value('(id)[1]', 'varchar(max)') AS ar_id,
-            T.Loc.value('(name)[1]', 'varchar(max)') AS ar_name
-        INTO [WTDB].[dbo].#TempTable1
-        FROM withtable1 AS wt1
-        CROSS APPLY
-        wt1.xml_data.nodes('./access_roles/access_role') AS T(Loc);
-
-        SELECT CONCAT( '''', cs.id ) AS PK,
-            cs.code AS col_code,
-            cs.fullname AS col_fullname,
-            cs.login AS col_login,
-            cs.email AS col_email,
-            cs.data.value('(collaborator/system_email)[1]', 'varchar(max)') AS col_system_email,
-            cs.position_name AS position_name,
-            orgs.name AS o_name,
-            CONCAT( '''', orgs.code ) AS o_inn,
-            CASE
-        WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') = 'true' THEN '+'
-        ELSE '-'
-        END AS is_rck
-            , CASE
-        WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_roiv''])[1]/value[1]', 'varchar(max)') = 'true' THEN '+'
-        ELSE '-'
-        END AS is_roiv
-            , CASE
-        WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_partner''])[1]/value[1]', 'varchar(max)') = 'true' THEN '+'
-        ELSE '-'
-        END AS is_partner
-            , org.data.value('(org/custom_elems/custom_elem[name=''format_part''])[1]/value[1]', 'varchar(max)') AS format_part
-            , org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') AS fact_region_id
-            ,CASE
-        WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_past_member''])[1]/value[1]', 'varchar(max)') = 'true' THEN 'Да'
-        ELSE 'Нет'
-        END AS is_past_member
-            ,CASE
-        WHEN org.data.value('(org/custom_elems/custom_elem[name=''is_project_ended''])[1]/value[1]', 'varchar(max)') = 'true' THEN 'Да'
-        ELSE 'Нет'
-        END AS is_project_ended,
-            c.created AS col_created,
-            c.data.value('(collaborator/custom_elems/custom_elem[name=''guid''])[1]/value[1]', 'varchar(max)') AS guid,
-            c.data.value('(collaborator/doc_info/creation/user_login)[1]', 'varchar(max)') AS col_created_by,
-            cs.modification_date AS col_modificated,
-            regions.code AS region_code,
-            regions.name AS region_name,
-            --_tbl1.ar_id AS ar_id,
-            --_tbl1.ar_name AS ar_name,
-            cs.is_dismiss
-        FROM [WTDB].[dbo].collaborators cs
-            INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id
-            INNER JOIN [WTDB].[dbo].orgs ON orgs.id = cs.org_id
-            INNER JOIN [WTDB].[dbo].org ON org.id = orgs.id
-            INNER JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id
-            --INNER JOIN [WTDB].[dbo].#TempTable1 AS _tbl1 ON _tbl1.ar_id = cs.role_id
-        WHERE c.created BETWEEN @date_from AND @date_to
-        " + extraCondition + ";
-
-        DROP TABLE [WTDB].[dbo].#TempTable1
-        " ) );
+        //" + extraCondition + "
 
         total = ArrayCount(dataList);
 
@@ -157,7 +140,7 @@ if (LdsIsServer) {
             ws = sendMessageToWebsocket(ws, agent);
         }
 
-        excel.SaveAs("E:/Websoft/Reports/report_collaborators/888_report_collaborators_" + ParseDate(Date()) + ".xlsx");
+        excel.SaveAs("E:/Websoft/Reports/report_collaborators/report_collaborators_" + ParseDate(Date()) + ".xlsx");
 
         agent.state = 1;
         agent.processed = processed;
