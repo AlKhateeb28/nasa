@@ -132,7 +132,76 @@ try {
 
         result.personMonthData.push(element);
     }
-    
+
+    // COURSES BY WEEK
+    year = OptInt(Request.Query.GetOptProperty("year", "2025"));
+
+    // STATE0 (Назначено)
+    state0List = ArrayDirect(XQuery("sql: " +
+        " SELECT DATEPART(week, als.start_usage_date) AS week, " +
+        "       COUNT(als.id) AS cnt " +
+        " FROM [WTDB].[dbo].active_learnings als " +
+        "       INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE als.state_id = 0 " +
+        "       AND YEAR(als.start_usage_date) = " + year +
+        " GROUP BY DATEPART(week, als.start_usage_date) " +
+        " ORDER BY week "));
+
+    result.state0Data = [];
+
+    for(state0Element in state0List) {
+        element = {};
+
+        element.week = state0Element.week;
+        element.count = state0Element.cnt;
+
+        result.state0Data.push(element);
+    }
+
+    // STATE1 (В процессе)
+    state1List = ArrayDirect(XQuery("sql: " +
+        " SELECT DATEPART(week, als.start_learning_date) AS week, " +
+        "       COUNT(als.id) AS cnt " +
+        " FROM [WTDB].[dbo].active_learnings als " +
+        "       INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE als.state_id = 1 " +
+        "       AND YEAR(als.start_learning_date) = " + year +
+        " GROUP BY DATEPART(week, als.start_learning_date) " +
+        " ORDER BY week "));
+
+    result.state1Data = [];
+
+    for(state1Element in state1List) {
+        element = {};
+
+        element.week = state1Element.week;
+        element.count = state1Element.cnt;
+
+        result.state1Data.push(element);
+    }
+
+    // STATE4 (Пройдено)
+    state4List = ArrayDirect(XQuery("sql: " +
+        " SELECT DATEPART(week, ls.last_usage_date) AS week, " +
+        "       COUNT(ls.id) AS cnt " +
+        " FROM [WTDB].[dbo].learnings ls " +
+        "       INNER JOIN [WTDB].[dbo].courses crs ON ls.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE ls.state_id = 4 " +
+        "       AND YEAR(ls.last_usage_date) = " + year +
+        " GROUP BY DATEPART(week, ls.last_usage_date) " +
+        " ORDER BY week "));
+
+    result.state4Data = [];
+
+    for(state4Element in state4List) {
+        element = {};
+
+        element.week = state4Element.week;
+        element.count = state4Element.cnt;
+
+        result.state4Data.push(element);
+    }
+
     Response.Write(EncodeJson(result));
 } catch (e) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);

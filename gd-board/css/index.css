@@ -68,6 +68,12 @@
     user-select: none;
 }
 
+.prevent-select {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .tab:hover {
     background-color: #d8edfd;
     border-radius: 3px;
