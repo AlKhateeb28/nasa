@@ -1,0 +1,191 @@
+﻿<SPXMLScreen>
+    <HTMLBox Dynamic="true"><![CDATA[
+        <style>
+            .font {
+                font-family: 'Roboto', 'Open Sans', Trebuchet MS, Verdana, Tahoma, sans-serif;
+            }
+
+            .caption {
+                border-radius: 3px;
+                font-size: 34px;
+                font-weight: 600;
+                margin: 0 0 0 0;
+                line-height: 1em;
+                font-size: 14px;
+                padding: 16px 0;
+                text-indent: 20px;
+            }
+
+            .header {
+                background-color: #f3f3f4;
+                color: darkgray;
+                height: 40px;
+            }
+
+            .header-cell {
+                text-indent: 10px;
+            }
+
+            .row {
+                background-color: #f3f3f4;
+                height: 40px;
+            }
+
+        </style>
+        <%
+        function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
+
+        var agentId = 9900000000000000002;
+        var loggerName = "web_9900000000000000002";
+
+        objectId = curUrlQuery.GetOptProperty( "object_id" )
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+
+        dataList = ArrayDirect(XQuery("sql: " +
+            " SELECT cs.name, " +
+            "       'Пройден' AS state, " +
+            "       ls.start_learning_date AS start, " +
+            "       ls.last_usage_date AS finish, " +
+            "       ls.score, " +
+            "       DATEDIFF(minute, ls.start_learning_date, ls.last_usage_date) AS diff " +
+            " FROM [WTDB].[dbo].learnings ls " +
+            " INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
+            " WHERE ls.state_id = 4 " +
+            "       AND ls.person_id = " + objectId +
+            "       AND ls.course_id IN (7033345432254749026, 7033317173098334621, 7033353503783534178, " +
+            "                           7033373371731500927, 7033393111894403431, 7119812308457777642, " +
+            "                           7119812071712565068, 7119812165002090859, 7119812388344499932, " +
+            "                           7119811761202858978, 7119812540134335010) " +
+            " ORDER BY finish DESC "));
+
+        total = ArrayCount(dataList);
+
+        %>
+        <script type="text/javascript" src="./scripts/jquery.js"></script>
+
+        <script type="application/javascript">
+            function reassignSeminars() {
+                if(confirm("Вы действительно хотите переназначить данному сотруднику семинары и методические разборы?")) {
+                    $.ajax({
+                        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7168319587610451307&person_id=" + $("#userId").html(),
+                        async: true,
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.errorMessage.indexOf("#") < 0) {
+                                location.reload();
+                            } else {
+                                console.log(data.errorMessage);
+                            }
+                        },
+                        error: function (e) {
+                            conole.log(e);
+                        }
+                    });
+                }
+            }
+        </script>
+
+        <div id="userId" style="display: none"><%=objectId%></div>
+        <div class="font">
+            <div>
+                <div class="caption" style="float: left; border: 1px solid silver; width: 83%; margin-bottom: 20px;">Пройденные просмотры метод. разборов. Пройдено: <%=total%> из 11</div>
+                <div style="float: right">
+                    <button style="margin-left: 5px;" onclick="reassignSeminars()">Переназначить</button>
+                </div>
+            </div>
+
+            <div style="padding-bottom: 20px;">
+                <table>
+                    <tr class="header">
+                        <td class="header-cell" style="width: 263px;">Электронный курс</td>
+                        <td class="header-cell" style="width: 80px;">Статус</td>
+                        <td class="header-cell" style="width: 150px;">Дата начала</td>
+                        <td class="header-cell" style="width: 150px;">Дата завершения</td>
+                        <td class="header-cell" style="width: 50px;">Балл</td>
+                        <td>Время прохождения (мин)</td>
+                    </tr>
+                    <%
+                        for (data in dataList) {
+                    %>
+                    <tr class="row">
+                        <td><%=data.name%></td>
+                        <td style="text-align: center;"><%=data.state%></td>
+                        <td style="text-align: center;"><%=data.start%></td>
+                        <td style="text-align: center;"><%=data.finish%></td>
+                        <td style="text-align: center;"><%=data.score%></td>
+                        <%
+                            diffColor = "black";
+
+                            if(data.diff < 10) {
+                                if(data.diff <= 3) {
+                                    diffColor = "red";
+                                } else {
+                                    diffColor = "orange";
+                            }
+                        }
+                        %>
+                        <td style='color: <%=diffColor%>; text-align: center;'><%=data.diff%></td>
+                    </tr>
+                    <%
+                    }
+                    %>
+                </table>
+            </div>
+
+            <%
+            dataList = ArrayDirect(XQuery("sql: " +
+                " SELECT cs.name, " +
+                "       IIF(als.state_id = 0, 'Назначен', 'В процесск') AS state, " +
+                "       als.start_usage_date AS start, " +
+                "       als.start_learning_date AS start_learning, " +
+                "       als.score " +
+                " FROM [WTDB].[dbo].active_learnings als " +
+                "       INNER JOIN [WTDB].[dbo].courses cs ON als.course_id = cs.id " +
+                " WHERE (als.state_id = 0 " +
+                "       OR als.state_id = 1) " +
+                "       AND als.person_id = " + objectId +
+                "       AND als.course_id IN (7033345432254749026, 7033317173098334621, 7033353503783534178, " +
+                "                           7033373371731500927, 7033393111894403431, 7119812308457777642, " +
+                "                           7119812071712565068, 7119812165002090859, 7119812388344499932, " +
+                "                           7119811761202858978, 7119812540134335010) " +
+                " ORDER BY start DESC"));
+            %>
+            <div class="caption" style="border: 1px solid silver; width: 99%; margin-bottom: 20px;">
+                Активные просмотры метод. разборов.
+            </div>
+
+            <div>
+                <table>
+                    <tr class="header">
+                        <td class="header-cell" style="width: 453px;">Электронный курс</td>
+                        <td class="header-cell" style="width: 80px;">Статус</td>
+                        <td class="header-cell" style="width: 150px;">Дата начала</td>
+                        <td class="header-cell" style="width: 150px;">Посл. посещение</td>
+                        <td class="header-cell" style="width: 50px;">Балл</td>
+                    </tr>
+                    <%
+                    for (data in dataList) {
+                    %>
+                    <tr class="row">
+                        <td><%=data.name%></td>
+                        <td style="text-align: center;"><%=data.state%></td>
+                        <td style="text-align: center;"><%=data.start%></td>
+                        <td style="text-align: center;"><%=data.start_learning%></td>
+                        <td style="text-align: center;"><%=data.score%></td>
+                    </tr>
+                    <%
+                    }
+                    %>
+                </table>
+            </div>
+
+        </div>
+        ]]></HTMLBox>
+    <%
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished");
+    %>
+</SPXMLScreen>

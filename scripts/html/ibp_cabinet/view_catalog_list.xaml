@@ -1,0 +1,707 @@
+﻿<SPXMLScreen Class="catalog_list">
+<%
+try
+{
+	if ( curView == undefined )
+		throw "no_object";
+}
+catch ( err )
+{
+	curView = {
+		"id": tools_web.get_web_param( curParams, "catalog_list.id", "", true ),
+		"title": tools_web.get_web_param( curParams, "catalog_list.title", "", true ),
+		"height": tools_web.get_web_param( curParams, "catalog_list.height", "", true ),
+		"max_height": tools_web.get_web_param( curParams, "catalog_list.max_height", "", true ),
+		"catalog_name": tools_web.get_web_param( curParams, "catalog_list.catalog_name", "", true ),
+		"view_type": tools_web.get_web_param( curParams, "catalog_list.view_type", "", true ),
+		"xquery_qual": tools_web.get_web_param( curParams, "catalog_list.xquery_qual", "", true ),
+		"check_access": tools_web.get_web_param( curParams, "catalog_list.check_access", false, true ),
+		"disp_filter": tools_web.get_web_param( curParams, "catalog_list.disp_filter", false, true ),
+		"filter_mode": tools_web.get_web_param( curParams, "catalog_list.filter_mode", "standart", true ),
+		"disp_search": tools_web.get_web_param( curParams, "catalog_list.disp_search", false, true ),
+		"disp_link": tools_web.get_web_param( curParams, "catalog_list.disp_link", true, true ),
+		"link_field_index": tools_web.get_web_param( curParams, "catalog_list.link_field_index", true, true ),
+		"link_action": tools_web.get_web_param( curParams, "catalog_list.link_action", "", true ),
+		"is_data_grid": true,
+		"disp_menu": false,
+		"disp_paging": false,
+		"disp_type": tools_web.get_web_param( curParams, "catalog_list.disp_type", "data_grid", true ),
+		"disp_schema": tools_web.get_web_param( curParams, "catalog_list.disp_schema", "", true ),
+		"collection": tools_web.get_web_param( curParams, "catalog_list.collection", "", true ),
+		"tile_template": tools_web.get_web_param( curParams, "catalog_list.tile_template", "", true ),
+		"tile_columns": tools_web.get_web_param( curParams, "catalog_list.tile_columns", "", true ),
+		"tile_rows": tools_web.get_web_param( curParams, "catalog_list.tile_rows", "", true ),
+		"tile_height": tools_web.get_web_param( curParams, "catalog_list.tile_height", "", true ),
+		"general_link_url": tools_web.get_web_param( curParams, "catalog_list.general_link_url", "", true ),
+		"general_link_title": tools_web.get_web_param( curParams, "catalog_list.general_link_title", "", true ),
+		"general_link_position": tools_web.get_web_param( curParams, "catalog_list.general_link_position", "", true ),
+
+		"filter_items": tools_web.get_web_param( curParams, "catalog_list.filter_items", [], true ),
+		"row_filters": tools_web.get_web_param( curParams, "catalog_list.row_filters", "", true ),
+
+		"sort_field_name": tools_web.get_web_param( curParams, "catalog_list.sort_field_name", "", true ),
+		"sort_direct": tools_web.get_web_param( curParams, "catalog_list.sort_direct", "+", true )
+	};
+	if ( curView.row_filters == "" )
+		curView.row_filters = [];
+	else
+		curView.row_filters = ParseJson( curView.row_filters );
+}
+
+sCatalogName_curView = curView.GetOptProperty( "catalog_name", "" );
+
+bOpenDoc = tools_web.is_true( curView.GetOptProperty( 'open_doc', false ) );
+bCheckAccess = sCatalogName_curView != 'collaborator' && tools_web.is_true( curView.GetOptProperty( 'check_access', true ) );
+sLinkObjectField = curView.GetOptProperty( 'link_object_field', 'PrimaryKey' );
+
+sID_curView = curView.GetOptProperty( "id", "" );
+bTypein =  tools_web.is_true( curView.GetOptProperty( 'typein', false ) );
+bHidden = bTypein || tools_web.is_true( curView.GetOptProperty( 'hidden', false ) );
+arrButtons_curView = curView.GetOptProperty( 'buttons', [] );
+sTitle = curView.GetOptProperty( 'title', '' );
+bDispFilter = tools_web.is_true( curView.GetOptProperty( 'disp_filter', true ) );
+bDispSearch = bTypein || tools_web.is_true( curView.GetOptProperty( 'disp_search', true ) );
+bDispSelectors = tools_web.is_true( curView.GetOptProperty( 'disp_selectors', false ) );
+arrTabs_curView = curView.GetOptProperty( 'tabs', [] );
+sSearchField_curView = "CatalogListSearch" + sID_curView;
+sUpdateAction_curView = curView.GetOptProperty( 'filter_action', '' );
+
+fldFilterConditions = undefined;
+
+curView_bParamPreffix = curView.GetOptProperty( "param_preffix", "" );
+curViewField_sDispType = "CatalogListSelectors" + sID_curView;
+curView_sDispType = "";
+if ( curView_bParamPreffix != "" )
+	curView_sDispType = tools_web.get_web_param( curParams, curView_bParamPreffix + ".view_type", "data_grid", true );
+if ( curView_sDispType == "" )
+	curView_sDispType = CONTEXT.GetOptProperty( curViewField_sDispType, curView.GetOptProperty( "disp_type", "" ) );
+if ( curView_sDispType == "" )
+	curView_sDispType = "data_grid";
+
+
+oCollection_curView = curView.GetOptProperty( 'collection', '' );
+sCollectionSource_curView = 'uni_catalog_list';
+arrCollectionParams_curView = null;
+if ( oCollection_curView != '' )
+{
+	if ( ObjectType( oCollection_curView ) == 'JsObject' )
+	{
+		sCollectionSource_curView = oCollection_curView.name;
+		arrCollectionParams_curView = oCollection_curView.GetOptProperty( 'params', null );
+	}
+	else
+	{
+		sCollectionSource_curView = oCollection_curView;
+		arrCollectionParams_curView = null;
+	}
+}
+
+bDispFilterPanel = sTitle != '' || bDispFilter || bDispSearch || ArrayCount( arrButtons_curView ) != 0 || ArrayCount( arrTabs_curView ) != 0;
+sDispSchema = curView.GetOptProperty( "disp_schema", "" );
+bDispSchema = bDispFilterPanel && sDispSchema != "" && sDispSchema != "default";
+
+if ( bDispFilterPanel )
+{
+	if ( bDispSchema )
+	{
+		if ( sDispSchema == 'block' && !bDispFilter )
+		{
+%>
+<StackPanel Orientation="Vertical" Class="XAML-uni-content-block XAML-uni-content-header">
+<%
+		}
+		else
+		{
+%>
+<StackPanel Orientation="Vertical" Class="XAML-uni-content-block XAML-uni-content-std">
+<%
+		}
+	}
+
+	if ( sUpdateAction_curView == '' )
+		sUpdateAction_curView = ( bTypein ? 'Hide=CatalogListTypeinPanel' + sID_curView + ';SHOW=CatalogListDataGrid' + sID_curView + ';' : '' ) + ( curView_sDispType == 'data_grid' ? 'UPDATE=CatalogListDataGrid' + sID_curView : ( curView_sDispType == 'data_grid' || curView_sDispType == 'tile' ? 'UPDATE=CatalogListDataTile' + sID_curView : 'REFRESH' ) );
+
+	curFilter = {
+		"id": sID_curView,
+		"title": sTitle,
+		"action": sUpdateAction_curView,
+		"selectors": ( bDispSelectors ? curView.GetOptProperty( 'selectors', 'data_grid;list;tile' ) : '' ),
+		"selectors_field": curViewField_sDispType,
+		"selectors_value": curView_sDispType,
+		"disp_search": bDispSearch,
+		"search_field": sSearchField_curView,
+		"buttons": arrButtons_curView,
+		"row_filters": curView.GetOptProperty( "row_filters", [] ),
+		"filters": curView.GetOptProperty( "filters", [] ),
+		"schema": "small",
+		"add_templates": curView.GetOptProperty( "add_templates", [] ),
+		"disp_search_field": curView.GetOptProperty( "disp_search_field" )
+	};
+	sSelectorsAction_curView = curView.GetOptProperty( "selectors_action", "" );
+	if ( sSelectorsAction_curView != "" )
+		curFilter.SetProperty( "selectors_action", sSelectorsAction_curView );
+
+	if ( bDispFilter )
+	{
+		for ( sFilterModeElem in curView.GetOptProperty( "filter_mode", "standart" ).split( ";" ) )
+		{
+			switch ( sFilterModeElem )
+			{
+				case "standart":
+					sItemName = 'CatalogListSchime' + sID_curView;
+					sItemValue_curView = CONTEXT.GetOptProperty( sItemName, "" );
+					if ( sItemValue_curView == "" )
+						sItemValue_curView = curView.GetOptProperty( "filter_id", '#empty#' );
+					else
+						curView.SetProperty( "filter_id", sItemValue_curView );
+
+					oFilter_curView = { "name": sItemName, "type": "combo", "default": sItemValue_curView, "items": [] };
+					oFilter_curView.items.push( { "value": "#empty#", "title": tools_web.get_web_const( 'vsefiltry', curLngWeb ) } )
+					for ( fldSchemeElem_curView in ArraySelect( lists.view_conditions_schemes, "disp_web&&catalog=='" + sCatalogName_curView + "'" ) )
+						oFilter_curView.items.push( { "value": fldSchemeElem_curView.id.Value, "title": fldSchemeElem_curView.name.Value } );
+					curFilter.filters.push( oFilter_curView );
+					break;
+
+				case "custom":
+					teCatalog = tools.new_doc_by_name( sCatalogName_curView, true ).TopElem;
+					fldCatalog = teCatalog.AddChild();
+					fldFilterConditions = CreateElem( "x-local://wtv/wtv_general.xmd", "view_conditions_base.conditions" );
+
+					for ( oFilterItemElem in curView.GetOptProperty( "filter_items", [] ) )
+					{
+						oFilter_curView = null;
+						sItemName = oFilterItemElem.GetOptProperty( 'id', '' );
+						if ( sItemName == '' )
+							sItemName = 'CatalogListFilter' + oFilterItemElem.field + sID_curView;
+						sAction = oFilterItemElem.GetOptProperty( 'action', '' );
+						if ( sAction == '' )
+							sAction = sUpdateAction_curView;
+
+						fldField = fldCatalog.Child( oFilterItemElem.field );
+						fldFilterConditionChild = fldFilterConditions.AddChild();
+						fldFilterConditionChild.field = oFilterItemElem.field;
+						fldFilterConditionChild.value = "{" + sItemName + "}";
+						fldFilterConditionChild.type = oFilterItemElem.GetOptProperty( 'type', '' );
+						if ( fldFilterConditionChild.type == '' )
+							fldFilterConditionChild.type = 'string';
+
+						sFilterFieldName = oFilterItemElem.GetOptProperty( 'name', '' );
+						if ( sFilterFieldName == '' )
+							sFilterFieldName = tools.get_field_title( fldField, curLngWeb );
+
+						if ( fldFilterConditionChild.type == 'slider' )
+						{
+							fldFilterConditionChild.type = 'integer';
+							oFilter_curView = { "name": sItemName, "type": "slider", "title": sFilterFieldName, "default": oFilterItemElem.GetOptProperty( 'default', '' ), "change": sAction, "min": oFilterItemElem.GetOptProperty( 'min', 0 ), "max": oFilterItemElem.GetOptProperty( 'max', 100 ) };
+						}
+						else if ( fldFilterConditionChild.type == 'button_combo' )
+						{
+							fldFilterConditionChild.type = 'string';
+							arrItems = ParseJson( oFilterItemElem.GetOptProperty( 'items', '[]' ) );
+							oFilter_curView = { "name": sItemName, "type": "button_combo", "title": sFilterFieldName, "default": oFilterItemElem.GetOptProperty( 'default', '' ), "change": sAction, "items": arrItems };
+						}
+						else if ( StrBegins( fldField.ForeignArrayCodeStr, 'common' ) || StrBegins( fldField.ForeignArrayCodeStr, 'lists' ) )
+						{
+							oFilter_curView = { "name": sItemName, "type": "combo", "default": oFilterItemElem.GetOptProperty( 'default', '#empty#' ), "change": sAction, "tip": sFilterFieldName, "items": [] };
+							oFilter_curView.items.push( { "value": "#empty#", "title": ( ( sFilterFieldName != "" ? ( sFilterFieldName + ": " ) : "" ) + tools_web.get_web_const( 'f0j4vfoxrb', curLngWeb ) ) } )
+
+							bIsCommon = StrBegins( fldField.ForeignArrayCodeStr, 'common' );
+							for ( fldCommonEllem in fldField.ForeignArray )
+								oFilter_curView.items.push( { "value": fldCommonEllem.PrimaryKey.Value, "title": ( bIsCommon ? curLngCommon.Child( fldField.ForeignArray.Name ).GetChildByKey( fldCommonEllem.PrimaryKey ).name : fldCommonEllem.name ) } );
+						}
+						else
+						{
+							if ( fldField.Type == 'date' )
+							{
+								fldFilterConditionChild.type = 'date';
+								oFilter_curView = { "name": sItemName, "type": "date", "title": sFilterFieldName, "default": oFilterItemElem.GetOptProperty( 'default', '' ), "change": sAction };
+							}
+							else if ( fldField.Type == 'integer' && StrEnds( fldField.ForeignArrayCodeStr, 's' ) )
+							{
+								sFilterCatalogName_curView = StrLeftRange( fldField.ForeignArrayCodeStr, StrLen( fldField.ForeignArrayCodeStr ) - 1 );
+
+								fldObjectTypeChild_curView = ArrayOptFindByKey( common.exchange_object_types, sFilterCatalogName_curView, "name" );
+								if ( fldObjectTypeChild_curView != undefined )
+								{
+									oFilter_curView = { "name": sItemName, "type": "foreign_elem", "title": sFilterFieldName, "catalog_name": sFilterCatalogName_curView, "xquery_qual": oFilterItemElem.GetOptProperty( "xquery_qual", "" ), "default": oFilterItemElem.GetOptProperty( 'default', '#empty#' ), "change": sAction };
+								}
+							}
+						}
+						if ( oFilter_curView != null )
+							curFilter.filters.push( oFilter_curView );
+					}
+					curView.SetProperty( "filter_conditions", fldFilterConditions.GetXml( { 'tabs': false } ) );
+					break;
+			}
+		}
+	}
+	Response.Write( EvalCodePageUrl( global_settings.web_path + "view_filter.xaml" ) );
+}
+
+
+sGeneralLinkPositions = curView.GetOptProperty( 'general_link_position', '' );
+function write_general_link( sPosParam )
+{
+	if ( sGeneralLinkPositions == '' )
+		return;
+
+	if ( StrContains( sGeneralLinkPositions, sPosParam ) )
+	{
+%>
+<Grid Width="100%">
+	<GridColumns>
+		<GridColumn Width="100%"/>
+		<GridColumn/>
+	</GridColumns>
+	<GridRow>
+<%
+		if ( StrContains( sGeneralLinkPositions, 'right' ) )
+		{
+%>
+		<Label/>
+<%
+		}
+%>
+		<Link Click="OPENURL=<%=XmlAttrEncode( curView.GetOptProperty( 'general_link_url', '' ) )%>" NoWrap="true"><![CDATA[<%=curView.GetOptProperty( 'general_link_title', '' )%>]]></Link>
+	</GridRow>
+</Grid>
+<%
+	}
+}
+
+write_general_link( 'top' );
+
+
+curView_sHeight = tools_web.get_web_param( curParams, curView_bParamPreffix + '.height', '', true );
+if ( curView_sHeight == '' )
+	curView_sHeight = curView.GetOptProperty( 'height', '' );
+curView_sMaxHeight = '';
+if ( curView_sHeight == '' )
+	curView_sMaxHeight = curView.GetOptProperty( 'max_height', '' );
+
+
+if ( curView_sDispType == 'data_grid' || curView_sDispType == 'tile' )
+{
+	curView_bDispPaging = tools_web.is_true( curView.GetOptProperty( 'disp_paging', false ) );
+	curView_sPagingSize = curView_bDispPaging ? curView.GetOptProperty( 'paging_size', 100 ) : '';
+	curView_bDispMenu = tools_web.is_true( curView.GetOptProperty( 'disp_menu', true ) );
+
+	curView_sDataFields = curView.GetOptProperty( 'data_fields', '' );
+	curView_sParentFieldName = "";
+
+	if ( curView_sDispType == 'data_grid' )
+	{
+		curView_sCategorized = curView.GetOptProperty( 'categorized', '' );
+		if ( tools_web.is_true( curView_sCategorized ) )
+		{
+			if ( view_types.GetChildByKey( sCatalogName_curView ).is_hier )
+			{
+				oCatalog = DefaultDb.GetOptCatalog( sCatalogName_curView + 's' );
+				curView_sParentFieldName = oCatalog.Form.ParentIDElemName;
+				curView_sCategorized = "id:" + curView_sParentFieldName;
+				curView_sDataFields += ( curView_sDataFields == '' ? '' : ';' ) + curView_sParentFieldName;
+				curView_bDispPaging = false;
+			}
+			else
+			{
+				curView_sCategorized = '';
+			}
+		}
+	}
+%>
+<Collection Name="CatalogListCollection<%=sID_curView%>" Source="<%=XmlAttrEncode( sCollectionSource_curView )%>">
+<%
+	if ( arrCollectionParams_curView == null )
+	{
+%>
+	<Param Name="catalog_name" Value="<%=sCatalogName_curView%>"/>
+	<Param Name="view_type" Value="<%=curView.GetOptProperty( 'view_type', '' )%>"/>
+	<Param Name="check_access" Value="<%=bCheckAccess%>"/>
+	<Param Name="open_doc" Value="<%=bOpenDoc%>"/>
+	<Param Name="xquery_qual" Value="<%=curView.GetOptProperty( 'xquery_qual', '' )%>"/>
+	<Param Name="external_eval" Value="<%=curView.GetOptProperty( 'external_eval', '' )%>"/>
+
+	<Param Name="disp_array" Value="<%=tools_web.is_true( curView.GetOptProperty( 'disp_array', false ) )%>"/>
+	<Param Name="array" Value="<%=curView.GetOptProperty( 'array', '' )%>"/>
+	<Param Name="array_selected" Value="<%=curView.GetOptProperty( 'array_selected', '#empty#' )%>"/>
+	<Param Name="array_link_field" Value="<%=curView.GetOptProperty( 'array_link_field', 'id' )%>"/>
+	<Param Name="show_all" Value="<%=tools_web.is_true( curView.GetOptProperty( 'show_all', global_settings.settings.show_all_persons ) )%>"/>
+
+	<Param Name="disp_sort" Value="<%=tools_web.is_true( curView.GetOptProperty( 'disp_sort', true ) )%>"/>
+	<Param Name="sort_index" Value="<%=curView.GetOptProperty( 'sort_index', '' )%>"/>
+	<Param Name="sort_field_name" Value="<%=curView.GetOptProperty( 'sort_field_name', '' )%>"/>
+	<Param Name="sort_direct" Value="<%=curView.GetOptProperty( 'sort_direct', '+' )%>"/>
+
+	<Param Name="disp_link" Value="<%=tools_web.is_true( curView.GetOptProperty( 'disp_link', true ) )%>"/>
+	<Param Name="link_object_field" Value="<%=sLinkObjectField%>"/>
+	<Param Name="link_field_index" Value="<%=curView.GetOptProperty( 'link_field_index', '' )%>"/>
+	<Param Name="link_field_name" Value="<%=curView.GetOptProperty( 'link_field_name', '' )%>"/>
+	<Param Name="link_mode" Value="<%=curView.GetOptProperty( 'link_mode', '' )%>"/>
+	<Param Name="link_prop" Value="<%=curView.GetOptProperty( 'link_prop', '' )%>"/>
+	<Param Name="link_action" Value="<%=curView.GetOptProperty( 'link_action', '' )%>"/>
+	<Param Name="link_open" Value="<%=curView.GetOptProperty( 'link_open', '' )%>"/>
+
+	<Param Name="disp_check_box" Value="<%=tools_web.is_true( curView.GetOptProperty( 'disp_check_box', false ) )%>"/>
+	<Param Name="is_data_grid" Value="<%=( curView_bDispMenu || tools_web.is_true( curView.GetOptProperty( 'is_data_grid', false ) ) )%>"/>
+	<Param Name="data_fields" Value="<%=curView_sDataFields%>"/>
+
+	<Param Name="col_headers" Value="<%=curView.GetOptProperty( 'col_headers', '' )%>"/>
+	<Param Name="col_cells" Value="<%=curView.GetOptProperty( 'col_cells', '' )%>"/>
+	<Param Name="list_headers" Value="<%=curView.GetOptProperty( 'list_headers', '' )%>"/>
+	<Param Name="list_columns" Value="<%=curView.GetOptProperty( 'list_columns', '' )%>"/>
+
+	<Param Name="filter_id" Value="{CatalogListSchime<%=sID_curView%>}"/>
+	<Param Name="filter_conditions" Value="<%=( fldFilterConditions == undefined ? '' : XmlAttrEncode( fldFilterConditions.GetXml( { 'tabs': false } ) ) )%>"/>
+
+	<Param Name="search" Value="{CatalogListSearch<%=sID_curView%>}"/>
+
+	<Param Name="disp_paging" Value="<%=curView_bDispPaging%>"/>
+	<Param Name="paging_size" Value="<%=curView.GetOptProperty( 'paging_size', 100 )%>"/>
+
+	<Param Name="source_type" Value="<%=curView.GetOptProperty( 'source_type', '' )%>"/>
+
+	<Param Name="disp_icon" Value="<%=tools_web.is_true( curView.GetOptProperty( 'disp_icon', false ) )%>"/>
+
+	<Param Name="secid" Value="<%=curView.GetOptProperty( 'secid', tools_web.get_secid( Session.sid ) )%>"/>
+
+	<Param Name="disp_first_only" Value="<%=curView_sDispType == 'tile'%>"/>
+
+	<Param Name="parent_field_name" Value="<%=curView_sParentFieldName%>"/>
+<%
+	}
+	else
+	{
+		for ( oParamElem_curView in arrCollectionParams_curView )
+		{
+%>
+	<Param Name="<%=XmlAttrEncode( oParamElem_curView.name )%>" Value="<%=XmlAttrEncode( oParamElem_curView.value )%>"/>
+<%
+		}
+	}
+%>
+</Collection>
+<%
+}
+
+
+///////////////////////////////////////   DATAGRID   //////////////////////////////////////////
+if ( curView_sDispType == 'data_grid' )
+{
+%>
+<Action Name="CatalogListActionHide<%=sID_curView%>" Initialize="HIDE=CatalogListGridFilter<%=sID_curView%>,CatalogListDataGrid<%=sID_curView%>;<%=curView.GetOptProperty( 'hide_action', '' )%>"/>
+<%
+if ( curView_bDispMenu )
+{
+curCollectionMenu = {
+	"id": ( sID_curView + "Menu" ),
+	"catalog_name": sCatalogName_curView,
+	"data_grid_id": ( "CatalogListDataGrid" + sID_curView ),
+	"source_type": curView.GetOptProperty( "source_type", "" ),
+	"id_field_name": curView.GetOptProperty( 'id_field_name', '' )
+}
+Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list_menu.xaml" ) );
+}
+
+if ( bTypein )
+{
+%>
+<StackPanel Name="CatalogListTypeinPanel<%=sID_curView%>" Orientation="Vertical" Width="100%" Height="<%=curView_sHeight%>">
+	<Label Class="XAML-label-empty-data"><%=tools_web.get_web_const( 'dlyaotobrazheniya', curLngWeb )%></Label>
+</StackPanel>
+<%
+}
+%>
+<DataGrid Name="CatalogListDataGrid<%=sID_curView%>"
+	Class="XAML-data-grid-ico-fix"
+	Source="{CatalogListCollection<%=sID_curView%>}"
+	PageSize="<%=curView_sPagingSize%>"
+	Width="100%"
+	Height="<%=curView_sHeight%>"
+	MaxHeight="<%=curView_sMaxHeight%>"
+	Selection="<%=curView.GetOptProperty( 'selection', ( curView_bDispMenu ? 'multiple' : 'none' ) )%>"
+	Hidden="<%=bHidden%>"
+	ShowHeader="<%=tools_web.is_true( curView.GetOptProperty( 'show_header', true ) )%>"
+	Categorized="<%=curView_sCategorized%>"
+<%
+	if ( tools_web.is_true( curView.GetOptProperty( 'hide_empty' ) ) )
+	{
+%>
+	EmptyAction="ACTION=CatalogListActionHide<%=sID_curView%>"
+<%
+	}
+%>
+>
+<%
+if ( curView_bDispMenu )
+{
+	arrMenuItems = curView.GetOptProperty( 'menu_items', [] );
+	if ( ArrayCount( arrMenuItems ) == 0 )
+	{
+%>
+<Menu Source="{CatalogListMenu<%=sID_curView%>Menu}"/>
+<%
+	}
+	else
+	{
+%>
+<Menu>
+<%
+		for ( oMenuItemElem in arrMenuItems )
+		{
+%>
+	<MenuItem Title="<%=XmlAttrEncode( oMenuItemElem.title )%>" Click="<%=XmlAttrEncode( oMenuItemElem.click )%>"/>
+<%
+		}
+%>
+</Menu>
+<%
+	}
+}
+%>
+</DataGrid>
+<%
+}
+else if ( curView_sDispType == 'tile' )
+{
+	sTemplateSource = curView.GetOptProperty( 'tile_template', '' );
+	sTileColumns_curView = curView.GetOptProperty( 'tile_columns', '' );
+	sTileRows_curView = curView.GetOptProperty( 'tile_rows', '' );
+	sTileHeight_curView = curView.GetOptProperty( 'tile_height', '' );
+	if ( curView_bParamPreffix != "" )
+	{
+		if ( sTemplateSource == "" )
+			sTemplateSource = tools_web.get_web_param( curParams, curView_bParamPreffix + ".tile_template", "", true );
+		if ( sTileColumns_curView == "" )
+			sTileColumns_curView = tools_web.get_web_param( curParams, curView_bParamPreffix + ".tile_columns", "", true );
+		if ( sTileRows_curView == "" )
+			sTileRows_curView = tools_web.get_web_param( curParams, curView_bParamPreffix + ".tile_rows", "", true );
+		if ( sTileHeight_curView == "" )
+			sTileHeight_curView = tools_web.get_web_param( curParams, curView_bParamPreffix + '.tile_height', '', true );
+	}
+	if ( sTemplateSource == '' )
+		sTemplateSource = 'object_tile';
+	if ( sTileHeight_curView == '' )
+		sTileHeight_curView = '270';
+///////////////////////////////////////   TILE  //////////////////////////////////////////
+%>
+<TileView
+	Name="CatalogListDataTile<%=sID_curView%>"
+	Width="100%"
+	Height="<%=curView_sHeight%>"
+	TileHeight="<%=sTileHeight_curView%>"
+	DataSource="{CatalogListCollection<%=sID_curView%>}"
+	TemplateSource="<%=sTemplateSource%>"
+	Columns="<%=XmlAttrEncode( sTileColumns_curView )%>"
+	Rows="<%=XmlAttrEncode( sTileRows_curView )%>"
+	PageSize="<%=curView_sPagingSize%>"
+	Class="<%=curView.GetOptProperty( 'tile_class', '' )%>"
+>
+	<Param Name="link_action" Value="<%=curView.GetOptProperty( 'link_action', '' )%>"/>
+	<Param Name="link_prop" Value="<%=curView.GetOptProperty( 'link_prop', '' )%>"/>
+</TileView>
+<%
+}
+else
+{
+///////////////////////////////////////   GRID  LIST  //////////////////////////////////////////
+	function getContexValue( sFilterValue, sFilterField )
+	{
+		if ( StrContains( sFilterValue, '{' ) && StrContains( sFilterValue, '}' ) )
+		{
+			arrFields = [];
+			iIndex = sFilterValue.indexOf( '{' );
+			while ( iIndex >= 0 )
+			{
+				iFinishIndex = sFilterValue.indexOf( '}', iIndex );
+				if ( iFinishIndex < 0 )
+					break;
+
+				arrFields.push( StrRangePos( sFilterValue, iIndex + 1, iFinishIndex ) );
+				iIndex = sFilterValue.indexOf( '{', iFinishIndex );
+			}
+			for ( sFieldElem in arrFields )
+				sFilterValue = StrReplace( sFilterValue, '{' + sFieldElem + '}', CONTEXT.GetOptProperty( sFieldElem, curView.GetOptProperty( sFilterField + '_default', '' ) ) );
+		}
+		return sFilterValue;
+	}
+
+	teCollection_curView = OpenDoc( UrlFromDocID( ArrayOptFirstElem( tools.xquery( "for $elem in remote_collections where $elem/code = " + XQueryLiteral( sCollectionSource_curView ) + " return $elem/id, $elem/__data" ) ).id ) ).TopElem;
+
+	if ( arrCollectionParams_curView == null )
+	{
+		curView.SetProperty( 'curDocID', curDocID );
+		curView.SetProperty( 'search', CONTEXT.GetOptProperty( sSearchField_curView, "" ) );
+		curView.SetProperty( 'is_data_grid', true );
+		if ( curView_sDispType == 'list' )
+			curView.SetProperty( 'disp_first_only', true );
+
+		for ( sFieldNameElem_curView in curView )
+		{
+			if ( sFieldNameElem_curView == 'id' )
+			{
+				continue;
+			}
+			teCollection_curView.wvars.ObtainChildByKey( sFieldNameElem_curView ).value = getContexValue( curView.GetProperty( sFieldNameElem_curView ), sFieldNameElem_curView );
+		}
+	}
+	else
+	{
+		for ( oParamElem_curView in arrCollectionParams_curView )
+			teCollection_curView.wvars.ObtainChildByKey( oParamElem_curView.name ).value = getContexValue( oParamElem_curView.value, '' );
+	}
+
+	oResult_curView = teCollection_curView.evaluate( "json", Request );
+	arrData_curView = ParseJson( oResult_curView.result );
+	if ( ArrayCount( arrData_curView ) == 0 )
+	{
+		if ( bDispSchema )
+		{
+%>
+</StackPanel>
+<%
+		}
+%>
+</SPXMLScreen>
+<%
+		Cancel();
+	}
+
+	arrColumns_curView = ArraySelect( ParseJson( oResult_curView.columns ), "sType=This.GetOptProperty('type'),(sType!='checkbox'&&sType!='image'&&sType!='fixedimage'&&!This.GetOptProperty('hidden',false))" );
+
+	if ( curView_sDispType == 'grid' )
+	{
+%>
+<Grid Width="100%" Class="XAML-grid-table" CellClass="">
+	<GridColumns>
+<%
+	for ( oColumnElem_curView in arrColumns_curView )
+	{
+%>
+		<GridColumn Width="<%=oColumnElem_curView.GetOptProperty( 'width', '' )%>"/>
+<%
+	}
+%>
+	</GridColumns>
+
+	<GridRow Class="XAML-gridrow-header">
+<%
+	for ( oColumnElem_curView in arrColumns_curView )
+	{
+%>
+		<Label><%=oColumnElem_curView.GetOptProperty( 'title', '' )%></Label>
+<%
+	}
+%>
+	</GridRow>
+<%
+	for ( oDataElem_curView in arrData_curView )
+	{
+%>
+<GridRow Class="XAML-grid-row">
+<%
+		for ( oColumnElem_curView in arrColumns_curView )
+		{
+			sData_curView = oDataElem_curView.GetOptProperty( oColumnElem_curView.data, '' );
+			sType_curView = oColumnElem_curView.GetOptProperty( 'type', '' );
+			if ( sType_curView == 'link' || sType_curView == 'button' )
+			{
+				sClick_curView = StrReplace( oColumnElem_curView.click, '{id}', oDataElem_curView.GetOptProperty( 'id', '' ) );
+				sClick_curView = StrReplace( oColumnElem_curView.click, '{link}', oDataElem_curView.GetOptProperty( 'link', '' ) );
+%>
+<Link Click="<%=XmlAttrEncode( sClick_curView )%>"><![CDATA[<%=sData_curView%>]]></Link>
+<%
+			}
+			else
+			{
+%>
+<Label><![CDATA[<%=sData_curView%>]]></Label>
+<%
+			}
+		}
+%>
+</GridRow>
+<%
+	}
+%>
+</Grid>
+<%
+
+	}
+	else
+	{
+///////////////////////////////////////  LIST  //////////////////////////////////////////
+
+		sCatalogTitle = curLngCommon.exchange_object_types.GetChildByKey( sCatalogName_curView ).title;
+%>
+<Grid Class="XAML-grid-list-container">
+	<GridColumns>
+		<GridColumn Width="100%"/>
+	</GridColumns>
+<%
+	curView_sIconClass = curView.GetOptProperty( 'icon_class', 'icon-link' );
+	sClick_curView = UrlDecode( curView.GetOptProperty( 'action', '' ) );
+	for ( oDataElem_curView in arrData_curView )
+	{
+		oColumnElem_curView = arrColumns_curView[ 0 ];
+		sData_curView = oDataElem_curView.GetOptProperty( oColumnElem_curView.data, '' );
+		sClickElem_curView = sClick_curView;
+		if ( sClickElem_curView == '' )
+		{
+			sClickElem_curView = oColumnElem_curView.GetOptProperty( "click", '' );
+		}
+		if ( sClickElem_curView != '' )
+		{
+			sClickElem_curView = StrReplace( sClickElem_curView, '{id}', oDataElem_curView.GetOptProperty( 'id', '' ) );
+			sClickElem_curView = StrReplace( sClickElem_curView, '{link}', oDataElem_curView.GetOptProperty( 'link', '' ) );
+		}
+%>
+	<GridRow>
+		<Grid Class="XAML-grid-list-item">
+			<GridColumns>
+				<GridColumn Width="32"/>
+				<GridColumn Width="100%"/>
+				<GridColumn/>
+			</GridColumns>
+			<GridRow>
+<%
+		if ( sClickElem_curView == '' )
+		{
+%>
+				<Label Class="<%=curView_sIconClass%>"></Label>
+				<Label><![CDATA[<%=sData_curView%>]]></Label>
+<%
+		}
+		else
+		{
+%>
+				<Link Click="<%=XmlAttrEncode( sClickElem_curView )%>" Class="<%=curView_sIconClass%>"></Link>
+				<Link Click="<%=XmlAttrEncode( sClickElem_curView )%>"><![CDATA[<%=sData_curView%>]]></Link>
+<%
+		}
+%>
+				<Label Class="XAML-grid-list-desc" NoWrap="true"><%=sCatalogTitle%></Label>
+			</GridRow>
+		</Grid>
+	</GridRow>
+<%
+	}
+%>
+</Grid>
+<%
+	}
+}
+
+
+write_general_link( 'bottom' );
+
+
+if ( bDispSchema )
+{
+%>
+</StackPanel>
+<%
+}
+
+curView = undefined;
+%>
+</SPXMLScreen>

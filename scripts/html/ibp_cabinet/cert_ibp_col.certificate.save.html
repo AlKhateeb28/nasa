@@ -1,6 +1,11 @@
 <SPXMLScreen>
     <%
     // 6971503495410184031
+    function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
+
+    var agentId = 6971503495410184031;
+    var loggerName = "agent_6971503495410184031";
+
     function from_str_to_date( _sDate, _bWithTime ) {
     try {
     if ( _bWithTime ) {
@@ -414,7 +419,7 @@
 
                 <TabItem Title="Прохождение курсов">
                     <%
-                    curView = {
+                    /*curView = {
                     "title" : "Результаты прохождения курсов программы." + " Пройдено: " + num + " из 8",
                     "id": "QWE",
                     "disp_selectors": false,
@@ -470,46 +475,50 @@
                     ])
                     }
                     }
-                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
+                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )*/
+
+                    Response.Write(EvalCodePageUrl(global_settings.web_path + "ibp_cabinet/ibp_courses_tab.html"));
                     %>
                 </TabItem>
 
                 <TabItem Title="Метод. разборы">
                     <%
-                    curView = {
-                    "title" : "Результаты просмотра видеозаписей метод. разборов."  + " Пройдено: " + videocourses_num + " из 11",
-                    "id": "SDF",
-                    "disp_selectors": false,
-                    "disp_search": true,
-                    "disp_filter": false,
-                    "disp_paging": true,
-                    "paging_size": 20,
-                    "catalog_name": "learnings",
-                    "xquery_qual": "",
-                    "disp_type": "data_grid",
-                    "height": null,
-                    "buttons": [
-                    {
-                    "name": "reassign_seminars",
-                    "title": "Переназначить",
-                    "click": ("CONFIRM=Вы действительно хотите переназначить данному сотруднику семинары и методические разборы?;ACTION=reassign_seminars_action")
-                    },
-                    {
-                    "name": "export_action_name_3",
-                    "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
-                    "click": ("ACTION=export_action_name_3")
+                    /*curView = {
+                        "title" : "Результаты просмотра видеозаписей метод. разборов."  + " Пройдено: " + videocourses_num + " из 11",
+                        "id": "SDF",
+                        "disp_selectors": false,
+                        "disp_search": true,
+                        "disp_filter": false,
+                        "disp_paging": true,
+                        "paging_size": 20,
+                        "catalog_name": "learnings",
+                        "xquery_qual": "",
+                        "disp_type": "data_grid",
+                        "height": null,
+                        "buttons": [{
+                                "name": "reassign_seminars",
+                                "title": "Переназначить",
+                                "click": ("CONFIRM=Вы действительно хотите переназначить данному сотруднику семинары и методические разборы?;ACTION=reassign_seminars_action")
+                            },
+                            {
+                                "name": "export_action_name_3",
+                                "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+                                "click": ("ACTION=export_action_name_3")
+                            }
+                        ],
+                        "collection": {
+                            "name": "col_videolearnings_cert_ibp",
+                            "params": ([
+                                {"name": "sSearchWord", "value": "{!CatalogListSearchSDF}"},
+                                {"name": "videocourses_ids_arr", "value": videocourses_ids_arr},
+                                {"name": "curObjectID", "value": object_id}
+                            ])
+                        }
                     }
-                    ],
-                    "collection": {
-                    "name": "col_videolearnings_cert_ibp",
-                    "params": ([
-                    {"name": "sSearchWord", "value": "{!CatalogListSearchSDF}"},
-                    {"name": "videocourses_ids_arr", "value": videocourses_ids_arr},
-                    {"name": "curObjectID", "value": object_id}
-                    ])
-                    }
-                    }
-                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
+
+                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )*/
+
+                    Response.Write(EvalCodePageUrl(global_settings.web_path + "ibp_cabinet/ibp_methods_tab.html"));
                     %>
                 </TabItem>
                 <!--
