@@ -89,6 +89,8 @@ try {
 
     notificationCount = 0;
     currentPersonId = 0;
+    personCoursesCount = 0;
+
     coursesLinks = new Binary();
     colobaratorList = new Binary();
 
@@ -103,9 +105,10 @@ try {
 
             tools.create_notification("incomplete_course", OptInt(currentPersonId), coursesLinks.GetStr());
 
-            colobaratorList.AppendStr("<div>" + dataList[processed - 1].fullname + " (" + currentPersonId + ")</div>");
+            colobaratorList.AppendStr("<div>" + dataList[processed - 1].fullname + " (" + currentPersonId + ") - " + personCoursesCount + " незавершенных курсов</div>");
 
             notificationCount++;
+            personCoursesCount = 0;
 
             currentPersonId = data.coll_id;
 
@@ -114,6 +117,7 @@ try {
 
         coursesLinks.AppendStr("<p><a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/learning_proc?object_id=" + data.course_id + "' target='_blank'>" + data.course_name + "</a></p>");
 
+        personCoursesCount++;
         processed++;
 
         agent.processed = processed;
@@ -133,7 +137,7 @@ try {
 
         notificationCount++;
 
-        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " (" + dataList[total - 1].coll_id + ")</div>");
+        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + " незавершенных курсов</div>");
 
         if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
             notificationMessage = "<p><b>Отправлено " + notificationCount + " сообщений сотрудниркам о незавершенных курсах:</b></p>" + colobaratorList.GetStr();
