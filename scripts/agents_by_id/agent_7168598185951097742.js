@@ -24,9 +24,13 @@ function isScheduledDay(datetime) {
 function getNormalizedMessage(count) {
     if(count == 1) {
         return " незавершенный курс";
+    } else {
+        if(count > 1 && count <= 4) {
+            return " незавершенных курса";
+        } else {
+            return " незавершенных курсов";
+        }
     }
-
-    return " незавершенных курсов";
 }
 
 var agentId = 7168598185951097742;
