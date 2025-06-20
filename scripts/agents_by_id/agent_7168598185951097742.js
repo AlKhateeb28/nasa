@@ -21,6 +21,14 @@ function isScheduledDay(datetime) {
     return false;
 }
 
+function getNormalizedMessage(count) {
+    if(count == 1) {
+        return " незавершенный курс";
+    }
+
+    return " незавершенных курсов";
+}
+
 var agentId = 7168598185951097742;
 var userId = 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
 var msPerRecord = 0.001;
@@ -105,7 +113,7 @@ try {
 
             tools.create_notification("incomplete_course", OptInt(currentPersonId), coursesLinks.GetStr());
 
-            colobaratorList.AppendStr("<div>" + dataList[processed - 1].fullname + " (" + currentPersonId + ") - " + personCoursesCount + " незавершенных курсов</div>");
+            colobaratorList.AppendStr("<div>" + dataList[processed - 1].fullname + " (" + currentPersonId + ") - " + personCoursesCount + getNormalizedMessage(personCoursesCount) + "</div>");
 
             notificationCount++;
             personCoursesCount = 0;
@@ -137,13 +145,7 @@ try {
 
         notificationCount++;
 
-        messageSuffix = " незавершенных курсов";
-
-        if(personCoursesCount == 1) {
-            messageSuffix = " незавершенный курс";
-        }
-
-        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + messageSuffix + "</div>");
+        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + getNormalizedMessage(personCoursesCount) + "</div>");
 
         if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
             notificationMessage = "<p><b>Отправлено " + notificationCount + " сообщений сотрудниркам о незавершенных курсах:</b></p>" + colobaratorList.GetStr();
