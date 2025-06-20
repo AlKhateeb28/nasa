@@ -137,7 +137,13 @@ try {
 
         notificationCount++;
 
-        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + " незавершенных курсов</div>");
+        messageSuffix = "незавершенных";
+
+        if(personCoursesCount == 1) {
+            messageSuffix = "незавершенный";
+        }
+
+        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + " " + messageSuffix + " курсов</div>");
 
         if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
             notificationMessage = "<p><b>Отправлено " + notificationCount + " сообщений сотрудниркам о незавершенных курсах:</b></p>" + colobaratorList.GetStr();
