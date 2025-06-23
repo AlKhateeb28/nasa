@@ -14,7 +14,7 @@ function setNotFinishedReminderDate(collaboratorId) {
 }
 
 function isScheduledDay(datetime) {
-    if(WeekDay(datetime) < 6 && Hour(Date()) >=8 &&  Hour(Date()) < 18) {
+    if(WeekDay(datetime) >= 1 && WeekDay(datetime) < 6 && Hour(Date()) >=8 &&  Hour(Date()) < 18) {
         return true
     }
 
