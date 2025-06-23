@@ -228,7 +228,7 @@ class Calendar extends Object {
             }
 
             for (let i = 1; i <= lastdate; i++) {
-                let isToday = i === date.getDate() && month === new Date().getMonth() && year === new Date().getFullYear() ? "active" : "inactive";
+                let isToday = i === (date.getDate() - 1) && month === new Date().getMonth() && year === new Date().getFullYear() ? "active" : "inactive";
 
                 lit += `<li class="${isToday}" onclick="Calendar.onSelectDate(${i})">${i}</li>`;
             }
