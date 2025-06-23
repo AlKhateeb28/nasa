@@ -1,0 +1,79 @@
+<%
+// 6760576445698543927
+oBlockHeader = tools_web.get_web_param( curParams, "objectblock.header", "", true );
+oBlockDesc = tools_web.get_web_param( curParams, "objectblock.desc", "", true );
+oBlockLink = tools_web.get_web_param( curParams, "objectblock.link", "", true );
+oBlockImage = tools_web.get_web_param( curParams, "objectblock.resource", "", true );
+if (oBlockImage!=null && oBlockImage!='' )
+oDopStyles = "background-image: url(download_file.html?file_id=" + Int(oBlockImage) + ") !important"
+else
+oDopStyles = "";
+%>
+
+<style>
+    .blockLinkCourse:hover {
+        border: 2px solid transparent;
+        color: #1a4b81;
+        background-color: #FFFFFF;
+        font-size: 16px;
+        border-radius: 8px;
+        padding: 16px 24px;
+        box-sizing: border-box;
+        display: inline-block;
+        cursor: pointer;
+        position: relative;
+        top: 3.4em;
+    }
+
+    .blockLinkCourse {
+        border: 2px solid #FFFFFF;
+        color: #FFFFFF;
+        font-size: 16px;
+        border-radius: 8px;
+        padding: 16px 24px;
+        box-sizing: border-box;
+        display: inline-block;
+        cursor: pointer;
+        position: relative;
+        top: 3.4em;
+    }
+
+    @media screen and (max-width: 550px) {
+        html {
+            -webkit-text-size-adjust: none;
+        }
+        .blockLinkCourse {
+            border: 2px solid #FFFFFF;
+            color: #FFFFFF;
+            font-size: 16px;
+            border-radius: 8px;
+            padding: 16px 24px;
+            box-sizing: border-box;
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+            top: 0.5em;
+        }
+
+        .blockLinkCourse:hover {
+            border: 2px solid transparent;
+            color: #1a4b81;
+            background-color: #FFFFFF;
+            font-size: 16px;
+            border-radius: 8px;
+            padding: 16px 24px;
+            box-sizing: border-box;
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+            top: 0.5em;
+        }
+    }
+</style>
+
+<div class="objBlock" style="<%=oDopStyles%>">
+    <!-- <div class="objBlockHeader"><%=oBlockHeader%></div> -->
+    <div style="font-size: 36px; color: #FFFFFF; padding-bottom: 12px;"><%=oBlockHeader%></div>
+    <div class="objBlockDesc"><%=oBlockDesc%></div>
+    <div class="blockLinkCourse" onClick="document.location.href='<%=oBlockLink%>'" style="margin-top: -20px;">Перейти в каталог</div>
+</div>
