@@ -67,7 +67,7 @@ try {
         "             INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "                AND IIF(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') IS NULL, " +
         "                        CAST ('01.01.2020' AS date), " +
-        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -180 , GETDATE() " +
+        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE() " +
         "                    ) " +
         "        AND c.data.value('(collaborator/access/web_banned)[1]', 'varchar(max)') != 1 " +
         "    WHERE als.start_usage_date < DATEADD(DAY,  -14 , GETDATE()) " +
@@ -84,7 +84,7 @@ try {
         "         INNER JOIN [WTDB].[dbo].collaborator c ON colls.id = c.id " +
         "                AND IIF(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') IS NULL, " +
         "                        CAST ('01.01.2020' AS date), " +
-        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -180 , GETDATE() " +
+        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE() " +
         "                    ) " +
         " WHERE als.start_usage_date < DATEADD(DAY,  -14 , GETDATE()) " +
         " ORDER BY coll_id "));
