@@ -1,12 +1,12 @@
-<!-- 7129369811097672246 -->
-<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7129369811097672246 -->
+<!-- 7169344819923418898 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7169344819923418898 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Кабинет ВТ</title>
+    <title>Кабинет РЦК</title>
 
-    <link rel="icon" href="./fcc/images/trainer.ico"/>
+    <link rel="icon" href="./fcc/certificate_rck/rck_trainer.ico"/>
 
     <link rel="stylesheet" href="./fcc/css/common.css"/>
     <style>
@@ -110,7 +110,7 @@
     <script type="text/javascript" src="./fcc/js/webSocket.js"></script>
     <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
     <script type="text/javascript" src="./fcc/js/common_classes.js"></script>
-    <script type="text/javascript" src="./fcc/certificate_vntr/index.js"></script>
+    <script type="text/javascript" src="./fcc/certificate_rck/index.js"></script>
 </head>
 <body>
 
@@ -128,14 +128,14 @@
 </div>
 
 <script type="text/html" id="report_template">
-<div class="flat-card" style="width: 90%; margin-left: 19px; margin-top: 18%; height: 70px;">
-    <div style="padding-top: 20px;">
-        <button id="report_button" class="blink button-control enable-button" style="margin-left: 15%; margin-right: 5%;" onclick="IndexPage.startAgent()">
-            <div class="text">Общая выгрузка</div>
-        </button>
+    <div class="flat-card" style="width: 90%; margin-left: 19px; margin-top: 18%; height: 70px;">
+        <div style="padding-top: 20px;">
+            <button id="report_button" class="blink button-control enable-button" style="margin-left: 15%; margin-right: 5%;" disabled="disabled" onclick="IndexPage.startAgent()">
+                <div class="text">Общая выгрузка</div>
+            </button>
+        </div>
+        <div id="report_message" style="display: none; margin-left: 19%; margin-right: 5%;">Выгрузка завершена</div>
     </div>
-    <div id="report_message" style="display: none; margin-left: 19%; margin-right: 5%;">Выгрузка завершена</div>
-</div>
 </script>
 
 <script type="text/html" id="grid_row_template">

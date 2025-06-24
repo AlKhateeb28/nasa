@@ -94,15 +94,8 @@ class IndexPage extends Object {
     static createRow(person, index) {
         $("#card_table").append(Common.getTemplate("person_row_template"));
 
-        let background = "#eaeaea"; // white
-        if(parseInt($("#type").val()) === 0) {
-            background = "#cacaca"; // gray
-        }
-
         $("#row").attr("id", "row_" + index);
-        const rowElement = $("#row_" + index);
-        rowElement.attr("data-id", person.id);
-        rowElement.css("background-color", background);
+        $("#row_" + index).attr("data-id", person.id);
 
         $("#fio").attr("id", "fio_" + index);
         $("#fio_" + index).html(person.fio);
