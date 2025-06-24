@@ -90,6 +90,8 @@ if (!LdsIsServer ) {
                     collaboratorCode = excelSheet.Cells(currentRow, 1).Value;
 
                     if (!isCollaboratorExistsInRccDossier(collaboratorCode)) {
+                        addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator '" + collaboratorCode + "' not in dossier!");
+
                         collaborator = tools.get_doc_by_key("collaborator", "login", collaboratorCode);
 
                         if (collaborator == null) {
@@ -120,6 +122,8 @@ if (!LdsIsServer ) {
                                 saveExcel(excelFile, excelSheet, "Должность " + collaboratorTE.position_id + "не найдена. Пропущено.", collaboratorTE.id);
                                 skipped++;
 
+                                currentRow++;
+
                                 continue;
                             }
 
@@ -134,6 +138,8 @@ if (!LdsIsServer ) {
                                 );
                                 saveExcel(excelFile, excelSheet, "Организация " + collaboratorTE.org_id + " не найдена. Пропущено.", collaboratorTE.id);
                                 skipped++;
+
+                                currentRow++;
 
                                 continue;
                             }
@@ -153,6 +159,8 @@ if (!LdsIsServer ) {
                                 saveExcel(excelFile, excelSheet, "Регион " + organizationTE.region_id + " не найден. Пропущено.", collaboratorTE.id);
                                 skipped++;
 
+                                currentRow++;
+
                                 continue;
                             }
 
@@ -167,6 +175,8 @@ if (!LdsIsServer ) {
                                 );
                                 saveExcel(excelFile, excelSheet, "Регион " + organizationTE.custom_elems.ObtainChildByKey("report_region_id").value + " не найден. Пропущено.", collaboratorTE.id);
                                 skipped++;
+
+                                currentRow++;
 
                                 continue;
                             }
@@ -214,15 +224,14 @@ if (!LdsIsServer ) {
                     currentRow++;
                     processed++;
 
-                    if (processed % 10 == 0) {
-                        agent.processed = processed;
-                        agent.skipped = skipped + edMethodsSkipped;
-                        agent.saved = saved;
-                        agent.message = "Обрабатывается ...";
-                        if (ws != null) {
-                            ws = sendMessageToWebsocket(ws, agent);
-                        }
+                    agent.processed = processed;
+                    agent.skipped = skipped + edMethodsSkipped;
+                    agent.saved = saved;
+                    agent.message = "Обрабатывается ...";
+                    if (ws != null) {
+                        ws = sendMessageToWebsocket(ws, agent);
                     }
+
                     if (processed % 100 == 0) {
                         addLogMessage(
                             loggerName,
