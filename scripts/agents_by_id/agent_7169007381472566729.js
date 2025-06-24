@@ -52,7 +52,7 @@ function assignCoursesByFlag(execute, ids, flag) {
         prevDate = new Date();
 
         for (data in dataList) {
-            var coursesIds = ArrayExtractKeys(tools.read_object(ids), "course_id");
+            coursesIds = ArrayExtractKeys(tools.read_object(ids), "course_id");
 
             for(courseId in coursesIds) {
                 tools.activate_course_to_person(OptInt(data.id), courseId);
