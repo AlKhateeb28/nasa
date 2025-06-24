@@ -470,7 +470,7 @@ function refreshTop5Material() {
         $("#pg4_row_index_mat_" + index).html(index + 1);
 
         $("#pg4_row_name").attr("id", "pg4_row_name_mat_" + index);
-        $("#pg4_row_name_mat_" + index).html(element.name.replaceAll("_", " ").replace(" ", ":"));
+        $("#pg4_row_name_mat_" + index).html(element.name.replaceAll("_", " ").replace(" ", " "));
 
         $("#pg4_row_value").attr("id", "pg4_row_value_mat_" + index);
         $("#pg4_row_value_mat_" + index).html(element.count);
@@ -487,7 +487,7 @@ function refreshTop5MonthMaterial() {
         $("#pg4_row_index_mat_hour_" + index).html(index + 1);
 
         $("#pg4_row_name").attr("id", "pg4_row_name_mat_hour_" + index);
-        $("#pg4_row_name_mat_hour_" + index).html(element.name.replaceAll("_", " ").replace(" ", ":"));
+        $("#pg4_row_name_mat_hour_" + index).html(element.name.replaceAll("_", " ").replace(" ", " "));
 
         $("#pg4_row_value").attr("id", "pg4_row_value_mat_hour_" + index);
         $("#pg4_row_value_mat_hour_" + index).html(element.count);
@@ -504,7 +504,7 @@ function refreshTop5MonthPerson() {
         $("#pg4_row_index_person_hour_" + index).html(index + 1);
 
         $("#pg4_row_name").attr("id", "pg4_row_name_person_hour_" + index);
-        $("#pg4_row_name_person_hour_" + index).html(element.name.replaceAll("_", " ").replace(" ", ":"));
+        $("#pg4_row_name_person_hour_" + index).html(element.name.replaceAll("_", " ").replace(" ", " "));
 
         $("#pg4_row_value").attr("id", "pg4_row_value_person_hour_" + index);
         $("#pg4_row_value_person_hour_" + index).html(element.count);
