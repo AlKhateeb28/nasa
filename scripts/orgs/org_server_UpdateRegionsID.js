@@ -35,7 +35,7 @@ try {
         "   INNER JOIN [WTDB].[dbo].org ON orgs.id = org.id " +
         " WHERE orgs.region_id IS NOT NULL " +
         "    AND org.data.exist('(//custom_elems/custom_elem[name=''fact_region_id''])') = 1 " +
-        "    AND org.data.exist('(//custom_elems/custom_elem[name=''report_region_id''])') = 0 "));
+        "    AND org.data.value('(org/custom_elems/custom_elem[name=''report_region_id''])[1]/value[1]', 'varchar(max)') IS NULL "));
 
     total = ArrayCount(resultArray);
 
