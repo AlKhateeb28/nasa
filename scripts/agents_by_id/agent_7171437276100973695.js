@@ -58,12 +58,7 @@ try {
 
     adminIds = [7351734047845980789, 6743923349751162819, 6614087247971038079]; // AA, FK, TO
 
-    for(id in adminIds) {
-        tools.create_notification("few_new_person_count", id, getNormalizedMessage(total));
-        tools.create_notification("more_new_person_count", id, getNormalizedMessage(total));
-    }
-
-    /*if(total < 5) {
+    if(total < 5) {
         for(id in adminIds) {
             tools.create_notification("few_new_person_count", id, getNormalizedMessage(total));
         }
@@ -71,7 +66,7 @@ try {
         for(id in adminIds) {
             tools.create_notification("more_new_person_count", id, getNormalizedMessage(total));
         }
-    }*/
+    }
 
     agent.state = 1;
     agent.processed = processed;
