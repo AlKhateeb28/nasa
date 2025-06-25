@@ -13,6 +13,14 @@ function setRegistrationReminderDate(collaboratorId) {
     }
 }
 
+function isScheduledDay(datetime) {
+    if(WeekDay(datetime) >= 1 && WeekDay(datetime) < 6 && Hour(Date()) >=8 &&  Hour(Date()) < 18) {
+        return true
+    }
+
+    return false;
+}
+
 var agentId = 7168940904002975753;
 var userId = 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
 var msPerRecord = 0.001;
@@ -39,23 +47,24 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 try {
     dataList = ArrayDirect(XQuery("sql: " +
         " SELECT TOP 50 cs.id, " +
-        "       cs.fullname, " +
-        "       c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime') AS created, " +
-        "       c.data.value('(//custom_elems/custom_elem[name=''registration_reminder'']/value)[1]', 'varchar(max)') AS registration_reminder, " +
-        "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''With_no_right''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''With_no_right''])[1]/value[1]', 'bit') AS INT)) AS with_no_right, " +
-        "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_fcc''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_fcc''])[1]/value[1]', 'bit') AS INT)) AS is_fck, " +
-        "    IIF(c.data.exist('(//custom_elems/custom_elem[name=''in_program''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''in_program''])[1]/value[1]', 'bit') AS INT)) AS in_program, " +
+        "              cs.fullname, " +
+        "              cs.email, " +
+        "              c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime') AS created, " +
+        "              c.data.value('(//custom_elems/custom_elem[name=''registration_reminder'']/value)[1]', 'varchar(max)') AS registration_reminder, " +
+        "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''With_no_right''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''With_no_right''])[1]/value[1]', 'bit') AS INT)) AS with_no_right, " +
+        "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_fcc''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_fcc''])[1]/value[1]', 'bit') AS INT)) AS is_fck, " +
+        "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''in_program''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''in_program''])[1]/value[1]', 'bit') AS INT)) AS in_program, " +
         "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_rck''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'bit') AS INT)) AS is_rck, " +
         "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_ock''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_ock''])[1]/value[1]', 'bit') AS INT)) AS is_ock, " +
         "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_roiv''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_roiv''])[1]/value[1]', 'bit') AS INT)) AS is_roiv, " +
-        "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_partner''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_partner''])[1]/value[1]', 'bit') AS INT)) AS is_partner " +
+        "              IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_partner''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_partner''])[1]/value[1]', 'varchar(max)') AS INT)) AS is_partner " +
         " FROM [WTDB].[dbo].collaborators cs " +
         "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
-        "                AND IIF(c.data.exist('(//custom_elems/custom_elem[name=''registration_reminder''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''registration_reminder''])[1]/value[1]', 'bit') AS INT)) = 0 " +
+        "               AND c.data.value('(//custom_elems/custom_elem[name=''registration_reminder''])[1]/value[1]', 'varchar(max)') IS NULL " +
         " WHERE UPPER(cs.code) NOT LIKE '%_MUC_%' " +
-        "    AND DAY(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = DAY(GETDATE()) " +
-        "    AND MONTH(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = MONTH(GETDATE()) " +
-        "    AND YEAR(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = YEAR(GETDATE()) "));
+        "       AND DAY(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = DAY(GETDATE()) " +
+        "       AND MONTH(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = MONTH(GETDATE()) " +
+        "       AND YEAR(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = YEAR(GETDATE()) "));
 
     total = ArrayCount(dataList);
 
@@ -69,6 +78,10 @@ try {
 
     isSendNotificationWithRight = true;
     isSendNotificationWithoutRight = true;
+
+    colobaratorList = new Binary();
+
+    notificationMessage = "<p><b>Отправлено " + total + " сообщений новым сотрудниркам</b></p>";
 
     for (data in dataList) {
         if(data.with_no_right == 1) {
@@ -87,6 +100,8 @@ try {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] Sent Notification to " + data.fullname + " ( " + data.id + " ) ");
         }
 
+        colobaratorList.AppendStr("<div>" + data.fullname + " Email: " + data.email + " (" + data.id + ") </div>");
+
         processed++;
 
         agent.processed = processed;
@@ -96,7 +111,13 @@ try {
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
+    }
 
+    if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
+        notificationMessage += colobaratorList.GetStr();
+
+        tools.create_notification("find_new_persons", 7351734047845980789, notificationMessage); // AA
+        tools.create_notification("find_new_persons", 6743923349751162819, notificationMessage); // FK
     }
 
     agent.state = 1;

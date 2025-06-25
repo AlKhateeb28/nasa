@@ -67,8 +67,7 @@ try {
         "             INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "                AND IIF(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') IS NULL, " +
         "                        CAST ('01.01.2020' AS date), " +
-        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE() " +
-        "                    ) " +
+        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE()) " +
         "        AND c.data.value('(collaborator/access/web_banned)[1]', 'varchar(max)') != 1 " +
         "    WHERE als.start_usage_date < DATEADD(DAY,  -14 , GETDATE()) " +
         "    GROUP BY cs.id " +
@@ -76,7 +75,8 @@ try {
         " SELECT cs.id AS coll_id, " +
         "       als.id course_id, " +
         "       crs.name AS course_name, " +
-        "       colls.fullname " +
+        "       colls.fullname, " +
+        "       colls.email " +
         " FROM [WTDB].[dbo].active_learnings als " +
         "         INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND UPPER(crs.code) LIKE '%FCK-%' " +
         "         INNER JOIN _group_colls_view cs ON als.person_id = cs.id " +
@@ -84,8 +84,7 @@ try {
         "         INNER JOIN [WTDB].[dbo].collaborator c ON colls.id = c.id " +
         "                AND IIF(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') IS NULL, " +
         "                        CAST ('01.01.2020' AS date), " +
-        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE() " +
-        "                    ) " +
+        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE()) " +
         " WHERE als.start_usage_date < DATEADD(DAY,  -14 , GETDATE()) " +
         " ORDER BY coll_id "));
 
@@ -117,7 +116,7 @@ try {
 
             tools.create_notification("incomplete_course", OptInt(currentPersonId), coursesLinks.GetStr());
 
-            colobaratorList.AppendStr("<div>" + dataList[processed - 1].fullname + " (" + currentPersonId + ") - " + personCoursesCount + getNormalizedMessage(personCoursesCount) + "</div>");
+            colobaratorList.AppendStr("<div>" + dataList[processed - 1].fullname + " Email: " + dataList[processed - 1].email + " (" + currentPersonId + ") - " + personCoursesCount + getNormalizedMessage(personCoursesCount) + "</div>");
 
             notificationCount++;
             personCoursesCount = 0;
@@ -149,10 +148,10 @@ try {
 
         notificationCount++;
 
-        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + getNormalizedMessage(personCoursesCount) + "</div>");
+        colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " Email: " + dataList[total - 1].email + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + getNormalizedMessage(personCoursesCount) + "</div>");
 
         if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
-            notificationMessage = "<p><b>Отправлено " + notificationCount + " сообщений сотрудниркам о незавершенных курсах:</b></p>" + colobaratorList.GetStr();
+            notificationMessage = "<p><b>Отправлено " + notificationCount + " сообщений сотрудниркам о незавершенных курсах</b></p>" + colobaratorList.GetStr();
 
             tools.create_notification("find_incomplete_course", 7351734047845980789, notificationMessage); // AA
             tools.create_notification("find_incomplete_course", 6743923349751162819, notificationMessage); // FK

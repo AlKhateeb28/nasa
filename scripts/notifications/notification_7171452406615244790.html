@@ -1,0 +1,50 @@
+<!-- 7171446802412961577 -->
+<p><img src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/fcc/images/more.jpg"/></p>
+<div style="padding-left: 20px;">
+    <p>
+        <div id="header" style="float: left; color: red; margin-left: 10px; margin-right: 10px;">
+            <b>МНОГО:</b>
+        </div>
+        <div style="float: left; margin-left: 10px;">
+            <%=Text%>
+        </div>
+    </p>
+    </br>
+    <p>
+        За последние 4 часа с внешнего портала в СДО было передано более 200 пользователей! Обратите внимание на работу интеграционного модуля.
+    </p>
+    <p><b>Порядок действий:</b></p>
+    <p>1. Необходимо информировать руководителя отдела дистанционного обучения</p>
+    <p>2. Проверить количество новых зарегистрированных пользователей в мониторе агентов <a href="" target="_blank">Ссылка</a>. Закладка "По часам"</p>
+    <p>
+        <div>
+            3. Увеличить время работы агента 7437057559620972968 "HELPER - Выровнить кастомные флаги организации и сотрудника за последний 1 час".
+            Изменить "Период запуска (мин)" с 10 на 30 минут.
+        </div>
+    </p>
+    <br>
+    <p>С уважением,</p>
+    <p>Команда портала производительность.рф</p>
+    ----------
+    <p>Данное письмо сгенерировано автоматически, не отвечайте на него.></p>
+</div>
+
+<script>
+    function refresh() {
+        if(step === 0) {
+            $("#header").css("background-color", "white");
+            $("#header").css("color", "red");
+
+            step = 1;
+        } else {
+            $("#header").css("background-color", "red");
+            $("#header").css("color", "white");
+
+            step = 0;
+        }
+    }
+
+    var step = 0;
+
+    setInterval(refresh, 500);
+</script>

@@ -1,0 +1,724 @@
+<!-- Google Tag Manager -->
+<!-- 6945869266660439829 -->
+<!--<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MG3MNPH');</script>-->
+<!-- End Google Tag Manager -->
+<link rel="shortcut icon" href="/static/ico/favicon.ico" type="image/x-icon">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<meta name="theme-color" content="#004781">
+<meta name="msapplication-navbutton-color" content="#004781">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#004781">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+
+
+
+<style>
+    @media (min-width: 1000px) and (max-width: 2000px){
+        .container {
+            max-width: 1140px;
+        }
+        .card-title{
+            font-size: 18px !important;
+        }
+        .card-text{
+            font-size: 12px !important;
+        }
+        .card-status{
+            font-size: 16px !important;
+        }
+    }
+    @media (min-width: 770px) and (max-width: 992px){
+        .container {
+            max-width: 960px;
+        }
+        .card-title{
+            font-size: 18px !important;
+        }
+        .card-text{
+            font-size: 12px !important;
+        }
+        .card-status{
+            font-size: 16px !important;
+        }
+    }
+    @media (min-width: 600px) and (max-width: 768px){
+        .container {
+            max-width: 720px;
+        }
+        .card-title{
+            font-size: 18px !important;
+        }
+        .card-text{
+            font-size: 12px !important;
+        }
+        .card-status{
+            font-size: 16px !important;
+        }
+    }
+    @media screen and (max-width: 576px){
+        html {
+            -webkit-text-size-adjust: none;
+        }
+        .container {
+            max-width: 540px;
+        }
+        .card-title{
+            font-size: 16px !important;
+        }
+        .card-text{
+            font-size: 12px !important;
+        }
+        .card-status{
+            font-size: 16px !important;
+        }
+        .fcc-page-card .card-body .card-title-text, .fcc-page-card .card-body .card-title-text-2 {
+            height: 300px !important;
+        }
+    }
+    .fcc-application .container-fluid {
+        padding: 0;
+    }
+    .fcc-application .fcc-filter {
+        background-color: #f5f6f7;
+        min-height: 60px;
+        display: flex;
+    }
+    .fcc-page-card {
+        margin: 0 0 40px;
+    }
+    .fcc-page-card .card-body .card-title-text, .fcc-page-card .card-body .card-title-text-2 {
+        height: 220px;
+    }
+    .block-title, .page-title {
+    <!-- font-family: 'Roboto', 'Open Sans', Trebuchet MS, Verdana, Tahoma, sans-serif !important; -->
+        font-style: normal;
+        font-weight: 300;
+        font-size: 44px;
+        line-height: 125%;
+        color: #3b4256;
+        word-break: break-word;
+    }
+    .mysvg{
+        height: 2em;
+        width: auto;
+        margin-right: 1em;
+    }
+    .card-title-text{
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+    }
+    .card-title-text:after{
+        background: none !important;
+    }
+    .link-text{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #004781;
+        background-color: #f6f4f5;
+        height: 64px;
+        font-size: 18px;
+        font-weight: 900;
+    }
+    .link-text:hover{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        background-color: #004781;
+        height: 64px;
+        font-size: 18px;
+        font-weight: 900;
+        cursor: pointer;
+    }
+    .my-card-text{
+        margin-right: 10px;
+    }
+    .card-text{
+        margin-right: 10px;
+
+        color: #848e99!important;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 140%;
+        letter-spacing: .005em;
+    }
+    .duration-circle{
+        border-radius: 50%;
+        /* border: 5px solid white; */
+        background-color: rgba(175, 175, 175, 0.8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 25px;
+        min-height: 25px;
+        height: 3.7em;
+        width: 3.7em;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-right: 5px;
+        word-break: keep-all;
+        white-space: nowrap;
+        /* font-weight: 900;*/
+    }
+    .circle-container{
+        position: absolute;
+        display: flex;
+        align-self: flex-end;
+    }
+
+
+    .isnew-container{
+        position: absolute;
+        display: flex;
+        align-self: flex-start;
+    }
+    .isnew-circle{
+        border-radius: 50%;
+        /* border: 5px solid white; */
+        background-color: #E9426D;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 25px;
+        min-height: 25px;
+        height: 3.7em;
+        width: 3.7em;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+        word-break: keep-all;
+        white-space: nowrap;
+        /*font-weight: 500;*/
+    }
+    .isnew-circle2{
+        border-radius: 20%;
+        /* border: 5px solid white; */
+        /* background-color: rgba(175, 175, 175, 0.8); */
+        color: red;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 25px;
+        min-height: 25px;
+        height: 3.7em;
+        width: 3.7em;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+        word-break: keep-all;
+        white-space: nowrap;
+        /* font-weight: 900;*/
+    }
+
+    .search-panel-container{
+        display: flex;
+        flex-flow: row;
+        justify-content: space-around;
+    }
+
+    .search-panel{
+        display: flex;
+        width: 250px;
+        font-size: 14px;
+    }
+    .next-panel-container{
+        display: flex;
+        flex-flow: row;
+        font-size: 14px;
+    }
+
+    .next-panel{
+        display: flex;
+        width: 33%;
+        justify-content: flex-start;
+    }
+    .next-button-panel{
+        display: flex;
+        width: 33%;
+        justify-content: flex-center;
+    }
+    .next-check-panel{
+        display: flex;
+        width: 33%;
+        justify-content: flex-end;
+    }
+    .check-input{
+
+    }
+    .check-label{
+        padding-left: 0.5em;
+    }
+    .sp-input{
+        display: flex;
+        width: 350px;
+    }
+    .form-control{
+        font-size: 1.5rem;
+    }
+    @media only screen and (max-width: 450px) {
+        .sp-input{
+            display: flex;
+            width: 100px;
+        }
+        .search-panel{
+            display: flex;
+            width: 100px;
+        }
+    }
+</style>
+
+
+<script>
+    var cardTemplate = '' +
+        `<div class="col col-12 col-md-4 fcc-page-card">
+			<div class="card body-card">
+				<div class="circle-container">
+					<div class="duration-circle">
+						<span > @duration мин</span>
+					</div>
+				</div>
+				<div class="isnew-container">
+					<div class="isnew-circle">
+						<span > @isnew</span>
+					</div>
+				</div>
+				<div style="height: 192px; background: url(&quot;@img_url&quot;) center center / cover no-repeat;"></div>
+				<div class="card-body">
+					<div class="card-title-text">
+						<div>
+							<h4 class="card-title" >@name</h4>
+							<div class="card-text my-3" >@description</div>
+						</div>
+						<div style="display: inline-flex; align-items: center; margin-bottom: 10px;">
+							<img class="mysvg" src="/static/thumbs-up-solid.svg">
+							<span class="card-text my-card-text">@likes</span>
+							<img class="mysvg" src="/static/star-solid.svg">
+							<span class="card-text" >@views</span>
+							<span class="card-text" >&#160;&#160;&#160;</span>
+							<span class="card-status" style="color: rgb(@status_color);"  >@status</span>
+						</div>
+					</div>
+				</div>
+				<div class="link-text" data-name="state" onclick="window.open('view_doc.html?mode=course&doc_id=6674846170380136045&object_id=@id', '_blank');">
+					Подробнее
+				</div>
+			</div>
+		</div>`
+
+    var cardTemplate2 = '' +
+        `<div class="col col-12 col-md-4 fcc-page-card">
+			<div class="card body-card">
+				<div class="circle-container">
+					<div class="duration-circle">
+						<span > @duration мин</span>
+					</div>
+				</div>
+				<div class="isnew-container">
+					<div class="isnew-circle2">
+						<span > @isnew</span>
+					</div>
+				</div>
+				<div style="height: 192px; background: url(&quot;@img_url&quot;) center center / cover no-repeat;"></div>
+				<div class="card-body">
+					<div class="card-title-text">
+						<div>
+							<h4 class="card-title" >@name</h4>
+							<div class="card-text my-3" >@description</div>
+						</div>
+						<div style="display: inline-flex; align-items: center; margin-bottom: 10px;">
+							<img class="mysvg" src="/static/thumbs-up-solid.svg">
+							<span class="card-text my-card-text">@likes</span>
+							<img class="mysvg" src="/static/star-solid.svg">
+							<span class="card-text" >@views</span>
+							<span class="card-text" >&#160;&#160;&#160;</span>
+							<span class="card-status" style="color: rgb(@status_color);"  >@status</span>
+						</div>
+					</div>
+				</div>
+				<div class="link-text" data-name="state" onclick="window.open('view_doc.html?mode=course&doc_id=6674846170380136045&object_id=@id', '_blank');">
+					Подробнее
+				</div>
+			</div>
+		</div>`
+    var preloader = `
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+			</div>
+		</div>
+		`
+
+    var ajaxHelperTemplate = "custom_web_template.html?object_id=6945869830255946062";
+
+    var coursesArr = []
+    var coursesNames = []
+
+    var search_word = ''
+    var filter_status = 'Поиск по статусу'
+    var filter_direction = 'Поиск по направлению'
+    var filter_position = 'Поиск по должности'
+    var flexCheckDefault = false
+
+    function get_courses ( _search_word ) {
+        $.ajax({
+            url: ajaxHelperTemplate,
+            async: true,
+            cache: false,
+            data: {
+                action: "get_courses",
+                search: _search_word,
+                document_id: '6674846170380136045' // Электронные курсы
+            },
+            type: "POST",
+            dataType: "text",
+            beforeSend: function() {
+                $('[data-id="container"]').empty().append( preloader );
+            },
+            success: function ( response ) {
+                //console.log("Ajax get_courses прошел");
+                //console.log( response )
+                coursesArr = JSON.parse( response );
+                coursesNames = coursesArr.map( _course => _course.name );
+
+                coursesDirectionsAll = coursesArr.map( _course => _course.direction).join( ";" ).split( ";" );
+                coursesDirections = []
+                coursesDirectionsAll.map( direction => {
+                    if ( direction != '' && !coursesDirections.includes( direction ) ) {
+                        coursesDirections.push( direction )
+                        countArr = coursesArr.filter( _course => _course.direction.indexOf( direction ) != -1 ).length
+                        $( "#select_direction_id" ).append("<option value='" + direction + "'>" + direction + " - " + countArr + "</option>");
+                        // $( "#select_direction_id" ).append("<option value='" + direction + "'>" + direction + "</option>");
+                    }
+                });
+
+                coursesPositionsAll = coursesArr.map( _course => _course.position).join( ";" ).split( ";" );
+                coursesPositions = []
+                coursesPositionsAll.map( position => {
+                    if ( position != '' && !coursesPositions.includes( position ) ) {
+                        coursesPositions.push( position )
+                        countArr = coursesArr.filter( _course => _course.position.indexOf( position ) != -1 ).length
+                        $( "#select_position_id" ).append("<option value='" + position + "'>" + position + " - " + countArr + "</option>");
+                        // $( "#select_position_id" ).append("<option value='" + position + "'>" + position + "</option>");
+                    }
+                });
+
+                coursesStatuses = []
+                coursesArr.map( _course => {
+                    if ( !coursesStatuses.includes( _course.status ) ) {
+                        coursesStatuses.push( _course.status )
+                        $( "#select_status_id" ).append("<option value='" + _course.status + "'>" + _course.status + "</option>");
+                    }
+                });
+                showCourses ( coursesArr, search_word )
+            },
+            error: function() {
+                console.log("Ajax не прошел")
+            }
+        })
+    }
+    function get_directions () {
+        $.ajax({
+            url: ajaxHelperTemplate,
+            async: true,
+            cache: false,
+            data: {
+                action: "get_directions"
+            },
+            type: "POST",
+            dataType: "text",
+            success: function ( response ) {
+                //console.log("Ajax get_directions прошел");
+                //console.log( response );
+                jsonObject = JSON.parse( response );
+                coursesDirections = jsonObject;
+                //console.log( coursesDirections );
+
+                coursesDirections.map( _direction => {
+                    countArr = coursesArr.filter( _course => _course.direction.indexOf( _direction.value ) != -1 ).length
+                    $( "#select_direction_id" ).append("<option value='" + _direction.value + "'>" + _direction.value + " - " + countArr + "</option>");
+                });
+            },
+            error: function() {
+                console.log("Ajax не прошел")
+            }
+        })
+    }
+
+    function filter_courses ( _arr, _search_word, _filter_status, _filter_direction, _filter_position, _isnew ) {
+        console.log( 'filter_courses_ ==== START' )
+        console.log( 'filter_courses_ _search_word = ' + _search_word )
+        console.log( 'filter_courses_ _filter_status = ' + _filter_status )
+        console.log( 'filter_courses_ _filter_direction = ' + _filter_direction )
+        console.log( 'filter_courses_ _filter_position = ' + _filter_position )
+        console.log( 'filter_courses_ _isnew = ' + _isnew )
+        if ( _search_word != '' ) _arr = _arr.filter( elem => ( elem.name.toLowerCase().indexOf( _search_word.toLowerCase() ) + 1 ) )
+        if ( _filter_status != 'Поиск по статусу' ) _arr = _arr.filter( elem => ( elem.status == _filter_status ) )
+        if ( _filter_direction != 'Поиск по направлению' ) _arr = _arr.filter( elem => ( elem.direction.indexOf( filter_direction ) != -1 ) )
+        if ( _filter_position != 'Поиск по должности' ) _arr = _arr.filter( elem => ( elem.position.indexOf( filter_position ) != -1 ) )
+        if ( _isnew ) _arr = _arr.filter( elem => ( elem.isnew == "+" ) )
+        console.log( 'filter_courses_ COUNT_ARR = ' + _arr.length )
+        console.log( 'filter_courses_ ==== FINISH' )
+        return _arr
+    }
+
+    function showCourses ( _coursesArr, _search_word ) {
+        $('[data-id="container"]').empty();
+        _coursesArr.map(_course => {
+            if ( _course.isnew == "+" ) {
+                cardCourse = cardTemplate
+                    .replace( '@duration', _course.duration )
+                    .replace( '@isnew', "Новый" )
+                    .replace( '@img_url', _course.img_url )
+                    .replace( '@name', insertMark( _course.name, _search_word ) )
+                    .replace( '@description', _course.description )
+                    .replace( '@likes', _course.likes )
+                    .replace( '@views', _course.views )
+                    .replace( '@status_color', _course.status_color )
+                    .replace( '@status', _course.status )
+                    .replace( '@id', _course.id );
+            } else {
+                cardCourse = cardTemplate2
+                    .replace( '@duration', _course.duration )
+                    .replace( '@isnew', "" )
+                    .replace( '@img_url', _course.img_url )
+                    .replace( '@name', insertMark( _course.name, _search_word ) )
+                    .replace( '@description', _course.description )
+                    .replace( '@likes', _course.likes )
+                    .replace( '@views', _course.views )
+                    .replace( '@status_color', _course.status_color )
+                    .replace( '@status', _course.status )
+                    .replace( '@id', _course.id );
+            }
+
+            $('[data-id="container"]').append( cardCourse );
+        })
+        $( "#span_id" ).empty();
+        $( "#span_id" ).append( "Найдено курсов: " + _coursesArr.length );
+    }
+
+    function insertMark ( _str, _search_word ) {
+        if ( _search_word != undefined ) {
+            pos = _str.toLowerCase().indexOf( _search_word.toLowerCase() )
+            len = _search_word.length
+            return _str.slice( 0, pos ) + '<span style="color:#CD5C5C">' + _str.slice( pos, pos + len ) + '</span>' + _str.slice( pos + len )
+        } else {
+            return _str
+        }
+    }
+
+
+    $( function() {
+        get_courses('');
+        // get_directions();
+        var search_input = document.querySelector('input[id="search_id"]');
+        search_input.oninput = function() {
+            console.log( '==== search_input ==== oninput' )
+            search_word = this.value.trim()
+            showCourses ( filter_courses( coursesArr, search_word, filter_status, filter_direction, filter_position, flexCheckDefault ), search_word )
+        }
+        search_input.addEventListener ('keypress', function(e) {
+            if ( e.which === 13 ) {
+                console.log( '==== search_input ==== enter' )
+                e.preventDefault();
+                search_word = this.value.trim()
+                showCourses ( filter_courses( coursesArr, search_word, filter_status, filter_direction, filter_position, flexCheckDefault ), search_word )
+            }
+        });
+
+        // $( "#search_id" ).autocomplete({
+        // source: coursesNames
+        // });
+
+        var select_direction = document.querySelector('select[id="select_direction_id"]');
+        select_direction.onchange = function() {
+            console.log( '==== select_direction ==== onchange' )
+            filter_direction = this.value.trim()
+            showCourses ( filter_courses( coursesArr, search_word, filter_status, filter_direction, filter_position, flexCheckDefault ), search_word )
+
+        };
+
+        var select_position = document.querySelector('select[id="select_position_id"]');
+        select_position.onchange = function() {
+            console.log( '==== select_position ==== onchange' )
+            filter_position = this.value.trim()
+            showCourses ( filter_courses( coursesArr, search_word, filter_status, filter_direction, filter_position, flexCheckDefault ), search_word )
+
+        };
+
+        var select_status = document.querySelector('select[id="select_status_id"]');
+        select_status.onchange = function() {
+            console.log( '==== select_status ==== onchange' )
+            filter_status = this.value.trim()
+            showCourses ( filter_courses( coursesArr, search_word, filter_status, filter_direction, filter_position, flexCheckDefault ), search_word )
+        };
+
+        var check_box = document.querySelector('input[id="flexCheckDefault"]');
+        check_box.onchange = function() {
+            console.log( '==== select_checkbox ==== onchange' )
+            flexCheckDefault = this.checked
+            showCourses ( filter_courses( coursesArr, search_word, filter_status, filter_direction, filter_position, flexCheckDefault ), search_word )
+        };
+    });
+</script>
+
+<div class="container">
+    <div class="block-typicalHeader">
+        <div class="row typical-page-header" style="margin-bottom: none;">
+            <div class="col col-12 ">
+                <div class="page-title">Электронные курсы</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="block-typicalHeader">
+        <div class="row typical-page-header" style="margin-bottom: none;">
+            <div class="col col-12 ">
+                <div style="font-size: 14px; margin-bottom: 30px;">Пройдите курсы до конца, завершите обучение и получите доступ к сертификатам в разделе «Моё обучение» - «Сертификаты» или по ссылке: <a href=“https://сдо.производительность.рф/view_doc.html?mode=my_account” target=“_blank”>Мое обучение</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="container mb-5">
+        <div class="search-panel-container">
+            <div class="search-panel" >
+                <input class="sp-input" type="text" placeholder="Поиск..." id="search_id" >
+            </div>
+
+            <div class="search-panel" >
+                <select class="form-control" id="select_status_id" data-tip="Выберите статус" >
+                    <option value="Поиск по статусу">Поиск по статусу</option>
+                </select>
+            </div>
+
+            <div class="search-panel" >
+                <select class="form-control" id="select_direction_id" data-tip="Выберите направление" >
+                    <option value="Поиск по направлению">Поиск по направлению</option>
+                </select>
+            </div>
+
+            <div class="search-panel" >
+                <select class="form-control" id="select_position_id" data-tip="Выберите должность" >
+                    <option value="Поиск по должности">Поиск по должности</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="container mb-5">
+
+        <div class="next-panel-container">
+            <div class="next-panel" >
+                <span id="span_id" ></span>
+            </div>
+            <div class="next-panel" ></div>
+
+            <div class="next-button-panel" >
+
+
+            </div>
+
+            <div class="next-button-panel" >
+
+
+            </div>
+
+            <div class="next-check-panel">
+                <input class="check-input" type="checkbox" value="" id="flexCheckDefault1">
+                <label class="check-label" for="flexCheckDefault1">Подходит для соц.сферы</label>
+            </div>
+            <div class="next-check-panel">
+                <input class="check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="check-label" for="flexCheckDefault">Новые</label>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="container-fluid">
+    <div class="container mb-5">
+
+        <div class="next-panel-container">
+            <div class="next-panel" >
+                <span id="span_id" ></span>
+            </div>
+            <div class="next-panel" ></div>
+
+            <div class="next-button-panel" >
+
+
+            </div>
+
+
+
+            <!--<div class="next-button-panel" >
+
+
+                </div>-->
+
+
+
+            <!--<div class="next-check-panel">
+                <%i_doc = tools.open_doc(curUserID)
+                    if( ArrayCount(i_doc.TopElem.tags) == 0 ){
+                %>
+
+                    <button onClick="create();">Подписаться </button>
+                <%}
+                    if( ArrayCount(i_doc.TopElem.tags) != 0 ){
+                %>
+                    <button onClick="create();">Отписаться </button>
+                <%}%>
+                <div id="main-container"> </div>
+                <input id="cur_user_id" value="<%=curUserID%>" hidden> 
+            </div>-->
+        </div>
+    </div>
+
+</div>
+
+
+<div class="container-fluid">
+    <div class="container mb-5">
+        <div class="row" data-id="container" >
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function create() {
+
+        cur_user_id = document.getElementById("cur_user_id").value;
+        var strLoadingText = 'Подождите, идет создание фильтра';
+        $.ajax({
+            url: "my_controler.html",
+            method: "get",
+            data: {
+                cur_user_id: cur_user_id
+            },
+            success: function(data){
+
+                location.reload()
+            },
+
+        });
+
+
+    }
+</script>
