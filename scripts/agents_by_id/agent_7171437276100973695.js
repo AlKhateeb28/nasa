@@ -13,6 +13,14 @@ function getNormalizedMessage(count) {
     }
 }
 
+function isScheduledDay(datetime) {
+    if(WeekDay(datetime) >= 1 && WeekDay(datetime) < 6 && Hour(Date()) >= 8 &&  Hour(Date()) < 18) {
+        return true
+    }
+
+    return false;
+}
+
 var agentId = 7171437276100973695;
 var userId = 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
 var msPerRecord = 0.001;
@@ -58,13 +66,15 @@ try {
 
     adminIds = [7351734047845980789, 6743923349751162819, 6614087247971038079]; // AA, FK, TO
 
-    if(total < 5) {
-        for(id in adminIds) {
-            tools.create_notification("few_new_person_count", id, getNormalizedMessage(total));
-        }
-    } else if(total > 200) {
-        for(id in adminIds) {
-            tools.create_notification("more_new_person_count", id, getNormalizedMessage(total));
+    if(isScheduledDay(Date())) {
+        if (total < 5) {
+            for (id in adminIds) {
+                tools.create_notification("few_new_person_count", id, getNormalizedMessage(total));
+            }
+        } else if (total > 200) {
+            for (id in adminIds) {
+                tools.create_notification("more_new_person_count", id, getNormalizedMessage(total));
+            }
         }
     }
 
