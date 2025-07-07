@@ -2,6 +2,7 @@ var sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 var page4Chart;
 var page4CoursesChart;
+var page4CoursesByWeekChart;
 
 var page4Data = {};
 
@@ -9,6 +10,8 @@ var page4AccumulationData = {};
 page4AccumulationData.state0Data = [];
 page4AccumulationData.state1Data = [];
 page4AccumulationData.state4Data = [];
+
+var page4CoursesByWeekData = {};
 
 var weekList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
     "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
@@ -22,6 +25,17 @@ var currentMode = 0;
 
 function getPage4Content() {
     return `
+    <style>
+        .refresh-hover:hover {
+            transform: scale(0.9);
+            color: cyan;
+        }
+
+        .refresh-hover:active {
+            transform: scale(0.8);
+        }
+    </style>
+
     <div style="width: 100%">
         <div class="card gd-board-caption-box" style="background: url(./images/banner02.png) no-repeat 1% / 101%; margin-top: 5.5%;">
                     <div class="gd-board-caption-header">
@@ -86,7 +100,7 @@ function getPage4Content() {
                     <div id="pg4_mode_basic" class="float-left-box prevent-select block page2-mode page2-mode-view" onclick="changeViewMode(0)">Базовый</div>
                     <div id="pg4_mode_accumulation" class="float-left-box prevent-select block page2-mode-view" onclick="changeViewMode(1)">С накоплением</div>
                     <div class= "float-left-box" style="margin-left: 8px; margin-top: 6px;">
-                        <button type="button" class="btn-refresh" onclick="refreshCoursesOfWeekManually()">Обновить</button>
+                        <button type="button" class="btn-refresh refresh-hover" onclick="refreshCoursesOfWeekManually()">Обновить</button>
                     </div>
                     <div id="refreshed_datetime" class= "float-right-box" style="margin-right: 8px; margin-top: 6px; font-size: smaller; color: deeppink;">
                     </div>
@@ -202,6 +216,11 @@ function page4Refresh() {
             if(data.errorMessage.indexOf("#") < 0) {
                 page4Data = data;
 
+                page4AccumulationData = {};
+                page4AccumulationData.state0Data = [];
+                page4AccumulationData.state1Data = [];
+                page4AccumulationData.state4Data = [];
+
                 createAccumulationData(page4Data.state0Data, page4AccumulationData.state0Data);
                 createAccumulationData(page4Data.state1Data, page4AccumulationData.state1Data);
                 createAccumulationData(page4Data.state4Data, page4AccumulationData.state4Data);
@@ -215,6 +234,83 @@ function page4Refresh() {
                 $("#wait").css("visibility", "hidden");
 
                 $("#refreshed_datetime").html(getCurrentDateTime());
+            } else {
+                showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
+                    "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
+            }
+        },
+        error: function() {
+            showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
+        }
+    });
+}
+
+function getCoursesByWeekList(list) {
+    clearedData = [];
+
+    for(let i = 0; i < 7; i++) {
+        clearedData.push(0);
+    }
+
+    list.forEach((element, index) => {
+        clearedData[element.day - 1] = element.count;
+    });
+
+    return clearedData;
+}
+
+function getDatesByWeek(week, courseDate) {
+    const days = [];
+
+    let date = moment(courseDate, "DD.MM.YYYY").day("Sunday").week(week);
+    date = moment(date, "DD.MM.YYYY").add(1, 'days');
+    days.push(new Date(date).toLocaleString("ru-RU").split(",")[0]);
+
+    console.log(new Date(date).toLocaleString("ru-RU").split(",")[0]);
+
+    for(let i = 0; i < 6; i++) {
+        date = moment(date, "DD.MM.YYYY").add(1, 'days');
+        days.push(new Date(date).toLocaleString("ru-RU").split(",")[0]);
+    }
+
+    return days;
+}
+
+function getCourseCount(list) {
+    count = 0;
+
+    list.forEach((element, index) => {
+        count += element.count;
+    });
+
+    return count;
+}
+
+function page4RefreshCoursesByWeek(week) {
+    $.ajax({
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7171809918284888706&year=" + $("#pg4_years").val() + "&week=" + week,
+        async: false,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            if(data.errorMessage.indexOf("#") < 0) {
+                $("#pg4_courses_by_week_title").html(week + " неделя " + $("#pg4_years").val() + " года");
+
+                page4CoursesByWeekData = data;
+
+                page4CoursesByWeekChart.updateSeries([
+                    {data: getCoursesByWeekList(page4CoursesByWeekData.state0Data)},
+                    {data: getCoursesByWeekList(page4CoursesByWeekData.state1Data)},
+                    {data: getCoursesByWeekList(page4CoursesByWeekData.state4Data)}
+                ]);
+
+                page4CoursesByWeekChart.updateOptions({
+                    xaxis: {categories: getDatesByWeek(week, data.date)}
+                });
+
+                $("#state0").html(getCourseCount(page4CoursesByWeekData.state0Data));
+                $("#state1").html(getCourseCount(page4CoursesByWeekData.state1Data));
+                $("#state4").html(getCourseCount(page4CoursesByWeekData.state4Data));
             } else {
                 showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
@@ -356,6 +452,109 @@ function getPage4ChartOption() {
     };
 }
 
+function getPage4CoursesByWeekChartOption() {
+    return {
+        series: [{
+            name: "Назначено",
+            color: "#ff9719",
+            data: [0, 0, 0, 0, 0, 0, 0]
+        },
+            {
+                name: "В процессе",
+                color: "#ff198c",
+                data: [0, 0, 0, 0, 0, 0, 0]
+            },
+            {
+                name: "Пройдено",
+                color: "#89fc19",
+                data: [0, 0, 0, 0, 0, 0, 0]
+            }
+        ],
+        chart: {
+            type: "area",
+            height: 550,
+            toolbar: {show: false},
+            zoom: {enabled: false}
+        },
+        dataLabels: {
+            enabled: true,
+            offsetX: -3,
+            fontWeight: "normal",
+            formatter: function (val) {
+                return val === 0 ? "" : val;
+            },
+            style: {
+                fontSize: "10px",
+                fontWeight: "bold"
+            },
+            background: {
+                enabled: true,
+                foreColor: "#000000"
+            }
+        },
+        grid: {
+            borderColor: "#d2d1d1",
+            padding: {
+                top: 15
+            }
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 3
+        },
+        xaxis: {
+            position: "bottom",
+            categories: weekList,
+            axisBorder: {show: false},
+            axisTicks: {show: false},
+            tooltip: {enabled: false},
+            labels: {
+                show: true,
+                offsetX: 3,
+                style: {
+                    fontSize: "10px",
+                    fontFamily: "'Noto Sans', sans-serif"
+                }
+            }
+        },
+        yaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false}},
+        legend: {
+            labels: {
+                colors: ["darkslategray"]
+            }
+        }
+    };
+}
+
+function getCoursesByWeekNumberContent() {
+    return `              
+       <style>
+            .state {
+                color: black;
+                font-weight: bold;                               
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 4px;
+                width: 40px;
+                text-align: center;
+                top: 36px;
+                float: left;
+                height: 17px;
+                margin-left: 5px;
+            }
+        </style>
+        <div style="user-select: none;">
+            <div id="pg4_courses_by_week_title" style="position: relative; top: 10px; left: 20px;font-weight: 600; font-size: large;"></div>
+            <div id="pg4_courses_by_week_title" style="position: relative; top: 12px; left: 200px;     margin-top: -22px;">
+                <div id="state0" class="state" style="background-color: #ff9719;"></div>
+                <div id="state1" class="state" style="background-color: #ff198c;"></div>
+                <div id="state4" class="state" style="background-color: #89fc19"></div>
+            </div>
+            <div id="pg4_courses_by_week_chart" style="margin-left: -10px; user-select: none;"></div>
+        </div>
+    `;
+}
+
 function getPage4CoursesChartOption() {
     return {
         series: [{
@@ -395,21 +594,26 @@ function getPage4CoursesChartOption() {
                 ]
             }
         ],
-        /*fill: {
-            type: "solid",
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.7,
-                opacityTo: 0.2,
-                stops: [0, 99, 100],
-                gradientToColors: ["#f5fffa"]
-            }
-        },*/
         chart: {
             type: "area",
             height: 600,
             toolbar: {show: false},
-            zoom: {enabled: false}
+            zoom: {enabled: false},
+            events: {
+                click: function(event, chartContext, opts) {
+                    ModalWindow.show(
+                        getCoursesByWeekNumberContent(),
+                        opts.dataPointIndex + 1,
+                        "60%",
+                        "600px",
+                        "20px");
+
+                    page4CoursesByWeekChart = new ApexCharts($("#pg4_courses_by_week_chart").get(0), getPage4CoursesByWeekChartOption());
+                    page4CoursesByWeekChart.render();
+
+                    page4RefreshCoursesByWeek(opts.dataPointIndex + 1);
+                }
+            }
         },
         dataLabels: {
             enabled: true,
@@ -513,6 +717,8 @@ function refreshTop5MonthPerson() {
 
 $(document).ready(function () {
     initVisitPage(false);
+
+    initModalWindow("modal_box");
 
     $("#page4").append(getPage4Content());
 

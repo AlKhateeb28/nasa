@@ -42,6 +42,7 @@ try {
 
     // STATE0 (Назначено)
     state0List = ArrayDirect(XQuery("sql: " +
+        " SET DATEFIRST 1; " +
         " SELECT DATEPART(week, als.start_usage_date) AS week, " +
         "       COUNT(als.id) AS cnt " +
         " FROM [WTDB].[dbo].active_learnings als " +
@@ -64,6 +65,7 @@ try {
 
     // STATE1 (В процессе)
     state1List = ArrayDirect(XQuery("sql: " +
+        " SET DATEFIRST 1; " +
         " SELECT DATEPART(week, als.start_learning_date) AS week, " +
         "       COUNT(als.id) AS cnt " +
         " FROM [WTDB].[dbo].active_learnings als " +
@@ -86,6 +88,7 @@ try {
 
     // STATE4 (Пройдено)
     state4List = ArrayDirect(XQuery("sql: " +
+        " SET DATEFIRST 1; " +
         " SELECT DATEPART(week, ls.last_usage_date) AS week, " +
         "       COUNT(ls.id) AS cnt " +
         " FROM [WTDB].[dbo].learnings ls " +
