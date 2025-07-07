@@ -95,7 +95,7 @@ function addGroups(id) {
 
         if(orgDoc != undefined) {
             if(indOrderCardTE.start_date <= Date() && Date() <= indOrderCardTE.finish_date) {
-                orgDoc.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "true";
+                orgDoc.TopElem.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "true";
 
                 orgDoc.Save();
             }
@@ -109,13 +109,13 @@ function bossPanel(id) {
     indOrderCardDoc = tools.open_doc(id);
     indOrderCardTE = indOrderCardDoc.TopElem;
 
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Обрабатываем " + ArrayCount(indOrderCardTE.boss_panel_orgs) + " boss_panel_orgs");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] BOSS Panel. Обрабатываем " + ArrayCount(indOrderCardTE.boss_panel_orgs) + " boss_panel_orgs");
 
     for (bossPanelOrg in indOrderCardTE.boss_panel_orgs) {
         foundCard = ArrayOptFirstElem(XQuery("for $elem in cc_boss_panel_org_courses where org_id=" + bossPanelOrg.boss_panel_org_id + " return $elem"));
 
         if (foundCard == undefined) {
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Новая запись в cc_boss_panel_org_courses");
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] BossPanel. Новая запись в cc_boss_panel_org_courses");
 
             codeName = indOrderCardTE.num + "_" + tools.get_doc_by_key("org", "id", bossPanelOrg.boss_panel_org_id).TopElem.code +
                 "_" + StrDate(OptDate(indOrderCardTE.start_date), false, false);
@@ -160,7 +160,7 @@ function bossPanel(id) {
 
             newGroupDoc.Save();
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Сохранили новую группу");
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] BossPanel. Сохранили новую группу");
 
             newCCBossPanelOrgCourseTE.group_id = newGroupDoc.DocID;
             newBossPanelOrgCourseDoc.Save();
@@ -190,13 +190,13 @@ function bossPanel(id) {
 
             orgDoc.Save();
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Сохранили организацию с ID: " + id);
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] BossPanel. Сохранили организацию с ID: " + id);
         }
     }
 
     indOrderCardDoc.Save();
 
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] bossPanel. Сохранили indOrderCardDoc");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] BossPanel. Сохранили indOrderCardDoc");
 }
 
 function isOrgsExistInConditions(conditions, orgId) {
@@ -209,20 +209,24 @@ function isOrgsExistInConditions(conditions, orgId) {
     return false;
 }
 
-function addCondition(doc, orgId) {
+function addCondition(docId, orgId, step) {
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Step: " + step);
+
+    doc = tools.open_doc(docId);
+
     if(doc != undefined) {
         patternDocTE = doc.TopElem;
 
         if(!isOrgsExistInConditions(patternDocTE.access.conditions, orgId)) {
             conditionElement = patternDocTE.access.conditions.AddChild("condition");
 
-            conditionElement.SetInnerXml("<field>org_id</field>" +
-                "<title>Организация</title>" +
-                "<value>" + orgId + "</value>" +
-                "<type>integer</type>" +
-                "<option_type>neq</option_type>" +
-                "<is_custom_field>1</is_custom_field>" +
-                "<and_or>and</and_or>");
+            conditionElement.field = "org_id";
+            conditionElement.title = "Организация";
+            conditionElement.value = orgId;
+            conditionElement.type = "integer";
+            conditionElement.option_type = "neq";
+            conditionElement.is_custom_field = 1;
+            conditionElement.and_or = "and";
 
             // DELETE
             /*for(condition in patternDocTE.access.conditions) {
@@ -241,7 +245,7 @@ function addCondition(doc, orgId) {
     }
 }
 
-if (!LdsIsServer) {
+//if (!LdsIsServer) {
     var agentId = 7107466891424790180;
     var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
     var msPerRecord = 0.001;
@@ -273,7 +277,7 @@ if (!LdsIsServer) {
             " SELECT id, org_id " +
             " FROM [WTDB].[dbo].cc_ind_order_cards " +
             " WHERE GETDATE() < finish_date " +
-            "    AND (status IS NULL OR UPPER(status) = 'ЗАКАЗ НА ИСПОЛНЕНИИ') "/* + params*/));
+            "    AND (status IS NULL OR UPPER(status) = N'ЗАКАЗ НА ИСПОЛНЕНИИ') "/* + params*/));
 
         total = ArrayCount(indOrderCards);
 
@@ -289,12 +293,13 @@ if (!LdsIsServer) {
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Найдено " + ArrayCount(indOrderCards) + " cc_ind_order_cards");
 
         for (indOrderCard in indOrderCards) {
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] >>>> indOrderCard.org_id: " + indOrderCard.org_id);
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] >>>>>>>>> OrgID: " + indOrderCard.org_id);
+
             addGroups(indOrderCard.id);
             bossPanel(indOrderCard.id);
 
-            addCondition(tools.open_doc(7247017380757573251), indOrderCard.org_id);
-            addCondition(tools.open_doc(7247026493378216428), indOrderCard.org_id);
+            addCondition(7247017380757573251, indOrderCard.org_id, 1);
+            addCondition(7247026493378216428, indOrderCard.org_id, 2);
 
             processed++;
 
@@ -349,6 +354,6 @@ if (!LdsIsServer) {
     try {
         ws.Send("close");
     } catch (e) {}
-} else {
+/*} else {
     Screen.MsgBox("Запустите агент на стороне клиента!", ms_tools.get_const("c_info"), "info", "ok");
-}
+}*/
