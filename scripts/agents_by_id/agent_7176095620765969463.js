@@ -26,7 +26,7 @@ if (!LdsIsServer) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
     try {
-        dataList = OBJECTS_ID_STR.split(";");;
+        dataList = OBJECTS_ID_STR.split(";");
 
         total = ArrayCount(dataList);
 
