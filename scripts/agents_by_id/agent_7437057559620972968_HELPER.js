@@ -188,7 +188,7 @@ function clearSpecialFlags() {
         "       AND ((format_part IS NOT NULL " +
         "       AND format_part != '') " +
         "       OR is_rck > 0 " +
-        "       OR os_rck > 0 " +
+        "       OR is_rck > 0 " +
         "       OR is_roiv > 0 " +
         "       OR is_partner > 0) " +
         " GROUP BY org_id "));
