@@ -1,10 +1,126 @@
 // 7121749858204988969
+function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
-aCacheData = tools_web.get_user_data("boss_panel_collaborators_cache_for_reports" + curUserID);
+function getDominationSubs(xarrMyFuncDomination, _curUserID) {
+    var arrDominationSubsIDs = Array();
+    var oTemp, catSomeElem, vTemp, arrDeputySubsColls = Array();
+    for (catSomeElem in xarrMyFuncDomination) {
+        switch (catSomeElem.catalog.Value) {
+            case "subdivision":
+                arrDominationSubsIDs.push(catSomeElem.object_id.Value);
+                break;
+            case "position":
+                oTemp = catSomeElem.object_id.OptForeignElem;
+                if (oTemp != undefined)
+                    arrDominationSubsIDs.push(oTemp.parent_object_id.Value);
+                break;
+            case "collaborator":
+                vTemp = catSomeElem.object_id.OptForeignElem;
+                if (vTemp != undefined && vTemp.position_parent_id.HasValue) {
+                    oTemp = ArrayOptFindByKey(arrDeputySubsColls, vTemp.position_parent_id.Value, "id");
+                    if (oTemp == undefined) {
+                        oTemp = new Object;
+                        oTemp.id = vTemp.position_parent_id.Value;
+                        oTemp.people = Array();
+                        arrDeputySubsColls.push(oTemp);
+                    }
+                    oTemp.people.push(vTemp.PrimaryKey);
+                }
+                break;
+        }
+    }
 
-if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
-    if (true) {
+    if (bProtectionFromStupid) {
+        var oDominationElem, bDomination, iDominatorID;
+        var aDestroy = new Array();
+        var aDemote = new Array();
+        if (ArrayCount(arrDominationSubsIDs) > 1)
+            for (oDominationElem in ArrayUnion(arrDominationSubsIDs, arrDeputySubsColls)) {
+                bDomination = (DataType(oDominationElem) == "integer");
+                if (bDomination)
+                    iDominatorID = oDominationElem;
+                else
+                    iDominatorID = oDominationElem.id;
+                catSomeElem = ArrayOptFirstElem(XQuery("for $elem in subdivisions where $elem/id = " + iDominatorID + " return $elem/Fields('id','parent_object_id')"));
+                if (catSomeElem != undefined) {
+                    while (catSomeElem != undefined) {
+                        if (catSomeElem.parent_object_id.HasValue) {
+                            if (arrDominationSubsIDs.indexOf(catSomeElem.parent_object_id.Value) >= 0) {
+                                if (bDomination) aDestroy.push(iDominatorID); else aDemote.push(iDominatorID);
+                                break;
+                            }
+                            catSomeElem = catSomeElem.parent_object_id.OptForeignElem;
+                        } else
+                            catSomeElem = undefined;
+                    }
+                } else if (bDomination) aDestroy.push(iDominatorID); else aDemote.push(iDominatorID);
+            }
 
+        if (ArrayOptFirstElem(aDestroy) != undefined)
+            arrDominationSubsIDs = ArraySelect(arrDominationSubsIDs, "!StrContains(" + CodeLiteral(ArrayMerge(aDestroy, "This", ";")) + ", This)");
+        if (ArrayOptFirstElem(aDemote) != undefined)
+            arrDeputySubsColls = ArraySelect(arrDeputySubsColls, "!StrContains(" + CodeLiteral(ArrayMerge(aDemote, "This", ";")) + ", This.id)");
+
+    }
+
+    oTemp = new Object;
+    oTemp.a_dominate = arrDominationSubsIDs;
+    oTemp.a_depute = arrDeputySubsColls;
+    return oTemp;
+}
+
+function getSlavePeople(oDominationInfoPARAM, catSubAnchorPARAM, bCompelParticipate) {
+    function drillDeeper(_oDominateInfo, _xarrSubsSelection, _catcurSubElem) {
+        var _oTempInfo, _aPeople = Array();
+        if (_oDominateInfo.a_dominate.indexOf(_catcurSubElem.id) >= 0) {
+            _aPeople = ArrayExtract(tools.xquery("for $elem in subs where IsHierChild($elem/id, " + _catcurSubElem.id + ") and $elem/type ='position' and $elem/basic_collaborator_id != null() order by $elem/Hier() return $elem/id,$elem/basic_collaborator_id"), "This.basic_collaborator_id.Value");
+        } else {
+            _oTempInfo = ArrayOptFindByKey(_oDominateInfo.a_depute, _catcurSubElem.id, "id");
+
+            if (_oTempInfo != undefined) {
+                _aPeople = ArrayUnion(_aPeople, _oTempInfo.people);
+            }
+
+            var _catChildSubElem;
+
+            var _aDrillingDeeperSelection = XQuery("for $elem in subs where $elem/parent_id= " + _catcurSubElem.PrimaryKey + " and $elem/type = 'subdivision' return $elem/Fields('id')");
+
+            for (_catChildSubElem in _aDrillingDeeperSelection)
+                _aPeople = ArrayUnion(_aPeople, drillDeeper(_oDominateInfo, /*_xarrSubsSelection*/ null, _catChildSubElem));
+        }
+
+        return _aPeople;
+    }
+
+    var _aResultPeople = Array();
+    if (bCompelParticipate) {
+        _aResultPeople = drillDeeper(oDominationInfoPARAM, /*_xarrSubInvestigate*/ null, catSubAnchorPARAM);
+    } else {
+        var catChildSubElem;
+        for (catChildSubElem in XQuery("for $elem in subs where $elem/parent_id = " + catSubAnchorPARAM.PrimaryKey + " and $elem/type = 'subdivision'  return $elem/Fields('id')"))
+            _aResultPeople = ArrayUnion(_aResultPeople, drillDeeper(oDominationInfoPARAM, null, catChildSubElem));
+    }
+
+    return XQuery("for $elem in collaborators where MatchSome($elem/id, (" + ArrayMerge(_aResultPeople, "This", ",") + ")) return $elem/Fields('id'," + sXQFileldList + ")")
+}
+
+var agentId = 7121749858204988969;
+var loggerName = "action_7121749858204988969";
+
+try {
+    //aCacheData = tools_web.get_user_data("boss_panel_collaborators_cache_for_reports" + curUserID);
+
+    dataList = ArrayDirect(XQuery("sql: " +
+        " SELECT ids " +
+        " FROM [WTDB].[dbo].cc_boss_cache_ids " +
+        " WHERE person_id = " + curUserID +
+        "   AND CONVERT(DATE, created_date) >= CONVERT(DATE, DATEADD(DAY,  -1 , GETDATE()))"));
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Started.");
+
+    //if (aCacheData == null || !aCacheData.HasProperty("result_array")) {
+    if(ArrayCount(dataList) == 0) {
         iElemId = OptInt(iElemId);
 
         bAdminAccess == (bAdminAccess == true);
@@ -16,27 +132,19 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
 
         cut = OptInt(cut, null);
 
-        var sXQFileldList, aExportFields, sViewMode = (view_type == "tile" ? "tile" : (is_mobile ? "mobile" : "data_grid"));
+        var sXQFileldList, aExportFields,
+            sViewMode = (view_type == "tile" ? "tile" : (is_mobile ? "mobile" : "data_grid"));
 
         if (sViewMode == "tile") {
             //aExportFields = ['position_parent_name','position_name','email','is_dismiss', 'birth_date', 'hire_date', 'position_date'];
             aExportFields = ['birth_date', 'hire_date', 'position_date'];
-        }
-        else if (sViewMode == "mobile") {
+        } else if (sViewMode == "mobile") {
             aExportFields = [];
-        }
-        else {
+        } else {
             aExportFields = ['position_parent_name', 'position_name', 'email'];
         }
 
         sXQFileldList = "'fullname'" + (ArrayCount(aExportFields) > 0 ? "," + ArrayMerge(aExportFields, "XQueryLiteral(This)", ",") : "");
-
-        function infologger(sText) {
-            SetCurThreadDesc(sText);
-            alert("<" + curUser.fullname + "> " + sText);
-        }
-
-        // infologger("0. Setting logger fn"); var _nameCacheO = new Object;function _namecache(sID) { var _retName = _nameCacheO.GetOptProperty(sID + ''); if (_retName != undefined) { return _retName; } else { _retName = tools.open_doc(_retName); if (_retName != undefined) { if (_retName.TopElem.ChildExists("name")) { _retName = _retName.TopElem.name.Value; _nameCacheO.SetProperty(sID + '', _retName); } else _retName = undefined; } return _retName; } }
 
         var catSelectedElem, sRole = null;
         var iCurrentUserID = OptInt(curUserID, null);
@@ -46,9 +154,6 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
             if (catSelectedElem != undefined)
                 sRole = catSelectedElem.role_id.Value;
         }
-
-        //catCurrentUser.role_id == "admin" || catCurrentUser.role_id == "hr")
-        // infologger("1. Starting search;  iElemId = [" + iElemId + "]" +_namecache(iElemId)+ "; curUserID=" + iCurrentUserID);
 
         var arrCollaboratorPack = Array();
         var arrAllFuncMan = Array();
@@ -67,12 +172,13 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
             for (sFld in aExportFields)
                 switch (sFld) {
                     case "email":
-                        oE.SetProperty(sFld, catElem.Child(sFld)); break;
+                        oE.SetProperty(sFld, catElem.Child(sFld));
                         break;
                     case "org_name":
                     case "position_name":
                     case "position_parent_name":
-                        oE.SetProperty(sFld, tools_web.get_cur_lng_name(catElem.Child(sFld).Value, curLng.short_id)); break;
+                        oE.SetProperty(sFld, tools_web.get_cur_lng_name(catElem.Child(sFld).Value, curLng.short_id));
+                        break;
                     case "birth_date":
                         if (catElem.birth_date.HasValue) {
                             vTemp = Year(CurDate) - Year(catElem.birth_date);
@@ -82,8 +188,7 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                             vTemp = StrInt(vTemp);
                             oE.SetProperty("aux_title_" + iAFCount, "const=vrb_age");
                             oE.SetProperty("aux_value_" + iAFCount, catElem.Child(sFld));
-                        }
-                        else {
+                        } else {
                             oE.SetProperty("aux_title_" + iAFCount, "-");
                         }
 
@@ -92,15 +197,14 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                     case "hire_date":
                     case "position_date":
                         if (catElem.Child(sFld).HasValue) {
-                            vTemp = ({ "ya": (['let_1', 'god', 'goda']), "v": catElem.Child(sFld).Value });
+                            vTemp = ({"ya": (['let_1', 'god', 'goda']), "v": catElem.Child(sFld).Value});
                             vTemp.rP = ((0.083 * Month(CurDate) + Year(CurDate)) - (0.083 * Month(vTemp.v) + Year(vTemp.v)));
                             vTemp.iP = Int(vTemp.rP);
                             vTemp.iPM = Int((vTemp.rP - vTemp.iP) / 0.083);
 
                             oE.SetProperty("aux_title_" + iAFCount, "const=" + (sFld == "hire_date" ? "vkompanii" : "nadolzhnosti"));
                             oE.SetProperty("aux_value_" + iAFCount, ((vTemp.iP == 0 ? "" : vTemp.iP + " " + StrNonTitleCase(tools_web.get_web_const(vTemp.ya[IntModType(vTemp.iP)], curLngWeb)) + " ") + vTemp.iPM + " " + StrNonTitleCase(tools_web.get_web_const("mes", curLngWeb))) + " " + StrNonTitleCase(tools_web.get_web_const("t1y74xh7qn", curLngWeb)) + " " + StrDate(vTemp.v, false));
-                        }
-                        else
+                        } else
                             oE.SetProperty("aux_title_" + iAFCount, "-");
 
                         iAFCount++;
@@ -108,129 +212,6 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                 }
 
             return oE;
-        }
-
-        function getDominationSubs(xarrMyFuncDomination, _curUserID) {
-            var arrDominationSubsIDs = Array();
-            var oTemp, catSomeElem, vTemp, arrDeputySubsColls = Array();
-            for (catSomeElem in xarrMyFuncDomination) {
-                switch (catSomeElem.catalog.Value) {
-                    case "subdivision":
-                        arrDominationSubsIDs.push(catSomeElem.object_id.Value);
-                        break;
-                    case "position":
-                        oTemp = catSomeElem.object_id.OptForeignElem;
-                        if (oTemp != undefined)
-                            arrDominationSubsIDs.push(oTemp.parent_object_id.Value);
-                        break;
-                    case "collaborator":
-                        vTemp = catSomeElem.object_id.OptForeignElem;
-                        if (vTemp != undefined && vTemp.position_parent_id.HasValue) {
-                            oTemp = ArrayOptFindByKey(arrDeputySubsColls, vTemp.position_parent_id.Value, "id");
-                            if (oTemp == undefined) {
-                                oTemp = new Object;
-                                oTemp.id = vTemp.position_parent_id.Value;
-                                oTemp.people = Array();
-                                arrDeputySubsColls.push(oTemp);
-                            }
-                            oTemp.people.push(vTemp.PrimaryKey);
-                        }
-                        break;
-                }
-            }
-
-            if (bProtectionFromStupid) {
-                // infologger("x.0 Duplicate check");
-                var oDominationElem, bDomination, iDominatorID;
-                var aDestroy = new Array();
-                var aDemote = new Array();
-                if (ArrayCount(arrDominationSubsIDs) > 1)
-                    for (oDominationElem in ArrayUnion(arrDominationSubsIDs, arrDeputySubsColls)) {
-                        bDomination = (DataType(oDominationElem) == "integer");
-                        if (bDomination)
-                            iDominatorID = oDominationElem;
-                        else
-                            iDominatorID = oDominationElem.id;
-                        catSomeElem = ArrayOptFirstElem(XQuery("for $elem in subdivisions where $elem/id = " + iDominatorID + " return $elem/Fields('id','parent_object_id')"));
-                        if (catSomeElem != undefined) {
-                            while (catSomeElem != undefined) {
-                                if (catSomeElem.parent_object_id.HasValue) {
-                                    if (arrDominationSubsIDs.indexOf(catSomeElem.parent_object_id.Value) >= 0) {
-                                        if (bDomination) aDestroy.push(iDominatorID); else aDemote.push(iDominatorID);
-                                        break;
-                                    }
-                                    catSomeElem = catSomeElem.parent_object_id.OptForeignElem;
-                                }
-                                else
-                                    catSomeElem = undefined;
-                            }
-                        }
-                        else
-                        if (bDomination) aDestroy.push(iDominatorID); else aDemote.push(iDominatorID);
-                    }
-
-                // infologger("x.1 Duplicate destroy: domination - " + ArrayMerge(aDestroy, "This", ";") + "; demotion - " + ArrayMerge(aDemote, "This", ";"));
-
-                if (ArrayOptFirstElem(aDestroy) != undefined)
-                    arrDominationSubsIDs = ArraySelect(arrDominationSubsIDs, "!StrContains(" + CodeLiteral(ArrayMerge(aDestroy, "This", ";")) + ", This)");
-                if (ArrayOptFirstElem(aDemote) != undefined)
-                    arrDeputySubsColls = ArraySelect(arrDeputySubsColls, "!StrContains(" + CodeLiteral(ArrayMerge(aDemote, "This", ";")) + ", This.id)");
-
-            }
-
-            oTemp = new Object;
-            oTemp.a_dominate = arrDominationSubsIDs;
-            oTemp.a_depute = arrDeputySubsColls;
-            return oTemp;
-        }
-
-        function getSlavePeople(oDominationInfoPARAM, catSubAnchorPARAM, bCompelParticipate) {
-            // infologger("1.00 Getting slave people; sub_anchor = [" +catSubAnchorPARAM.PrimaryKey+ "]" +_namecache(catSubAnchorPARAM.PrimaryKey)); var iIteraion = 0;
-
-            function drillDeeper(_oDominateInfo, _xarrSubsSelection, _catcurSubElem) {
-                // infologger("1.10 Drill iteration " + (iIteraion++) + ";  for sub_anchor [" + catSubAnchorPARAM.PrimaryKey + "]"+_namecache(catSubAnchorPARAM.PrimaryKey)+"; catcurSubElemID = " + _catcurSubElem.id);
-
-                // infologger("1.11 Drill iteration " +iIteraion+ "");
-                var _oTempInfo, _aPeople = Array();
-                if (_oDominateInfo.a_dominate.indexOf(_catcurSubElem.id) >= 0) {
-                    // infologger("1.12a Drill iteration " +iIteraion+ "");
-                    //_aPeople = ArraySelect(XQuery("CatalogHierSubset('subs', " + _catcurSubElem.id + ")"), "This.type.Value == 'position' && This.basic_collaborator_id.HasValue");
-                    _aPeople = ArrayExtract(tools.xquery("for $elem in subs where IsHierChild($elem/id, " + _catcurSubElem.id + ") and $elem/type ='position' and $elem/basic_collaborator_id != null() order by $elem/Hier() return $elem/id,$elem/basic_collaborator_id"), "This.basic_collaborator_id.Value");
-                }
-                else {
-                    // infologger("1.12b Drill iteration " +iIteraion+ "");
-                    _oTempInfo = ArrayOptFindByKey(_oDominateInfo.a_depute, _catcurSubElem.id, "id");
-                    // infologger("1.13b Drill iteration " +iIteraion+ "");
-                    if (_oTempInfo != undefined) {
-                        // infologger("1.140 Drill iteration " +iIteraion+ "");
-                        _aPeople = ArrayUnion(_aPeople, _oTempInfo.people);
-                    }
-                    // infologger("1.15 Drill iteration " +iIteraion+ "");
-                    var _catChildSubElem;
-
-                    var _aDrillingDeeperSelection = XQuery("for $elem in subs where $elem/parent_id= " + _catcurSubElem.PrimaryKey + " and $elem/type = 'subdivision' return $elem/Fields('id')");
-                    // infologger("1.16 Drill iteration " +iIteraion+ " (" +ArrayCount(_aDrillingDeeperSelection)+ ")");
-                    for (_catChildSubElem in _aDrillingDeeperSelection)
-                        _aPeople = ArrayUnion(_aPeople, drillDeeper(_oDominateInfo, /*_xarrSubsSelection*/ null, _catChildSubElem));
-                }
-                // infologger("1.17x Got slaves: " + ArrayCount(_aPeople));
-
-                return _aPeople;
-            }
-
-            var _aResultPeople = Array();
-            if (bCompelParticipate) {
-                _aResultPeople = drillDeeper(oDominationInfoPARAM, /*_xarrSubInvestigate*/ null, catSubAnchorPARAM);
-            }
-            else {
-                var catChildSubElem;
-                for (catChildSubElem in XQuery("for $elem in subs where $elem/parent_id = " + catSubAnchorPARAM.PrimaryKey + " and $elem/type = 'subdivision'  return $elem/Fields('id')"))
-                    _aResultPeople = ArrayUnion(_aResultPeople, drillDeeper(oDominationInfoPARAM, null, catChildSubElem));
-            }
-
-            return XQuery("for $elem in collaborators where MatchSome($elem/id, (" + ArrayMerge(_aResultPeople, "This", ",") + ")) return $elem/Fields('id'," + sXQFileldList + ")")
-
-            //return QueryCatalogByKeys("collaborators", "id", _aResultPeople);
         }
 
         if (iElemId != undefined) {
@@ -245,16 +226,14 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
 
                 if (bAdminAccess && (sRole == "admin" || sRole == "hr")) {
                     arrCollaboratorPack = XQuery("for $elem in collaborators where $elem/is_candidate = true() and $elem/position_id = null() return $elem");
-                }
-                else {
+                } else {
                     arrCollIds = XQuery("for $elem in func_managers where $elem/person_id = " + XQueryLiteral(iCurrentUserID) + " and $elem/catalog = 'collaborator' return $elem/Fields('id','object_id')");
 
                     arrCollaboratorPack = XQuery("for $elem in collaborators where MatchSome( $elem/id, (" + ArrayMerge(arrCollIds, 'This.object_id', ',') + ")) and $elem/is_candidate = true() and $elem/position_id = null() return $elem/Fields('id'," + sXQFileldList + ")");
 
                 }
 
-            }
-            else if (sObjectType != "group" || sObjectType == "all") {
+            } else if (sObjectType != "group" || sObjectType == "all") {
 
                 if (bAdminAccess && (sRole == "admin" || sRole == "hr")) {
                     if (sObjectType != "all") {
@@ -264,56 +243,43 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                         arrCollaboratorPack = XQuery("for $elem in collaborators where MatchSome($elem/id, (" + ArrayMerge(arrCollaboratorPack, "This.basic_collaborator_id.Value", ",") + ")) return $elem/Fields('id'," + sXQFileldList + ")");
 
                         //arrCollaboratorPack = QueryCatalogByKeys("collaborators", "id", arrCollIds);
-                    }
-                    else
+                    } else
                         arrCollaboratorPack = XQuery("for $elem in collaborators return $elem/Fields('id'," + sXQFileldList + ")");
-                }
-                else {
+                } else {
                     sQuery = "";
                     if (sObjectType != "all") {
                         sQuery = "for $elem in subs where $elem/id = " + iElemId + " return $elem/Fields('id','type','org_id','parent_id')";
-                    }
-                    else {
+                    } else {
                         sQuery = "for $elem in subs where MatchSome($elem/id,(" + ArrayMerge(arrAllFuncMan, "This", ",") + ")) and $elem/type='org' return $elem/Fields('id','type','org_id','parent_id')";
                     }
 
-                    // infologger("1.1 Search subs;  sQuery = " + sQuery + "; sObjectType = " + sObjectType);
                     var arrSelectedSubs = XQuery(sQuery);
-                    // infologger("1.1a arrSelectedSubs=" + ArrayCount(arrSelectedSubs));
-                    var oDominationInfoPARAM;
 
                     for (catSelectedElem in arrSelectedSubs) {
-                        // infologger("1.1f catSelectedElem=" + catSelectedElem.id);
-
                         if (catSelectedElem.type.Value == "org") {
-
                             if (ArrayOptFindByKey(xarrMyFuncDominationPack, catSelectedElem.PrimaryKey, "object_id") != undefined) {
                                 arrCollaboratorPack = ArrayUnion(arrCollaboratorPack, XQuery("for $elem in collaborators where $elem/org_id = " + catSelectedElem.PrimaryKey + " return $elem/Fields('id'," + sXQFileldList + ")"));
-                            }
-                            else {
+                            } else {
                                 oDominationInfo = getDominationSubs(xarrMyFuncDominationPack, iCurrentUserID);
                                 if (bSmartSearch) {
 
                                     aSmartCut = XQuery("for $elem in subdivisions where MatchSome($elem/id, (" + ArrayMerge(ArrayUnion(oDominationInfo.a_dominate, ArrayExtract(oDominationInfo.a_depute, "id")), "This", ",") + ")) return $elem/Fields('id','org_id')");
 
                                     aSmartCut = ArraySelectByKey(aSmartCut, catSelectedElem.PrimaryKey.Value, "org_id");
-                                    // infologger("1.1s aSmartCut=" + ArrayCount(aSmartCut));
+
                                     for (catSub in aSmartCut) {
                                         arrCollaboratorPack = ArrayUnion(arrCollaboratorPack, getSlavePeople(oDominationInfo, catSub, true));
                                     }
-                                }
-                                else
+                                } else
                                     arrCollaboratorPack = getSlavePeople(oDominationInfo, catSelectedElem, false);
                             }
 
-                        }
-                        else if (catSelectedElem.type.Value == "subdivision") {
+                        } else if (catSelectedElem.type.Value == "subdivision") {
 
                             bItsAllClear = false;
                             if (ArrayOptFind(xarrMyFuncDominationPack, "This.object_id.Value == " + catSelectedElem.PrimaryKey + " || This.object_id.Value == " + CodeLiteral(catSelectedElem.org_id.Value)) != undefined) {
                                 bItsAllClear = true;
-                            }
-                            else if (catSelectedElem.parent_id.HasValue) {
+                            } else if (catSelectedElem.parent_id.HasValue) {
                                 aDominationInfo = getDominationSubs(xarrMyFuncDominationPack, iCurrentUserID);
                                 catParentSub = catSelectedElem;
 
@@ -335,12 +301,11 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
 
                                         aSmartCut = ArrayUnion(([catSelectedElem]), tools.xquery("for $elem in subdivisions where IsHierChild($elem/id, " + catSelectedElem.PrimaryKey + ") order by $elem/Hier() return $elem/id"));
                                         aSmartCut = ArrayIntersect(aSmartCut, ArrayUnion(oDominationInfo.a_dominate, ArrayExtract(oDominationInfo.a_depute, "id")), "This.id", "This");
-                                        // infologger("1.1ss aSmartCut=" + ArrayCount(aSmartCut));
+
                                         for (catSub in aSmartCut) {
                                             arrCollaboratorPack = ArrayUnion(arrCollaboratorPack, getSlavePeople(oDominationInfo, catSub, true));
                                         }
-                                    }
-                                    else
+                                    } else
                                         arrCollaboratorPack = getSlavePeople(aDominationInfo, catSelectedElem, true);
 
                                 }
@@ -350,35 +315,23 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                                 arrCollaboratorPack = tools.xquery("for $elem in subs where IsHierChild($elem/id, " + catSelectedElem.id + ") and $elem/type = 'position' and $elem/basic_collaborator_id != null() order by $elem/Hier() return $elem/id,$elem/basic_collaborator_id");
 
                                 arrCollaboratorPack = XQuery("for $elem in collaborators where MatchSome($elem/id, (" + ArrayMerge(arrCollaboratorPack, "This.basic_collaborator_id.Value", ",") + ")) return $elem/Fields('id'," + sXQFileldList + ")");
-                                // infologger("1.1nw clear pack generated: count " + ArrayCount(arrCollaboratorPack));
-
                             }
 
                         }
                     }
-
-                    // infologger("1.2 Subs processed");
                 }
-            }
-            else {
-                // infologger("1.1 Search groups");
+            } else {
                 var arrGroupColls = XQuery("for $elem in group_collaborators where $elem/group_id = " + iElemId + " return $elem/Fields('id','collaborator_id')");
 
                 if (ArrayOptFirstElem(arrGroupColls) != undefined) {
-                    // infologger("1.10 group found, getting collaborators");
-                    //arrCollIds = ArrayExtract( arrGroupColls, "collaborator_id" );
-                    //arrCollaboratorPack = QueryCatalogByKeys("collaborators", "id", arrCollIds);
                     arrCollaboratorPack = XQuery("for $elem in collaborators where MatchSome($elem/id, (" + ArrayMerge(arrGroupColls, "This.collaborator_id.Value", ",") + ")) return $elem/Fields('id'," + sXQFileldList + ")");
                 }
 
             }
         }
 
-        // infologger("2. Building filter conditions");
-
         var sFilterGist, sFilterData;
         var aXQueryAdd = ([]);
-
 
 
         for (sFilterGist in aFilterGist = Trim(sFilterId).split(",")) {
@@ -461,15 +414,6 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                     break;
                 case "r:":
                     sFilterData = OptInt(StrRightRangePos(sFilterGist, 2));
-                    if (sFilterData != null) {
-                        infologger("r sFilterData: " + sFilterData);
-                        /*xarrRegionOrgs = XQuery("for $elem in orgs where doc-contains($elem/id,'wt_data','[report_region_id=" + sFilterData + "~string]') return $elem");
-                        if (ArrayOptFirstElem(xarrRegionOrgs) != undefined)
-                        {
-                            arrRegionOrgIds = ArrayExtract(xarrRegionOrgs, "This.id");
-                            aXQueryAdd.push("MatchSome( $elem/org_id, ( " + ArrayMerge( arrRegionOrgIds, "This", "," ) + " ))");
-                        }*/
-                    }
                     break;
             }
         }
@@ -484,7 +428,6 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
 
         if (ArrayOptFirstElem(aXQueryAdd) != undefined) {
             _i = ("for $elem in collaborators where " + ArrayMerge(aXQueryAdd, "This", " and ") + " return $elem/Fields('id')");
-            // infologger("3. Filter set: " + _i);
 
             var arrFilteredHumans = ArraySelectAll(XQuery(_i));
             arrCollaboratorPack = ArraySort(arrCollaboratorPack, "id", "+");
@@ -500,8 +443,7 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                     xarrResult.push(processResultElem(arrCollaboratorPack[_j]));
                     _i++;
                     _j++;
-                }
-                else if (arrFilteredHumans[_i].PrimaryKey > arrCollaboratorPack[_j].PrimaryKey)
+                } else if (arrFilteredHumans[_i].PrimaryKey > arrCollaboratorPack[_j].PrimaryKey)
                     _j++;
                 else
                     _i++;
@@ -509,15 +451,12 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                 if (cut > 0 && _j > cut) // Cut array to not exceed cut
                     break;
             }
-
-        }
-        else {
-            // infologger("3. No filter set");
-
+        } else {
             if (cut > 0)
-                arrCollaboratorPack = ArrayRange(arrCollaboratorPack, 0, cut); /* Cut array to not exceed cut */
+                arrCollaboratorPack = ArrayRange(arrCollaboratorPack, 0, cut);
             arrCollaboratorPack = ArraySort(arrCollaboratorPack, "id", "+");
             catColl = ArrayCount(arrCollaboratorPack);
+
             sFilterGist = null;
             xarrResult = new Array();
             for (_i = 0; _i < catColl; _i++) {
@@ -528,7 +467,6 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
                 }
             }
         }
-        // infologger("4. Humans combed");
 
         var iStatID = OptInt(statistic_id);
 
@@ -545,9 +483,71 @@ if (!(aCacheData != null && aCacheData.HasProperty("result_array")))
             }
         }
 
-        // infologger("5. Resultset formed");
+        resultList = [];
 
-        tools_web.set_user_data("boss_panel_collaborators_cache_for_reports" + curUserID, ({ "result_array": xarrResult }), 86400);
+        var ids = "";
+        var step = 1;
 
-        // infologger("6. Session data refreshed");
+        for(id in xarrResult) {
+            if(step == 1000) {
+                ids = StrCharRangePos(ids,  0, StrCharCount(ids) - 1);
+                resultList.push(ids);
+
+                ids = "";
+                step = 1;
+            }
+
+            ids += id.id + ",";
+
+            step++;
+        }
+
+        if(ids != "") {
+            ids = StrCharRangePos(ids,  0, StrCharCount(ids) - 1);
+            resultList.push(ids);
+        }
+
+        //var RESULT = tools_web.set_user_data("boss_panel_collaborators_cache_for_reports" + OptInt(curUserID), ({"result_array": resultList}), 86400);
+
+        saved = 0;
+
+        for(ids in resultList) {
+            bossCacheIdsDoc = tools.new_doc_by_name( "cc_boss_cache_id", false );
+            bossCacheIdsDoc.BindToDb(DefaultDb);
+
+            bossCacheIdsDocTE = bossCacheIdsDoc.TopElem;
+
+            bossCacheIdsDocTE.person_id = OptInt(curUserID);
+            bossCacheIdsDocTE.ids = ids;
+            bossCacheIdsDocTE.created_date = Date(StrDate(Date(), false, false) + " 00:00:00");
+
+            bossCacheIdsDoc.Save();
+
+            saved++;
+        }
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Added " + saved + " records into 'cc_boss_cache_ids' table for " + curUserID + " person");
+    } else {
+        dataList = ArrayDirect(XQuery("sql: " +
+            " SELECT ids " +
+            " FROM [WTDB].[dbo].cc_boss_cache_ids " +
+            " WHERE person_id = " + curUserID +
+            "   AND CONVERT(DATE, created_date) < CONVERT(DATE, DATEADD(DAY,  -1 , GETDATE()))"));
+
+        deleted = 0;
+
+        for(data in dataList) {
+            DeleteDoc(UrlFromDocID(data.id));
+
+            deleted++;
+        }
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Deleted " + deleted + " records into 'cc_boss_cache_ids' table for " + curUserID + " person");
     }
+
+    tools_web.set_user_data("boss_panel_collaborators_cache_for_reports" + curUserID, ({ "result_array": xarrResult }), 86400);
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished");
+} catch (e) {
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
+}
