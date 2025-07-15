@@ -227,7 +227,7 @@ function showMessage(message) {
                 if(agents[clientAgent.getId()].getState() !== clientAgent.getState()) {
                     agents[clientAgent.getId()].setStartDateTime(new Date());
 
-                    if(clientAgent.getState() !== 2) {
+                    if(clientAgent.getState() == 0) {
                         $("#dateTime_" + clientAgent.getId()).html(getCurrentDateTime());
                     }
 
