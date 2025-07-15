@@ -6,8 +6,8 @@ function getPage2Content() {
                     <option value="0" selected="selected">Итого</option>
                 </select>
             </div>
-            <div id="mode_basic" class="float-left-box block page2-mode page2-mode-view" onclick="changeViewMode(0)">Базовый</div>
-            <div id="mode_accumulation" class="float-left-box block page2-mode-view" onclick="changeViewMode(1)">С накоплением</div>
+            <div id="mode_basic" class="float-left-box block page2-mode page2-mode" style="margin-top: 7px; margin-left: 7px; width: 80px; text-align: center;" onclick="changeViewMode2(0)">Базовый</div>
+            <div id="mode_accumulation" class="float-left-box block page2-mode-view" onclick="changeViewMode2(1)">С накоплением</div>
         </div>
     </div>
     <div class="float-left-box main_box">
@@ -649,7 +649,7 @@ function page2Refresh(regionId) {
     });
 }
 
-function changeViewMode(mode) {
+function changeViewMode2(mode) {
     const basicElement = $("#mode_basic");
     const accumulationElement = $("#mode_accumulation");
 
@@ -660,6 +660,7 @@ function changeViewMode(mode) {
         accumulationElement.removeClass("page2-mode");
 
         basicElement.addClass("page2-mode");
+        accumulationElement.addClass("page2-mode-view");
 
         updateOtherCharts(false);
     } else if(mode === 1) {
@@ -668,6 +669,7 @@ function changeViewMode(mode) {
         basicElement.removeClass("page2-mode");
         accumulationElement.removeClass("page2-mode");
 
+        basicElement.addClass("page2-mode-view");
         accumulationElement.addClass("page2-mode");
 
         updateOtherCharts(true);

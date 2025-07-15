@@ -97,8 +97,8 @@ function getPage4Content() {
                     </select>               
                 </div>
                 <div class="float-left-box" style="margin-top: -6px; width: 92%;">
-                    <div id="pg4_mode_basic" class="float-left-box prevent-select block page2-mode page2-mode-view" onclick="changeViewMode(0)">Базовый</div>
-                    <div id="pg4_mode_accumulation" class="float-left-box prevent-select block page2-mode-view" onclick="changeViewMode(1)">С накоплением</div>
+                    <div id="pg4_mode_basic" class="float-left-box prevent-select block page2-mode page2-mode-view" onclick="changeViewMode4(0)">Базовый</div>
+                    <div id="pg4_mode_accumulation" class="float-left-box prevent-select block page2-mode-view" onclick="changeViewMode4(1)">С накоплением</div>
                     <div class= "float-left-box" style="margin-left: 8px; margin-top: 6px;">
                         <button type="button" class="btn-refresh refresh-hover" onclick="refreshCoursesOfWeekManually()">Обновить</button>
                     </div>
@@ -132,7 +132,7 @@ function reloadPage4() {
 function refreshCoursesOfWeekManually() {
     page4CoursesOfWeekRefresh();
 
-    changeViewMode(currentMode);
+    changeViewMode4(currentMode);
 
     $("#refreshed_datetime").html(getCurrentDateTime());
 }
@@ -151,7 +151,7 @@ function createAccumulationData(courseArray, accumulationArray) {
     });
 }
 
-function changeViewMode(mode) {
+function changeViewMode4(mode) {
     const basicElement = $("#pg4_mode_basic");
     const accumulationElement = $("#pg4_mode_accumulation");
 
