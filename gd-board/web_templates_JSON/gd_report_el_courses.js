@@ -42,12 +42,12 @@ try {
 
     // Chart block
     chartList = ArrayDirect(XQuery("sql: " +
-        " SELECT MONTH(courses.start_usage_date) AS month, YEAR(courses.start_usage_date) AS year, COUNT(courses.id) AS cnt " +
+        " SELECT MONTH(courses.last_usage_date) AS month, YEAR(courses.last_usage_date) AS year, COUNT(courses.id) AS cnt " +
         " FROM [WTDB].[dbo].learnings AS courses " +
         "   INNER JOIN [WTDB].[dbo].courses crs ON courses.course_id = crs.id AND crs.code LIKE '%FCK-%' " + getLongQuery(regionId) +
         " WHERE (courses.state_id = 3 OR courses.state_id = 4) " +
-        " AND YEAR(courses.start_usage_date) >= YEAR(GETDATE()) - 1 " +
-        " GROUP BY MONTH(courses.start_usage_date), YEAR(courses.start_usage_date) " +
+        " AND YEAR(courses.last_usage_date) >= YEAR(GETDATE()) - 1 " +
+        " GROUP BY MONTH(courses.last_usage_date), YEAR(courses.last_usage_date) " +
         " ORDER BY year, month "));
 
     result.chartData = [];
@@ -145,11 +145,11 @@ try {
 
     // Block5 (Пройдено)
     block5List = ArrayDirect(XQuery("sql: " +
-        " SELECT YEAR(courses.start_usage_date) AS year, COUNT(courses.id) AS cnt " +
+        " SELECT YEAR(courses.last_usage_date) AS year, COUNT(courses.id) AS cnt " +
         " FROM [WTDB].[dbo].learnings courses " +
         "   INNER JOIN [WTDB].[dbo].courses crs ON courses.course_id = crs.id AND crs.code LIKE '%FCK-%' " + getLongQuery(regionId) +
-        " WHERE courses.state_id = 4 " +
-        " GROUP BY YEAR(courses.start_usage_date) " +
+        " WHERE (courses.state_id = 3 OR courses.state_id = 4) " +
+        " GROUP BY YEAR(courses.last_usage_date) " +
         " ORDER BY year"));
 
     result.block5Data = [];
@@ -168,7 +168,7 @@ try {
         " SELECT COUNT(courses.id) AS cnt " +
         " FROM [WTDB].[dbo].learnings courses " +
         "   INNER JOIN [WTDB].[dbo].courses crs ON courses.course_id = crs.id AND crs.code LIKE '%FCK-%' " + getLongQuery(regionId) +
-        " WHERE courses.state_id = 3 "));
+        " WHERE courses.state_id = 4 "));
 
     result.block6Value = 0;
 
