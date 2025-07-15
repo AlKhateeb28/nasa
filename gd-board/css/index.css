@@ -392,6 +392,7 @@
 }
 
 .page2-mode {
+    cursor: pointer;
     color: #008cff;
     background-color: #d8edfd;
     border-radius: 3px;
