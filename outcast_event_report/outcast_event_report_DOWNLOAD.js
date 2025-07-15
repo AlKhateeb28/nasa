@@ -146,7 +146,7 @@ try {
     // SAVE EXCEL FILE
     reportString.AppendStr("</table></html>");
     excel.LoadHtmlString(reportString.GetStr(), "");
-    excel.SaveAs("E:/Websoft/WebSoftServer/wt/web/Reports/outcast_report/participant_report_" + ParseDate(Date()) + ".xlsx");
+    excel.SaveAs("E:/Websoft/WebSoftServer/wt/web/Reports/Reports/outcast_report/participant_report_" + ParseDate(Date()) + ".xlsx");
 
     agent.state = 1;
     agent.processed = processed;
