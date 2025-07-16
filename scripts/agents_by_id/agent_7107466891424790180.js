@@ -224,7 +224,7 @@ function isOrgsExistInConditions(conditions, orgId) {
     return false;
 }
 
-function addCondition(docId, orgId, step) {
+function addCondition(docId, orgId) {
     doc = tools.open_doc(docId);
 
     if(doc != undefined) {
@@ -310,8 +310,8 @@ try{
         addGroups(indOrderCard.id);
         bossPanel(indOrderCard.id);
 
-        addCondition(7247017380757573251, indOrderCard.org_id, 1);
-        addCondition(7247026493378216428, indOrderCard.org_id, 2);
+        addCondition(7247017380757573251, indOrderCard.org_id);
+        addCondition(7247026493378216428, indOrderCard.org_id);
 
         processed++;
 
