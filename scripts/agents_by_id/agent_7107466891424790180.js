@@ -10,15 +10,15 @@ function isNotExistInAccessGroup(docObjectTE, groupId) {
 }
 
 function addAccessGroupsToObject(docId, newGroupDocId) {
-        docObject = tools.open_doc(docId)
-        docObjectTE = docObject.TopElem;
+    docObject = tools.open_doc(docId)
+    docObjectTE = docObject.TopElem;
 
-        if (isExistInCatalogById("group", newGroupDocId) && isNotExistInAccessGroup(docObjectTE, newGroupDocId)) {
-            docObjectTE.access.access_groups.ObtainChildByKey(newGroupDocId);
-            docObject.Save();
+    if (isExistInCatalogById("group", newGroupDocId) && isNotExistInAccessGroup(docObjectTE, newGroupDocId)) {
+        docObjectTE.access.access_groups.ObtainChildByKey(newGroupDocId);
+        docObject.Save();
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] addAccessGroupsToObject. Дали доступ. DocID: " + docId + " NewGroupID: " + newGroupDocId);
-        }
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] addAccessGroupsToObject. Дали доступ. DocID: " + docId + " NewGroupID: " + newGroupDocId);
+    }
 }
 
 function addGroups(id) {
@@ -133,70 +133,85 @@ function bossPanel(id) {
                 newCCBossPanelOrgCourseTE.courses.ObtainChildByKey(bossPanelCourse.boss_panel_course_id);
             }
 
-            newGroupDoc = tools.new_doc_by_name("group", false);
-            newGroupDoc.BindToDb();
-            newGroupTE = newGroupDoc.TopElem;
-            newGroupTE.code = "ВР_" + codeName;
-            newGroupTE.name = "ВР_" + codeName;
-            for (bossPanelCol in indOrderCardTE.boss_panel_cols) {
-                if (!newGroupTE.func_managers.ChildByKeyExists(bossPanelCol.boss_panel_col_id)) {
-                    respColTE = tools.open_doc(bossPanelCol.boss_panel_col_id).TopElem;
-                    newFuncManager = newGroupTE.func_managers.AddChild();
-                    newFuncManager.person_id = respColTE.id;
-                    newFuncManager.person_fullname = respColTE.lastname + " " + respColTE.firstname + " " + respColTE.middlename;
-                    newFuncManager.person_position_id = respColTE.position_id;
-                    newFuncManager.person_position_name = respColTE.position_name;
-                    newFuncManager.person_position_code = ArrayOptFirstElem(XQuery("for $elem in positions where $elem/id = " + respColTE.position_id + " return $elem")) == undefined ? "" : ArrayOptFirstElem(XQuery("for $elem in positions where $elem/id = " + respColTE.position_id + " return $elem")).code;
-                    newFuncManager.person_org_id = respColTE.org_id;
-                    newFuncManager.person_org_name = respColTE.org_name;
-                    newFuncManager.person_org_code = ArrayOptFirstElem(XQuery("for $elem in orgs where $elem/id = " + respColTE.org_id + " return $elem")) == undefined ? "" : ArrayOptFirstElem(XQuery("for $elem in orgs where $elem/id = " + respColTE.org_id + " return $elem")).code;
-                    newFuncManager.person_subdivision_id = respColTE.position_parent_id;
-                    newFuncManager.person_subdivision_name = respColTE.position_parent_name;
-                    newFuncManager.person_code = respColTE.code;
-                    newFuncManager.is_native = "1";
-                    newFuncManager.boss_type_id = 7158147030098137646; // Для индивидуального заказа
-                }
+            orgDoc = tools.open_doc(bossPanelOrg.boss_panel_org_id);
+            orgDocTE = null;
+            if(orgDoc != undefined) {
+                orgDocTE = orgDoc.TopElem;
             }
 
-            newGroupDoc.Save();
-
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] BossPanel. Сохранили новую группу");
-
-            newCCBossPanelOrgCourseTE.group_id = newGroupDoc.DocID;
-            newBossPanelOrgCourseDoc.Save();
-
-            orgDoc = tools.open_doc(bossPanelOrg.boss_panel_org_id);
-            orgTE = orgDoc.TopElem;
+            stage1GroupDoc = tools.open_doc(OptInt(newCCBossPanelOrgCourseTE.group_id));
+            stage1GroupDocTE = null;
+            if(stage1GroupDoc != undefined) {
+                stage1GroupDocTE = stage1GroupDoc.TopElem;
+            }
 
             for (bossPanelCol in indOrderCardTE.boss_panel_cols) {
-                if (!orgTE.func_managers.ChildByKeyExists(bossPanelCol.boss_panel_col_id)) {
-                    respColTE = tools.open_doc(bossPanelCol.boss_panel_col_id).TopElem;
-                    newFuncManager = orgTE.func_managers.AddChild();
-                    newFuncManager.person_id = respColTE.id;
-                    newFuncManager.person_fullname = respColTE.lastname + " " + respColTE.firstname + " " + respColTE.middlename;
-                    newFuncManager.person_position_id = respColTE.position_id;
-                    newFuncManager.person_position_name = respColTE.position_name;
-                    newFuncManager.person_position_code = ArrayOptFirstElem(XQuery("for $elem in positions where $elem/id = " + respColTE.position_id + " return $elem")) == undefined ? "" : ArrayOptFirstElem(XQuery("for $elem in positions where $elem/id = " + respColTE.position_id + " return $elem")).code;
-                    newFuncManager.person_org_id = respColTE.org_id;
-                    newFuncManager.person_org_name = respColTE.org_name;
-                    newFuncManager.person_org_code = ArrayOptFirstElem(XQuery("for $elem in orgs where $elem/id = " + respColTE.org_id + " return $elem")) == undefined ? "" : ArrayOptFirstElem(XQuery("for $elem in orgs where $elem/id = " + respColTE.org_id + " return $elem")).code;
-                    newFuncManager.person_subdivision_id = respColTE.position_parent_id;
-                    newFuncManager.person_subdivision_name = respColTE.position_parent_name;
-                    newFuncManager.person_code = respColTE.code;
-                    newFuncManager.is_native = "1";
-                    newFuncManager.boss_type_id = 7158147030098137646; // Для индивидуального заказа
+                collaboratorDoc = tools.open_doc(bossPanelCol.boss_panel_col_id);
+
+                if(collaboratorDoc != undefined) {
+                    collaboratorDocTE = collaboratorDoc.TopElem;
+
+                    // NEW GROUP
+                    if (!newGroupTE.func_managers.ChildByKeyExists(bossPanelCol.boss_panel_col_id)) {
+                        getNewFuncManager(newGroupTE, collaboratorDocTE);
+                    }
+
+                    // ORGANIZATION
+                    if (orgDocTE != null && !orgDocTE.func_managers.ChildByKeyExists(bossPanelCol.boss_panel_col_id)) {
+                        getNewFuncManager(orgDocTE, collaboratorDocTE);
+                    }
+
+                    // STAGE1 GROUP
+                    if (stage1GroupDocTE != null && !stage1GroupDocTE.func_managers.ChildByKeyExists(bossPanelCol.boss_panel_col_id)) {
+                        getNewFuncManager(stage1GroupDocTE, collaboratorDocTE);
+                    }
+                } else {
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID " + bossPanelCol.boss_panel_col_id + " is not exist!");
                 }
             }
 
             orgDoc.Save();
+            stage1GroupDoc.Save();
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] BossPanel. Сохранили организацию с ID: " + id);
+            newBossPanelOrgCourseDoc.Save();
         }
     }
 
     indOrderCardDoc.Save();
 
+    // ADD PERSONS FOR PR INTO GROUP
+    specialGroupDoc = tools.open_doc(7374801458644609163);
+
+    if(specialGroupDoc != undefined) {
+        specialGroupDocTE = specialGroupDoc.TopElem;
+
+        for(bossPanelCols in indOrderCardTE.boss_panel_cols) {
+            specialGroupDocTE.collaborators.ObtainChildByKey(bossPanelCols.boss_panel_col_id);
+        }
+
+        specialGroupDoc.Save();
+    } else {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Special group with ID " + 7374801458644609163 + " is not exist!");
+    }
+
     addLogMessage(loggerName, "[agent.id: " + agentId + "] BossPanel. Сохранили indOrderCardDoc");
+}
+
+function getNewFuncManager(documentTE, collaboratorDocTE) {
+    newFuncManager = documentTE.func_managers.AddChild();
+    newFuncManager.person_id = collaboratorDocTE.id;
+    newFuncManager.person_fullname = collaboratorDocTE.lastname + " " + collaboratorDocTE.firstname + " " + collaboratorDocTE.middlename;
+    newFuncManager.person_position_id = collaboratorDocTE.position_id;
+    newFuncManager.person_position_name = collaboratorDocTE.position_name;
+    newFuncManager.person_position_code = ArrayOptFirstElem(XQuery("for $elem in positions where $elem/id = " + collaboratorDocTE.position_id + " return $elem")) == undefined ? "" : ArrayOptFirstElem(XQuery("for $elem in positions where $elem/id = " + collaboratorDocTE.position_id + " return $elem")).code;
+    newFuncManager.person_org_id = collaboratorDocTE.org_id;
+    newFuncManager.person_org_name = collaboratorDocTE.org_name;
+    newFuncManager.person_org_code = ArrayOptFirstElem(XQuery("for $elem in orgs where $elem/id = " + collaboratorDocTE.org_id + " return $elem")) == undefined ? "" : ArrayOptFirstElem(XQuery("for $elem in orgs where $elem/id = " + collaboratorDocTE.org_id + " return $elem")).code;
+    newFuncManager.person_subdivision_id = collaboratorDocTE.position_parent_id;
+    newFuncManager.person_subdivision_name = collaboratorDocTE.position_parent_name;
+    newFuncManager.person_code = collaboratorDocTE.code;
+    newFuncManager.is_native = "1";
+    newFuncManager.boss_type_id = 7158147030098137646; // Для индивидуального заказа
 }
 
 function isOrgsExistInConditions(conditions, orgId) {
@@ -210,8 +225,6 @@ function isOrgsExistInConditions(conditions, orgId) {
 }
 
 function addCondition(docId, orgId, step) {
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Step: " + step);
-
     doc = tools.open_doc(docId);
 
     if(doc != undefined) {
@@ -245,115 +258,112 @@ function addCondition(docId, orgId, step) {
     }
 }
 
-//if (!LdsIsServer) {
-    var agentId = 7107466891424790180;
-    var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
-    var msPerRecord = 0.001;
+var agentId = 7107466891424790180;
+var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
+var msPerRecord = 0.001;
 
-    var startDate = Date();
-    var prevDate;
-    var loggerName = "agent_7107466891424790180";
-    var ws = getWebsocketClient();
-    var agent = getAgentInstance(agentId, userId, loggerName);
+var startDate = Date();
+var prevDate;
+var loggerName = "agent_7107466891424790180";
+var ws = getWebsocketClient();
+var agent = getAgentInstance(agentId, userId, loggerName);
 
-    var total = 0;
-    var processed = 0;
-    var skipped = 0;
+var total = 0;
+var processed = 0;
+var skipped = 0;
 
-    var errorStringNumber = 0;
+var errorStringNumber = 0;
 
-    agent.message = "Получение данных...";
-    ws = sendMessageToWebsocket(ws, agent);
+agent.message = "Получение данных...";
+ws = sendMessageToWebsocket(ws, agent);
+prevDate = new Date();
+
+addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+
+try{
+    //params = OBJECTS_ID_STR == "" ? "" : "AND CONTAINS('" + OBJECTS_ID_STR + "'";
+
+    indOrderCards = ArrayDirect(XQuery("sql: " +
+        " SELECT id, org_id " +
+        " FROM [WTDB].[dbo].cc_ind_order_cards " +
+        " WHERE GETDATE() < finish_date " +
+        "    AND (status IS NULL OR UPPER(status) = N'ЗАКАЗ НА ИСПОЛНЕНИИ') "/* + params*/));
+
+    total = ArrayCount(indOrderCards);
+
+    agent.refreshChart = 1;
+    agent.total = total;
+    agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+    agent.message = "Обработка данных...";
+    if (ws != null) {
+        ws = sendMessageToWebsocket(ws, agent);
+    }
     prevDate = new Date();
 
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Найдено " + ArrayCount(indOrderCards) + " cc_ind_order_cards");
 
-    try{
-        //params = OBJECTS_ID_STR == "" ? "" : "AND CONTAINS('" + OBJECTS_ID_STR + "'";
+    for (indOrderCard in indOrderCards) {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] >>>>>>>>> OrgID: " + indOrderCard.org_id);
 
-        indOrderCards = ArrayDirect(XQuery("sql: " +
-            " SELECT id, org_id " +
-            " FROM [WTDB].[dbo].cc_ind_order_cards " +
-            " WHERE GETDATE() < finish_date " +
-            "    AND (status IS NULL OR UPPER(status) = N'ЗАКАЗ НА ИСПОЛНЕНИИ') "/* + params*/));
+        addGroups(indOrderCard.id);
+        bossPanel(indOrderCard.id);
 
-        total = ArrayCount(indOrderCards);
+        addCondition(7247017380757573251, indOrderCard.org_id, 1);
+        addCondition(7247026493378216428, indOrderCard.org_id, 2);
 
-        agent.refreshChart = 1;
-        agent.total = total;
-        agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        agent.message = "Обработка данных...";
-        if (ws != null) {
-            ws = sendMessageToWebsocket(ws, agent);
-        }
-        prevDate = new Date();
+        processed++;
 
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Найдено " + ArrayCount(indOrderCards) + " cc_ind_order_cards");
-
-        for (indOrderCard in indOrderCards) {
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] >>>>>>>>> OrgID: " + indOrderCard.org_id);
-
-            addGroups(indOrderCard.id);
-            bossPanel(indOrderCard.id);
-
-            addCondition(7247017380757573251, indOrderCard.org_id, 1);
-            addCondition(7247026493378216428, indOrderCard.org_id, 2);
-
-            processed++;
-
-            agent.processed = processed;
-            agent.skipped = skipped;
-            refreshMsPerRow(agent, startDate, processed);
-            if (ws != null) {
-                ws = sendMessageToWebsocket(ws, agent);
-            }
-
-            if (processed % 10 == 0) {
-                addLogMessage(
-                    loggerName,
-                    "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
-               );
-            }
-        }
-
-        agent.state = 1;
         agent.processed = processed;
         agent.skipped = skipped;
-        agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        refreshMsPerRow(agent, startDate, total);
-        agent.message = "Закончено";
+        refreshMsPerRow(agent, startDate, processed);
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
 
-        addLogResultMessage(
-            loggerName,
-            "[agent.id: " + agentId + "]",
-            total + " total, ",
-            processed + " processed",
-            null,
-            skipped + " skipped"
-       );
-
-        addLogMessage(
-            loggerName,
-            "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
-       );
-    } catch(e) {
-        agent.state = 2;
-        agent.errorMessage = e + " Line " + errorStringNumber;
-        sendMessageToWebsocket(ws, agent);
-
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e  + " Line " + errorStringNumber);
+        if (processed % 10 == 0) {
+            addLogMessage(
+                loggerName,
+                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
+            );
+        }
     }
 
-    saveMonitorAgents(agent, startDate);
+    agent.state = 1;
+    agent.processed = processed;
+    agent.skipped = skipped;
+    agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+    refreshMsPerRow(agent, startDate, total);
+    agent.message = "Закончено";
+    if (ws != null) {
+        ws = sendMessageToWebsocket(ws, agent);
+    }
 
-    try {
-        ws.Send("close");
-    } catch (e) {}
-/*} else {
-    Screen.MsgBox("Запустите агент на стороне клиента!", ms_tools.get_const("c_info"), "info", "ok");
-}*/
+    addLogResultMessage(
+        loggerName,
+        "[agent.id: " + agentId + "]",
+        total + " total, ",
+        processed + " processed",
+        null,
+        skipped + " skipped"
+    );
+
+    addLogMessage(
+        loggerName,
+        "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
+    );
+} catch(e) {
+    agent.state = 2;
+    agent.errorMessage = e + " Line " + errorStringNumber;
+    sendMessageToWebsocket(ws, agent);
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e  + " Line " + errorStringNumber);
+}
+
+saveMonitorAgents(agent, startDate);
+
+try {
+    ws.Send("close");
+} catch (e) {}
+
