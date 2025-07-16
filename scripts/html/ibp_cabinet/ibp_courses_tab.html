@@ -109,7 +109,7 @@
                 <%
                     dataList = ArrayDirect(XQuery("sql: " +
                     " SELECT cs.name, " +
-                    "       IIF(als.state_id = 0, 'Назначен', 'В процесск') AS state, " +
+                    "       IIF(als.state_id = 0, 'Назначен', 'В процессе') AS state, " +
                     "       als.start_usage_date AS start, " +
                     "       als.start_learning_date AS start_learning, " +
                     "       als.score " +
