@@ -43,6 +43,24 @@ function createCertificate (_MyDate, _curDoc, i, programName) {
     }
 }
 
+function hasSpecialPrivileges(userId) {
+    groupId = 7180977708493279992;
+
+    groupDoc = tools.open_doc(groupId);
+
+    if(groupDoc != undefined) {
+        if(groupDoc.TopElem.collaborators.GetOptChildByKey(userId) != undefined) {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] User with ID " + userId + " has special privileges!");
+
+            return true;
+        }
+    } else {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Group with ID " + groupId + " is not exist!");
+    }
+
+    return false;
+}
+
 function validateAllowableDateInterval(type, personId, incomingDate, prefix, programName) {
     if(incomingDate != undefined) {
         if(type == 0) {
@@ -72,15 +90,15 @@ function validateAllowableDateInterval(type, personId, incomingDate, prefix, pro
                     if (hasGroupPerson(OptInt(data.object_id), OptInt(personId))) {
                         for (program in eduPlanDoc.TopElem.programs) {
                             if (StrUpperCase(program.name) == "СЕРТИФИКАЦИЯ") {
-                                if (program.plan_date != '') {
+                                if (program.finish_date != '') {
                                     if (start == null) {
-                                        start = Date(program.plan_date);
+                                        start = Date(program.finish_date);
 
                                         break;
                                     }
 
-                                    if (Date(program.plan_date) > start) {
-                                        start = Date(program.plan_date);
+                                    if (Date(program.finish_date) > start) {
+                                        start = Date(program.finish_date);
 
                                         break;
                                     }
@@ -92,11 +110,13 @@ function validateAllowableDateInterval(type, personId, incomingDate, prefix, pro
             }
 
             if (start != null) {
-                last = DateOffset(start, 50 * 86400);
-                start = DateOffset(start, -21 * 86400);
+                if(!hasSpecialPrivileges(curUserID)) {
+                    last = DateOffset(start, 50 * 86400);
+                    start = DateOffset(start, -42 * 86400);
 
-                if (incomingDate < start || incomingDate > last) {
-                    showException("Не сохранено. Сертификация возможна с " + StrDate(start, false, false) + " по " + StrDate(last, false, false) + " !" );
+                    if (incomingDate < start || incomingDate > last) {
+                        showException("Не сохранено. Сертификация возможна с " + StrDate(start, false, false) + " по " + StrDate(last, false, false) + " !");
+                    }
                 }
             } else {
                 showException("Не сохранено. Сотрудник не участвовал в программе подготовки!");
