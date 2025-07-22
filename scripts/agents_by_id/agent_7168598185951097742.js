@@ -67,7 +67,7 @@ try {
         "             INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "                AND IIF(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') IS NULL, " +
         "                        CAST ('01.01.2020' AS date), " +
-        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE()) " +
+        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS date)) < DATEADD(DAY,  -90 , GETDATE()) " +
         "        AND c.data.value('(collaborator/access/web_banned)[1]', 'varchar(max)') != 1 " +
         "    WHERE als.start_usage_date < DATEADD(DAY,  -14 , GETDATE()) " +
         "    GROUP BY cs.id " +
@@ -84,11 +84,13 @@ try {
         "         INNER JOIN [WTDB].[dbo].collaborator c ON colls.id = c.id " +
         "                AND IIF(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') IS NULL, " +
         "                        CAST ('01.01.2020' AS date), " +
-        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS datetime)) < DATEADD(DAY,  -90 , GETDATE()) " +
+        "                        CAST(c.data.value('(//custom_elems/custom_elem[name=''not_finished_reminder'']/value)[1]', 'varchar(max)') AS date)) < DATEADD(DAY,  -90 , GETDATE()) " +
         " WHERE als.start_usage_date < DATEADD(DAY,  -14 , GETDATE()) " +
         " ORDER BY coll_id "));
 
     total = ArrayCount(dataList);
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Total: " + total);
 
     agent.total = total;
     agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
@@ -182,6 +184,8 @@ try {
         loggerName,
         "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
     );
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished");
 } catch (e) {
     agent.state = 2;
     agent.errorMessage = e;
