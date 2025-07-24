@@ -31,7 +31,23 @@
                 height: 40px;
             }
 
+            .checkbox-cell {
+                padding-left: 8px;
+                padding-top: 5px;
+            }
+
+            .checkbox-control {
+                accent-color: #e23d64;
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+
+            .row-checkbox {
+                width: 16px;
+            }
         </style>
+
         <%
         function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
@@ -45,12 +61,14 @@
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
         dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT cs.name, " +
+            " SELECT ls.id, " +
+            "       cs.name, " +
             "       'Пройден' AS state, " +
             "       ls.start_learning_date AS start, " +
             "       ls.last_usage_date AS finish, " +
             "       ls.score, " +
-            "       DATEDIFF(minute, ls.start_learning_date, ls.last_usage_date) AS diff " +
+            "       DATEDIFF(minute, ls.start_learning_date, ls.last_usage_date) AS diff, " +
+            "       ls.course_id AS course_id " +
             " FROM [WTDB].[dbo].learnings ls " +
             " INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
             " WHERE ls.state_id = 4 " +
@@ -67,10 +85,61 @@
         <script type="text/javascript" src="./scripts/jquery.js"></script>
 
         <script type="application/javascript">
+            function onHeaderCheckBoxChange(event) {
+                if(event.currentTarget.checked) {
+                    $(".checkbox-element").each((index) => {
+                        $("#row_check_" + index).prop("checked", true);
+                    });
+                } else {
+                    $(".checkbox-element").each((index) => {
+                        $("#row_check_" + index).prop("checked", false);
+                    });
+                }
+            }
+
+            function onRowCheckBoxChange(event) {
+                let fullCheckedCount = 0;
+                let checkedCount = 0;
+
+                $(".checkbox-element").each((index) => {
+                    if($("#row_check_" + index).prop("checked")) {
+                        checkedCount++;
+                    }
+
+                    fullCheckedCount++;
+                });
+
+                const headerChecker = $("#header_check");
+
+                if(checkedCount === 0) {
+                    headerChecker.prop("indeterminate", false);
+                    headerChecker.prop("checked", false);
+                } else if(checkedCount === fullCheckedCount) {
+                    headerChecker.prop("indeterminate", false);
+                    headerChecker.prop("checked", true);
+                } else {
+                    headerChecker.prop("indeterminate", true);
+                }
+            }
+
             function reassignSeminars() {
                 if(confirm("Вы действительно хотите переназначить данному сотруднику семинары и методические разборы?")) {
+                    let ids = "";
+
+                    $(".checkbox-element").each((index) => {
+                        const checkboxElement = $("#row_check_" + index);
+
+                        if(checkboxElement.prop("checked")) {
+                            ids += checkboxElement.attr("data-id") + ",";
+                        };
+                    });
+
+                    if(ids.length > 0) {
+                        ids = ids.substring(0, ids.length - 1);
+                    }
+
                     $.ajax({
-                        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7168319587610451307&person_id=" + $("#userId").html(),
+                        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7168319587610451307&person_id=" + $("#userId").html() + "&ids=" + ids,
                         async: true,
                         type: "GET",
                         dataType: "json",
@@ -101,6 +170,11 @@
             <div style="padding-bottom: 20px;">
                 <table>
                     <tr class="header">
+                        <td>
+                            <div class="checkbox-cell">
+                                <input id="header_check" type="checkbox" class="checkbox-control row-checkbox" onchange="onHeaderCheckBoxChange(event)"/>
+                            </div>
+                        </td>
                         <td class="header-cell" style="width: 263px;">Электронный курс</td>
                         <td class="header-cell" style="width: 80px;">Статус</td>
                         <td class="header-cell" style="width: 150px;">Дата начала</td>
@@ -109,9 +183,15 @@
                         <td>Время прохождения (мин)</td>
                     </tr>
                     <%
+                        step = 0;
                         for (data in dataList) {
                     %>
                     <tr class="row">
+                        <td>
+                            <div class="checkbox-cell">
+                                <input id="row_check_<%=step%>" type="checkbox" data-id="<%=data.course_id%>" class="checkbox-control row-checkbox checkbox-element" onchange="onRowCheckBoxChange(this, event)">
+                            </div>
+                        </td>
                         <td><%=data.name%></td>
                         <td style="text-align: center;"><%=data.state%></td>
                         <td style="text-align: center;"><%=data.start%></td>
@@ -131,6 +211,7 @@
                         <td style='color: <%=diffColor%>; text-align: center;'><%=data.diff%></td>
                     </tr>
                     <%
+                        step++;
                     }
                     %>
                 </table>

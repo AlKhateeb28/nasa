@@ -14,25 +14,18 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
 try {
     personId = OptInt(Request.Query.GetOptProperty("person_id"));
+    ids = Request.Query.GetOptProperty("ids");
 
-    courseIds = [
-        7033345432254749026,
-        7033317173098334621,
-        7033353503783534178,
-        7033373371731500927,
-        7033393111894403431,
-        7119812308457777642,
-        7119812071712565068,
-        7119812165002090859,
-        7119812388344499932,
-        7119811761202858978,
-        7119812540134335010
-    ];
+    courseIds = [];
 
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Person.ID: " + personId);
+    if(StrCharCount(ids) > 0) {
+        courseIds = ids.split(",");
+    }
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Person.ID: " + personId + " Count: " + ArrayCount(courseIds));
 
     for (courseId in courseIds) {
-        tools.activate_course_to_person(personId, courseId);
+        tools.activate_course_to_person(personId, OptInt(courseId));
 
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Activated.ID: " + courseId);
     }
