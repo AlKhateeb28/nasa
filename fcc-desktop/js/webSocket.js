@@ -5,8 +5,14 @@ function getWebSocket(windowWebSocket) {
         throw "WebSocket в этом браузере не поддерживается.";
     }
 
-    // WITH PARAMETER var ws = new WebSocket('ws://example.com/?token=abc123');
+    let protocol;
 
-    return new WebSocket("ws://10.176.16.38:3000/");
-    //return new WebSocket("ws://192.168.0.96:3000/");
+    if(window.location.protocol === "https:") {
+        protocol = "wss";
+    } else {
+        protocol = "ws";
+    }
+
+    //return new WebSocket("ws://10.176.16.38:3000/");
+    return new WebSocket("ws://192.168.0.96:3000/");
 }

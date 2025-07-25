@@ -238,9 +238,10 @@ class EditPage extends Object {
 
         const programMode = selectedOption.attr("data-type");
 
+        const text = selectedOption.html().replaceAll("⚑ ", "").replaceAll("⚐ ", "");
 
         const parameters = `&person_id=${$("#person").attr("data-id")}&mode=${programMode}` +
-            `&code=${selectedOption.attr("data-code")}&noti=${$("#notification").prop("checked")}&text=${selectedOption.html()}`;
+            `&code=${selectedOption.attr("data-code")}&noti=${$("#notification").prop("checked")}&text=${text}`;
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7136806679986788131" + parameters,
