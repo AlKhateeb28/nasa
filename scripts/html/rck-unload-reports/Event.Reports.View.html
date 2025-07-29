@@ -20,11 +20,13 @@
     }
 
     function isOutcast(regionId) {
-        outcastList = [];
+        return true;
+        /*outcastList = [];
 
         outcastList.push(6659322042133322565); // Тюменская область
         outcastList.push(6652240967037451456); // Калужская область
         outcastList.push(6687413799865372317); // Новосибирская область
+        outcastList.push(6746322308306315441); // Хабаровский край
 
         for(i = 0; i < ArrayCount(outcastList); i++) {
             if(OptInt(regionId) == outcastList[i]) {
@@ -32,7 +34,7 @@
             }
         }
 
-        return false;
+        return false;*/
     }
 
     var regionsList = [];
@@ -144,11 +146,12 @@
                 <div class="row region-link" onclick="document.getElementById('a_<%=result.reportId%>').click();">
                     <%
                         if(!isOutcast(result.id)) {
-                        //if(OptInt(result.id) != 6659322042133322565) {
+                        // OLD REPORT PAGE
                     %>
                         <%=result.name%><a id="a_<%=result.reportId%>" class="region-link" href="_wt/custom_report/<%=result.reportId%>" target="_blank" style="display: none;"></a>
                     <%
                         } else {
+                        // NEW REPORT PAGE
                     %>
                         <%=result.name%><a id="a_<%=result.reportId%>" class="region-link" href="custom_web_template.html?object_id=7161947550370233006&region_id=<%=result.id%>" target="_blank" style="display: none;"></a>
                     <%

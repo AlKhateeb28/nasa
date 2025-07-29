@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Helper</title>
+
+    <link rel="icon" href="./images/favicon.ico"/>
+
+    <link rel="stylesheet" href="./../fcc/css/common.css"/>
+    <link rel="stylesheet" href="./css/helper.css"/>
+
+    <script type="text/javascript" src="./../scripts/jquery.js"></script>
+    <script type="text/javascript" src="./../fcc/js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="./../fcc/js/webSocket.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./../fcc/js/common_classes.js"></script>
+    <script type="text/javascript" src="./../fcc-desktop/js/agent.js"></script>
+    <script type="text/javascript" src="./js/index.js"></script>
+</head>
+<body class="body">
+
+<div id="loader" class="loader loader-view" style="visibility: hidden;"></div>
+
+<div id="grid" class="grid">
+    <div id="left_box"></div>
+
+    <div id="grid_box">
+        <!-- CARD -->
+        <div id="card" class="flat-card" style="width: 100%; height: 860px; margin-top: 20px;">
+            <div class="rock-and-roll" style="font-size: x-large; padding-top: 40px; margin-left: 20px;">
+                Agent "HELPER - Выровнить кастомные флаги организации и сотрудника за последний 1 час"
+            </div>
+
+            <div>
+                <div class="float-left statistic ws_statistic block-offset">
+                    <div id="start_datetime" class="start_datetime"></div>
+                    <div>
+                        <div class="header-label rock-and-roll">
+                            WS Server
+                        </div>
+                    </div>
+                    <div id="ws_server" class="ws-server ws-server-unknown">
+                        Unknown
+                    </div>
+                    <div class="ws-server-tooltip" style="margin-right: 8px;">
+                        Websocket version: 2.5.0
+                        <br/>
+                        Dashboard version: 1.0.0
+                    </div>
+                </div>
+
+                <div class="float-left block-summary">
+                    <div style="margin-top: 2px;">
+                        <div class="float-left summary-name rock-and-roll">TOTAL:</div>
+                        <div id="sum_total" class="float-left summary-value">--</div>
+                    </div>
+                </div>
+                <div class="float-left block-summary" style="width: 150px;">
+                    <div style="margin-top: 2px;">
+                        <div class="float-left summary-name rock-and-roll">PROCESSED:</div>
+                        <div id="sum_processed" class="float-left summary-value">--</div>
+                    </div>
+                </div>
+                <div class="float-left block-summary">
+                    <div style="margin-top: 2px;">
+                        <div class="float-left summary-name rock-and-roll">SAVED:</div>
+                        <div id="sum_saved" class="float-left summary-value">--</div>
+                    </div>
+                </div>
+                <div class="float-left block-summary">
+                    <div style="margin-top: 2px;">
+                        <div class="float-left summary-name rock-and-roll">SKIPPED:</div>
+                        <div id="sum_skipped" class="float-left summary-value">--</div>
+                    </div>
+                </div>
+
+                <div id="rowId" pin="0" class="float-left thread thread-unknown-state thread-inactive agent-box" onclick="haveFocus(this)">
+                    <div id="owner" class="float-left owner"></div>
+                    <div>
+                        <table>
+                            <tr>
+                                <td colspan="6">
+                                    <div class="float-left" style="height: 21px; padding-right: 5px;">
+                                        <div class="float-left" style="margin-top: -1px;">
+                                            <img id="wait" class="float-left pointer-image" src="images/wait.gif" style="visibility: hidden"/>
+                                        </div>
+                                        <div class="float-left">
+                                            <div id="wsState" class="device device-sleep">WS</div>
+                                        </div>
+                                        <div class="float-left">
+                                            <div id="agentState" class="device device-sleep">AG</div>
+                                        </div>
+                                    </div>
+                                    <div class="float-left agent-info-block">
+                                        <div class="idbox-textbox float-left">
+                                            <div id="agentName" class="idbox-textbox-text agent-name-box" style="font-size: small; margin-top: 5px;">
+                                                HELPER - Выровнить кастомные флаги организации и сотрудника за последний 1 час
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <div class="float-left user-info-box">
+                                        <div class="idbox-textbox float-left">
+                                            <div id="userName" class="idbox-textbox-text user-name-box"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 70px;"><div class="header-box">Всего</div></td>
+                                <td style="width: 120px;"><div class="header-box">Обработано</div></td>
+                                <td style="width: 120px;"><div class="header-box">Пропущено</div></td>
+                                <td style="width: 120px;"><div class="header-box">Сохранено / Удалено</div></td>
+                                <td style="width: 120px;"><div class="header-box">Не найдено</div></td>
+                                <td style="width: 155px;"><div class="header-box">Старт</div></td>
+                            </tr>
+                            <tr>
+                                <td><div id="total" class="value-line">0</div></td>
+                                <td><div id="processed" class="value-line">0</div></td>
+                                <td><div id="skipped" class="value-line">0</div></td>
+                                <td><div id="saved" class="value-line">0</div></td>
+                                <td><div id="notFound" class="value-line">0</div></td>
+                                <td><div id="dateTime" class="value-line">--</div></td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <div id="optionalData" style="margin-left: -3px; height: 40px;">
+                                        <table>
+                                            <tr>
+                                                <td style="width: 150px;"><div id="name1" class="header-box" style="visibility: hidden;"></div></td>
+                                                <td style="width: 150px;"><div id="name2" class="header-box" style="visibility: hidden;"></div></td>
+                                                <td style="width: 80px;"><div class="header-box header-box-align" style="text-indent: 2px;">Длительность</div></td>
+                                                <td style="width: 80px;"><div class="header-box header-box-align1">Ожидается</div></td>
+                                                <td style="width: 120px;"><div class="header-box header-box-align1" title="Одна запись в ms">RpMs</div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><div id="value1" class="value-line" style="visibility: hidden;"></div></td>
+                                                <td><div id="value2" class="value-line" style="visibility: hidden;"></div></td>
+                                                <td><div id="duration" class="value-line">--</div></td>
+                                                <td><div id="expected" class="value-line">--</div></td>
+                                                <td><div id="msPerRow" class="value-line">--</div></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <div id="message" class="idbox-textbox-text float-left text-align" style="padding-top: 4px;"></div>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div id="chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="right_box"></div>
+</div>
+
+</body>
+</html>
