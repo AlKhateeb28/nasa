@@ -44,37 +44,33 @@ if (LdsIsServer) {
             "             CROSS APPLY e.data.nodes('event/lectors/lector') T(c) " +
             "             INNER JOIN [WTDB].[dbo].lectors " +
             "                        ON T.c.value('lector_id[1]','varchar(max)') = lectors.id " +
-            " ) " +
-            " SELECT id, lector_fio = STUFF ( " +
-            "        ( " +
-            "            SELECT '|' + lector_fio " +
-            "            FROM _lectors tmp " +
-            "            WHERE tmp.id = ls.id " +
-            "            FOR XML PATH ('') " +
-            "        ) " +
-            "    , 1, 1, '') " +
-            " INTO [WTDB].[dbo]._temp_lectors " +
-            " FROM _lectors ls " +
-            " GROUP BY ls.id; " +
-            " " +
-            " WITH _preparations AS ( " +
+            " ), " +
+            " _temp_lectors AS ( " +
+            "    SELECT id, " +
+            "        lector_fio = STUFF( " +
+            "            (SELECT '|' + lector_fio " +
+            "                FROM _lectors tmp " +
+            "                WHERE tmp.id = ls.id " +
+            "                FOR XML PATH ('')), 1, 1, '') " +
+            "                FROM _lectors ls " +
+            "                GROUP BY ls.id " +
+            " ), " +
+            " _preparations AS ( " +
             "    SELECT es.id, T.c.value('person_fullname[1]', 'varchar(max)') AS pre_fio " +
             "    FROM [WTDB].[dbo].events es " +
             "             LEFT JOIN [WTDB].[dbo].event e ON es.id = e.id " +
             "             CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c) " +
+            " ), " +
+            " _temp_preparations AS ( " +
+            "    SELECT id, preparation_fio = STUFF ( " +
+            "    (SELECT '|' + pre_fio " +
+            "        FROM _preparations tmp " +
+            "        WHERE tmp.id = ps.id " +
+            "        FOR XML PATH ('') " +
+            "    ), 1, 1, '') " +
+            "    FROM _preparations ps " +
+            "    GROUP BY id " +
             " ) " +
-            " SELECT id, preparation_fio = STUFF ( " +
-            "        ( " +
-            "            SELECT '|' + pre_fio " +
-            "            FROM _preparations tmp " +
-            "            WHERE tmp.id = ps.id " +
-            "            FOR XML PATH ('') " +
-            "        ) " +
-            "    , 1, 1, '') " +
-            " INTO [WTDB].[dbo]._temp_preparations " +
-            " FROM _preparations ps " +
-            " GROUP BY id; " +
-            " " +
             " SELECT rs.name AS region_name, " +
             "       f_rs.name AS fact_region_name, " +
             "       os.code AS inn, " +
@@ -127,25 +123,23 @@ if (LdsIsServer) {
             "       ers.event_start_date, " +
             "       o.data.value('(//custom_elems/custom_elem[name=''wave'']/value)[1]', 'varchar(max)') AS wave " +
             " FROM [WTDB].[dbo].event_results AS ers " +
-            "        INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id AND es.education_org_id IN (7100351150313827874, 7410749948253583035, 7100351480975785298) " +
-            "        INNER JOIN [WTDB].[dbo].event AS e ON es.id = e.id " +
-            "        INNER JOIN [WTDB].[dbo].event_result_types AS erts ON ers.event_result_type_id = erts.id " +
-            "        LEFT JOIN [WTDB].[dbo].education_methods AS ems ON es.education_method_id = ems.id " +
-            "        INNER JOIN [WTDB].[dbo].education_method AS em ON ems.id = em.id " +
-            "        INNER JOIN [WTDB].[dbo].collaborators AS cs ON ers.person_id = cs.id " +
-            "        INNER JOIN [WTDB].[dbo].collaborator AS c ON cs.id = c.id " +
-            "        LEFT JOIN [WTDB].[dbo].positions AS ps ON cs.position_id = ps.id " +
-            "        INNER JOIN [WTDB].[dbo].orgs AS os ON cs.org_id = os.id " +
-            "        INNER JOIN [WTDB].[dbo].org AS o ON os.id = o.id " +
-            "        INNER JOIN [WTDB].[dbo].regions AS rs ON os.region_id = rs.id " +
-            "        INNER JOIN [WTDB].[dbo].regions AS f_rs ON o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = f_rs.id " +
-            "        LEFT JOIN [WTDB].[dbo]._temp_lectors AS tls ON e.id = tls.id " +
-            "        LEFT JOIN [WTDB].[dbo]._temp_preparations AS tps ON e.id = tps.id " +
-            "        INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +
+            "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id AND es.education_org_id IN (7100351150313827874, 7410749948253583035, 7100351480975785298) " +
+            "         INNER JOIN [WTDB].[dbo].event AS e ON es.id = e.id " +
+            "         INNER JOIN [WTDB].[dbo].event_result_types AS erts ON ers.event_result_type_id = erts.id " +
+            "         LEFT JOIN [WTDB].[dbo].education_methods AS ems ON es.education_method_id = ems.id " +
+            "         INNER JOIN [WTDB].[dbo].education_method AS em ON ems.id = em.id " +
+            "         INNER JOIN [WTDB].[dbo].collaborators AS cs ON ers.person_id = cs.id " +
+            "         INNER JOIN [WTDB].[dbo].collaborator AS c ON cs.id = c.id " +
+            "         LEFT JOIN [WTDB].[dbo].positions AS ps ON cs.position_id = ps.id " +
+            "         INNER JOIN [WTDB].[dbo].orgs AS os ON cs.org_id = os.id " +
+            "         INNER JOIN [WTDB].[dbo].org AS o ON os.id = o.id " +
+            "         INNER JOIN [WTDB].[dbo].regions AS rs ON os.region_id = rs.id " +
+            "         INNER JOIN [WTDB].[dbo].regions AS f_rs ON o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = f_rs.id " +
+            "         LEFT JOIN _temp_lectors AS tls ON e.id = tls.id " +
+            "         LEFT JOIN _temp_preparations AS tps ON e.id = tps.id " +
+            "         INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +
             " WHERE ers.event_result_type_id IN (7101358388861564662, 7410750501543094820) " +
-            " ORDER BY cs.fullname, os.name, es.finish_date  " +
-            " " +
-            " DROP TABLE " + "[WTDB].[dbo]._temp_lectors; DROP TABLE [WTDB].[dbo]._temp_preparations; "));
+            " ORDER BY cs.fullname, os.name, es.finish_date "));
 
         total = ArrayCount(dataList);
 
