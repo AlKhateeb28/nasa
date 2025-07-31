@@ -55,7 +55,8 @@ try {
     }
 
     dataList = ArrayDirect(XQuery("sql: " +
-        " SELECT state, " +
+        " SELECT processed, " +
+        "       state, " +
         "       error_message, " +
         "       start_date, " +
         "       finish_date, " +
@@ -79,6 +80,7 @@ try {
 
     for (data in dataList) {
         element = {};
+        element.processed = data.processed;
         element.state = data.state;
         element.errorMessage = data.error_message;
         element.startDate = data.start_date;

@@ -178,7 +178,9 @@ if (!LdsIsServer) {
             ws = sendMessageToWebsocket(ws, agent);
         }
 
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Before save file");
         excelFile.Save();
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] After save file");
 
         agent.state = 1;
         agent.processed = processed;

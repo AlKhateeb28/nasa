@@ -53,37 +53,36 @@ if (LdsIsServer) {
             "             CROSS APPLY e.data.nodes('event/lectors/lector') T(c) " +
             "             INNER JOIN [WTDB].[dbo].lectors " +
             "                        ON T.c.value('lector_id[1]','varchar(max)') = lectors.id " +
-            " ) " +
-            " SELECT id, lector_fio = STUFF ( " +
-            "        ( " +
-            "            SELECT '|' + lector_fio " +
-            "            FROM _lectors tmp " +
-            "            WHERE tmp.id = ls.id " +
-            "            FOR XML PATH ('') " +
-            "        ) " +
-            "    , 1, 1, '') " +
-            " INTO [WTDB].[dbo]._temp_rck_lectors " +
-            " FROM _lectors ls " +
-            " GROUP BY ls.id; " +
-            " " +
-            " WITH _preparations AS ( " +
+            " ), " +
+            " _temp_rck_lectors AS ( " +
+            "    SELECT id, " +
+            "        lector_fio = STUFF ( " +
+            "            ( " +
+            "                SELECT '|' + lector_fio " +
+            "                FROM _lectors tmp " +
+            "                WHERE tmp.id = ls.id " +
+            "                FOR XML PATH ('') " +
+            "            ), 1 , 1, '') " +
+            "    FROM _lectors ls " +
+            "    GROUP BY ls.id " +
+            " ), " +
+            " _preparations AS ( " +
             "    SELECT es.id, T.c.value('person_fullname[1]', 'varchar(max)') AS pre_fio " +
             "    FROM [WTDB].[dbo].events es " +
             "             LEFT JOIN [WTDB].[dbo].event e ON es.id = e.id " +
             "             CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c) " +
-            " ) " +
+            " ), " +
+            " _temp_rck_preparations AS ( " +
             " SELECT id, preparation_fio = STUFF ( " +
             "        ( " +
             "            SELECT '|' + pre_fio " +
             "            FROM _preparations tmp " +
             "            WHERE tmp.id = ps.id " +
             "            FOR XML PATH ('') " +
-            "        ) " +
-            "    , 1, 1, '') " +
-            " INTO [WTDB].[dbo]._temp_rck_preparations " +
+            "        ), 1, 1, '') " +
             " FROM _preparations ps " +
-            " GROUP BY id; " +
-            " " +
+            " GROUP BY id " +
+            " ) " +
             " SELECT rs.name AS fact_region_name, " +
             "       os.code AS inn, " +
             "       os.name AS org_name, " +
@@ -127,12 +126,10 @@ if (LdsIsServer) {
             "         INNER JOIN [WTDB].[dbo].orgs AS os ON cs.org_id = os.id " +
             "         INNER JOIN [WTDB].[dbo].org AS o ON os.id = o.id AND o.data.value('(//custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'bit') = 1 " +
             "         INNER JOIN [WTDB].[dbo].regions AS rs ON o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = rs.id " +
-            "         LEFT JOIN [WTDB].[dbo]._temp_rck_lectors AS tls ON e.id = tls.id " +
-            "         LEFT JOIN [WTDB].[dbo]._temp_rck_preparations AS tps ON e.id = tps.id " +
+            "         LEFT JOIN _temp_rck_lectors AS tls ON e.id = tls.id " +
+            "         LEFT JOIN _temp_rck_preparations AS tps ON e.id = tps.id " +
             "         INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +
-            " ORDER BY cs.fullname, os.name, es.finish_date " +
-            " " +
-            " DROP TABLE " + "[WTDB].[dbo]._temp_rck_lectors; DROP TABLE [WTDB].[dbo]._temp_rck_preparations; "));
+            " ORDER BY cs.fullname, os.name, es.finish_date "));
 
         total = ArrayCount(dataList);
 

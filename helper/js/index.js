@@ -211,10 +211,13 @@ class HelperPage extends Object {
         $("#sum_skipped").html(summary.skipped);
 
         const charData = [];
+        const processedData = [];
         const charCategories = [];
 
         summary.ticks.forEach((tick, index) => {
             charData.push((tick.diff / 60).toFixed(2));
+
+            processedData.push(tick.processed);
 
             charCategories.push(getHoursAnMinutes(tick.startDate));
         });
@@ -222,10 +225,11 @@ class HelperPage extends Object {
 
         for(let i = summary.ticks.length; i < 144/* - summary.ticks.length*/; i++) {
             charData.push(0);
+            processedData.push(0);
             charCategories.push("⚬");
         }
 
-        chart.updateSeries(HelperPage.getCharData(charData));
+        chart.updateSeries(HelperPage.getCharData(charData, processedData));
 
         chart.updateOptions({
             xaxis: {categories: charCategories}
@@ -354,20 +358,31 @@ class HelperPage extends Object {
         ];
     }
 
-    static getCharData(agentData) {
-        return  [{
-            name: "Принять решение",
-            color: "#f88b85",
-            data: HelperPage.getFilledList(9)
-        },
+    static getCharData(agentData, processedData) {
+        return  [
+            {
+                name: "Принять решение",
+                color: "#f88b85",
+                data: HelperPage.getFilledList(10)
+            },
             {
                 name: "Внимание",
                 color: "#ffde93",
-                data: HelperPage.getFilledList(7)
+                data: HelperPage.getFilledList(8)
+            },
+            {
+                name: "Оптимально",
+                color: "#7fff00",
+                data: HelperPage.getFilledList(5)
+            },
+            {
+                name: "Обработано",
+                color: "#4a4fd4",
+                data: processedData
             },
             {
                 name: "Время агента",
-                color: "#8dff50",
+                color: "#2f4f4f",
                 data: agentData
             }
         ]
@@ -375,7 +390,7 @@ class HelperPage extends Object {
 
     static getChartOption() {
         return {
-            series: HelperPage.getCharData(HelperPage.getFilledList(0)),
+            series: HelperPage.getCharData(HelperPage.getFilledList(0), HelperPage.getFilledList(0)),
             chart: {
                 type: "area",
                 height: 550,
@@ -387,7 +402,7 @@ class HelperPage extends Object {
                 offsetX: -3,
                 fontWeight: "normal",
                 formatter: function (val) {
-                    return val === 0 || val === 7 || val === 9 ? "" : val;
+                    return val === 0 || val === 5 || val === 8 || val === 10 ? "" : val;
                 },
                 style: {
                     fontSize: "10px",
@@ -395,9 +410,25 @@ class HelperPage extends Object {
                 },
                 background: {
                     enabled: true,
-                    foreColor: "#2f4f4f"
+                    foreColor: ["#ffffff"]
                 }
             },
+            /*fill: {
+                type: "gradient",
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.9,
+                    stops: [0, 99, 100],
+                    gradientToColors: [
+                        "#2f4f4f",
+                        "#2f4f4f",
+                        "#2f4f4f",
+                        "#2f4f4f",
+                        "#2f4f4f"
+                    ]
+                }
+            },*/
             grid: {
                 borderColor: "#d2d1d1",
                 padding: {
@@ -425,19 +456,21 @@ class HelperPage extends Object {
                     }
                 }
             },
-            yaxis: {
-                stepSize: 5,
-                min: 0,
-                max: 10,
-                labels: {
-                    show: true,
-                    style: {
-                        fontSize: "10px",
-                        fontFamily: "'Noto Sans', sans-serif",
-                        colors: HelperPage.getFilledList("#ffffff")
+            yaxis: [
+                {
+                    stepSize: 1,
+                    min: 0,
+                    max: 10,
+                    labels: {
+                        show: true,
+                        style: {
+                            fontSize: "10px",
+                            fontFamily: "'Noto Sans', sans-serif",
+                            colors: HelperPage.getFilledList("#ffffff")
+                        }
                     }
                 }
-            },
+            ],
             legend: {
                 labels: {
                     colors: "#ffffff"
@@ -445,7 +478,7 @@ class HelperPage extends Object {
             },
             tooltip: {
                 enabled: true,
-                enabledOnSeries: [2],
+                enabledOnSeries: [3, 4],
                 theme: "dark"
             }
         };
