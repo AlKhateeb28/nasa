@@ -43,6 +43,10 @@ try {
         "       SUM(CAST(saved AS INT)) AS saved " +
         " FROM [WTDB].[dbo].cc_agent_monitor_events " +
         " WHERE agent_id = 7437057559620972968 " +
+        " AND total <> '--' " +
+        "  AND processed <> '--' " +
+        "  AND skipped <> '--' " +
+        "  AND saved <> '--' " +
         "  AND DAY(start_date) = DAY(GETDATE()) " +
         "  AND MONTH(start_date) = MONTH(GETDATE()) " +
         "  AND YEAR(start_date) = YEAR(GETDATE()) "));
