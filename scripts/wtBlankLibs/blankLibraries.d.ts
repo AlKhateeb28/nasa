@@ -27,6 +27,7 @@ function StrDate(date: any, showTime: boolean): any;
 function StrDate(date: any, showTime: boolean, showSeconds: boolean): any;
 function OptDate(date: any) : string;
 function UrlFromDocID(value: number): string;
+function UrlFromDocID(value: number, dbName: string): string;
 function DeleteDoc(url: string): void;
 function ArrayOptFindByKey(list: object, key: any, field: string);
 function ArrayOptFind(array: any, expression: string);
