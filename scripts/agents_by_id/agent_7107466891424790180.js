@@ -30,8 +30,6 @@ function addGroups(id) {
         if (indOrderCardTE.OptChild("stage_" + stageNum + "_start_date") != null && indOrderCardTE.OptChild("stage_" + stageNum + "_finish_date") != null && ArrayCount(indOrderCardTE.OptChild("stage_" + stageNum + "_documents")) != 0) {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] addGroups. stageNum: " + stageNum + " Условия выполняются");
 
-            groupId = null;
-
             if (indOrderCardTE.OptChild("stage_" + stageNum + "_group_id") == null) {
                 // создаем группу доступа
                 groupName = indOrderCardTE.num + "_" + indOrderCardTE.org_id.ForeignElem.code + "_" + stageNum + "_" + StrDate(indOrderCardTE.start_date, false, false);
@@ -68,6 +66,8 @@ function addGroups(id) {
                     indOrderCardTE.OptChild("stage_" + stageNum + "_group_id").Value = existGroupDocTE.id;
                 } else {
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Group with ID " + groupId + " not exist!");
+
+                    groupId = null;
                 }
             }
 
@@ -151,9 +151,13 @@ function bossPanel(id) {
                 if(collaboratorDoc != undefined) {
                     collaboratorDocTE = collaboratorDoc.TopElem;
 
+                    existGroupDoc = tools.open_doc(groupId);
+
+                    existGroupDocTE = existGroupDoc.TopElem;
+
                     // NEW GROUP
-                    if (!newGroupTE.func_managers.ChildByKeyExists(bossPanelCol.boss_panel_col_id)) {
-                        getNewFuncManager(newGroupTE, collaboratorDocTE);
+                    if (!existGroupDocTE.func_managers.ChildByKeyExists(bossPanelCol.boss_panel_col_id)) {
+                        getNewFuncManager(existGroupDocTE, collaboratorDocTE);
                     }
 
                     // ORGANIZATION
@@ -273,6 +277,8 @@ var processed = 0;
 var skipped = 0;
 
 var errorStringNumber = 0;
+
+var groupId = null;
 
 agent.message = "Получение данных...";
 ws = sendMessageToWebsocket(ws, agent);
