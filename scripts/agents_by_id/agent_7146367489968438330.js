@@ -61,7 +61,8 @@ function createNotificationMessage(currentWave) {
 
         if(waveCount >= 4) {
             organizations = ArrayDirect(XQuery("sql: " +
-                " SELECT os.code, " +
+                " SELECT os.id," +
+                "       os.code, " +
                 "       os.name AS org_name, " +
                 "       rs.name AS region_name, " +
                 "       o.data.value('(org/custom_elems/custom_elem[name=''allowed_ibp_count''])[1]/value[1]', 'varchar(max)') AS allowed " +
