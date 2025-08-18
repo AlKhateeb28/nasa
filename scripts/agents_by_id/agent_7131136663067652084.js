@@ -216,11 +216,44 @@ try {
         dossierDoc = tools.open_doc(data.id);
 
         if(dossierDoc != undefined) {
+            dossierDocTE = dossierDoc.TopElem;
+
             typeValue = "";
 
-            for(type in dossierDoc.TopElem.training_type) {
-                typeValue += type.value + ", ";
+            if(dossierDocTE.is_rck_intership) {
+                typeValue += "РП РЦК стажировка в ФЦК, "
             }
+            if(dossierDocTE.is_rck_alone) {
+                typeValue += "РП РЦК самостоятельно, "
+            }
+            if(dossierDocTE.is_rck_trainer) {
+                typeValue += "Тренер РЦК, "
+            }
+            if(dossierDocTE.is_rck_fck_cert) {
+                typeValue += "Сертификация тренера РЦК в ФЦК, "
+            }
+            if(dossierDocTE.is_ock_ss) {
+                typeValue += "Соц.сфера_ОЦК_РП, "
+            }
+            if(dossierDocTE.is_ock_ss_analyst) {
+                typeValue += "Соц.сфера_ОЦК_Аналитик-методолог, "
+            }
+            if(dossierDocTE.is_ock_ss_trainer) {
+                typeValue += "Соц.сфера_ОЦК_Тренер, "
+            }
+            if(dossierDocTE.is_ock_bno) {
+                typeValue += "БНО_ОЦК_РП, "
+            }
+            if(dossierDocTE.is_ock_bno_analyst) {
+                typeValue += "БНО_ОЦК_Аналитик-методолог, "
+            }
+            if(dossierDocTE.is_ock_bno_trainer) {
+                typeValue += "БНО_ОЦК_Тренер, "
+            }
+
+            /*for(type in .training_type) {
+                typeValue += type.value + ", ";
+            }*/
 
             if(StrCharCount(typeValue) > 0) {
                 typeValue = StrCharRangePos(typeValue, 0, StrCharCount(typeValue) - 2);
