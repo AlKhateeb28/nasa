@@ -81,7 +81,7 @@ try {
 
     colobaratorList = new Binary();
 
-    notificationMessage = "<p><b>Отправлено " + total + " сообщений новым сотрудниркам</b></p>";
+    notificationMessage = "<p><b>Отправлено " + total + " сообщений новым сотрудникам</b></p>";
 
     for (data in dataList) {
         if(data.with_no_right == 1) {

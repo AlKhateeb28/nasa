@@ -153,7 +153,7 @@ try {
         colobaratorList.AppendStr("<div>" + dataList[total - 1].fullname + " Email: " + dataList[total - 1].email + " (" + dataList[total - 1].coll_id + ") - " + personCoursesCount + getNormalizedMessage(personCoursesCount) + "</div>");
 
         if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
-            notificationMessage = "<p><b>Отправлено " + notificationCount + " сообщений сотрудниркам о незавершенных курсах</b></p>" + colobaratorList.GetStr();
+            notificationMessage = "<p><b>Отправлено " + notificationCount + " сообщений сотрудникам о незавершенных курсах</b></p>" + colobaratorList.GetStr();
 
             tools.create_notification("find_incomplete_course", 7351734047845980789, notificationMessage); // AA
             tools.create_notification("find_incomplete_course", 6743923349751162819, notificationMessage); // FK
