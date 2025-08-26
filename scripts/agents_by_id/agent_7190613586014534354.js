@@ -24,7 +24,6 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
 addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
 addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-
 try {
     total = 1;
 
