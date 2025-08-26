@@ -102,6 +102,15 @@ function getPage4Content() {
                     <div class= "float-left-box" style="margin-left: 8px; margin-top: 6px;">
                         <button type="button" class="btn-refresh refresh-hover" onclick="refreshCoursesOfWeekManually()">Обновить</button>
                     </div>
+                    <div class= "float-left-box" style="margin-left: 8px; margin-top: 2px;">
+                        <div class="float-left-box" style="margin-top: 5px; padding-left: 24px;">Детали прохождений</div>
+                            <div class="float-left-box" style="margin-left: 11px;">
+                                <label class="checkbox-ios" style="margin-top: -2px;">
+                                    <input id="detail" type="checkbox" style="margin-top: 5px; margin-left: 10px;"/>
+                                    <span class="checkbox-ios-switch"></span>
+                                </label>
+                        </div>
+                    </div>
                     <div id="refreshed_datetime" class= "float-right-box" style="margin-right: 8px; margin-top: 6px; font-size: smaller; color: deeppink;">
                     </div>
                 </div>
@@ -311,6 +320,48 @@ function page4RefreshCoursesByWeek(week) {
                 $("#state0").html(getCourseCount(page4CoursesByWeekData.state0Data));
                 $("#state1").html(getCourseCount(page4CoursesByWeekData.state1Data));
                 $("#state4").html(getCourseCount(page4CoursesByWeekData.state4Data));
+            } else {
+                showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
+                    "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
+            }
+        },
+        error: function() {
+            showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
+        }
+    });
+}
+
+function page4RefreshCoursesDetailByWeek(week) {
+    const yearElementValue = $("#pg4_years").val();
+
+    $.ajax({
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7193439281983944051&year=" + yearElementValue + "&week=" + week,
+        async: false,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            if(data.errorMessage.indexOf("#") < 0) {
+                const sanKeyData = [];
+
+                data.details.forEach((element, index) => {
+                    sanKeyElement = {};
+                    sanKeyElement.from = "Н:" + element.fromWeek + " Г:" + element.fromYear;
+                    sanKeyElement.to = "Н:" + week + " Г:" + yearElementValue;
+                    sanKeyElement.value = element.count;
+
+                    sanKeyData.push(sanKeyElement);
+                });
+
+                let chart = anychart.sankey();
+                chart.data(sanKeyData);
+                chart.node().normal().labels().fontSize(14);
+                chart.node().labels().useHtml(true);
+                chart.node().labels().format("<span style='font-weight:bold; color: black;'>{%name}</span><br>{%value}");
+                chart.padding(20, 40);
+                chart.title(week + " неделя " + $("#pg4_years").val() + " года");
+
+                chart.container("pg4_courses_detail_sankey");
+                chart.draw();
             } else {
                 showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
@@ -555,10 +606,18 @@ function getCoursesByWeekNumberContent() {
     `;
 }
 
+function getCoursesDetailByWeek() {
+    return `
+    <div style="user-select: none;">
+        <div id="pg4_courses_detail_sankey" style="display: flex; justify-content: center; margin-left: -10px; user-select: none; height: 550px;"></div>
+    </div>
+    `;
+}
+
 function getPage4CoursesChartOption() {
     return {
         series: [{
-                name: "Назначено",
+            name: "Назначено",
                 color: "#ff9719",
                 data: [
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -601,17 +660,28 @@ function getPage4CoursesChartOption() {
             zoom: {enabled: false},
             events: {
                 click: function(event, chartContext, opts) {
-                    ModalWindow.show(
-                        getCoursesByWeekNumberContent(),
-                        opts.dataPointIndex + 1,
-                        "60%",
-                        "600px",
-                        "20px");
+                    if($("#detail").prop("checked")) {
+                        ModalWindow.show(
+                            getCoursesDetailByWeek(),
+                            opts.dataPointIndex + 1,
+                            "60%",
+                            "600px",
+                            "20px");
 
-                    page4CoursesByWeekChart = new ApexCharts($("#pg4_courses_by_week_chart").get(0), getPage4CoursesByWeekChartOption());
-                    page4CoursesByWeekChart.render();
+                        page4RefreshCoursesDetailByWeek(opts.dataPointIndex + 1);
+                    } else {
+                        ModalWindow.show(
+                            getCoursesByWeekNumberContent(),
+                            opts.dataPointIndex + 1,
+                            "60%",
+                            "600px",
+                            "20px");
 
-                    page4RefreshCoursesByWeek(opts.dataPointIndex + 1);
+                        page4CoursesByWeekChart = new ApexCharts($("#pg4_courses_by_week_chart").get(0), getPage4CoursesByWeekChartOption());
+                        page4CoursesByWeekChart.render();
+
+                        page4RefreshCoursesByWeek(opts.dataPointIndex + 1);
+                    }
                 }
             }
         },

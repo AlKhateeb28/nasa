@@ -12,6 +12,8 @@ class IndexPage extends Object {
     static onDownloadOCK() {
         IndexPage.beforeReport("Формируется выгрузка ОЦК ...");
 
+        const messageElement = $("message");
+
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7137494958071545430",
             async: true,
@@ -36,6 +38,8 @@ class IndexPage extends Object {
     static onDownloadOCKBNO() {
         IndexPage.beforeReport("Формируется выгрузка ОЦК БНО...");
 
+        const messageElement = $("message");
+
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7151616261867663994",
             async: true,
@@ -59,6 +63,8 @@ class IndexPage extends Object {
 
     static onDownloadRCK() {
         IndexPage.beforeReport("Формируется выгрузка РЦК...");
+
+        const messageElement = $("message");
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7159099470552366682",
