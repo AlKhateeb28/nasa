@@ -1,4 +1,4 @@
-// 7176435673224669806
+// 7193007675817061484
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
 function isCollaboratorExistsInDossier(collsCode) {
@@ -11,13 +11,13 @@ function isCollaboratorExistsInDossier(collsCode) {
 }
 
 if (LdsIsServer) {
-    var agentId = 7176435673224669806;
+    var agentId = 7193007675817061484;
     var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
     var msPerRecord = 0.001;
 
     var startDate = Date();
     var prevDate;
-    var loggerName = "agent_7176435673224669806";
+    var loggerName = "agent_7193007675817061484";
     var ws = getWebsocketClient();
     var agent = getAgentInstance(agentId, userId, loggerName);
 
@@ -59,7 +59,7 @@ if (LdsIsServer) {
             "    FROM [WTDB].[dbo].events es " +
             "        LEFT JOIN [WTDB].[dbo].event e ON es.id = e.id " +
             "        CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c) " +
-            " ), " +
+            "), " +
             " _temp_preparations AS ( " +
             "    SELECT id, " +
             "        preparation_fio = STUFF( " +
@@ -125,13 +125,11 @@ if (LdsIsServer) {
             "       pcs.name AS typical_position_name " +
             " FROM [WTDB].[dbo].event_results AS ers " +
             "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id " +
-            "    AND es.education_org_id IN (7100351150313827874, 7410749948253583035, 7100351480975785298) " +
-            "    AND YEAR(es.finish_date) >= 2025 " +
             "         INNER JOIN [WTDB].[dbo].event AS e ON es.id = e.id " +
             "         INNER JOIN [WTDB].[dbo].event_result_types AS erts ON ers.event_result_type_id = erts.id " +
             "         LEFT JOIN [WTDB].[dbo].education_methods AS ems ON es.education_method_id = ems.id " +
             "         INNER JOIN [WTDB].[dbo].education_method AS em ON ems.id = em.id " +
-            "         INNER JOIN [WTDB].[dbo].collaborators AS cs ON ers.person_id = cs.id " +
+            "         INNER JOIN [WTDB].[dbo].collaborators AS cs ON ers.person_id = cs.id AND cs.code LIKE '%load_muc%' " +
             "         INNER JOIN [WTDB].[dbo].collaborator AS c ON cs.id = c.id " +
             "         LEFT JOIN [WTDB].[dbo].positions AS ps ON cs.position_id = ps.id " +
             "         LEFT JOIN [WTDB].[dbo].position_commons AS pcs ON ps.position_common_id = pcs.id " +
@@ -142,7 +140,7 @@ if (LdsIsServer) {
             "         LEFT JOIN _temp_lectors AS tls ON e.id = tls.id " +
             "         LEFT JOIN _temp_preparations AS tps ON e.id = tps.id " +
             "         INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +
-            " ORDER BY cs.fullname, os.name, es.finish_date  "));
+            "ORDER BY cs.fullname, os.name, es.finish_date  "));
 
         total = ArrayCount(dataList);
 
@@ -276,7 +274,7 @@ if (LdsIsServer) {
         // SAVE EXCEL FILE
         reportString.AppendStr("</table></html>");
         excel.LoadHtmlString(reportString.GetStr(), "");
-        excel.SaveAs("E:/Websoft/Reports/report_fck_2025/report_fck_all_" + ParseDate(Date()) + ".xlsx");
+        excel.SaveAs("E:/Websoft/Reports/report_fck_2025/report_fck_all_2018_" + ParseDate(Date()) + ".xlsx");
 
         agent.state = 1;
         agent.processed = processed;
