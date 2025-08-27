@@ -222,26 +222,32 @@ try {
     reportString.AppendStr("<td class='header'>Дополнительная программа 1</td>");
     reportString.AppendStr("<td class='header'>Дата обучения</td>");
     reportString.AppendStr("<td class='header'>Дата сертификации</td>");
+    reportString.AppendStr("<td class='header'>Результат сертификации</td>");
     reportString.AppendStr("<td class='header'>Сертификат</td>");
     reportString.AppendStr("<td class='header'>Дополнительная программа 2</td>");
     reportString.AppendStr("<td class='header'>Дата обучения</td>");
     reportString.AppendStr("<td class='header'>Дата сертификации</td>");
+    reportString.AppendStr("<td class='header'>Результат сертификации</td>");
     reportString.AppendStr("<td class='header'>Сертификат</td>");
     reportString.AppendStr("<td class='header'>Дополнительная программа 3</td>");
     reportString.AppendStr("<td class='header'>Дата обучения</td>");
     reportString.AppendStr("<td class='header'>Дата сертификации</td>");
+    reportString.AppendStr("<td class='header'>Результат сертификации</td>");
     reportString.AppendStr("<td class='header'>Сертификат</td>");
     reportString.AppendStr("<td class='header'>Дополнительная программа 4</td>");
     reportString.AppendStr("<td class='header'>Дата обучения</td>");
     reportString.AppendStr("<td class='header'>Дата сертификации</td>");
+    reportString.AppendStr("<td class='header'>Результат сертификации</td>");
     reportString.AppendStr("<td class='header'>Сертификат</td>");
     reportString.AppendStr("<td class='header'>Дополнительная программа 5</td>");
     reportString.AppendStr("<td class='header'>Дата обучения</td>");
     reportString.AppendStr("<td class='header'>Дата сертификации</td>");
+    reportString.AppendStr("<td class='header'>Результат сертификации</td>");
     reportString.AppendStr("<td class='header'>Сертификат</td>");
     reportString.AppendStr("<td class='header'>Дополнительная программа 6</td>");
     reportString.AppendStr("<td class='header'>Дата обучения</td>");
     reportString.AppendStr("<td class='header'>Дата сертификации</td>");
+    reportString.AppendStr("<td class='header'>Результат сертификации</td>");
     reportString.AppendStr("<td class='header'>Сертификат</td>");
     reportString.AppendStr("<td class='header'>Кол-во сертификатов</td>");
     reportString.AppendStr("<td class='header'>ID пользователя</td>");
@@ -334,7 +340,7 @@ try {
             "<td>" + getBaseCertificateCount(data.dop_1_cert, data.dop_2_cert, data.dop_3_cert, data.dop_4_cert, data.dop_5_cert, data.dop_6_cert) + "</td>" +
             "<td>'" + data.trainer_id + "</td>" +
             "<td>" + data.trainer_fio + "</td>" +
-            "<td>" + data.org_inn + "</td>" +
+            "<td>'" + data.org_inn + "</td>" +
             "<td>" + data.region_name + "</td>" +
             "<td>'" + data.id + "</td>" +
             "</tr>");
