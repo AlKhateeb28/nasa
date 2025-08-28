@@ -34,6 +34,51 @@ function getPage4Content() {
         .refresh-hover:active {
             transform: scale(0.8);
         }
+         
+        tr:nth-child(odd) {
+            background-color: #eaeaea;
+        }
+
+        tr:nth-child(even) {
+            background-color: #cacaca;
+        }
+        
+        .align-cell {
+            text-align: center;
+        }
+        
+        .scrollbar-control {
+            position: relative;
+            width: 100%;
+            padding: 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+        
+        .state {
+            color: black;
+            font-weight: bold;
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 4px;
+            width: 40px;
+            text-align: center;
+            top: 36px;
+            float: left;
+            height: 17px;
+            margin-left: 5px;
+        }
+        
+        .sticky {
+            position: sticky;
+            top: 0;
+        }
+        
+        .detail-header {
+            text-indent: 5px; 
+            background-color: #ff8c00; 
+            color: #f5fdca;
+        }
     </style>
 
     <div style="width: 100%">
@@ -273,9 +318,8 @@ function getDatesByWeek(week, courseDate) {
 
     let date = moment(courseDate, "DD.MM.YYYY").day("Sunday").week(week);
     date = moment(date, "DD.MM.YYYY").add(1, 'days');
-    days.push(new Date(date).toLocaleString("ru-RU").split(",")[0]);
 
-    console.log(new Date(date).toLocaleString("ru-RU").split(",")[0]);
+    days.push(new Date(date).toLocaleString("ru-RU").split(",")[0]);
 
     for(let i = 0; i < 6; i++) {
         date = moment(date, "DD.MM.YYYY").add(1, 'days');
@@ -341,27 +385,58 @@ function page4RefreshCoursesDetailByWeek(week) {
         dataType: "json",
         success: function (data) {
             if(data.errorMessage.indexOf("#") < 0) {
-                const sanKeyData = [];
+                const detailTable = $("#detail_table");
+
+                detailTable.append(`
+                        <tr class="sticky">
+                            <td class="detail-header">Неделя</td>
+                            <td class="detail-header">Год</td>
+                            <td class="detail-header">Интервал</td>
+                            <td class="detail-header"></td>
+                            <td class="detail-header">Курсов</td>
+                        </tr>
+                `);
+
+                let total = 0;
 
                 data.details.forEach((element, index) => {
-                    sanKeyElement = {};
-                    sanKeyElement.from = "Н:" + element.fromWeek + " Г:" + element.fromYear;
-                    sanKeyElement.to = "Н:" + week + " Г:" + yearElementValue;
-                    sanKeyElement.value = element.count;
-
-                    sanKeyData.push(sanKeyElement);
+                    total += element.count;
                 });
 
-                let chart = anychart.sankey();
-                chart.data(sanKeyData);
-                chart.node().normal().labels().fontSize(14);
-                chart.node().labels().useHtml(true);
-                chart.node().labels().format("<span style='font-weight:bold; color: black;'>{%name}</span><br>{%value}");
-                chart.padding(20, 40);
-                chart.title(week + " неделя " + $("#pg4_years").val() + " года");
+                let interval = "";
 
-                chart.container("pg4_courses_detail_sankey");
-                chart.draw();
+                if(data.date.length > 0) {
+                    const daysOfWeek = getDatesByWeek(week, data.date);
+
+                    if(daysOfWeek.length > 0) {
+                        interval = " (" + daysOfWeek[0] + " - " + daysOfWeek[6] + ")";
+                    }
+                }
+
+                $("#detailHeader").html(week + " неделя " + yearElementValue + " года " + interval);
+                $("#detail_state").html(total);
+
+                data.details.forEach((element, index) => {
+                    let dateInterval = "";
+
+                    if(element.start.length > 0) {
+                        const daysOfWeek = getDatesByWeek(element.fromWeek, element.start);
+
+                        if(daysOfWeek.length > 0) {
+                            dateInterval = daysOfWeek[0] + " - " + daysOfWeek[6];
+                        }
+                    }
+
+                    detailTable.append(`
+                        <tr>
+                            <td class="align-cell">${element.fromWeek === null ? "" : element.fromWeek}</td>
+                            <td class="align-cell">${element.fromYear === null ? "" : element.fromYear}</td>
+                            <td class="align-cell">${element.fromWeek === null ? "" : dateInterval}</td>
+                            <td class="align-cell">${((element.count * 100) / total).toFixed(2)}%</td>
+                            <td class="align-cell">${element.count}</td>
+                        </tr>
+                    `);
+                });
             } else {
                 showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
@@ -601,7 +676,7 @@ function getCoursesByWeekNumberContent() {
                 <div id="state1" class="state" style="background-color: #ff198c;"></div>
                 <div id="state4" class="state" style="background-color: #89fc19"></div>
             </div>
-            <div id="pg4_courses_by_week_chart" style="margin-left: -10px; user-select: none;"></div>
+            <div id="pg4_courses_by_week_chart" style="margin-left: 24px; user-select: none;"></div>
         </div>
     `;
 }
@@ -609,7 +684,15 @@ function getCoursesByWeekNumberContent() {
 function getCoursesDetailByWeek() {
     return `
     <div style="user-select: none;">
-        <div id="pg4_courses_detail_sankey" style="display: flex; justify-content: center; margin-left: -10px; user-select: none; height: 550px;"></div>
+        <div id="pg4_courses_detail_tree" style=" margin-left: -10px; user-select: none; height: 550px;">
+            <div style="padding-bottom: 30px;">
+                <div id="detailHeader" class="float-left-box"></div>
+                <div id="detail_state" class="float-left-box state" style="background-color: #89fc19">9337</div>
+            </div>
+            <div class="scrollbar-control" style="height: 580px;">
+                <table id="detail_table" border="0" style="width: 100%;"></table>
+            </div>
+        </div>
     </div>
     `;
 }
@@ -618,16 +701,16 @@ function getPage4CoursesChartOption() {
     return {
         series: [{
             name: "Назначено",
-                color: "#ff9719",
-                data: [
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0
-                ]
-            },
+            color: "#ff9719",
+            data: [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0
+            ]
+        },
             {
                 name: "В процессе",
                 color: "#ff198c",
@@ -660,11 +743,17 @@ function getPage4CoursesChartOption() {
             zoom: {enabled: false},
             events: {
                 click: function(event, chartContext, opts) {
+                    console.log(opts);
+
+                    if(opts.dataPointIndex + 1 === 0) {
+                        return;
+                    }
+
                     if($("#detail").prop("checked")) {
                         ModalWindow.show(
                             getCoursesDetailByWeek(),
                             opts.dataPointIndex + 1,
-                            "60%",
+                            "50%",
                             "600px",
                             "20px");
 

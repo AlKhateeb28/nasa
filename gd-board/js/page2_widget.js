@@ -43,12 +43,13 @@ function getPage2Content() {
             </div>
         </div>
         <div class="float-left-box">
-            <div class="block pg2-block5">
+            <div class="block pg2-block5">               
                 <div class="block-header">
                     <div class="float-left-box">Пройдено</div>
                     <div class="float-left-box page2-basic mode_caption">базовый</div>
                 </div>
-                <div id="pg2_block5_value" class="block-value">0</div>
+                <div id="pg2_block5_value" class="block-value" style="margin-top: 0px;">0</div>
+                <div id="pg2_block5_remains" style="left: 90px; top: 90px; position: relative; margin-top: -16px;"></div>
                 <div id="pg2_block5_chart" class="chart-block"></div>
             </div>
         </div>
@@ -494,21 +495,33 @@ function updateOtherCharts(accumulationMode) {
     page2Data.block3Data.forEach((element, index) => {
         totalValue += parseInt(element.count);
     });
-    $("#pg2_block3_value").html(totalValue);
+    $("#pg2_block3_value").html(totalValue.toLocaleString());
     updateBlockChart(block3Chart, page2Data.block3Data, accumulationMode);
 
     totalValue = 0;
     page2Data.block4Data.forEach((element, index) => {
         totalValue += parseInt(element.count);
     });
-    $("#pg2_block4_value").html(totalValue);
+    $("#pg2_block4_value").html(totalValue.toLocaleString());
     updateBlockChart(block4Chart, page2Data.block4Data, accumulationMode);
 
     totalValue = 0;
     page2Data.block5Data.forEach((element, index) => {
         totalValue += parseInt(element.count);
     });
-    $("#pg2_block5_value").html(totalValue);
+    $("#pg2_block5_value").html(totalValue.toLocaleString());
+
+    const remainsValue = totalValue - 1120000;
+
+    const remainsElement = $("#pg2_block5_remains");
+    remainsElement.html(remainsValue.toLocaleString());
+
+    if(remainsValue < 0) {
+        remainsElement.css("color", "red");
+    } else {
+        remainsElement.css("color", "green");
+    }
+
     updateBlockChart(block5Chart, page2Data.block5Data, accumulationMode, "#2f4f4f");
 
     updatePage2Chart(accumulationMode);
@@ -621,7 +634,7 @@ function page2Refresh(regionId) {
             if(data.errorMessage.indexOf("#") < 0) {
                 page2Data = data;
 
-                $("#pg2_block1_value").html(data.block1Value);
+                $("#pg2_block1_value").html(data.block1Value.toLocaleString());
 
                 let totalValue = 0;
                 page2Data.block2Data.forEach((element, index) => {
