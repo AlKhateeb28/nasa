@@ -1,0 +1,129 @@
+﻿{<%
+	function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
+
+	var agentId = 9900000000000000003;
+	var loggerName = "web_9900000000000000003";
+
+	var _sCollectionCode = Request.Form.GetOptProperty("collection_code", null);
+
+	//addLogMessage(loggerName, "[agent.id: " + agentId + "] Code: " + _sCollectionCode);
+
+	var _catRColl = (_sCollectionCode != "" && _sCollectionCode != null ? ArrayOptFirstElem(tools.xquery("for $elem in remote_collections where $elem/code = " + XQueryLiteral(_sCollectionCode) + " return $elem/id,$elem/__data)")) : undefined);
+
+	if (_catRColl == undefined && Request.Form.HasProperty("collection_id"))
+	{
+		_catRColl = ArrayOptFirstElem(tools.xquery("for $elem in remote_collections where $elem/id = " + XQueryLiteral(OptInt(Request.Form.GetProperty("collection_id"), 0)) + " return $elem/id,$elem/__data"));
+	}
+
+	var bGrowingTree = (Request.Form.GetOptProperty("tree", "") == "1");
+
+	if (_catRColl != undefined)
+	{
+		teRemoteCollection = OpenDoc(UrlFromDocID(_catRColl.PrimaryKey)).TopElem;
+		var fldWVarElem, sDataFormat="json";
+		if (bGrowingTree)
+		{
+			teRemoteCollection.tree_node_id = Request.Form.GetOptProperty("node", null);
+		}
+		else
+		{
+			var iPageSize = OptInt(Request.Form.GetOptProperty("limit"), null);
+			var iPageIndex = OptInt(Request.Form.GetOptProperty("start"), null);
+			var iStartIndex = OptInt(Request.Form.GetOptProperty("start_index"), null);
+			if (iPageIndex != null)
+			{
+				if (iPageSize != null && iPageSize > 0)
+					iPageIndex = Int(iPageIndex / iPageSize);
+				else
+					iPageIndex = null;
+			}
+			teRemoteCollection.setPaging(iPageIndex, iPageSize);
+			teRemoteCollection.start_index = iStartIndex;
+		}
+
+/*
+		for (fldWVarElem in teRemoteCollection.wvars)
+			if (Request.Form.HasProperty(fldWVarElem.PrimaryKey))
+				fldWVarElem.value = UrlDecode(Request.Form.GetProperty(fldWVarElem.PrimaryKey));
+*/
+
+		var iEq,sParam,sName,sVal,sParameters = String(Request.Form.GetOptProperty("parameters","")).split(";");
+		var arrRejectFieldNames = ["curUserID"];
+		for (sParam in sParameters)
+		{
+			sName = UrlDecode(sParam);
+			iEq = sName.indexOf("=");
+			if (iEq >= 0)
+			{
+				sVal = UrlDecode(sName.slice(iEq+1));
+				sName = sName.slice(0,iEq);
+				if(ArrayOptFind(arrRejectFieldNames, "This == " + CodeLiteral(sName)) == undefined)
+					teRemoteCollection.wvars.ObtainChildByKey(sName).value = sVal;
+			}
+		}
+/*
+		var _curUserID = Request.Form.GetOptProperty("user_id", null);
+		if (_curUserID != null)
+		{
+			var oXmlWVar = teRemoteCollection.wvars.ObtainChildByKey("curUserID");
+			oXmlWVar.value = _curUserID;
+			oXmlWVar.type = "integer";
+		}
+*/
+/*
+		var sSortField = Request.Form.GetOptProperty("sort_column_id", null);
+		if (sSortField != null)
+		{
+			teRemoteCollection.sort_field_name = sSortField;
+			teRemoteCollection.sort_direction = Request.Form.GetOptProperty("sort_column_direction", "");
+		}
+		else
+		{
+*/
+
+			var sSortField = Request.Form.GetOptProperty("sort", "");
+			if (sSortField != "" && sSortField.charAt(0) == "[")
+			{
+				try
+				{
+					sSortField = ParseJson(sSortField);
+					sSortField = sSortField[0];
+				}
+				catch(_x_)
+				{
+					sSortField = null;
+				}
+				if (sSortField != null)
+				{
+					teRemoteCollection.sort_field_name = sSortField.GetOptProperty("property", "");
+					if (teRemoteCollection.sort_field_name.HasValue)
+						teRemoteCollection.sort_direction = sSortField.GetOptProperty("direction", "");
+				}
+			}
+		/*
+		}
+		*/
+
+		teRemoteCollection.view.referer_url = Request.Form.GetOptProperty("referer_url", "");
+
+		var oResult = teRemoteCollection.evaluate(sDataFormat, Request);
+		oResult.messageText=EncodeCharset(HtmlEncode(oResult.messageText), "utf-8");
+		oResult.result=EncodeCharset(oResult.result, "utf-8");
+
+		if (oResult.columns != null)
+			oResult.columns=EncodeCharset(oResult.columns, "utf-8");
+		if ( oResult.data != null )
+		{
+			oResult.data = EncodeCharset( oResult.data, "utf-8" );
+		}
+%>"success":<%=(oResult.error == 0)%>,"messageText":"<%=oResult.messageText%>","total":<%=oResult.total%>,"results":<%=oResult.result%>,"columns":<%=oResult.columns%>,"data":<%=oResult.data%><%
+		if (oResult.sort_field_name != "")
+		{
+%>,"sorters":[{"property":"<%=HtmlEncode(oResult.sort_field_name)%>","direction":"<%=oResult.sort_direction%>"}]<%
+		}
+	}
+	else
+	{
+%>"success":false,"messageText":"Data source '<%=XmlAttrEncode(_sCollectionCode)%>' not found", "results":[]<%
+	}
+%>}

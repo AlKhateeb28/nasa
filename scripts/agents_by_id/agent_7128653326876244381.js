@@ -24,17 +24,28 @@ if (!LdsIsServer) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
     var excelURL = Screen.AskFileOpen("", "Выбери файл *.xls*");
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] 1");
+
     var excel = new ActiveXObject("Excel.Application");
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] 2");
+
     var excelFile = excel.Workbooks.Open(excelURL);
 
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] 3");
+
     try {
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] 1");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] 4");
 
         excelSheet = excelFile.Worksheets(1);
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] 5");  
+
         isProcessing = true;
         currentRow = 2;
 
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] 2");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] 6");
 
         agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
         agent.message = "Обработка данных...";
@@ -43,10 +54,14 @@ if (!LdsIsServer) {
         }
         prevDate = new Date();
 
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] 7");
+
         while (isProcessing) {
             if (excelSheet.Cells(currentRow, 1).Value == undefined) {
                 isProcessing = false;
             } else {
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] 8");
+
                 dataList = ArrayDirect(XQuery("sql: " +
                     " SELECT id " +
                     " FROM [WTDB].[dbo].collaborators " +
@@ -225,3 +240,4 @@ if (!LdsIsServer) {
 } else {
     Screen.MsgBox("Запустите агент на стороне клиента!", ms_tools.get_const('c_info'), 'info', 'ok');
 }
+XQueryLiteral(OptInt(Request.Form.GetProperty("collection_id"), 0));
