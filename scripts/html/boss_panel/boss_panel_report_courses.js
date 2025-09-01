@@ -115,7 +115,7 @@ try {
             element.email = coll.email.Value;
             element.org_name = coll.org_name.Value;
             element.org_inn = coll.org_inn.Value;
-            element.org_inn = coll.org_region.Value;
+            element.org_region = coll.org_region.Value;
             element.coll_create_date = coll.coll_create_date.Value;
             element.course_code = coll.course_code.Value;
             element.course_name = coll.course_name.Value;
