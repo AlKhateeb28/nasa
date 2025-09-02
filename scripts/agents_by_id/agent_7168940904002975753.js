@@ -116,7 +116,7 @@ try {
     if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
         notificationMessage += colobaratorList.GetStr();
 
-        tools.create_notification("find_new_persons", 7351734047845980789, notificationMessage); // AA
+        //tools.create_notification("find_new_persons", 7351734047845980789, notificationMessage); // AA
         tools.create_notification("find_new_persons", 6743923349751162819, notificationMessage); // FK
     }
 

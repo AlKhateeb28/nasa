@@ -92,7 +92,7 @@ try {
         // SEND NOTIFICATION TO ADMINS
         notificationMessage = "<p><b>Отправлено уведомление «Опрос о платформе» <b>" + total + "</b> пользователям</b></p>" + colobaratorList.GetStr();
 
-        tools.create_notification("admin_survey_about_platform", 7351734047845980789, notificationMessage); // AA
+        //tools.create_notification("admin_survey_about_platform", 7351734047845980789, notificationMessage); // AA
         tools.create_notification("admin_survey_about_platform", 6743923349751162819, notificationMessage); // FK
     }
 
