@@ -45,15 +45,29 @@
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
         dataList = ArrayDirect(XQuery("sql: " +
-        " SELECT cs.name, " +
+        "   SELECT cs.name, " +
+        "       'Завершен' AS state, " +
+        "       ls.start_learning_date AS start, " +
+        "       ls.last_usage_date AS finish, " +
+        "       ls.score, " +
+        "       DATEDIFF(minute, ls.start_learning_date, ls.last_usage_date) AS diff " +
+        "   FROM [WTDB].[dbo].active_learnings ls " +
+        "       INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
+        "   WHERE ls.state_id = 2 " +
+        "       AND ls.person_id = " + objectId +
+        "       AND ls.course_id IN (6644416288763437283, 6671106418291659865, 6743176161780188235, " +
+        "                           6838854269792109574, 6743177975518886480, 6836087635825603553, " +
+        "                           6852554380951299709, 6727253502766890095) " +
+        " UNION " +
+        "   SELECT cs.name, " +
         "       'Пройден' AS state, " +
         "       ls.start_learning_date AS start, " +
         "       ls.last_usage_date AS finish, " +
         "       ls.score, " +
         "       DATEDIFF(minute, ls.start_learning_date, ls.last_usage_date) AS diff " +
-        " FROM [WTDB].[dbo].learnings ls " +
-        " INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
-        " WHERE ls.state_id = 4 " +
+        "   FROM [WTDB].[dbo].learnings ls " +
+        "       INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
+        "   WHERE ls.state_id = 4 " +
         "       AND ls.person_id = " + objectId +
         "       AND ls.course_id IN (6644416288763437283, 6671106418291659865, 6743176161780188235, " +
         "                           6838854269792109574, 6743177975518886480, 6836087635825603553, " +

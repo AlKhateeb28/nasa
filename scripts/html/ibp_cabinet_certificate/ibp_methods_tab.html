@@ -61,7 +61,7 @@
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
         dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT ls.id, " +
+            "   SELECT ls.id, " +
             "       cs.name, " +
             "       'Пройден' AS state, " +
             "       ls.start_learning_date AS start, " +
@@ -69,9 +69,26 @@
             "       ls.score, " +
             "       DATEDIFF(minute, ls.start_learning_date, ls.last_usage_date) AS diff, " +
             "       ls.course_id AS course_id " +
-            " FROM [WTDB].[dbo].learnings ls " +
-            " INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
-            " WHERE ls.state_id = 4 " +
+            "   FROM [WTDB].[dbo].active_learnings ls " +
+            "   INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
+            "   WHERE ls.state_id = 2 " +
+            "       AND ls.person_id = " + objectId +
+            "       AND ls.course_id IN (7033345432254749026, 7033317173098334621, 7033353503783534178, " +
+            "                           7033373371731500927, 7033393111894403431, 7119812308457777642, " +
+            "                           7119812071712565068, 7119812165002090859, 7119812388344499932, " +
+            "                           7119811761202858978, 7119812540134335010) " +
+            " UNION " +
+            "   SELECT ls.id, " +
+            "       cs.name, " +
+            "       'Пройден' AS state, " +
+            "       ls.start_learning_date AS start, " +
+            "       ls.last_usage_date AS finish, " +
+            "       ls.score, " +
+            "       DATEDIFF(minute, ls.start_learning_date, ls.last_usage_date) AS diff, " +
+            "       ls.course_id AS course_id " +
+            "   FROM [WTDB].[dbo].learnings ls " +
+            "   INNER JOIN [WTDB].[dbo].courses cs ON ls.course_id = cs.id " +
+            "   WHERE ls.state_id = 4 " +
             "       AND ls.person_id = " + objectId +
             "       AND ls.course_id IN (7033345432254749026, 7033317173098334621, 7033353503783534178, " +
             "                           7033373371731500927, 7033393111894403431, 7119812308457777642, " +
