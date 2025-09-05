@@ -13,6 +13,24 @@ function setIsExistFlag(dossierId, collaboratorId) {
 
             collaboratorDoc.Save();
 
+            linkList = ArrayDirect(XQuery("sql: " +
+                " SELECT cds.id " +
+                " FROM [WTDB].[dbo].cc_collaborator_dossiers cds " +
+                " WHERE cds.collaborator_id = " + collaboratorId +
+                "   AND cds.dossier_id = " + dossierId));
+
+            if(ArrayCount(linkList) == 0) {
+                linkDoc = tools.new_doc_by_name("cc_collaborator_dossier", false)
+                linkDoc.BindToDb(DefaultDb);
+
+                linkDocTE = linkDoc.TopElem;
+
+                linkDocTE.collaborator_id = OptInt(collaboratorId);
+                linkDocTE.dossier_id = OptInt(dossierId);
+
+                linkDoc.Save();
+            }
+
             return true;
         }
     }
