@@ -151,7 +151,7 @@ if (!LdsIsServer) {
 
                     if(orgDoc != undefined) {
                         if(Date() > indOrderCardTE.finish_date) {
-                            orgDoc.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "false";
+                            orgDoc.TopElem.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "false";
 
                             orgDoc.Save();
                         }
