@@ -192,6 +192,7 @@ function FuncStampPassed(oRetParam, tePlan, iPersonID) {
             _oObj.is_actual = (_cur_id == OptInt(_oObj.id,999));
         }
     }
+
     return oRetParam;
 }
 
@@ -1210,8 +1211,5 @@ try {
 //oLib.toLog("URLs: " + ArrayMerge(RESULT, 'This.activity_url', '\r\n'), "marathon", true);
 
 } catch(err) {
-    EnableLog('error');
-    LogEvent("error","RemoteCollection: GetEducationPlanProgramsByParam:\r\n" +err); alert("QQQ=" + err);
-
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Error: " + err);
 }

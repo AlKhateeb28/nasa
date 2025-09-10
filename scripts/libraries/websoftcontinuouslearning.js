@@ -4545,3 +4545,33 @@ function getMessage(idChatParam)
 	return OpenCodeLib("x-local://applications/websoftcontinuouslearning/app_chat_lib.js").getMessage(idChatParam);
 }
 // ***********************************************************
+function GetContinuousLearningStat() {
+	/* @typedef {Object} oContinuousLearningStatisticRec
+	 *  @property {boolean} access - наличие доступа к обучению у текущего пользователя.
+	 *  @property {string} count - общее количество задач в плане
+	 *  @property {string} finished_count - количество завершенных задач
+	 *  @property {string} passed_count - количество успешно завершенных задач
+	 *  @property {string} finished_procent - процент завершенных задач
+	 *  @property {string} passed_procent - процент успешно завершенных задач*/
+
+	tools_app.clear_application_cache();
+
+	try	{
+		var teApplication = tools_app.get_application("websoftcontinuouslearning");
+		var oLib = tools_app.get_cur_application_lib(teApplication.id.Value);
+		try {
+			var oRes = oLib.GetStatisticRec(OptInt(curObjectID,iObjectID), curUserID, iProgramID);
+
+			VALUE_STR = EncodeJson(oRes.result);
+
+			if(oRes.error != 0) oLib.toLog(oRes.errorMessage);
+		} catch(e) {
+			VALUE_STR = "-";
+
+			oLib.toLog("ERROR: GerContinuousLearningStat: " + e )
+		}
+	} catch(err) {
+		EnableLog('error');
+		LogEvent("error","StatisticRec: GerContinuousLearningStat:\r\n" +err);
+	}
+}

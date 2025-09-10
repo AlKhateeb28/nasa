@@ -1,0 +1,801 @@
+// 6883977602579656301
+function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
+
+function get_education_plan_by_person(iObjectID, iPersonID) {
+    docObject = tools.open_doc(iObjectID);
+    if (docObject == undefined) {
+        throw StrReplace("Невозможно открыть объект с ID [{PARAM1}]", "{PARAM1}", iObjectID);
+    }
+
+    if (docObject.TopElem.Name == 'compound_program'){
+        var sGroupsIds = ArrayMerge(
+            XQuery("for $elem in group_collaborators " +
+                " where $elem/collaborator_id=" + XQueryLiteral(iPersonID) +
+                " return $elem/Fields('group_id')"),
+            "This.group_id.Value", ",");
+
+        var xqEducationPlans = XQuery("for $elem in education_plans " +
+            " where $elem/compound_program_id=" + XQueryLiteral(iObjectID) +
+            " and MatchSome($elem/object_id, (" + sGroupsIds + ")) " +
+            " order by $elem/create_date descending " +
+            " return $elem");
+
+        var xqLastEducationPlan =
+            ArrayOptFirstElem(xqEducationPlans) != undefined
+                ? ArrayMax(xqEducationPlans, "This.create_date.Value")
+                : null;
+    } else if (docObject.TopElem.Name == 'education_plan') {
+        var xqLastEducationPlan = ArrayOptFirstElem(XQuery("for $elem in education_plans " +
+            " where $elem/id=" + XQueryLiteral(iObjectID) +
+            " order by $elem/create_date descending " +
+            " return $elem"));
+        if (xqLastEducationPlan == undefined) {
+            xqLastEducationPlan = null;
+        }
+    }
+
+    return xqLastEducationPlan;
+}
+
+function get_activity(catalog, object_id, person_id, education_plan_id, start_date)
+{
+    var bConstFilterByEducationPlan = false
+    var sFilterByEducationPlan =
+        bConstFilterByEducationPlan && OptInt(education_plan_id) != undefined
+            ? " $elem/education_plan_id=" + XQueryLiteral(education_plan_id) + " and "
+            : "";
+
+    // var dStartDate = OptDate(start_date);
+    // var sFilterByStartDate = (dStartDate == undefined) ? "" : "$elem/[{PARAM}]>=" + XQueryLiteral(DateNewTime(dStartDate)) + " and ";
+
+    var xqItem, sReqItem;
+    var oRetObject = {
+        "catalog": "",
+        "url": "",
+        "name": "",
+        "status": "",
+        "status_name": "Не назначался",
+        "xq_object": undefined,
+        "started": false,
+        "finished": false,
+        "passed": false
+    };
+    switch (catalog)
+    {
+        case "event_collaborator":
+        {
+            sReqItem = "for $elem in event_collaborators where " + sFilterByEducationPlan +
+                //					" where $elem/education_plan_id=" + XQueryLiteral(education_plan_id) +
+                " $elem/education_method_id=" + XQueryLiteral(object_id) +
+                " and $elem/collaborator_id=" + XQueryLiteral(person_id) +
+                " return $elem";
+            xqItem = ArrayOptFirstElem(ArraySort(XQuery(sReqItem), "This.start_date.Value", "-"));
+
+            var bIsAssist =
+                xqItem != undefined
+                    ? tools_web.is_true(
+                        ArrayOptFirstElem(
+                            XQuery("for $elem in event_results " +
+                                " where $elem/event_id=" + XQueryLiteral(xqItem.event_id.Value) +
+                                " and $elem/person_id=" + XQueryLiteral(person_id) +
+                                " return $elem/Fields('is_assist')"),
+                            { is_assist: false }
+                        ).is_assist)
+                    : false;
+
+            oRetObject.catalog = "event_collaborator";
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.name = xqItem.name.Value;
+                oRetObject.status = xqItem.status_id.Value;
+                oRetObject.started = (xqItem.start_date.HasValue && xqItem.start_date >= Date());
+                oRetObject.finished = (xqItem.status_id.Value == 'close');
+                oRetObject.passed = (xqItem.status_id.Value == 'close' && bIsAssist);
+                if (xqItem.status_id.HasValue)
+                {
+                    var fldStatus = xqItem.status_id.OptForeignElem;
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+            }
+            return oRetObject;
+        }
+        // Custom checking learnings before program
+        case "active_learning":
+        case "learning":
+        {
+            var docCourse = tools.open_doc(object_id);
+            var teCourse;
+            if (docCourse != undefined)
+            {
+                teCourse = docCourse.TopElem;
+            }
+            sReqItem = "sql: \
+							select top 1 l.* \
+							from \
+								learnings l \
+								join courses c ON c.id = l.course_id \
+							where \
+								l.person_id = " + XQueryLiteral(person_id) + " \
+								and " + (teCourse != undefined ? ("(l.code = '" + teCourse.code.Value + "' or c.code = '" + teCourse.code.Value + "')") : ("l.education_plan_id = " + XQueryLiteral(education_plan_id))) + " \
+								and l.course_id = " + XQueryLiteral(object_id) + " \
+							order by \
+								l.state_id asc, \
+								l.last_usage_date desc \
+							";
+
+            oRetObject.catalog = "learning";
+            xqItem = ArrayOptFirstElem(XQuery(sReqItem));
+            if (xqItem == undefined)
+            {
+                oRetObject.catalog = "active_learning";
+                xqItem = ArrayOptFirstElem(XQuery(StrReplace(sReqItem, 'learning', 'active_learning')));
+            }
+
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.name = xqItem.course_name.Value;
+                oRetObject.status = xqItem.state_id.Value;
+                oRetObject.started = (xqItem.state_id.Value > 0);
+                oRetObject.finished = (xqItem.state_id.Value > 1);
+                oRetObject.passed = (xqItem.state_id.Value == 4 || xqItem.state_id.Value == 2);
+                if (xqItem.state_id.HasValue)
+                {
+                    var fldStatus = xqItem.state_id.OptForeignElem;
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+            }
+            return oRetObject;
+        }
+        case "active_test_learning":
+        {
+            sReqItem = "for $elem in active_test_learnings " +
+                " where $elem/education_plan_id=" + XQueryLiteral(education_plan_id) +
+                " and $elem/assessment_id = " + XQueryLiteral(object_id) +
+                " and $elem/person_id=" + XQueryLiteral(person_id) +
+                " return $elem";
+            xqItem = ArrayOptFirstElem(ArraySort(XQuery(sReqItem), "This.start_usage_date.Value", "-"));
+
+            oRetObject.catalog = "active_test_learning";
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.name = xqItem.assessment_name.Value;
+                oRetObject.status = xqItem.state_id.Value;
+                oRetObject.started = (xqItem.state_id.Value > 0);
+                oRetObject.finished = (xqItem.state_id.Value > 1);
+                oRetObject.passed = (xqItem.state_id.Value == 4);
+                if (xqItem.state_id.HasValue)
+                {
+                    var fldStatus = xqItem.state_id.OptForeignElem;
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+            }
+            return oRetObject;
+
+        }
+        case "test_learning":
+        {
+            sReqItem = "for $elem in test_learnings " +
+                " where $elem/education_plan_id=" + XQueryLiteral(education_plan_id) +
+                " and $elem/assessment_id = " + XQueryLiteral(object_id) +
+                " and $elem/person_id=" + XQueryLiteral(person_id) +
+                " return $elem";
+
+            xqItem = ArrayOptFirstElem(ArraySort(XQuery(sReqItem), "This.start_usage_date.Value", "-"));
+
+            oRetObject.catalog = "test_learning";
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.name = xqItem.assessment_name.Value;
+                oRetObject.status = xqItem.state_id.Value;
+                oRetObject.started = (xqItem.state_id.Value > 0);
+                oRetObject.finished = (xqItem.state_id.Value > 1);
+                oRetObject.passed = (xqItem.state_id.Value == 4);
+                if (xqItem.state_id.HasValue)
+                {
+                    var fldStatus = xqItem.state_id.OptForeignElem;
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+            }
+            return oRetObject;
+        }
+        case "library_material_viewing":
+        {
+            sReqItem = "for $elem in library_material_viewings " +
+                " where $elem/education_plan_id=" + XQueryLiteral(education_plan_id) +
+                " and $elem/material_id=" + XQueryLiteral(object_id) +
+                " and $elem/person_id=" + XQueryLiteral(person_id) +
+                " order by $elem/last_viewing_date descending return $elem";
+
+            xqItem = ArrayOptFirstElem( XQuery( sReqItem ) );
+
+            if (xqItem == undefined)
+            {
+                sReqItem = "for $elem in library_material_viewings " +
+                    " where $elem/material_id=" + XQueryLiteral(object_id) +
+                    " and $elem/person_id=" + XQueryLiteral(person_id) +
+                    " order by $elem/last_viewing_date descending return $elem";
+
+                xqItem = ArrayOptFirstElem( XQuery( sReqItem ) );
+            }
+
+            oRetObject.catalog = "library_material_viewing";
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.name = xqItem.material_name.Value;
+                oRetObject.status = xqItem.state_id.Value;
+                oRetObject.started = (xqItem.state_id.Value != 'plan');
+                oRetObject.finished = (xqItem.state_id.Value == 'finished');
+                oRetObject.passed = (xqItem.state_id.Value == 'finished');
+                if (xqItem.state_id.HasValue)
+                {
+                    var fldStatus = xqItem.state_id.OptForeignElem;
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+            }
+            return oRetObject;
+        }
+        case "object_data":
+        {
+            sReqItem = "for $elem in object_datas " +
+                " where $elem/object_id = " + XQueryLiteral(education_plan_id) +
+                " and $elem/sec_object_id=" + XQueryLiteral(person_id) +
+                " and contains($elem/data_str, '" + XQueryLiteral(object_id) + "')" +
+                " return $elem/Fields('id')";
+            xqItem = ArrayOptFirstElem(XQuery(sReqItem));
+            oRetObject.catalog = "object_data";
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.status = xqItem.status_id.Value;
+                oRetObject.started = true;
+                oRetObject.finished = true;
+                oRetObject.passed = true;
+                if (xqItem.status_id.HasValue)
+                {
+                    fldStatus = xqItem.status_id.OptForeignElem;
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+            }
+            return oRetObject;
+        }
+        case "learning_task_result":
+        {
+            sReqItem = "for $elem in learning_task_results " +
+                " where $elem/education_plan_id=" + XQueryLiteral(education_plan_id) +
+                " and $elem/learning_task_id=" + XQueryLiteral(object_id) +
+                " and $elem/person_id=" + XQueryLiteral(person_id) +
+                " return $elem";
+            xqItem = ArrayOptFirstElem(ArraySort(XQuery(sReqItem), "This.start_date.Value", "-"));
+
+            oRetObject.catalog = "learning_task_result";
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.name = xqItem.learning_task_name.Value;
+                oRetObject.status = xqItem.status_id.Value;
+                oRetObject.started = (xqItem.status_id.Value != 'assign');
+                oRetObject.finished = (xqItem.status_id.Value != 'assign' && xqItem.status_id.Value != 'process');
+                oRetObject.passed = (xqItem.status_id.Value == 'success');
+                if (xqItem.status_id.HasValue)
+                {
+                    var fldStatus = xqItem.status_id.OptForeignElem;
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+            }
+            return oRetObject;
+        }
+        case "poll_result":
+        {
+            sReqItem = "for $elem in poll_results " +
+                " where $elem/poll_id=" + XQueryLiteral(object_id) +
+                " and $elem/person_id=" + XQueryLiteral(person_id) +
+                " return $elem";
+            xqItem = ArrayOptFirstElem(ArraySort(XQuery(sReqItem), "This.create_date.Value", "-"));
+
+            oRetObject.catalog = "poll_result";
+            oRetObject.xq_object = xqItem;
+            if (xqItem != undefined)
+            {
+                oRetObject.name = xqItem.poll_id.ForeignElem.name.Value;
+                oRetObject.status = xqItem.status.Value;
+                oRetObject.started = ( xqItem.is_done || xqItem.status > 0 );
+                oRetObject.finished = ( xqItem.is_done || xqItem.status > 1 );
+                oRetObject.passed = ( xqItem.is_done && ( xqItem.status == 4 || xqItem.status == 2 ) );
+                if ( xqItem.status.HasValue )
+                {
+                    var fldStatus = common.learning_states.GetOptChildByKey( xqItem.status );
+                    if (fldStatus != undefined)
+                    {
+                        oRetObject.status_name = fldStatus.name.Value;
+                    }
+                }
+                if ( xqItem.status == 0 && xqItem.is_done )
+                {
+                    oRetObject.status_name = common.learning_states.GetOptChildByKey( 2 ).name.Value;
+                }
+            }
+            return oRetObject;
+        }
+        default:
+        {
+            throw StrReplace("Необслуживаемый каталог: [{PARAM1}]", "{PARAM1}", catalog);
+        }
+    }
+}
+
+function get_url(sCatalog, iObjectID, oAddParam)
+{
+    if (OptInt(iObjectID) == undefined)
+    {
+        return "";
+    }
+
+    if (oAddParam == undefined || (oAddParam != undefined && !(DataType(oAddParam) == "object" && ObjectType(oAddParam) == "JsObject")))
+    {
+        oAddParam = null;
+    }
+
+    if (sCatalog == "" || sCatalog == null)
+    {
+        var objDoc = tools.open_doc(iObjectID);
+        if (objDoc == undefined)
+        {
+            return "";
+        }
+
+        sCatalog = objDoc.TopElem.Name;
+    }
+
+    switch (sCatalog)
+    {
+        case "library_material":
+        case "resource":
+        {
+            return tools_web.get_object_source_url("resource", iObjectID, { type: "library_material" });
+        }
+        case "active_test_learning":
+        {
+            if (oAddParam == null)
+            {
+                return tools_web.get_mode_clean_url("test_learning_proc", iObjectID);
+            }
+            else
+            {
+                return tools_web.get_mode_clean_url("test_learning_proc", iObjectID, oAddParam);
+            }
+        }
+        case "test_learning":
+        {
+            if (oAddParam == null)
+            {
+                return tools_web.get_mode_clean_url("test_learning_stat", iObjectID);
+            }
+            else
+            {
+                return tools_web.get_mode_clean_url("test_learning_stat", iObjectID, oAddParam);
+            }
+        }
+        case "active_learning":
+        {
+            if (oAddParam == null)
+            {
+                return tools_web.get_mode_clean_url("learning_proc", iObjectID);
+            }
+            else
+            {
+                return tools_web.get_mode_clean_url("learning_proc", iObjectID, oAddParam);
+            }
+        }
+        case "learning":
+        {
+            if (oAddParam == null)
+            {
+                return tools_web.get_mode_clean_url("learning_stat", iObjectID);
+            }
+            else
+            {
+                return tools_web.get_mode_clean_url("learning_stat", iObjectID, oAddParam);
+            }
+        }
+        case "document":
+        {
+            return tools_web.doc_link(iObjectID);
+        }
+        default:
+        {
+            return tools_web.get_mode_clean_url(null, iObjectID);
+        }
+    }
+
+}
+
+function get_activity_by_task(iEducationPlanID, teEducationPlan, Task, iPersonID, bCheckCompleteActivity) {
+    bCheckCompleteActivity = tools_web.is_true(bCheckCompleteActivity);
+
+    try {
+        teEducationPlan.Name
+        var hasDocEP = true
+    } catch (e) {
+        var hasDocEP = false
+    }
+
+    iEducationPlanID = OptInt(iEducationPlanID);
+    if (iEducationPlanID == undefined) {
+        if (hasDocEP)
+        {
+            iEducationPlanID = teEducationPlan.id.Value;
+        }
+        else
+        {
+            throw "Не передана информация о плане обучения";
+        }
+    } else if (!hasDocEP) {
+        var docEducationPlan = tools.open_doc(iEducationPlanID);
+        if (docEducationPlan == undefined) {
+            throw StrReplace("Невозможно открыть план обучения с ID {PARAM1}", "{PARAM1}", iEducationPlanID);
+        }
+
+        teEducationPlan = docEducationPlan.TopElem;
+    }
+
+    var fldTask = OptInt(Task) != undefined ? ArrayOptFind(teEducationPlan.programs, "This.id.Value == Task") : Task;
+
+    if (fldTask == undefined) {
+        throw StrReplace(
+            StrReplace(
+                "В плане обучения ID [{PARAM1}] не найдено задачи с ID [{PARAM2}]", "{PARAM1}", iEducationPlanID
+            ),
+            "{PARAM2}",
+            Task
+        );
+    }
+
+    if (ObjectType(fldTask) != 'XmElem') {
+        throw "Переданный аргумент Task не является элементом программы обучения или ID такого элемента: " +
+        "\r\n" + tools.object_to_text(fldTask, "json");
+    }
+
+    var xqItem = null;
+    var xqItem_bis = null
+    var sReqItem, sReqItem_bis;
+
+    switch (fldTask.type.Value) {
+        case "education_method": {
+            xqItem = get_activity(
+                "event_collaborator", fldTask.education_method_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value
+            );
+
+            if (xqItem.xq_object == undefined) {
+                return null;
+            }
+
+            xqItem.url = get_url("event", xqItem.xq_object.event_id.Value);
+            return xqItem;
+        }
+        case "course": {
+            xqItem = get_activity("active_learning", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value);
+
+            if (xqItem.xq_object != undefined) {
+                xqItem.url = get_url("active_learning", xqItem.xq_object.id.Value);
+                return xqItem;
+            } else {
+                xqItem_bis = get_activity("learning", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value);
+                if (xqItem_bis.xq_object != undefined) {
+                    xqItem_bis.url = bCheckCompleteActivity ? "" : get_url("learning", xqItem_bis.xq_object.id.Value);
+                    return xqItem_bis;
+                } else {
+                    return null;
+                }
+            }
+        }
+        case "assessment": {
+            xqItem = get_activity("active_test_learning", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value);
+
+            if (xqItem.xq_object != undefined) {
+                xqItem.url = get_url("active_test_learning", xqItem.xq_object.id.Value);
+                return xqItem;
+            } else {
+                xqItem_bis = get_activity("test_learning", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value);
+                if ( xqItem_bis.xq_object != undefined && !xqItem_bis.passed && fldTask.object_id.OptForeignElem.is_open ) {
+//						var newTest = tools.activate_test_to_person({
+//							"iPersonID": iPersonID,
+//							"iAssessmentID": fldTask.object_id.Value,
+//							"iEducationPlanID": iEducationPlanID
+//						});
+
+                    xqItem_bis.url = get_url("assessment", fldTask.object_id.Value);
+                    fldTask.result_object_id.Clear();
+                    return xqItem_bis;
+                } else if (xqItem_bis.xq_object != undefined) {
+                    xqItem_bis.url = bCheckCompleteActivity ? "" : get_url("test_learning", xqItem_bis.xq_object.id.Value);
+                    return xqItem_bis;
+                } else {
+                    return null;
+                }
+            }
+        }
+        case "material": {
+            switch (fldTask.catalog_name.Value) {
+                case "document":
+                case "resource": {
+                    xqItem = get_activity("object_data", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value);
+
+                    if (xqItem.xq_object == undefined)  {
+                        var stateDesc = ArrayOptFind(common.education_learning_states, 'This.id == ' + OptInt(fldTask.state_id.Value));
+
+                        xqItem = {
+                            "catalog": "resource",
+                            "url": get_url(fldTask.catalog_name.Value, fldTask.object_id.Value),
+                            "name": fldTask.name.Value,
+                            "status": fldTask.state_id.Value,
+                            "status_name": (stateDesc != undefined ? stateDesc.name.Value : "Не назначено"),
+                            "xq_object": undefined,
+                            "finished": (fldTask.state_id.Value > 1),
+                            "passed": (fldTask.state_id.Value == 4 || fldTask.state_id.Value == 2 || fldTask.state_id.Value == 5)
+                        };
+                    } else {
+                        stateDesc = common.education_learning_states.GetOptChildByKey(5);
+                        xqItem.url = get_url(fldTask.catalog_name.Value, fldTask.object_id.Value);
+                        xqItem.name = fldTask.name.Value;
+                        xqItem.status = 5;
+                        xqItem.status_name = (stateDesc != undefined ? stateDesc.name.Value : "");
+                    }
+
+                    return xqItem;
+                }
+                case "library_material":{
+                    xqItem = get_activity(
+                        "library_material_viewing", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value
+                    );
+
+                    if (xqItem.xq_object == undefined) {
+                        return null;
+                    }
+
+                    xqItem.url = get_url("library_material", xqItem.xq_object.material_id.Value);
+                    //toLog(xqItem.name + " (" + fldTask.id.Value + ") ---> " + xqItem.url)
+                    return xqItem;
+                }
+                case "poll": {
+                    xqItem = get_activity(
+                        "poll_result", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value
+                    );
+
+                    if (xqItem.xq_object == undefined) {
+                        return null;
+                    }
+
+                    xqItem.url = get_url("poll_result", xqItem.xq_object.id.Value);
+                    //toLog(xqItem.name + " (" + fldTask.id.Value + ") ---> " + xqItem.url)
+                    return xqItem;
+                }
+                default: {
+                    throw StrReplace("Необслуживаемый тип учебного материала: [{PARAM1}]", "{PARAM1}", fldTask.catalog_name.Value);
+                }
+            }
+
+            break;
+        }
+        case "learning_task": {
+            xqItem = get_activity("learning_task_result", fldTask.object_id.Value, iPersonID, iEducationPlanID, teEducationPlan.create_date.Value);
+
+            if (xqItem.xq_object == undefined) {
+                return null;
+            }
+
+            xqItem.url = get_url("learning_task", xqItem.xq_object.learning_task_id.Value);
+            return xqItem;
+        }
+        case "folder": {
+            return null;
+        }
+        case "notification_template": {
+            return null;
+        }
+        default:{
+            throw StrReplace("Необслуживаемый тип задачи: [{PARAM1}]", "{PARAM1}", fldTask.type.Value);
+        }
+    }
+}
+
+function filterActivity(fldObject, sReturnType, bReturnTree, arrParentIDs) {
+    switch (sReturnType) {
+        case "activity": {
+            var bIsActivity = (
+                fldObject.type.Value != 'folder'
+                && fldObject.type.Value != 'notification_template'
+                && fldObject.type.Value != 'material'
+            );
+
+            var bIsActivityMaterial = (
+                fldObject.type.Value == 'material'
+                &&
+                ArrayOptFind(
+                    ['blog', 'poll', 'document', 'resource', 'forum', 'chat'],
+                    'This == fldObject.catalog_name.Value') == undefined
+            );
+
+            var bIsParent = true;
+            if (IsArray(arrParentIDs) && ArrayOptFirstElem(arrParentIDs) != undefined) {
+                bIsParent = (ArrayOptFind(arrParentIDs, "fldObject.parent_progpam_id.Value == This") != undefined);
+            }
+
+            return bIsParent && (bIsActivity || bIsActivityMaterial);
+        }
+        case "stage": {
+            if (IsArray(arrParentIDs) && ArrayOptFirstElem(arrParentIDs) != undefined) {
+                var bIsParent = (
+                    fldObject.parent_progpam_id.HasValue
+                    && ArrayOptFind(arrParentIDs, "fldObject.parent_progpam_id.Value == This") != undefined
+                );
+            } else {
+                var bIsParent = !fldObject.parent_progpam_id.HasValue
+            }
+
+            return (fldObject.type.Value == 'folder' || bReturnTree) && bIsParent && fldObject.type.Value != 'notification_template';
+        }
+        case "all": {
+            return (fldObject.type.Value != 'notification_template');
+        }
+    }
+}
+
+function getStatisticRec(iObjectID, iPersonID, iProgramIDparam) {
+    var bCheckCompleteActivity = false;
+
+    var oRet = {
+        error: 0,
+        errorMessage: "",
+        result: {
+            access: false,
+            count: 0,
+            finished_count: 0,
+            finished_procent: 0.0,
+            passed_count: 0,
+            passed_procent: 0.0
+        }
+    }
+
+    var iProgramID;
+
+    try {
+        iProgramID = OptInt(iProgramIDparam);
+    } catch(_dersl) {
+        iProgramID = undefined;
+    }
+
+    var fldEducationPlan = get_education_plan_by_person(iObjectID, iPersonID);
+
+    if (fldEducationPlan == null) {
+        oRet.error = 2;
+        oRet.errorMessage = StrReplace(StrReplace(
+            "Не найдено плана оценки по модульной программе ID [{PARAM1}] и сотруднику [{PARAM2}]",
+            "{PARAM1}", iObjectID), "{PARAM2}", iPersonID);
+        return oRet;
+    }
+
+    oRet.access = true;
+
+    var teEducationPlan = tools.open_doc(fldEducationPlan.id.Value).TopElem;
+
+    var xqItem;
+    var aPrograms = [];
+
+    function get_hier_prgs(iParent) {
+        aTmp = ArraySelect(teEducationPlan.programs, "This.parent_progpam_id == " + iParent);
+        if (ArrayCount(aTmp)>0) {
+            aPrograms = ArrayUnion(aPrograms, aTmp);
+            for (_vrem in aTmp) {
+                get_hier_prgs(_vrem.id);
+            }
+        }
+    }
+
+    if (iProgramID == undefined) {
+        aPrograms = teEducationPlan.programs;
+    } else {
+        itemTask = ArrayOptFind(teEducationPlan.programs, "This.id == " + iProgramID);
+        if (itemTask!=undefined) {
+            aPrograms = ArrayUnion(aPrograms, itemTask);
+            get_hier_prgs( iProgramID );
+        }
+    }
+
+    for (itemTask in ArraySelect(aPrograms, "filterActivity(This, 'activity')")) {
+        xqItem = get_activity_by_task(fldEducationPlan.id.Value, teEducationPlan, itemTask, iPersonID, bCheckCompleteActivity)
+        if (xqItem == null || xqItem == undefined) {
+            continue;
+        }
+
+        oRet.result.count++;
+
+        if (tools_web.is_true(xqItem.GetOptProperty('finished'))) {
+            oRet.result.finished_count++;
+        }
+
+        if (tools_web.is_true(xqItem.GetOptProperty('passed'))) {
+            oRet.result.passed_count++;
+        }
+    }
+
+    if (oRet.result.count > 0) {
+        oRet.result.finished_procent = Real(oRet.result.finished_count) * 100.0 / Real(oRet.result.count);
+    }
+
+    if (oRet.result.count > 0) {
+        oRet.result.passed_procent = Real(oRet.result.passed_count) * 100.0 / Real(oRet.result.count);
+    }
+
+    oRet.result.count = StrInt(oRet.result.count);
+    oRet.result.finished_count = StrInt(oRet.result.finished_count);
+    oRet.result.passed_count = StrInt(oRet.result.passed_count);
+    oRet.result.finished_procent = StrReal(oRet.result.finished_procent, 1);
+    oRet.result.passed_procent = StrReal(oRet.result.passed_procent, 1);
+
+    return oRet;
+}
+
+/* @typedef {Object} oContinuousLearningStatisticRec
+	 *  @property {boolean} access - наличие доступа к обучению у текущего пользователя.
+	 *  @property {string} count - общее количество задач в плане
+	 *  @property {string} finished_count - количество завершенных задач
+	 *  @property {string} passed_count - количество успешно завершенных задач
+	 *  @property {string} finished_procent - процент завершенных задач
+	 *  @property {string} passed_procent - процент успешно завершенных задач*/
+
+tools_app.clear_application_cache();
+
+var agentId = 6883977602579656301;
+var loggerName = "sql_6883977602579656301";;
+
+addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+
+try	{
+    //var teApplication = tools_app.get_application("websoftcontinuouslearning");
+    //var oLib = tools_app.get_cur_application_lib(teApplication.id.Value);
+
+    try {
+        //var oRes = oLib.GetStatisticRec(OptInt(curObjectID,iObjectID), curUserID, iProgramID);
+        var oRes = getStatisticRec(OptInt(curObjectID,iObjectID), curUserID, iProgramID);
+
+        VALUE_STR = EncodeJson(oRes.result);
+
+        if(oRes.error != 0) {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] LOW ERROR: " + oRes.error);
+        }
+    } catch(e) {
+        VALUE_STR = "-";
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] MIDDLE ERROR: " + e);
+    }
+} catch(err) {
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] TOP ERROR: " + err);
+}
