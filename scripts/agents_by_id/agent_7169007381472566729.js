@@ -39,7 +39,10 @@ function assignCoursesByFlag(execute, ids, flag) {
             "                AND DAY(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = DAY(GETDATE()) " +
             "                AND MONTH(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = MONTH(GETDATE()) " +
             "                AND YEAR(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = YEAR(GETDATE()) " +
-            " WHERE UPPER(cs.code) NOT LIKE '%_MUC_%'  "));
+            " WHERE UPPER(cs.code) NOT LIKE '%_MUC_%' " +
+            "       AND (c.data.exist('(//custom_elems/custom_elem[name=''is_a_commerce_client''])') = 0 " +
+            "           OR " +
+            "       CAST(c.data.value('(//custom_elems/custom_elem[name=''is_a_commerce_client'']/value)[1]', 'bit') AS INT) = 0) "));
 
         total += ArrayCount(dataList);
 
