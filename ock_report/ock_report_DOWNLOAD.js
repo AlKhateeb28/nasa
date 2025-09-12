@@ -145,6 +145,7 @@ try {
     reportString.AppendStr("<tr>");
     reportString.AppendStr("<th class='header'>ID</th>");
     reportString.AppendStr("<th class='header'>Код</th>");
+    reportString.AppendStr("<th class='header'>Сфера</th>");
     reportString.AppendStr("<th class='header'>ИНН</th>");
     reportString.AppendStr("<th class='header' style='width: 500px'>Организация</th>");
     reportString.AppendStr("<th class='header' style='width: 200px'>ФИО</th>");
@@ -211,7 +212,6 @@ try {
     reportString.AppendStr("<th class='header'>Серт_АМ дата дата</th>");
     reportString.AppendStr("<th class='header'>Серт_АМ дата статус</th>");
     reportString.AppendStr("<th class='header'>Дата увольнения</th>");
-    reportString.AppendStr("<th class='header'>Сфера</th>");
 
     reportString.AppendStr("</tr>");
 
@@ -242,7 +242,8 @@ try {
 
             reportString.AppendStr("<tr>");
             reportString.AppendStr("<td>'" + data.id + "</td>");
-            reportString.AppendStr("<td>" + data.code + "</td>")
+            reportString.AppendStr("<td>" + data.code + "</td>");
+            reportString.AppendStr("<td>" + data.sphere_name + "</td>");
             reportString.AppendStr("<td>" + data.inn + "</td>");
             reportString.AppendStr("<td>" + data.org_name + "</td>");
             reportString.AppendStr("<td>" + data.fio + "</td>");
@@ -366,7 +367,6 @@ try {
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
             // dismiss_date
             reportString.AppendStr("<td class='align-center'>" + (data.dismiss_date == null ? "" : StrDate(data.dismiss_date, false, false))  + "</td>");
-            reportString.AppendStr("<td>" + data.sphere_name + "</td>");
 
             reportString.AppendStr("</tr>");
         } else {
