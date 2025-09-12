@@ -103,22 +103,24 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 try {
     dataList = ArrayDirect(XQuery("sql: " +
         " SELECT ds.id, " +
-        "    cs.code, " +
-        "    cs.fullname, " +
-        "    ds.subdivision_inn AS inn, " +
-        "    os.name AS org_name, " +
-        "    ds.student_fullname AS fio, " +
-        "    ds.student_id, " +
-        "    ds.student_position, " +
-        "    ds.date_selection, " +
-        "    ds.date_position, " +
-        "    '' AS isInGroup, " +
-        "    ds.dismiss_date " +
+        "       cs.code, " +
+        "       cs.fullname, " +
+        "       ds.subdivision_inn AS inn, " +
+        "       os.name AS org_name, " +
+        "       ds.student_fullname AS fio, " +
+        "       ds.student_id, " +
+        "       ds.student_position, " +
+        "       ds.date_selection, " +
+        "       ds.date_position, " +
+        "       '' AS isInGroup, " +
+        "       ds.dismiss_date, " +
+        "       pas.name AS sphere_name " +
         " FROM [WTDB].[dbo].cc_dossier_rcc_employees ds " +
-        "    INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employee d ON ds.id = d.id " +
-        "    LEFT JOIN [WTDB].[dbo].orgs os ON ds.subdivision_inn = os.code " +
-        "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id AND o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 1 " +
-        "    LEFT JOIN [WTDB].[dbo].collaborators cs ON ds.student_id = cs.id " +
+        "         INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employee d ON ds.id = d.id " +
+        "         LEFT JOIN [WTDB].[dbo].orgs os ON ds.subdivision_inn = os.code " +
+        "         INNER JOIN [WTDB].[dbo].org o ON os.id = o.id AND o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 1 " +
+        "         LEFT JOIN [WTDB].[dbo].professional_areas pas ON o.data.value('(//custom_elems/custom_elem[name=''professional_area'']/value)[1]', 'bigint') = pas.id " +
+        "         LEFT JOIN [WTDB].[dbo].collaborators cs ON ds.student_id = cs.id " +
         " ORDER BY fio "));
 
     total = ArrayCount(dataList);
@@ -209,6 +211,7 @@ try {
     reportString.AppendStr("<th class='header'>Серт_АМ дата дата</th>");
     reportString.AppendStr("<th class='header'>Серт_АМ дата статус</th>");
     reportString.AppendStr("<th class='header'>Дата увольнения</th>");
+    reportString.AppendStr("<th class='header'>Сфера</th>");
 
     reportString.AppendStr("</tr>");
 
@@ -363,6 +366,7 @@ try {
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
             // dismiss_date
             reportString.AppendStr("<td class='align-center'>" + (data.dismiss_date == null ? "" : StrDate(data.dismiss_date, false, false))  + "</td>");
+            reportString.AppendStr("<td>" + data.sphere_name + "</td>");
 
             reportString.AppendStr("</tr>");
         } else {
