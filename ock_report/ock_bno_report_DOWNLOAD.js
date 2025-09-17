@@ -97,6 +97,7 @@ try {
         "    cs.code, " +
         "    cs.fullname, " +
         "    ds.subdivision_inn AS inn, " +
+        "    o.data.value('(//custom_elems/custom_elem[name=''short_name'']/value)[1]', 'varchar(max)') AS short_name, " +
         "    os.name AS org_name, " +
         "    ds.student_fullname AS fio, " +
         "    ds.student_id, " +
@@ -138,6 +139,7 @@ try {
     reportString.AppendStr("<th class='header'>Код</th>");
     reportString.AppendStr("<th class='header'>Сфера</th>");
     reportString.AppendStr("<th class='header'>ИНН</th>");
+    reportString.AppendStr("<th class='header' style='width: 300px'>Короткое название организации</th>");
     reportString.AppendStr("<th class='header' style='width: 500px'>Организация</th>");
     reportString.AppendStr("<th class='header' style='width: 200px'>ФИО</th>");
     reportString.AppendStr("<th class='header'>Ссылка на сотрудника</th>");
@@ -238,6 +240,7 @@ try {
             reportString.AppendStr("<td>" + data.code + "</td>");
             reportString.AppendStr("<td>" + data.sphere_name + "</td>");
             reportString.AppendStr("<td>" + data.inn + "</td>");
+            reportString.AppendStr("<td>" + data.short_name + "</td>");
             reportString.AppendStr("<td>" + data.org_name + "</td>");
             reportString.AppendStr("<td>" + data.fio + "</td>");
             reportString.AppendStr("<td>'" + data.fullname + "</td>");
