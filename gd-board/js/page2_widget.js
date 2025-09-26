@@ -49,7 +49,7 @@ function getPage2Content() {
                     <div class="float-left-box page2-basic mode_caption">базовый</div>
                 </div>
                 <div id="pg2_block5_value" class="block-value" style="margin-top: 0px;">0</div>
-                <div id="pg2_block5_remains" style="left: 90px; top: 90px; position: relative; margin-top: -16px;"></div>
+                <div id="pg2_block5_remains" style="left: 90px; top: 90px; position: relative; margin-top: -16px; min-height: 17px;"></div>
                 <div id="pg2_block5_chart" class="chart-block"></div>
             </div>
         </div>
@@ -516,7 +516,9 @@ function updateOtherCharts(accumulationMode) {
     const remainsElement = $("#pg2_block5_remains");
     remainsElement.html(remainsValue.toLocaleString());
 
-    if(remainsValue < 0) {
+    if(remainsValue === 0) {
+        remainsElement.css("color", "black");
+    } else if(remainsValue < 0) {
         remainsElement.css("color", "red");
     } else {
         remainsElement.css("color", "green");
