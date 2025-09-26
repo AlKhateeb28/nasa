@@ -28,7 +28,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         try
         {
             var iIconId = Int(oBData.oParams.sIconFile);
-            sURL = "download_file.html?file_id=" + iIconId;
+            sURL = "download_file.js?file_id=" + iIconId;
         }
         catch(e)
         {
@@ -184,7 +184,7 @@ function _CUSTOM_BuildFldsToSub(oArgs)
         try
         {
             var iIconId = Int(g_oALL[sHexOWTId].oRuntimeData.oParams.sIconFile);
-            sURL = "download_file.html?file_id=" + iIconId;
+            sURL = "download_file.js?file_id=" + iIconId;
         }
         catch(e)
         {

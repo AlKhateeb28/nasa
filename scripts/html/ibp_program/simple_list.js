@@ -27,7 +27,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         {
             try
             {
-                oElem.icon = "download_file.html?file_id=" + Int(oElem.icon);
+                oElem.icon = "download_file.js?file_id=" + Int(oElem.icon);
             }
             catch(e)
             {

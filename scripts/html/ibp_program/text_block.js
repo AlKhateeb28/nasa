@@ -31,7 +31,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         }
         else
         {
-            oBData.oParams.sImgLink = (oBData.oParams.sImgFile=="") ? "pics/default-placeholder.png" : "download_file.html?file_id=" + oBData.oParams.sImgFile;
+            oBData.oParams.sImgLink = (oBData.oParams.sImgFile=="") ? "pics/default-placeholder.png" : "download_file.js?file_id=" + oBData.oParams.sImgFile;
         }
     }
     oBData.oParams.sBlockImgLink = _Substitute({ sText: oBData.oParams.sBlockImgLink });
@@ -161,7 +161,7 @@ function _CUSTOM_BuildFldsToSub(oArgs)
         }
         else
         {
-            g_oALL[sHexOWTId].oRuntimeData.oParams.sImgLink = (g_oALL[sHexOWTId].oRuntimeData.oParams.sImgFile=="") ? "pics/default-placeholder.png" : "download_file.html?file_id=" + g_oALL[sHexOWTId].oRuntimeData.oParams.sImgFile;
+            g_oALL[sHexOWTId].oRuntimeData.oParams.sImgLink = (g_oALL[sHexOWTId].oRuntimeData.oParams.sImgFile=="") ? "pics/default-placeholder.png" : "download_file.js?file_id=" + g_oALL[sHexOWTId].oRuntimeData.oParams.sImgFile;
         }
     }
     if(g_oALL[sHexOWTId].oRuntimeData.oParams.sBlockImgLink!="")

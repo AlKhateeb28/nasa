@@ -27,7 +27,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         if(oBData.oParams.oItem.bDisplayImg && oElem.image!="")
         {
             oElem.image = _Substitute({ sText: oElem.image });
-            try { oElem.image = "download_file.html?file_id=" + Int(oElem.image); } catch (e) {}
+            try { oElem.image = "download_file.js?file_id=" + Int(oElem.image); } catch (e) {}
         }
         if(oElem.header!="")
         {
@@ -2215,7 +2215,7 @@ function _CUSTOM_BuildRuntimeData(oArgs)
         for(oElem in g_oALL[sHexOWTId].oRuntimeData.aItems)
         {
             oElem.id = oElem.hex_id = tools.random_string(10);
-            try { oElem.image = "download_file.html?file_id=" + Int(oElem.image); } catch (e) {}
+            try { oElem.image = "download_file.js?file_id=" + Int(oElem.image); } catch (e) {}
         }
     }
     g_oALL[sHexOWTId].oRuntimeData.oParams.sHexCollectionId = "0x" + StrHexInt(g_oALL[sHexOWTId].oRuntimeData.oParams.iCollectionId, 16);

@@ -30,7 +30,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         {
             try
             {
-                oElem.image = "download_file.html?file_id=" + Int(oElem.image);
+                oElem.image = "download_file.js?file_id=" + Int(oElem.image);
             }
             catch(e)
             {

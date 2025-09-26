@@ -2550,7 +2550,7 @@ function get_todo( iUserID, teUser, oParams, Session, oLngItems, oToDoInit, oTar
 									"name": tools_web.get_cur_lng_name( catCourse.name.Value, sLngShortID ),
 									"action": ( bStartApproved && bStartLaunch && Session != null ? ( catCourse.view_type == "single" ? ( "/course_launch.html?object_id=" + catLearning.id + "&course_id=" + catLearning.course_id + "&sid=" + tools_web.get_sum_sid( catLearning.course_id, Session.sid ) ) : ( "/course_launch.html?structure=first&launch_id=" + tools_web.encrypt_launch_id( catLearning.id, DateOffset( Date(), 86400*365 ) )  ) ) : ( !bOpenLearningObject ? tools_web.get_mode_clean_url( null, catLearning.PrimaryKey ) : tools_web.get_mode_clean_url( null, catLearning.course_id ) ) ),
 									"actionLabel": i18n.t( 'proytielektron' ),
-									"image": ( catCourse.resource_id.Value ? ("/download_file.html?file_id=" + catCourse.resource_id.Value) : ( bShowDefaultImage ? ("/images/course.png") : "" ) )
+									"image": ( catCourse.resource_id.Value ? ("/download_file.js?file_id=" + catCourse.resource_id.Value) : ( bShowDefaultImage ? ("/images/course.png") : "" ) )
 								});
 								if ( catLearning.max_end_date.HasValue )
 								{
@@ -2614,7 +2614,7 @@ function get_todo( iUserID, teUser, oParams, Session, oLngItems, oToDoInit, oTar
 								if (bShowTiles)
 								{
 									if( catAssessment.resource_id.HasValue )
-										currentTestImage = "/download_file.html?file_id=" + catAssessment.resource_id;
+										currentTestImage = "/download_file.js?file_id=" + catAssessment.resource_id;
 									else if( bShowDefaultImage )
 										currentTestImage = "/images/test_learning.png";
 								}
@@ -2718,7 +2718,7 @@ function get_todo( iUserID, teUser, oParams, Session, oLngItems, oToDoInit, oTar
 								if (bShowTiles)
 								{
 									if( catEvent.resource_id.HasValue )
-										currentEventImage = "/download_file.html?file_id=" + catEvent.resource_id;
+										currentEventImage = "/download_file.js?file_id=" + catEvent.resource_id;
 									else if( bShowDefaultImage )
 										currentEventImage = "/images/event.png";
 								}
@@ -2782,7 +2782,7 @@ function get_todo( iUserID, teUser, oParams, Session, oLngItems, oToDoInit, oTar
 							if (bShowTiles)
 							{
 								if( catEvent.resource_id.HasValue )
-									currentEventImage = "/download_file.html?file_id=" + catEvent.resource_id;
+									currentEventImage = "/download_file.js?file_id=" + catEvent.resource_id;
 								else if( bShowDefaultImage )
 									currentEventImage = "/images/event.png";
 							}
@@ -3444,7 +3444,7 @@ function get_todo( iUserID, teUser, oParams, Session, oLngItems, oToDoInit, oTar
 							if (bShowTiles)
 								{
 									if( catLearningTask.resource_id.HasValue )
-										currentTaskImage = "/download_file.html?file_id=" + catLearningTask.resource_id;
+										currentTaskImage = "/download_file.js?file_id=" + catLearningTask.resource_id;
 									else if( bShowDefaultImage )
 										currentTaskImage = "/images/learning_task.png";
 								}

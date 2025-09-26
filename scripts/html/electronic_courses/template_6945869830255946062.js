@@ -34,7 +34,7 @@ function getJSONstrCourses (search, documentId) {
             "           END AS isnew, " +
             "       c.data.value('(course/custom_elems/custom_elem[name=''direction''])[1]/value[1]' ,'varchar(max)') AS direction, " +
             "       c.data.value('(course/custom_elems/custom_elem[name=''position''])[1]/value[1]' ,'varchar(max)') AS position, " +
-            "       CONCAT( 'download_file.html?file_id=', c.data.value('(course/resource_id)[1]' ,'varchar(max)') ) AS img_url, " +
+            "       CONCAT( 'download_file.js?file_id=', c.data.value('(course/resource_id)[1]' ,'varchar(max)') ) AS img_url, " +
             "       (SELECT COUNT (l.id) FROM [WTDB].[dbo].likes AS l WHERE l.object_id = cs.id) AS likes, " +
             "       (SELECT COUNT (l.id) FROM [WTDB].[dbo].learnings AS l WHERE l.course_id = cs.id) AS views, " +
             "       CASE " +

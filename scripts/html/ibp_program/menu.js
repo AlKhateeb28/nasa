@@ -38,7 +38,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         {
             try
             {
-                oElem.icon = "download_file.html?file_id=" + Int(oElem.icon);
+                oElem.icon = "download_file.js?file_id=" + Int(oElem.icon);
             }
             catch(e)
             {
@@ -48,7 +48,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         {
             try
             {
-                oElem.icon_hover = "download_file.html?file_id=" + Int(oElem.icon_hover);
+                oElem.icon_hover = "download_file.js?file_id=" + Int(oElem.icon_hover);
             }
             catch(e)
             {
@@ -58,7 +58,7 @@ function _CUSTOM_BuildBrowserData(oArgs)
         {
             try
             {
-                oElem.icon_selected = "download_file.html?file_id=" + Int(oElem.icon_selected);
+                oElem.icon_selected = "download_file.js?file_id=" + Int(oElem.icon_selected);
             }
             catch(e)
             {

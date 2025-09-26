@@ -195,7 +195,7 @@ function _CUSTOM_BuildHTML(oArgs)
             {
                 if(g_oALL[sHexOWTId].oDesignData.oParams.sMacroImgFile!="")
                 {
-                    aMacroBlockBGCSS.push("background-image:url('download_file.html?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sMacroImgFile + "')");
+                    aMacroBlockBGCSS.push("background-image:url('download_file.js?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sMacroImgFile + "')");
                 }
             }
             aMacroBlockBGCSS.push("background-repeat:" + g_oALL[sHexOWTId].oDesignData.oParams.sMacroImgRepeat);
@@ -244,7 +244,7 @@ function _CUSTOM_BuildHTML(oArgs)
             aWorkareaBGCSS.push("background-repeat:" + g_oALL[sHexOWTId].oDesignData.oParams.sBlockImgRepeat);
             if(g_oALL[sHexOWTId].oDesignData.oParams.sBlockImgBG=="resource")
             {
-                aWorkareaBGCSS.push("background-image:url('download_file.html?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sBlockImgFile + "')");
+                aWorkareaBGCSS.push("background-image:url('download_file.js?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sBlockImgFile + "')");
             }
             if(g_oALL[sHexOWTId].oDesignData.oParams.sBlockImgPosition!="custom")
             {
@@ -486,7 +486,7 @@ function _CUSTOM_BuildHTML(oArgs)
                 {
                     if(oColumn.column_img_bg!=undefined && oColumn.column_img_bg!="")
                     {
-                        sColumnBGURL = "download_file.html?file_id=" + oColumn.column_img_bg;
+                        sColumnBGURL = "download_file.js?file_id=" + oColumn.column_img_bg;
                     }
                 }
                 else
