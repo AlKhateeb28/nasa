@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agents Monitor</title>
+
+    <link rel="icon" href="./images/favicon.ico"/>
+
+    <link rel="stylesheet" href="./css/index.css"/>
+
+    <script type="text/javascript" src="./js/jquery3.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./js/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="./js/webSocket.js"></script>
+    <script type="text/javascript" src="./js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./js/index.js"></script>
+</head>
+<body class="body">
+
+<div id="loader" class="loader loader-view" style="visibility: hidden;"></div>
+
+<div id="grid" class="grid">
+    <div id="left_box"></div>
+
+    <div id="grid_box">
+        <!-- NIGHT -->
+        <!-- LEFT -->
+        <div class="statistic ws-statistic block-offset">
+            <div class="float-left">
+                <div>
+                    <div class="float-left-box header-image header-image-size logo"></div>
+                    <div class="header-label rock-and-roll">
+                        WS Server
+                    </div>
+                </div>
+                <div id="ws_server" class="ws-server ws-server-unknown">
+                    Unknown
+                </div>
+            </div>
+            <div class="float-left">
+                <div id="start_datetime" class="start-datetime"></div>
+                <div class="ws-server-tooltip">
+                    Websocket version: 2.5.0
+                    <br/>
+                    Dashboard version: 1.0.0
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 100px;">
+            <div id="block_0" class="part-block" style="padding-top: 30px;">
+                <div id="block_0_1" class="float-left part-image-block night_image">
+                    <div class="hour_label">00:00 - 00:59</div>
+                </div>
+                <div id="block_0_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_1" class="part-block">
+                <div id="block_1_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_1_1" class="float-right part-image-block night_image">
+                    <div class="hour_label">01:00 - 01:59</div>
+                </div>
+            </div>
+            <!-- LEFT -->
+            <div id="block_2" class="part-block">
+                <div id="block_2_1" class="float-left part-image-block night_image">
+                    <div class="hour_label">02:00 - 02:59</div>
+                </div>
+                <div id="block_2_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_3" class="part-block">
+                <div id="block_3_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_3_1" class="float-right part-image-block night_image">
+                    <div class="hour_label">03:00 - 03:59</div>
+                </div>
+            </div>
+            <!-- SUNRISE -->
+            <!-- LEFT -->
+            <div id="block_4" class="part-block">
+                <div id="block_4_1" class="float-left part-image-block sunrise_image">
+                    <div class="hour_label">04:00 - 04:59</div>
+                </div>
+                <div id="block_4_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_5" class="part-block">
+                <div id="block_5_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_5_1" class="float-right part-image-block sunrise_image">
+                    <div class="hour_label">05:00 - 05:59</div>
+                </div>
+            </div>
+            <!-- LEFT -->
+            <div id="block_6" class="part-block">
+                <div id="block_6_1" class="float-left part-image-block sunrise_image">
+                    <div class="hour_label">06:00 - 06:59</div>
+                </div>
+                <div id="block_6_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_7" class="part-block">
+                <div id="block_7_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_7_1" class="float-right part-image-block sunrise_image">
+                    <div class="hour_label">07:00 - 07:59</div>
+                </div>
+            </div>
+            <!-- LEFT -->
+            <div id="block_8" class="part-block">
+                <div id="block_8_1" class="float-left part-image-block sunrise_image">
+                    <div class="hour_label">08:00 - 08:59</div>
+                </div>
+                <div id="block_8_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_9" class="part-block">
+                <div id="block_9_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_9_1" class="float-right part-image-block sunrise_image">
+                    <div class="hour_label">09:00 - 09:59</div>
+                </div>
+            </div>
+            <!-- NOON -->
+            <!-- LEFT -->
+            <div id="block_10" class="part-block">
+                <div id="block_10_1" class="float-left part-image-block noon_image">
+                    <div class="hour_label">10:00 - 10:59</div>
+                </div>
+                <div id="block_10_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_11" class="part-block">
+                <div id="block_11_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_11_1" class="float-right part-image-block noon_image">
+                    <div class="hour_label">11:00 - 11:59</div>
+                </div>
+            </div>
+            <!-- LEFT -->
+            <div id="block_12" class="part-block">
+                <div id="block_12_1" class="float-left part-image-block noon_image">
+                    <div class="hour_label">12:00 - 12:59</div>
+                </div>
+                <div id="block_12_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_13" class="part-block">
+                <div id="block_13_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_13_1" class="float-right part-image-block noon_image">
+                    <div class="hour_label">13:00 - 13:59</div>
+                </div>
+            </div>
+            <!-- LEFT -->
+            <div id="block_14" class="part-block">
+                <div id="block_14_1" class="float-left part-image-block noon_image">
+                    <div class="hour_label">14:00 - 14:59</div>
+                </div>
+                <div id="block_14_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_15" class="part-block">
+                <div id="block_15_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_15_1" class="float-right part-image-block noon_image">
+                    <div class="hour_label">15:00 - 15:59</div>
+                </div>
+            </div>
+            <!-- SUNSET -->
+            <!-- LEFT -->
+            <div id="block_16" class="part-block">
+                <div id="block_16_1" class="float-left part-image-block sunset_image">
+                    <div class="hour_label">16:00 - 16:59</div>
+                </div>
+                <div id="block_16_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_17" class="part-block">
+                <div id="block_17_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_17_1" class="float-right part-image-block sunset_image">
+                    <div class="hour_label">17:00 - 17:59</div>
+                </div>
+            </div>
+            <!-- LEFT -->
+            <div id="block_18" class="part-block">
+                <div id="block_18_1" class="float-left part-image-block sunset_image">
+                    <div class="hour_label">18:00 - 18:59</div>
+                </div>
+                <div id="block_18_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_19" class="part-block">
+                <div id="block_19_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_19_1" class="float-right part-image-block sunset_image">
+                    <div class="hour_label">19:00 - 19:59</div>
+                </div>
+            </div>
+            <!-- LEFT -->
+            <div id="block_20" class="part-block">
+                <div id="block_20_1" class="float-left part-image-block sunset_image">
+                    <div class="hour_label">20:00 - 20:59</div>
+                </div>
+                <div id="block_20_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_21" class="part-block">
+                <div id="block_21_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_21_1" class="float-right part-image-block sunset_image">
+                    <div class="hour_label">21:00 - 21:59</div>
+                </div>
+            </div>
+            <!-- NIGHT -->
+            <div id="block_22" class="part-block">
+                <div id="block_22_1" class="float-left part-image-block night_image">
+                    <div class="hour_label">22:00 - 22:59</div>
+                </div>
+                <div id="block_22_2" class="float-right part-content-block">
+
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div id="block_23" class="part-block">
+                <div id="block_23_2" class="float-left part-content-block">
+
+                </div>
+                <div id="block_23_1" class="float-right part-image-block night_image">
+                    <div class="hour_label">23:00 - 23:59</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="right_box"></div>
+
+    <script type="text/html" id="agent_instance_template">
+        <!-- AGENT INSTANCE Count: n -->
+        <div id="agent_instance" class="float-left agent-instance">
+            <div class="agent-instance-block-margin-left" style="height: 21px;">
+                <div id="agent_name" class="float-left label-cell" style="font-size: 10px; color: cornsilk;"></div>
+                <div id="agent_button" class="float-right label-cell button-get-id" onclick="copyAgentId(this)">Get ID</div>
+            </div>
+            <div id="launch_block" class="agent-instance-block-margin-left" style="height: 21px;"></div>
+            <div class="agent-instance-block-margin-left">
+                <div class="float-left" style="width: 99%;">
+                    <!-- AGENT DATA BLOCK -->
+                    <div class="float-left">
+                        <div class="agent-instance-block-label">Schedule</div>
+                        <!-- SCHEDULE DATA -->
+                        <div>
+                            <div id="period" class="float-left label-cell"></div>
+                            <div id="period_value" class="float-right value-cell value-old-cell"></div>
+                        </div>
+                        <div class="agent-instance-block-label">Statistic</div>
+                        <div>
+                            <div class="float-left label-cell" title="Running count">RC</div>
+                            <div id="run_count" class="float-right value-cell value-old-cell"></div>
+                        </div>
+                        <div style="margin-top: 25px;">
+                            <div class="float-left label-cell" title="Max running time">MaxRT</div>
+                            <div id="max_run_time" class="float-right value-cell value-old-cell" style="background-color: orangered"></div>
+                        </div>
+                    </div>
+                    <!-- AGENT ERROR BLOCK -->
+                    <div class="float-left" style="width: 69%; margin-left: 5px;">
+                        <div class="agent-instance-block-label">
+                            Caught exceptions
+                        </div>
+                        <div id="exception_block" class="scrollbar-control" style="height: 115px;">
+                            <!-- ERRORS TEXTAREA LIST -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="st_template">
+        <div id="launch_time" class="float-left value-cell value-old-cell"></div>
+    </script>
+
+    <script type="text/html" id="exception_template">
+        <div id="exception" class="exception-box">
+        </div>
+    </script>
+</div>
+
+</body>
+</html>

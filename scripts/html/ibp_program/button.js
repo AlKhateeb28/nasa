@@ -174,7 +174,7 @@ function _CUSTOM_BuildHTML(oArgs)
             if(g_oALL[sHexOWTId].oDesignData.oParams.sImgLeft!=undefined && g_oALL[sHexOWTId].oDesignData.oParams.sImgLeft!=0 && g_oALL[sHexOWTId].oDesignData.oParams.sImgLeft!="")
             {
                 aIconLeftCustomImgClasses = [ "wt-lp-wbutton-icon-img", "wt-lp-wbutton-icon-img-left" ];
-                aIconLeftCustomImgCSS = [ "width:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize] + ";height:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize], "background-image: url('download_file.html?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sImgLeft + "')" ];
+                aIconLeftCustomImgCSS = [ "width:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize] + ";height:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize], "background-image: url('download_file.js?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sImgLeft + "')" ];
             }
             else
             {
@@ -190,7 +190,7 @@ function _CUSTOM_BuildHTML(oArgs)
             if(g_oALL[sHexOWTId].oDesignData.oParams.sImgRight!=undefined && g_oALL[sHexOWTId].oDesignData.oParams.sImgRight!=0 && g_oALL[sHexOWTId].oDesignData.oParams.sImgRight!="")
             {
                 aIconRightCustomImgClasses = [ "wt-lp-wbutton-icon-img", "wt-lp-wbutton-icon-img-right" ];
-                aIconRightCustomImgCSS = [ "width:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize] + ";height:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize], "background-image: url('download_file.html?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sImgRight + "')" ];
+                aIconRightCustomImgCSS = [ "width:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize] + ";height:" + oLPParams.headerfontsize[g_oALL[sHexOWTId].oDesignData.oParams.sFontSize], "background-image: url('download_file.js?file_id=" + g_oALL[sHexOWTId].oDesignData.oParams.sImgRight + "')" ];
             }
             else
             {
