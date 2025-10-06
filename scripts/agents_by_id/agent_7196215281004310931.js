@@ -1,24 +1,59 @@
 // 7196215281004310931
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
-function getLectorsNames(eventId, lectorList) {
-    for(lector in lectorList) {
-        if(OptInt(lector.id) == OptInt(eventId)) {
-            return lector.lector_fio;
-        }
+function getAvailableTypesAsString(dossierDocTE) {typeValue="";if(dossierDocTE.is_rck_intership){typeValue+="РП РЦК стажировка в ФЦК, ";}if(dossierDocTE.is_rck_alone){typeValue+="РП РЦК самостоятельно, ";}if(dossierDocTE.is_rck_trainer){typeValue+="Тренер РЦК, ";}if(dossierDocTE.is_rck_fck_cert){typeValue+="Сертификация тренера РЦК в ФЦК, ";}if(dossierDocTE.is_ock_ss){typeValue+="Соц.сфера_ОЦК_РП, ";}if(dossierDocTE.is_ock_ss_analyst){typeValue+="Соц.сфера_ОЦК_Аналитик-методолог, ";}if(dossierDocTE.is_ock_ss_trainer){typeValue+="Соц.сфера_ОЦК_Тренер, ";}if(dossierDocTE.is_ock_bno){typeValue+="БНО_ОЦК_РП, ";}if(dossierDocTE.is_ock_bno_analyst){typeValue+="БНО_ОЦК_Аналитик-методолог, ";}if(dossierDocTE.is_ock_bno_trainer){typeValue+="БНО_ОЦК_Тренер, ";}if(dossierDocTE.is_ock_ss_rp_alone){typeValue+="Соц.сфера_ОЦК_РП самостоятельно, ";}if(dossierDocTE.is_ock_ss_analyst_alone){typeValue+="Соц.сфера_ОЦК_Аналитик-методолог самостоятельно, ";}if(dossierDocTE.is_ock_ss_trainer_alone){typeValue += "Соц.сфера_ОЦК_Тренер самостоятельно, ";}if(dossierDocTE.is_ock_bno_rp_alone){typeValue+="БНО_ОЦК_РП самостоятельно, ";}if(dossierDocTE.is_ock_bno_analyst_alone){typeValue+="БНО_ОЦК_Аналитик-методолог самостоятельно, ";}if(dossierDocTE.is_ock_bno_trainer_alone){typeValue+="БНО_ОЦК_Тренер самостоятельно, ";}if(StrCharCount(typeValue) > 0){typeValue=StrCharRangePos(typeValue,0,StrCharCount(typeValue)-2);}return typeValue;}
+
+function getRckOckNames(isRcc, isOckSS, isOckBNO) {
+    result = "";
+
+    if(OptInt(isRcc) == 1) {
+        result += "РЦК,";
     }
 
-    return "";
+    if(OptInt(isOckSS) == 1) {
+        result += "ОЦК_Соц.сфера,";
+    }
+
+    if(OptInt(isOckBNO) == 1) {
+        result += "ОЦК_БНО,";
+    }
+
+    if(StrCharCount(result) > 0) {
+        result = StrCharRangePos(result,0,StrCharCount(result) - 1);
+    }
+
+    return result;
 }
 
-function getPreparationNames(eventId, preparationList) {
-    for(preporation in preparationList) {
-        if(OptInt(preporation.id) == OptInt(eventId)) {
-            return preporation.preparation_fio;
+function getWaveNames(personId) {
+    result = "";
+
+    groupList = ArrayDirect(XQuery("sql: " +
+        " SELECT gcs.group_id " +
+        " FROM [WTDB].[dbo].group_collaborators gcs " +
+        "         LEFT JOIN [WTDB].[dbo].collaborators cs ON gcs.collaborator_id = cs.id " +
+        " WHERE cs.id = " + personId +
+        "    AND gcs.group_id IN (7129041349147311066, 7124688456013271111) "));
+
+    for(group in groupList) {
+        groupDoc = tools.open_doc(OptInt(group.group_id));
+
+        if(groupDoc != undefined) {
+            for(eduGroup in groupDoc.TopElem.educ_groups) {
+                for(person in eduGroup.collaborators) {
+                    if(OptInt(person.collaborator_id) == OptInt(personId)) {
+                        result += eduGroup.name + ",";
+                    }
+                }
+            }
         }
     }
 
-    return "";
+    if(StrCharCount(result) > 0) {
+        result = StrCharRangePos(result,0,StrCharCount(result) - 1);
+    }
+
+    return result;
 }
 
 if (LdsIsServer) {
@@ -39,7 +74,7 @@ if (LdsIsServer) {
     var reportString = new Binary();
 
 
-    agent.message = "Получение данных LECTORS...";
+    agent.message = "Получение данных";
     ws = sendMessageToWebsocket(ws, agent);
     prevDate = new Date();
 
@@ -48,52 +83,6 @@ if (LdsIsServer) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
     try {
-        lectorList = ArrayDirect(XQuery("sql: " +
-            " WITH _lectors AS ( " +
-            "    SELECT events.id, lectors.lector_fullname AS lector_fio " +
-            "    FROM [WTDB].[dbo].events " +
-            "             INNER JOIN [WTDB].[dbo].event e ON events.id = e.id " +
-            "             CROSS APPLY e.data.nodes('event/lectors/lector') T(c) " +
-            "             INNER JOIN [WTDB].[dbo].lectors " +
-            "                        ON T.c.value('lector_id[1]','varchar(max)') = lectors.id " +
-            " ) " +
-            " SELECT id, " +
-            "       lector_fio = STUFF( " +
-            "               (SELECT '|' + lector_fio " +
-            "                FROM _lectors tmp " +
-            "                WHERE tmp.id = ls.id " +
-            "                FOR XML PATH ('')) " +
-            "           , 1, 1, '') " +
-            " FROM _lectors ls " +
-            " GROUP BY ls.id "
-        ));
-
-        agent.message = "Получение данных PREPARATION...";
-        ws = sendMessageToWebsocket(ws, agent);
-        prevDate = new Date();
-
-        preparationList = ArrayDirect(XQuery("sql: " +
-            " WITH _preparations AS ( " +
-            "    SELECT es.id, T.c.value('person_fullname[1]', 'varchar(max)') AS pre_fio " +
-            "    FROM [WTDB].[dbo].events es " +
-            "             LEFT JOIN [WTDB].[dbo].event e ON es.id = e.id " +
-            "             CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c) " +
-            " ) " +
-            " SELECT id, " +
-            "       preparation_fio = STUFF( " +
-            "               (SELECT '|' + pre_fio " +
-            "                FROM _preparations tmp " +
-            "                WHERE tmp.id = ps.id " +
-            "                FOR XML PATH ('')) " +
-            "           , 1, 1, '') " +
-            " FROM _preparations ps " +
-            " GROUP BY id "
-        ));
-
-        agent.message = "Получение данных FINAL...";
-        ws = sendMessageToWebsocket(ws, agent);
-        prevDate = new Date();
-
         dataList = ArrayDirect(XQuery("sql: " +
             " SELECT ers.id AS event_result_id, " +
             "       rs.name AS region_name, " +
@@ -147,7 +136,18 @@ if (LdsIsServer) {
             "       IIF(e_cont.id IS NOT NULL , e_cont.date, er_cont.date) AS contract_date, " +
             "       ers.event_start_date, " +
             "       doss.region_name AS current_region, " +
-            "       cur_os.name AS current_org " +
+            "       cur_os.code AS current_inn, " +
+            "       cur_os.name AS current_org, " +
+            "       IIF(o.data.value('(//custom_elems/custom_elem[name=''is_rcc'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rcc'']/value)[1]', 'bit') AS INT)) AS is_rcc, " +
+            "       IIF(o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') AS INT)) AS is_ock_ss, " +
+            "       IIF(o.data.value('(//custom_elems/custom_elem[name=''is_ock_bno'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock_bno'']/value)[1]', 'bit') AS INT)) AS is_ock_bno, " +
+            "       pas.name AS pas_name, " +
+            "       o.data.value('(//custom_elems/custom_elem[name=''short_name'']/value)[1]', 'varchar(max)') AS short_name," +
+            "       doss.date_position, " +
+            "       doss.dismiss_date, " +
+            "       doss.id AS doss_id, " +
+            "       er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)') AS cert_result, " +
+            "       cs.id AS cs_id" +
             " FROM [WTDB].[dbo].event_results AS ers " +
             "         INNER JOIN [WTDB].[dbo].event_result AS er ON ers.id = er.id " +
             "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id " +
@@ -168,6 +168,7 @@ if (LdsIsServer) {
             "         INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +
             "         LEFT JOIN [WTDB].[dbo].contracts AS e_cont ON e.data.value('(event/contract_id)[1]', 'bigint') = e_cont.id " +
             "         LEFT JOIN [WTDB].[dbo].contracts AS er_cont ON er.data.value('(//custom_elems/custom_elem[name=''contract'']/value)[1]', 'bigint') = er_cont.id " +
+            "         LEFT JOIN [WTDB].[dbo].professional_areas pas ON o.data.value('(//custom_elems/custom_elem[name=''professional_area'']/value)[1]', 'bigint') = pas.id " +
             " ORDER BY cs.fullname, os.name, es.finish_date "
         ));
 
@@ -188,91 +189,96 @@ if (LdsIsServer) {
         reportString.AppendStr("</style>");
         reportString.AppendStr("<table border='1'>");
         reportString.AppendStr("<tr>");
+        reportString.AppendStr("<td class='header'>РЦК/ОЦК</td>");
+        reportString.AppendStr("<td class='header'>Сфера</td>");
         reportString.AppendStr("<td class='header'>Текущий регион</td>");
+        reportString.AppendStr("<td class='header'>ИНН текущей организации</td>");
         reportString.AppendStr("<td class='header'>Текущая организация</td>");
-        reportString.AppendStr("<td class='header'>Регион</td>");
-        reportString.AppendStr("<td class='header'>Фактический регион</td>");
+        reportString.AppendStr("<td class='header'>Сокращенное название организации</td>");
+        reportString.AppendStr("<td class='header'>Фактический регион обучения</td>");
         reportString.AppendStr("<td class='header'>ИНН</td>");
         reportString.AppendStr("<td class='header'>Организация</td>");
         reportString.AppendStr("<td class='header'>Код участника</td>");
         reportString.AppendStr("<td class='header'>ФИО участника</td>");
         reportString.AppendStr("<td class='header'>Должность участника</td>");
-        reportString.AppendStr("<td class='header'>Присутствие</td>");
         reportString.AppendStr("<td class='header'>Обучающая организация</td>");
         reportString.AppendStr("<td class='header'>ID учебной программы</td>");
         reportString.AppendStr("<td class='header'>Код учебной программы</td>");
         reportString.AppendStr("<td class='header'>Учебная программа</td>");
         reportString.AppendStr("<td class='header'>ID мероприятия</td>");
-        reportString.AppendStr("<td class='header'>Код мероприятия</td>");
         reportString.AppendStr("<td class='header'>Мероприятие</td>");
         reportString.AppendStr("<td class='header'>Дата начала мероприятия</td>");
         reportString.AppendStr("<td class='header'>Дата завершения мероприятия</td>");
-        reportString.AppendStr("<td class='header'>Место проведения</td>");
+        reportString.AppendStr("<td class='header'>Присутствие</td>");
+        reportString.AppendStr("<td class='header'>Результат сертификации</td>");
         reportString.AppendStr("<td class='header'>Форма проведения мероприятия</td>");
-        reportString.AppendStr("<td class='header'>Тренер</td>");
-        reportString.AppendStr("<td class='header'>NPS</td>");
+        reportString.AppendStr("<td class='header'>Место проведения</td>");
         reportString.AppendStr("<td class='header'>Статус</td>");
-        reportString.AppendStr("<td class='header'>Ответственный</td>");
-        reportString.AppendStr("<td class='header'>num</td>");
-        reportString.AppendStr("<td class='header'>Дата завершения мероприятия</td>");
-        reportString.AppendStr("<td class='header'>Месяц завершения мероприятия</td>");
-        reportString.AppendStr("<td class='header'>Год завершения мероприятия</td>");
-        reportString.AppendStr("<td class='header'>ID результата мероприятия</td>");
         reportString.AppendStr("<td class='header'>Тип результата мероприятия</td>");
         reportString.AppendStr("<td class='header'>ID договора</td>");
         reportString.AppendStr("<td class='header'>Номер договора</td>");
         reportString.AppendStr("<td class='header'>Дата договора</td>");
+        reportString.AppendStr("<td class='header'>num</td>");
+        reportString.AppendStr("<td class='header'>Месяц завершения мероприятия</td>");
+        reportString.AppendStr("<td class='header'>Год завершения мероприятия</td>");
+        reportString.AppendStr("<td class='header'>Направление подготовки</td>");
+        reportString.AppendStr("<td class='header'>Волна</td>");
+        reportString.AppendStr("<td class='header'>Дата трудоустройства</td>");
+        reportString.AppendStr("<td class='header'>Дата увольнения</td>");
+        reportString.AppendStr("<td class='header'>ID результата мероприятия</td>");
         reportString.AppendStr("<td class='header'>Дата создания результата мероприятия</td>");
-        reportString.AppendStr("<td class='header'>Фамилия участника</td>");
-        reportString.AppendStr("<td class='header'>Имя участника</td>");
-        reportString.AppendStr("<td class='header'>Отчество участника</td>");
+
         reportString.AppendStr("</tr>");
 
         for (data in dataList) {
-            fullFIO = data.fullname + " #empty #empty";
+            directionTraining = "";
 
-            fioList = fullFIO.split(" ");
+            dossDoc = tools.open_doc(OptInt(data.doss_id));
+
+            if(dossDoc != undefined) {
+                directionTraining = getAvailableTypesAsString(dossDoc.TopElem);
+            }
 
             reportString.AppendStr(
                 "<tr>" +
+                "<td>" + getRckOckNames(data.is_rcc, data.is_ock_ss, data.is_ock_bno) + "</td>" +
+                "<td>" + data.pas_name + "</td>" +
                 "<td>" + data.current_region + "</td>" +
+                "<td>" + data.current_inn + "</td>" +
                 "<td>" + data.current_org + "</td>" +
-                "<td>" + data.region_name + "</td>" +
+                "<td>" + data.short_name + "</td>" +
                 "<td>" + data.fact_region_name + "</td>" +
                 "<td>" + data.inn + "</td>" +
                 "<td>" + data.org_name + "</td>" +
                 "<td>" + data.person_code + "</td>" +
                 "<td>" + data.fullname + "</td>" +
                 "<td>" + data.position_name + "</td>" +
-                "<td>" + data.is_assist + "</td>" +
                 "<td>" + data.education_org_name + "</td>" +
                 "<td>'" + data.education_method_id + "</td>" +
                 "<td>" + data.subcode + "</td>" +
                 "<td>" + data.education_method_name + "</td>" +
                 "<td>'" + data.event_id + "</td>" +
-                "<td>'" + data.event_code + "</td>" +
                 "<td>" + data.event_name + "</td>" +
-                "<td>" + StrDate(data.start_date, true, false) + "</td>" +
-                "<td>" + StrDate(data.finish_date, true, false) + "</td>" +
-                "<td>" + data.place + "</td>" +
+                "<td>" + StrDate(data.start_date, false, false) + "</td>" +
+                "<td>" + StrDate(data.finish_date, false, false) + "</td>" +
+                "<td>" + data.is_assist + "</td>" +
+                "<td>" + data.cert_result + "</td>" +
                 "<td>" + data.event_form + "</td>" +
-                "<td>" + getLectorsNames(data.event_id, lectorList) + "</td>" +
-                "<td>" + data.nps + "</td>" +
+                "<td>" + data.place + "</td>" +
                 "<td>" + data.status_name + "</td>" +
-                "<td>" + getPreparationNames(data.event_id, preparationList) + "</td>" +
-                "<td>" + data.num + "</td>" +
-                "<td>" + data.day + "</td>" +
-                "<td>" + data.month + "</td>" +
-                "<td>" + data.year + "</td>" +
-                "<td>'" + data.event_result_id + "</td>" +
                 "<td>" + data.result_type_name + "</td>" +
                 "<td>'" + data.contract_id + "</td>" +
                 "<td>'" + data.contract_number + "</td>" +
-                "<td>" + StrDate(data.contract_date, true, false) + "</td>" +
+                "<td>" + StrDate(data.contract_date, false, false) + "</td>" +
+                "<td>" + data.num + "</td>" +
+                "<td>" + data.month + "</td>" +
+                "<td>" + data.year + "</td>" +
+                "<td>" + directionTraining + "</td>" +
+                "<td>" + getWaveNames(data.cs_id) + "</td>" +
+                "<td>" + StrDate(data.date_position, false, false) + "</td>" +
+                "<td>" + StrDate(data.dismiss_date, false, false) + "</td>" +
+                "<td>'" + data.event_result_id + "</td>" +
                 "<td>" + StrDate(data.event_start_date, true, false) + "</td>" +
-                "<td>" + fioList[0] + "</td>" +
-                "<td>" + (fioList[1] == "#empty" ? "" : fioList[1]) + "</td>" +
-                "<td>" + (fioList[2] == "#empty" ? "" : fioList[2]) + "</td>" +
 
                 "</tr>");
 
