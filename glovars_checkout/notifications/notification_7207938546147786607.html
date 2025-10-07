@@ -1,0 +1,71 @@
+<!-- 7207938546147786607 -->
+<style>
+    .float-left {
+        float: left;
+    }
+
+    .content {
+        margin-left: 20px;
+    }
+
+    .text-block {
+        margin-bottom: 5px;
+    }
+
+    .image-block {
+        margin-left: 100px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+</style>
+
+<div>
+    <div class="float-left">
+        <img src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/glovars_checkout/images/hanged_man.jpg"/>
+    </div>
+    <div class="float-left content">
+        <p>
+            Замечено пустое срабатывание агента "HELPER - Выровнить кастомные флаги организации и сотрудника за последний 1 час" (ID <strong>7437057559620972968</strong>)
+        </p>
+        <p>
+            <div class="text-block">Есть две причины для этого случая:</div>
+            <div class="text-block"><strong>1.Зависание агента в системе WebSoft HCM</strong></div>
+            <div class="text-block">Для определения этого варианта перейдите в программе WebSoft HCM Administrator в</div>
+            <div class="image-block">
+                <img src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/glovars_checkout/images/case1.jpg"/>
+            </div>
+            <div class="text-block">и отсортируйте данные в колонке "Finished" по возростанию. Если данный агент выполняется: значение "Статус" равно "Running" и значение "Finished" пустое</div>
+            <div class="image-block">
+                <img src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/glovars_checkout/images/case2.jpg"/>
+            </div>
+        <div class="text-block">,то бейте тревогу. <strong>Только Господь Бог знает, что делать в этом случае.</strong></div>
+        </p>
+        <p>
+            <div class="text-block"><strong>2. Не корректное прерывание работы агента.</strong></div>
+            <div class="text-block">Проверяем по п.1, что агент не выполняется</div>
+            <div class="text-block">В Microsoft SQL Server Management Studio выполняем следующий sql-запрос</div>
+            <div class="text-block"><strong>SELECT id, run_count FROM [WTDB].[dbo].cc_glovars WHERE code = 'helper_1_hour'</strong>></div>
+            <div class="text-block">и в рузультате выполнения запроса мы видим,</div>
+            <div class="image-block">
+                <img src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/glovars_checkout/images/case3.jpg"/>
+            </div>
+            <div class="text-block">что значение run_count больше 1, то выполняем слудующий sql-запрос</div>
+            <div class="text-block"><strong>DELETE FROM [WTDB].[dbo].cc_glovars WHERE id = 7207954860077904080</strong>></div>
+            <div class="text-block">где 7207954860077904080 заменяем на корретное значение id из последней SELECT выборки из п.2 </div>
+            <div class="text-block">И да пребудет с Вами Сила.</div>
+        </p>
+        <br/>
+        <p>
+            С уважением,
+        </p>
+        <p>
+            Команда портала производительность.рф
+        </p>
+        <p>
+            ----------
+        </p>
+        <p>
+            Данное письмо сгенерировано автоматически, не отвечайте на него.>
+        </p>
+    </div>
+</div>
