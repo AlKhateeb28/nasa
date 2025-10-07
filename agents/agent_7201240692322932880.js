@@ -3,7 +3,7 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 function getAgentsMonitorWebsocketClient(){try{return new WebSocketClient("ws://192.168.0.96:3000/");}catch(e){}}function sendAgentsMonitorMessageToWebsocket(ws, agentsMonitor) {try{ws.Send("#"+EncodeJson(agentsMonitor));return ws;}catch(e){return null;}}
 
 function hasException(list, exception) {
-    if(exception == "") {
+    if(exception == "" || exception == null) {
         return true;
     }
 
