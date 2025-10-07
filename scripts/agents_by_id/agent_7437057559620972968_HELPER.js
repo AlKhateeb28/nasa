@@ -3,7 +3,7 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 
 function getHelperRunningId() {
     dataList = ArrayDirect(XQuery("sql: " +
-        " SELECT id " +
+        " SELECT id, run_count " +
         "FROM [WTDB].[dbo].cc_glovars " +
         "WHERE code = 'helper_1_hour' "));
 
@@ -20,8 +20,9 @@ function addGlovarRecord() {
 
     glovarDocTE = glovarDooc.TopElem;
     glovarDocTE.code = "helper_1_hour";
-    glovarDocTE.type = "bigint";
+    glovarDocTE.type = "string";
     glovarDocTE.value = "Running...";
+    glovarDocTE.run_count = 1;
 
     glovarDooc.Save();
 
@@ -96,183 +97,6 @@ function updateSingleFlag(flag) {
     return ArrayCount(dataList);
 }
 
-function upWithNoRightFlag() {
-    agent.message = "Получение кастомных флагов для поднятия With_no_right флага ...";
-    ws = sendMessageToWebsocket(ws, agent);
-    prevDate = new Date();
-
-    dataList = ArrayDirect(XQuery("sql: " +
-        " WITH _view AS ( " +
-        "    SELECT cs.id AS cs_id, " +
-        "           os.id AS org_id, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''With_no_right''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''With_no_right'']/value)[1]', 'bit') AS INT)) AS with_no_right, " +
-        "           o.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'varchar(max)') AS format_part, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_rck''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') AS INT)) AS is_rck, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_ock''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') AS INT)) AS is_ock, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_roiv''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') AS INT)) AS is_roiv, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_partner''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_partner'']/value)[1]', 'bit') AS INT)) AS is_partner, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_fcc''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'bit') AS INT)) AS is_fcc " +
-        "    FROM [WTDB].[dbo].collaborators cs " +
-        "             INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
-        "             INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
-        "             INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
-        "    WHERE cs.code NOT LIKE '%_muc_%' " +
-        "       AND (cs.modification_date > DATEADD(MINUTE,  " + pastTimeOffset + " , GETDATE()) " +
-        "       OR os.modification_date > DATEADD(MINUTE,  " + pastTimeOffset + " , GETDATE())) " +
-        " ) " +
-        " SELECT TOP 1000 org_id " +
-        " FROM _view " +
-        " WHERE format_part IS NULL " +
-        "    AND is_rck = 0 " +
-        "    AND is_ock = 0 " +
-        "    AND is_roiv = 0 " +
-        "    AND is_partner = 0 " +
-        "    AND is_fcc = 0 " +
-        "    AND with_no_right = 0"));
-
-    total += ArrayCount(dataList);
-
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] TOTAL: " + total);
-
-    agent.total = total;
-    agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-    agent.message = "Поднять With_no_right флаг...";
-    if (ws != null) {
-        ws = sendMessageToWebsocket(ws, agent);
-    }
-    prevDate = new Date();
-
-    currentOrgId = 0;
-
-    for (data in dataList) {
-        if(currentOrgId != OptInt(data.org_id)) {
-            orgDoc = tools.open_doc(data.org_id);
-
-            if (orgDoc != undefined) {
-                orgDoc.TopElem.custom_elems.ObtainChildByKey("With_no_right").value = "true";
-
-                orgDoc.Save();
-
-                saved++;
-
-                addLogMessage(loggerName, "[agent.id: " + agentId + "] UP Org.ID: " + data.org_id);
-            } else {
-                addLogMessage(loggerName, "[agent.id: " + agentId + "] Organization with ID " + data.org_id + " is not exist!");
-
-                skipped;
-            }
-        }
-
-        currentOrgId = OptInt(data.org_id);
-
-        processed++;
-
-        agent.processed = processed;
-        agent.skipped = skipped;
-        agent.saved = saved;
-        refreshMsPerRow(agent, startDate, processed);
-        if (ws != null) {
-            ws = sendMessageToWebsocket(ws, agent);
-        }
-
-        if (processed % 10 == 0) {
-            addLogMessage(
-                loggerName,
-                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
-            );
-        }
-    }
-
-    return ArrayCount(dataList);
-}
-
-function clearSpecialFlags() {
-    agent.message = "Получение кастомных флагов для очистки ...";
-    ws = sendMessageToWebsocket(ws, agent);
-    prevDate = new Date();
-
-    dataList = ArrayDirect(XQuery("sql: " +
-        " WITH _view AS ( " +
-        "    SELECT cs.id AS cs_id, " +
-        "           os.id AS org_id, " +
-        "           o.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'varchar(max)') AS format_part, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_project_ended''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_project_ended'']/value)[1]', 'bit') AS INT)) AS is_project_ended, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_rck''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') AS INT)) AS is_rck, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_ock''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') AS INT)) AS is_ock, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_roiv''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') AS INT)) AS is_roiv, " +
-        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_partner''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_partner'']/value)[1]', 'bit') AS INT)) AS is_partner " +
-        "    FROM [WTDB].[dbo].collaborators cs " +
-        "             INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
-        "             INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
-        "             INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
-        "    WHERE cs.code NOT LIKE '%_muc_%' " +
-        "       AND (cs.modification_date > DATEADD(MINUTE,  " + pastTimeOffset + " , GETDATE()) " +
-        "       OR os.modification_date > DATEADD(MINUTE,  " + pastTimeOffset + " , GETDATE())) " +
-        " ) " +
-        " SELECT org_id " +
-        " FROM _view " +
-        " WHERE is_project_ended = 1 " +
-        "       AND ((format_part IS NOT NULL " +
-        "       AND format_part != '') " +
-        "       OR is_rck > 0 " +
-        "       OR is_rck > 0 " +
-        "       OR is_roiv > 0 " +
-        "       OR is_partner > 0) " +
-        " GROUP BY org_id "));
-
-    total += ArrayCount(dataList);
-
-    agent.total = total;
-    agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-    agent.message = "Очистить специальные флаги ...";
-    if (ws != null) {
-        ws = sendMessageToWebsocket(ws, agent);
-    }
-    prevDate = new Date();
-
-    for (data in dataList) {
-        orgDoc = tools.open_doc(data.org_id);
-
-        if (orgDoc != undefined) {
-            orgDoc.TopElem.custom_elems.ObtainChildByKey("format_part").value = "";
-            orgDoc.TopElem.custom_elems.ObtainChildByKey("is_rck").value = "false";
-            orgDoc.TopElem.custom_elems.ObtainChildByKey("is_ock").value = "false";
-            orgDoc.TopElem.custom_elems.ObtainChildByKey("is_roiv").value = "false";
-            orgDoc.TopElem.custom_elems.ObtainChildByKey("is_partner").value = "false";
-            orgDoc.TopElem.custom_elems.ObtainChildByKey("in_program").value = "false";
-
-            orgDoc.Save();
-
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] CLEAR Org.ID: " + data.org_id);
-
-            saved++;
-        } else {
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] Organization with ID " + data.org_id + " is not exist!");
-
-            skipped;
-        }
-
-        processed++;
-
-        agent.processed = processed;
-        agent.skipped = skipped;
-        agent.saved = saved;
-        refreshMsPerRow(agent, startDate, processed);
-        if (ws != null) {
-            ws = sendMessageToWebsocket(ws, agent);
-        }
-
-        if (processed % 10 == 0) {
-            addLogMessage(
-                loggerName,
-                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
-            );
-        }
-    }
-
-    return ArrayCount(dataList);
-}
-
 var agentId = 7437057559620972968;
 var userId = 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
 var msPerRecord = 0.001;
@@ -314,12 +138,6 @@ if(helperAgentId == null) {
     ];
 
     try {
-        count = upWithNoRightFlag();
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed With_no_right: " + count);
-
-        count = clearSpecialFlags();
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed Clear special:  " + count);
-
         count = updateSingleFlag("in_program");
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed in_program: " + count);
 
@@ -382,6 +200,14 @@ if(helperAgentId == null) {
     DeleteDoc(UrlFromDocID(helperAgentId));
 } else {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent is running. Waiting for it to end!");
+
+    glovarsDoc = tools.open_doc(helperAgentId);
+
+    if(glovarsDoc != undefined) {
+        glovarsDoc.TopElem.run_count = glovarsDoc.TopElem.run_count + 1;
+
+        glovarsDoc.Save();
+    }
 
     agent.state = 1;
     agent.processed = 0;

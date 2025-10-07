@@ -11,7 +11,7 @@ function updateSingleFlag(flag) {
         " SELECT cs.id AS cs_id, " +
         "       os.id AS org_id, " +
         "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''" + flag + "'']/value)[1]', 'bit') AS INT)) AS cs_flag, " +
-        "       IIF(o.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''" + flag + "'']/value)[1]', 'bit') AS INT)) AS org_flag, " +
+        "       IIF(o.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''" + flag + "'']/value)[1]', 'bit') AS INT)) AS org_flag " +
         " FROM [WTDB].[dbo].collaborators cs " +
         "           INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "           INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
@@ -180,7 +180,7 @@ function clearSpecialFlags() {
         "             INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "             INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
         "             INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
-        "    WHERE cs.code NOT LIKE '%_muc_%' "+
+        "    WHERE cs.code NOT LIKE '%_muc_%' " +
         " ) " +
         " SELECT TOP 1000 org_id " +
         " FROM _view " +
