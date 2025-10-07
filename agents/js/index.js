@@ -5,6 +5,19 @@ var pingTimeout = 300000;
 var currentState = 1;
 
 var hourBackgroundColors = [];
+var importantAgentIds = [7437057559620972968];
+
+function isImportantAgent(id) {
+    let result = false;
+
+    importantAgentIds.forEach((agentId, index) => {
+       if(agentId === id) {
+           result = true;
+       }
+    });
+
+    return result;
+}
 
 function fillSingleHour(hour) {
     let backgroundColor = "";
@@ -197,30 +210,32 @@ function showAgentsHourData(index, hourData) {
                 $("#agent_instance").attr("id", "agent_instance_" + index + "_" + element.agentId);
                 const agentElement = $("#agent_instance_" + index + "_" + element.agentId);
 
+                agentElement.removeClass("new-bg-color");
+                agentElement.removeClass("night-bg-color");
+                agentElement.removeClass("sunrise-bg-color");
+                agentElement.removeClass("noon-bg-color");
+                agentElement.removeClass("sunset-bg-color");
+
                 agentElement.addClass(agentBlockIdentifier);
 
                 if(getCurrentHourNumber() === index) {
-                    agentElement.addClass("gui-new-bg");
+                    agentElement.addClass("new-bg-color");
                 } else {
-                    agentElement.addClass("gui-bg");
+                    agentElement.addClass(getHourBackgroundColor(index));
                 }
             } else {
-                //$("#agent_instance_" + index + "_" + element.agentId).addClass(getHourBackgroundColor(index));
+                $("#agent_instance_" + index + "_" + element.agentId).addClass(getHourBackgroundColor(index));
+            }
 
-                const agentInstanceElement = $("#agent_instance_" + index + "_" + element.agentId);
-                const guiClass = "gui-bg";
-
-                agentInstanceElement.removeClass("gui-new-bg");
-
-                if(!agentInstanceElement.hasClass(guiClass)) {
-                    agentInstanceElement.addClass(guiClass);
-                }
+            // HELPER
+            if(isImportantAgent(parseInt(element.agentId))) {
+                $("#agent_instance_" + index + "_" + element.agentId).css("background-color", "indigo");
             }
 
             $("#agent_name").attr("id", "agent_name_" + index + "_" + element.agentId);
             const agentNameElement = $("#agent_name_" + index + "_" + element.agentId);
             agentNameElement.html(element.name.substring(0, 44) + "...");
-            agentNameElement.addClass(getHourBackgroundColor(index));
+            //agentNameElement.addClass(getHourBackgroundColor(index));
 
             $("#agent_button").attr("id", "agent_button_" + index + "_" + element.agentId);
             $("#agent_button_" + index + "_" + element.agentId).attr("data-agent-id", element.agentId);
@@ -256,6 +271,12 @@ function showAgentsHourData(index, hourData) {
                 maxRunTimeElement.css("background", "cornsilk");
             }
 
+            if(parseInt(element.agentId) === 7437057559620972968) {
+                if(parseInt(element.maxDiff) <= 5) {
+                    maxRunTimeElement.css("background", "tomato");
+                }
+            }
+
             $("#launch_block").attr("id", "launch_block_" + index + "_" + element.agentId);
 
             element.launches.forEach((launch, launchIndex) => {
@@ -289,10 +310,17 @@ function showAgentsHourData(index, hourData) {
             $("#exception_block").attr("id", "exception_block_" + index + "_" + element.agentId);
 
             element.exceptions.forEach((exception, exceptionIndex) => {
-                $("#exception_block_" + index + "_" + element.agentId).append($("#exception_template").html());
+                const exceptionIdentifier = "exception_" + index + "_" + element.agentId + "_" + exceptionIndex;
 
-                $("#exception").attr("id", "exception_" + index + "_" + element.agentId + "_" + exceptionIndex);
-                $("#exception_" + index + "_" + element.agentId + "_" + exceptionIndex).html(exception);
+                if($("." + exceptionIdentifier).length === 0) {
+                    $("#exception_block_" + index + "_" + element.agentId).append($("#exception_template").html());
+
+                    $("#exception").attr("id", "exception_" + index + "_" + element.agentId + "_" + exceptionIndex);
+
+                    const exceptionElement = $("#exception_" + index + "_" + element.agentId + "_" + exceptionIndex);
+                    exceptionElement.addClass(exceptionIdentifier);
+                    exceptionElement.html(exception);
+                }
             });
         });
     }
@@ -329,6 +357,11 @@ function showAgentsData(data) {
         showAgentsHourData(i, eval("data.hour" + i));
     }
 }
+
+function goToHelperMonitor() {
+    window.open("http://192.168.0.96/helper/index.html", '_blank').focus();
+}
+
 
 $(document).ready(function () {
     fillHoursByDayPart();

@@ -47,7 +47,7 @@ function save(dossierDoc, dossierDocTE, personId, code, program, certificationRe
                 templateCode = "cert_ock_ss_rp_am_print";
             }
 
-            if(personId == 7351734047845980789) {
+            if(personId == 7351734047845980789 || personId == 6743923349751162819) {
                 tools.create_notification(templateCode, personId, "", OptInt(certificateDoc.DocID));
             }
         }/* else {

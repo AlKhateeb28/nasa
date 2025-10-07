@@ -299,7 +299,6 @@
     text-align: center;
     margin-right: 3px;
     margin-top: 2px;
-    margin-left: 5px;
 }
 
 .value-old-cell {
@@ -349,4 +348,23 @@
     margin-top: 4px;
     font-size: 10px;
     margin-right: 5px;
+}
+
+.button-get-id:hover {
+    transform: scale(0.9);
+}
+
+.link-icon {
+    width: 100px;
+    height: 100px;
+    margin-left: 30px;
+    margin-top: 3px;
+    border: 1px solid mintcream;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px #bebebe, 0 0 9px #ffffff;
+    cursor: pointer;
+}
+
+.link-icon:hover {
+    transform: scale(0.9);
 }

@@ -1,9 +1,9 @@
 <%
-// 7170770401108980357
+// 7208227090674480790
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
-agentId = 7170770401108980357;
-var loggerName = "agent_7170770401108980357";
+agentId = 7208227090674480790;
+var loggerName = "agent_7208227090674480790";
 
 var result = {};
 result.errorMessage = "";
@@ -18,11 +18,11 @@ try {
 
     personDossiers = ArrayDirect(XQuery("sql: " +
         " SELECT doss.id, " +
-        "       dos.data.value('(//custom_elems/custom_elem[name=''certificate_" + code + "'']/value)[1]', 'varchar(max)') AS certificate_id " +
+        "       dos.data.value('(//custom_elems/custom_elem[name=''ss_cert_" + code + "_id'']/value)[1]', 'varchar(max)') AS certificate_id " +
         " FROM [WTDB].[dbo].object_datas doss " +
         "       INNER JOIN [WTDB].[dbo].object_data dos ON doss.id = dos.id " +
         " WHERE doss.object_id = " + personId +
-        "       AND doss.object_data_type_id = 7103978283796946164"));
+        "       AND doss.object_data_type_id = 7205394578516177541"));
 
     dossiersCount = ArrayCount(personDossiers);
 
@@ -46,11 +46,9 @@ try {
 
     dossierDocTE = dossierDoc.TopElem;
 
-    eval("dossierDocTE.custom_elems.ObtainChildByKey('result_" + code  + "').value = ''");
-    eval("dossierDocTE.custom_elems.ObtainChildByKey('date_" + code  + "').value = ''");
-    eval("dossierDocTE.custom_elems.ObtainChildByKey('comment_" + code  + "').value = ''");
-    eval("dossierDocTE.custom_elems.ObtainChildByKey('flag_" + code  + "').value = 'false'");
-    eval("dossierDocTE.custom_elems.ObtainChildByKey('certificate_" + code  + "').value = ''");
+    eval("dossierDocTE.custom_elems.ObtainChildByKey('ss_result_" + code  + "').value = ''");
+    eval("dossierDocTE.custom_elems.ObtainChildByKey('ss_date_" + code  + "').value = ''");
+    eval("dossierDocTE.custom_elems.ObtainChildByKey('ss_cert_" + code  + "_id').value = ''");
 
     dossierDoc.Save();
 
@@ -61,8 +59,10 @@ try {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Noti: " + sendNotification);
 
     if(sendNotification == "true") {
-        if (OptInt(code) == 13 || OptInt(code) == 14) {
+        if (code == "rp") {
             text = "Руководитель проекта";
+        } else if(code == "am") {
+            text = "Аналитик-методолог";
         }
 
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Sent");

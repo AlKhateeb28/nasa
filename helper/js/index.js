@@ -101,6 +101,8 @@ class HelperPage extends Object {
                     HelperPage.showAgentInfo(clientAgent);
                 }
             } else if(agent.type === "HELPER") {
+                console.log(agent);
+
                 HelperPage.showSummaryData(agent);
             }
         } else {

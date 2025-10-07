@@ -189,7 +189,7 @@ class EditPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    EditPage.showMessageBox("error-response", "success-response", "Досье сохранено.");
+                    EditPage.showMessageBox("error-response", "success-response", "Сертификат сохранен.");
 
                     EditPage.setTimeoutOnMessageBox();
 
@@ -228,7 +228,7 @@ class EditPage extends Object {
             `&text=${program}`;
 
         $.ajax({
-            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7170770401108980357" + parameters,
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7208227090674480790" + parameters,
             async: false,
             type: "GET",
             dataType: "json",
