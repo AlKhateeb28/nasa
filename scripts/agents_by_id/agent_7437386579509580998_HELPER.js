@@ -266,27 +266,7 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
 addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
 addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-var flags = [
-    {flag: "up_With_no_right"},
-    {flag: "clear_special_flags"},
-    {flag: "in_program"},
-    {flag: "is_fcc"},
-    {flag: "is_rck"},
-    {flag: "is_ock"},
-    {flag: "is_roiv"},
-    {flag: "is_partner"},
-    {flag: "is_a_commerce_client"},
-    {flag: "is_project_ended"},
-    {flag: "With_no_right"}
-];
-
 try {
-    count = upWithNoRightFlag();
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed With_no_right: " + count);
-
-    count = clearSpecialFlags();
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed Clear special:  " + count);
-
     count = updateSingleFlag("in_program");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed in_program: " + count);
 
