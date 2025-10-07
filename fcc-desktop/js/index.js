@@ -915,7 +915,7 @@ function processMismatchMessage(agent) {
     let mismatchIndex = -1;
 
     switch (clientTask.getMismatchType()) {
-        case "DOSS_FCK": {
+        /*case "DOSS_FCK": {
             mismatchIndex = 0;
             break;
         }
@@ -943,45 +943,55 @@ function processMismatchMessage(agent) {
         case "DOSS_TRAINER": {
             mismatchIndex = 5;
             break;
-        }
+        }*/
 
         case "IN_PROGRAM": {
-            mismatchIndex = 6;
+            mismatchIndex = 0;
             break;
         }
 
         case "IS_FCC": {
-            mismatchIndex = 7;
+            mismatchIndex = 1;
             break;
         }
 
         case "IS_RCK": {
-            mismatchIndex = 8;
-            break;
-        }
-
-        case "IS_ROIV": {
-            mismatchIndex = 9;
-            break;
-        }
-
-        case "IS_PARTNER": {
-            mismatchIndex = 10;
-            break;
-        }
-
-        case "IS_COMMERCE": {
-            mismatchIndex = 11;
+            mismatchIndex = 2;
             break;
         }
 
         case "IS_OCK": {
-            mismatchIndex = 12;
+            mismatchIndex = 3;
+            break;
+        }
+
+        case "IS_ROIV": {
+            mismatchIndex = 4;
+            break;
+        }
+
+        case "IS_PARTNER": {
+            mismatchIndex = 5;
+            break;
+        }
+
+        case "IS_COMMERCE": {
+            mismatchIndex = 6;
+            break;
+        }
+
+        case "IS_OCK": {
+            mismatchIndex = 7;
             break;
         }
 
         case "IS_PROJECT": {
-            mismatchIndex = 13;
+            mismatchIndex = 8;
+            break;
+        }
+
+        case "WITH_NO_RIGHT": {
+            mismatchIndex = 9;
             break;
         }
     }
@@ -1721,20 +1731,22 @@ $(document).ready(function () {
     appendOverloadBlock(mismatchBoxElement, overloadTemplateElement, "Overload Web: 192.168.0.96 (порт: 80)", 0, webOverloadData);
     appendOverloadBlock(mismatchBoxElement, overloadTemplateElement, "Overload SQL: 192.168.0.97 (порт: 1433)", 1, sqlOverloadData);
 
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 0,  "Досье: ФЦК", "Изменилось количество пройденных программ", 7368463748813160933, "#212529");
+    /*appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 0,  "Досье: ФЦК", "Изменилось количество пройденных программ", 7368463748813160933, "#212529");
     appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 1, "Досье: РЦК", "Изменилось количество пройденных программ", 7368463748813160933, "#212529");
     appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 2, "Мероприятия: битые ссылки", "Результат мероприятия имеет ломанные ссылки на мероприятие", 7382143266387215552, "#4a4e50");
     appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 3, "Сотрудники: битые ссылки", "Результат мероприятия имеет ломанные ссылки на сотрудника", 7382143266387215552, "#4a4e50");
     appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 4, "Досье: инструкторы", "Количество проблемных номеров сертификатов", 7389939808110063496, "#212529");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 5, "Досье: тренеры", "Количество проблемных номеров сертификатов", 7389939808110063496, "#212529");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 6, "Признак: in_program", "Не верный признак <b>in_program</b> сотрудника", 7397671274748933246, "#4a4e50");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 7, "Признак: is_fcc", "Не верный признак <b>is_fcc</b> сотрудника", 7397671274748933246, "#4a4e50");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 8, "Признак: is_rck", "Не верный признак <b>is_rck</b> сотрудника", 7397671274748933246, "#4a4e50");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 9, "Признак: is_roiv", "Не верный признак <b>is_roiv</b> сотрудника", 7397671274748933246, "#4a4e50");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 10, "Признак: is_partner", "Не верный признак <b>is_partner</b> сотрудника", 7397671274748933246, "#4a4e50");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 11, "Признак: is_a_commerce_client", "Не верный признак <b>is_a_commerce_client</b> сотрудника", 7397671274748933246, "#4a4e50");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 12, "Признак: is_ock", "Не верный признак <b>is_ock</b> сотрудника", 7397671274748933246, "#4a4e50");
-    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 13, "Признак: is_project_ended", "Не верный признак <b>is_project_ended</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 5, "Досье: тренеры", "Количество проблемных номеров сертификатов", 7389939808110063496, "#212529");*/
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 0, "Признак: in_program", "Не верный признак <b>in_program</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 1, "Признак: is_fcc", "Не верный признак <b>is_fcc</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 2, "Признак: is_rck", "Не верный признак <b>is_rck</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 3, "Признак: is_ock", "Не верный признак <b>is_ock</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 4, "Признак: is_roiv", "Не верный признак <b>is_roiv</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 5, "Признак: is_partner", "Не верный признак <b>is_partner</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 6, "Признак: is_a_commerce_client", "Не верный признак <b>is_a_commerce_client</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 7, "Признак: is_ock", "Не верный признак <b>is_ock</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 8, "Признак: is_project_ended", "Не верный признак <b>is_project_ended</b> сотрудника", 7397671274748933246, "#4a4e50");
+    appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, 9, "Признак: With_no_right", "Не верный признак <b>With_no_right</b> сотрудника", 7397671274748933246, "#4a4e50");
 
     setInterval(refreshDuration, 1000);
     setInterval(pingServers, 1000);
