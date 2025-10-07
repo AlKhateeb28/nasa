@@ -1,8 +1,8 @@
 // 7437386579509580998
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
-function updateSingleFlag(flag) {
-    agent.message = "Получение " + flag + " данных ...";
+function updateSingleFlag(flag, step) {
+    agent.message = step + " из 9. Получение " + flag + " данных ...";
     ws = sendMessageToWebsocket(ws, agent);
     prevDate = new Date();
 
@@ -267,31 +267,40 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
 addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
 try {
-    count = updateSingleFlag("in_program");
+    step = 1;
+    count = updateSingleFlag("in_program", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed in_program: " + count);
 
-    count = updateSingleFlag("is_fcc");
+    step++;
+    count = updateSingleFlag("is_fcc", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_fcc: " + count);
 
-    count = updateSingleFlag("is_rck");
+    step++;
+    count = updateSingleFlag("is_rck", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_rck: " + count);
 
-    count = updateSingleFlag("is_ock");
+    step++;
+    count = updateSingleFlag("is_ock", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_ock: " + count);
 
-    count = updateSingleFlag("is_roiv");
+    step++;
+    count = updateSingleFlag("is_roiv", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_roiv: " + count);
 
-    count = updateSingleFlag("is_partner");
+    step++;
+    count = updateSingleFlag("is_partner", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_partner: " + count);
 
-    count = updateSingleFlag("is_a_commerce_client");
+    step++;
+    count = updateSingleFlag("is_a_commerce_client", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_a_commerce_client: " + count);
 
-    count = updateSingleFlag("is_project_ended");
+    step++;
+    count = updateSingleFlag("is_project_ended", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_project_ended: " + count);
 
-    count = updateSingleFlag("With_no_right");
+    step++;
+    count = updateSingleFlag("With_no_right", step);
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed With_no_right: " + count);
 
     agent.state = 1;

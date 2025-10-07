@@ -362,6 +362,9 @@ function goToHelperMonitor() {
     window.open("http://192.168.0.96/helper/index.html", '_blank').focus();
 }
 
+function goToAgentMonitor() {
+    window.open("http://192.168.0.96/fcc-desktop/index.html", '_blank').focus();
+}
 
 $(document).ready(function () {
     fillHoursByDayPart();

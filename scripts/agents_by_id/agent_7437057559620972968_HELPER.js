@@ -29,8 +29,8 @@ function addGlovarRecord() {
     return glovarDooc.DocID;
 }
 
-function updateSingleFlag(flag) {
-    agent.message = "Получение " + flag + " данных ...";
+function updateSingleFlag(flag, step) {
+    agent.message = step + " из 9. Получение " + flag + " данных ...";
     ws = sendMessageToWebsocket(ws, agent);
     prevDate = new Date();
 
@@ -124,31 +124,40 @@ if(helperAgentId == null) {
     helperAgentId = addGlovarRecord();
 
     try {
-        count = updateSingleFlag("in_program");
+        step = 1;
+        count = updateSingleFlag("in_program", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed in_program: " + count);
 
-        count = updateSingleFlag("is_fcc");
+        step++;
+        count = updateSingleFlag("is_fcc", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_fcc: " + count);
 
-        count = updateSingleFlag("is_rck");
+        step++;
+        count = updateSingleFlag("is_rck", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_rck: " + count);
 
-        count = updateSingleFlag("is_ock");
+        step++;
+        count = updateSingleFlag("is_ock", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_ock: " + count);
 
-        count = updateSingleFlag("is_roiv");
+        step++;
+        count = updateSingleFlag("is_roiv", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_roiv: " + count);
 
-        count = updateSingleFlag("is_partner");
+        step++;
+        count = updateSingleFlag("is_partner", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_partner: " + count);
 
-        count = updateSingleFlag("is_a_commerce_client");
+        step++;
+        count = updateSingleFlag("is_a_commerce_client", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_a_commerce_client: " + count);
 
-        count = updateSingleFlag("is_project_ended");
+        step++;
+        count = updateSingleFlag("is_project_ended", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_project_ended: " + count);
 
-        count = updateSingleFlag("With_no_right");
+        step++;
+        count = updateSingleFlag("With_no_right", step);
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed With_no_right: " + count);
 
         agent.state = 1;
