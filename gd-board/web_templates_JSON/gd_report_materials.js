@@ -205,6 +205,18 @@ try {
         result.state4Data.push(element);
     }
 
+    result.completedCount = 0;
+
+    completedList = ArrayDirect(XQuery("sql: " +
+        " SELECT COUNT(courses.id) AS cnt " +
+        " FROM [WTDB].[dbo].learnings courses " +
+        "         INNER JOIN [WTDB].[dbo].courses crs ON courses.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE (courses.state_id = 3 OR courses.state_id = 4) "));
+
+    if(ArrayCount(completedList) > 0) {
+        result.completedCount = completedList[0].cnt;
+    }
+
     Response.Write(EncodeJson(result));
 } catch (e) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);

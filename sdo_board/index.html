@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SDO Board</title>
+
+    <link rel="icon" href="./images/favicon.ico"/>
+
+    <link rel="stylesheet" href="./css/index.css"/>
+
+    <script type="text/javascript" src="./js/jquery3.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./js/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="./js/moment.js"></script>
+    <script type="text/javascript" src="./js/webSocket.js"></script>
+    <script type="text/javascript" src="./js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="./js/ModalWindow.js"></script>
+    <script type="text/javascript" src="./js/index.js"></script>
+</head>
+<body class="body">
+
+<div id="wait" style="visibility: hidden;">
+    <div class="loader loader-view"></div>
+</div>
+
+<div id="grid" class="grid">
+    <div id="left_box"></div>
+
+    <div id="grid_box">
+        <div id="top_block" style="min-height: 580px; margin-top: 5px;">
+            <div id="top_left_block" class="float-left" style="min-width: 30%; min-height: 580px;">
+                <div class="box" style="min-height: 130px; width: 530px;">
+                    <div style="font-size: x-large; text-indent: 10px;">Прогноз временно́й конвергенции</div>
+                    <div class="float-left" style="min-height:24px; min-width: 290px;">
+                        <div id="courses_expected_time" class="course-value-info course-left-color" style="margin-top: 28px; font-size: xx-large; text-align: center; margin-left: 10px; width: 290px; color: var(--color-course-passed)"></div>
+                    </div>
+                    <div class="float-left" style="margin-left: 20px;">
+                        <div>
+                            <div class="float-left" style=" margin-top: 24px; margin-left: 14px;">вчера</div>
+                            <div id="courses_yesterday_count" class="float-left course-value-info course-left-color convergence-value" style="margin-top: 10px;"></div>
+                        </div>
+
+                        <div>
+                            <div class="float-left" style="margin-top: 64px; margin-left: -59px;">сегодня</div>
+                            <div id="courses_today_count" class="float-left course-value-info course-left-color convergence-value" style="margin-top: 52px;"></div>
+                            <div id="courses_today_leave" class="float-left expected-passed-count" title="Осталось до вчерашнего количества прохождений">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="top_right_block" class="float-left box" style="min-width: 69.76%; min-height: 580px;">
+                <div style="position: absolute; left: 70%;">
+                    <div class="float-left" style="font-size: x-large;">Пройденные курсы</div>
+                    <div id="refreshed_datetime" class="float-left" style="font-size: x-small; color: burlywood; margin-top: 16px; margin-left: 10px;"></div>
+                </div>
+                <div style="margin-left: 10px; margin-top: 20px;">
+                    <div class="float-left course-label">пройдено</div>
+                    <div id="courses_completed" class="float-left course-value-info course-left-color">0</div>
+                    <div id="increase_count" class="float-left increase-count" title="Текущее увеличение/уменьшение">0</div>
+                </div>
+                <div style="margin-left: 10px; margin-top: 65px;">
+                    <div class="float-left course-label">осталось</div>
+                    <div id="courses_left" class="float-left course-value-info course-left-color">0</div>
+                    <div>
+                        <div id="expected_week" class="increase-count expected-values" style="margin-top: 1px; width: 70px;" title="Ожидаемая неделя выполнение плана"></div>
+                        <div id="expected_start" class="increase-count expected-values" style="margin-top: 19px; width: 97px;" title="Ожидаемая дата/время выполнения плана"></div>
+                        <!--div id="expected_finish" class="increase-count expected-values" style="margin-top: 28px;" title="Или выполнение плана в этот день"></div-->
+                    </div>
+                </div>
+                <div style="margin-left: 10px; margin-top: 110px;">
+                    <div class="float-left course-label">выполнено</div>
+                    <div id="courses_done" class="float-left course-value-info course-left-color">0%</div>
+                </div>
+                <div id="courses_chart" style="position: absolute; margin-top: -100px;"></div>
+            </div>
+        </div>
+        <div id="bottom_block" style="min-height: 300px; margin-top: 10px">
+
+        </div>
+    </div>
+
+    <div id="right_box"></div>
+</div>
+
+</body>
+</html>
