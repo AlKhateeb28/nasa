@@ -224,7 +224,7 @@ function calculateCatchUpTime(yesterdayTotal, todaySoFar, currentTime) {
     if (remaining <= 0) {
         return {
             type: 2,
-            time: prevExpectedDate
+            time: new Date(prevExpectedDate)
         };
     }
 
@@ -382,9 +382,9 @@ function refreshBoardData() {
                 let time = "";
 
                 if(result.type === 0) {
-                    time = getNormalizedTime(result.time);
+                    time = getNormalizedTime(result.time.toLocaleString("ru-RU"));
                 } else {
-                    time  = getNormalizedDateTime(result.time);
+                    time  = getNormalizedDateTime(result.time.toLocaleString("ru-RU"));
                 }
 
                 if(prevExpectedMilliseconds === result.ms) {
@@ -472,7 +472,7 @@ function showNotification(message){
 }
 
 function initialize() {
-    $("#courses_expected_time").html(getNormalizedTime(new Date().toLocaleString()));
+    $("#courses_expected_time").html(getNormalizedTime(new Date().toLocaleString("ru-RU")));
 
     sleep(100).then(() => {
         refreshBoardData();
