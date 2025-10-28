@@ -59,16 +59,19 @@ try {
             "    LEFT JOIN [WTDB].[dbo].benefit_item bi3 ON bis3.id = bi3.id " +
             " WHERE cs.id = " + curUserID));
 
-        count = ArrayCount(promoList)
+        count = ArrayCount(promoList);
 
         if(count > 0 && (promoList[0].promo_code1 != "" || promoList[0].promo_code2 != "" || promoList[0].promo_code3 != "")) {
-            if(promoList[0].promo_code1 != "" && promoList[0].promo_code2 != "" && promoList[0].promo_code3 != "") {
-                result
-            } else {
-
+            if(promoList[0].promo_code1 != "") {
+                result.response.count += 1;
+            }
+            if(promoList[0].promo_code2 != "") {
+                result.response.count += 1;
+            }
+            if(promoList[0].promo_code3 != "") {
+                result.response.count += 1;
             }
 
-            result.response.count = count;
             result.response.code1 = promoList[0].promo_code1;
             result.response.name1 = promoList[0].name1;
             result.response.url1 = promoList[0].url1;
