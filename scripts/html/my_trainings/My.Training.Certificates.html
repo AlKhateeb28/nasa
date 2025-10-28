@@ -1,0 +1,79 @@
+<%
+// 7031818713314891782
+var aCertificateTypes = [{id: 'all', name: 'Все сертификаты'}];
+
+var sQuery = "sql:\
+SELECT DISTINCT\
+crs.type_id id\
+,crs.type_name name\
+FROM\
+certificates crs\
+WHERE\
+crs.person_id = " + curUserID + "\
+ORDER BY type_name ASC
+";
+
+aCertificateTypes = ArrayUnion(aCertificateTypes, tools.xquery(sQuery));
+%>
+
+<SPXMLScreen Class='my_account_certificates'>
+    <Grid>
+        <GridColumns>
+            <GridColumn Width="25%" Align="right"/>
+            <GridColumn Width="2%"/>
+            <GridColumn Width="" Align="left"/>
+        </GridColumns>
+        <GridRow>
+            <Label Width="200" Class="block_selector_title">Тип сертификата:</Label>
+            <Label/>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Name="BlockName" Width="56%" SelectedItem="all" Change="Set=IsPostet,1;UPDATE=Report;">
+                    <%
+                    for(oCertificateType in aCertificateTypes) {
+                    %>
+                    <ComboBoxItem Value="<%=oCertificateType.id%>"><%=oCertificateType.name%></ComboBoxItem>
+                    <%
+                    }
+                    %>
+                </ComboBox>
+            </StackPanel>
+        </GridRow>
+    </Grid>
+
+    <Grid>
+        <GridColumns>
+            <GridColumn Width="10%"/>
+            <GridColumn Width="" Align="left"/>
+        </GridColumns>
+        <GridRow>
+            <Label/>
+            <Edit Name="Information" Editable="false" Class="Stile1" Width="800"></Edit>
+        </GridRow>
+    </Grid>
+
+
+    <Collection Name="ReportCollection" Source="my_account_certificates_collection">
+        <Param Name="sContext" Value="{CONTEXT}"/>
+    </Collection>
+
+
+    <HTMLBox>
+        <![CDATA[
+        <style>
+            .Stile1 input{border: none; box-shadow: none;}
+            .block_selector_title{text-align: left; color: #969eb2;}
+            .mode-my_account .XAML-tab-template-container.my_account_certificates {
+                border: 2px solid #CED1D8;
+                border-radius: 4px;
+                margin-top: 24px;
+                margin-left: 2%;
+                padding: 20px 1% 2px 1%;
+            }
+        </style>
+        ]]>
+    </HTMLBox>
+
+    <DataGrid Name="Report" Source="{ReportCollection}" Height="" PageSize="20">
+    </DataGrid>
+    <Edit Name="IsPostet" Hidden="true"></Edit>
+</SPXMLScreen>
