@@ -60,3 +60,4 @@ function ArraySelectAll(o: object): any;
 function ArraySelectDistinct(o: object, column: string) : any;
 function ArrayMerge(a: any, column: string, s: string): any;
 function ArrayExtract(array: any, field: string): any;
+function StrLeftCharRange(datetime: any, length: number) : string
