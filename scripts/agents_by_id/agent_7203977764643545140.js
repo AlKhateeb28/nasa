@@ -45,9 +45,9 @@ function verifyIncomingParameters(code, name, finish, groupName, url) {
     }
 
     if(StrContains(url, "courses_catalog")) {
-        return 4;
+        return 1;
     } else {
-        return 6;
+        return 2;
     }
 }
 
@@ -218,7 +218,7 @@ if (!LdsIsServer) {
 
         promoDoc.Save();
 
-        if(total > 4) {
+        if(total == 1) {
             processed++;
 
             agent.message = "Создание карточки индивидуального заказа...";
