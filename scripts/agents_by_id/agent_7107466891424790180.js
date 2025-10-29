@@ -10,14 +10,17 @@ function isNotExistInAccessGroup(docObjectTE, groupId) {
 }
 
 function addAccessGroupsToObject(docId, newGroupDocId) {
-    docObject = tools.open_doc(docId)
-    docObjectTE = docObject.TopElem;
+    docObject = tools.open_doc(docId);
 
-    if (isExistInCatalogById("group", newGroupDocId) && isNotExistInAccessGroup(docObjectTE, newGroupDocId)) {
-        docObjectTE.access.access_groups.ObtainChildByKey(newGroupDocId);
-        docObject.Save();
+    if(docObject != undefined) {
+        docObjectTE = docObject.TopElem;
 
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] addAccessGroupsToObject. Дали доступ. DocID: " + docId + " NewGroupID: " + newGroupDocId);
+        if (isExistInCatalogById("group", newGroupDocId) && isNotExistInAccessGroup(docObjectTE, newGroupDocId)) {
+            docObjectTE.access.access_groups.ObtainChildByKey(newGroupDocId);
+            docObject.Save();
+
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] addAccessGroupsToObject. Дали доступ. DocID: " + docId + " NewGroupID: " + newGroupDocId);
+        }
     }
 }
 
