@@ -1,0 +1,236 @@
+<!-- 7215673190636286573 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>выгрузка сертификатов по типу</title>
+
+    <style>
+        .position-center {
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            position: absolute;
+        }
+
+        #container {
+            width: 200px;
+            height: 125px;
+            margin: auto auto;
+        }
+
+        .loading-title {
+            display: block;
+            text-align: center;
+            font-size: 20px;
+            font-family: 'Inter', sans-serif;
+            font-weight: bold;
+            padding-bottom: 15px;
+            color: #888;
+            margin-left: -80px;
+        }
+
+        .loading-circle {
+            display: block;
+            border-left: 5px solid;
+            border-top-left-radius: 100%;
+            border-top: 5px solid;
+            margin: 5px;
+            animation-name: Loader_611;
+            animation-duration: 1500ms;
+            animation-timing-function: linear;
+            animation-delay: 0s;
+            animation-iteration-count: infinite;
+            animation-direction: normal;
+            animation-fill-mode: forwards;
+        }
+
+        .sp1 {
+            border-left-color: #002b4e;
+            border-top-color: #002b4e;
+            width: 40px;
+            height: 40px;
+        }
+
+        .sp2 {
+            border-left-color: #0062a9;
+            border-top-color: #0062a9;
+            width: 30px;
+            height: 30px;
+        }
+
+        .sp3 {
+            width: 20px;
+            height: 20px;
+            border-left-color: #e53c65;
+            border-top-color: #e53c65;
+        }
+
+        @keyframes Loader_611 {
+            0% {
+                transform: rotate(0deg);
+                transform-origin: right bottom;
+            }
+
+            25% {
+                transform: rotate(90deg);
+                transform-origin: right bottom;
+            }
+
+            50% {
+                transform: rotate(180deg);
+                transform-origin: right bottom;
+            }
+
+            75% {
+                transform: rotate(270deg);
+                transform-origin: right bottom;
+            }
+
+            100% {
+                transform: rotate(360deg);
+                transform-origin: right bottom;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="./fcc/css/common.css"/>
+
+    <script type="text/javascript" src="./scripts/jquery.js"></script>
+    <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+</head>
+<body>
+    <div id="message_box"></div>
+
+    <div class="position-center">
+        <div id="container" style="display: none;">
+            <label id="caption" class="loading-title">Формируем файл ...</label>
+            <span id="loader" class="loading-circle sp1">
+                <span class="loading-circle sp2">
+                    <span class="loading-circle sp3"></span>
+                </span>
+            </span>
+        </div>
+    </div>
+
+    <div>
+        <div style="height: 545px;">
+            <div class="float-left" style="margin-left: 25%;">
+                <div>
+                    <div class="float-left" style="margin-top: 6px; padding-left: 24px;">Выберите серию сертификата: </div>
+                    <div class="float-left dropdown" style="margin-left: 20px; width: 80px;">
+                        <select id="serial" class="dropdown-select">
+                            <option value=""></option>
+                            <option value="Т-С">Т-С</option>
+                            <option value="РП-С">РП-С</option>
+                            <option value="А-С">А-С</option>
+                            <option value="И">И</option>
+                            <option value="РГ">РГ</option>
+                            <option value="ВТ">ВТ</option>
+                            <option value="РК">РК</option>
+                            <option value="К">К</option>
+                            <option value="Т">Т</option>
+                            <option value="Д">Д</option>
+                            <option value="У">У</option>
+                            <option value="РП">РП</option>
+                            <option value="ШК">ШК</option>
+                            <option value="С">С</option>
+                            <option value="СК">СК</option>
+                            <option value="ЭК">ЭК</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="float-left" style="margin-top: -5px; margin-left: 20px;">
+                <button id="save_button" class="button-control enable-button" onclick="createReport()">
+                    <div class="text" style="margin-top: -6px;">Выгрузить</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getCurrentDate() {
+            const currentDate = new Date();
+
+            return currentDate.toLocaleString("ru-RU").split(",")[0];
+        }
+
+        function createReport() {
+            const serialElement = $("#serial");
+            const saveButtonElement = $("#save_button");
+
+            if(serialElement.val().length === 0) {
+                alert("Выберите серию сертификата для формирования выгрузки!");
+
+                return;
+            }
+
+            serialElement.attr("disabled", true);
+            saveButtonElement.attr("disabled", true);
+            saveButtonElement.removeClass("enable-button");
+            saveButtonElement.addClass("disable-button");
+
+            $("#container").css("display", "block");
+
+            $.ajax({
+                url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7215704071994585819&serial=" + serialElement.val(),
+                async: true,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    serialElement.attr("disabled", false);
+                    saveButtonElement.attr("disabled", false);
+                    saveButtonElement.removeClass("disable-button");
+                    saveButtonElement.addClass("enable-button");
+
+                    if(data.errorMessage.indexOf("#") < 0) {
+                        afterReport("upload/upload_by_type_" + serialElement.val() + "_" + getCurrentDate() + ".xlsx");
+                    } else {
+                        const messageElement = $("#message");
+
+                        messageElement.css("color", "hotpink");
+                        messageElement.html("Ошибка! Подробности в логе 'agent_7215704071994585819'");
+
+                        console.log("Error: " + data.errorMessage.indexOf("#"));
+                    }
+                },
+                error: function(error) {
+                    onError(error, 7215704071994585819);
+                }
+            });
+        }
+
+        function afterReport(path) {
+            $("#caption").html("Скачиваем файл...");
+
+            const fileURL = "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/Reports/" + path;
+
+            var link= document.createElement('a');
+            document.body.appendChild(link);
+            link.href = fileURL;
+            link.rel = "nofollow";
+            link.click();
+
+            setTimeout(closeMessage, 1000);
+        }
+
+        function closeMessage() {
+            $("#container").css("display", "none");
+        }
+
+        function onError(error, id) {
+            const messageElement = $("#message");
+
+            messageElement.css("color", "hotpink");
+            messageElement.html("Системная ошибка! Смотрите лог шаблона документа " + id);
+
+            console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+        }
+
+        $(document).ready(function () {
+
+        });
+    </script>
+</body>
+</html>
