@@ -295,10 +295,10 @@ try{
     //params = OBJECTS_ID_STR == "" ? "" : "AND CONTAINS('" + OBJECTS_ID_STR + "'";
 
     indOrderCards = ArrayDirect(XQuery("sql: " +
-        " SELECT id, org_id " +
+        " SELECT id, org_id, num " +
         " FROM [WTDB].[dbo].cc_ind_order_cards " +
         " WHERE GETDATE() < finish_date " +
-        "    AND (status IS NULL OR UPPER(status) = N'ЗАКАЗ НА ИСПОЛНЕНИИ') "/* + params*/));
+        "    AND (status IS NULL OR UPPER(status) = 'ЗАКАЗ НА ИСПОЛНЕНИИ') "/* + params*/));
 
     total = ArrayCount(indOrderCards);
 
@@ -326,6 +326,7 @@ try{
 
         agent.processed = processed;
         agent.skipped = skipped;
+        agent.message = "Обработка данных... " + "Заказ: " + indOrderCard.num;
         refreshMsPerRow(agent, startDate, processed);
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
