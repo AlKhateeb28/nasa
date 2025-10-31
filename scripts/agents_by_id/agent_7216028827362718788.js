@@ -8,17 +8,19 @@ if (!LdsIsServer) {
 
     try{
         dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT id, " +
-            "       name" +
-            " FROM [WTDB].[dbo].professional_areas " +
-            " ORDER BY name"));
+            " SELECT pas.id, " +
+            "       pas.name, " +
+            "       pats.name AS type_name " +
+            " FROM [WTDB].[dbo].professional_areas pas " +
+            "    INNER JOIN [WTDB].[dbo].professional_area_types pats ON pas.professional_area_type_id = pats.id " +
+            " ORDER BY pats.name, pas.name "));
 
         var areaList = [];
 
         for (data in dataList) {
             area = {};
             area.id = OptInt(data.id);
-            area.name = data.name;
+            area.name = data.type_name + ": " + data.name;
 
             areaList.push(area);
         }
@@ -49,7 +51,7 @@ if (!LdsIsServer) {
 
         selected = ArrayExtract(dlgDoc.TopElem.fields, "({title: RValue(This.title), value: RValue(This.value)})");
     } catch(err) {
-        alert("В процессе выполнения агента произошла ошибка.");
+        //alert("В процессе выполнения агента произошла ошибка.");
         Cancel();
     };
 
