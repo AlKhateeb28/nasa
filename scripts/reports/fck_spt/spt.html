@@ -1,0 +1,110 @@
+<!-- 7131029103573605170 -->
+<SPXMLScreen>
+    <Action Name="start_agent_action_name" Source="start_agent" Success="ALERT={messageText};REFRESH;" Failure="ALERT={messageText}">
+        <Param Name="_agent_id" Value=""/>
+        <Param Name="_element_id" Value=""/>
+        <Param Name="_elems_id_str" Value=""/>
+        <Param Name="_wvars_obj" Value="[\{name:'curUserID', value:'<%=curUserID%>'\}]"/>
+    </Action>
+    <%
+    // 6930901362812013168 - Сформировать Отчет о прохождении ЭК организациями_NEW learnings ALL FULL
+    // 7140270395527875373 - Сформировать Отчет о прохождении ЭК организациями_NEW learnings ALL
+    // 6942570809091686414 - Сформировать отчет по обученным только tren_muc
+    agent_ids_str = "7140270395527875373, 6942570809091686414"
+    arr = XQuery( "for $elem in server_agents where id in (" + agent_ids_str + ") return $elem" )
+    %>
+
+    <%
+    curTitle = {
+    "type": "simple",
+    "title": "Отчеты Службы подготовки тренеров"
+    }
+    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_object_title.xaml" ) );
+    %>
+    <Grid Width="1200">
+        <GridColumns>
+            <GridColumn Width="500" Align="left"/>
+            <GridColumn Width="200" Align="center"/>
+            <GridColumn Width="200" Align="center"/>
+            <GridColumn Width="200" Align="center"/>
+            <GridColumn Width="300" Align="right"/>
+        </GridColumns>
+        <GridRow>
+            <Label Class="grid_header">Название</Label>
+            <Label Class="grid_header">Дата запуска</Label>
+            <Label Class="grid_header">Продолжительность</Label>
+            <Label Class="grid_header">Запущен?</Label>
+            <Label Class="grid_header">Запустить</Label>
+        </GridRow>
+        <GridRow>
+            <Label></Label><Label></Label><Label></Label><Label></Label>
+        </GridRow>
+        <GridRow>
+            <Label></Label><Label></Label><Label></Label><Label></Label>
+        </GridRow>
+        <%
+        for ( elem in arr ) {
+        doc = tools.open_doc( elem.id )
+        last = ArrayOptFirstElem( XQuery( "for $elem in action_reports where object_id=" + XQueryLiteral( elem.id ) + " order by $elem/create_date descending return $elem" ) )
+
+        work_status = last != undefined ? last.completed ? "Нет" : "Да" : "Нет"
+        but_enabled = work_status == "Да" ? "0" : "1"
+        %>
+
+        <GridRow>
+            <Label><%=doc.TopElem.name%></Label>
+            <Label><%=doc.TopElem.last_run_date%></Label>
+            <Label><%=doc.TopElem.custom_elems.ObtainChildByKey( "work_duration" ).value%></Label>
+            <Label><%=work_status%></Label>
+            <Button Enabled="<%=but_enabled%>" Click="SET=start_agent_action_name/_agent_id, <%=doc.DocID%>;ACTION=start_agent_action_name;" Width="150">Построить отчет</Button>
+        </GridRow>
+
+        <%
+        }
+        %>
+    </Grid>
+
+    <Label></Label><Label></Label><Label></Label><Label></Label>
+    <Label Class="text">Отчеты находятся в серверных папках
+        \\WT-APP01\report_only_tren_muc,
+        \\WT-APP01\report_org_learnings,
+        соответственно.</Label>
+    <Label></Label>
+    <Label Class="text_bold">Повторное построение можно выполнять только после завершения текущего!</Label>
+
+    <Label></Label><Label></Label><Label></Label><Label></Label>
+
+    <Button Click="OPENWINDOW=/_wt/custom_report/6960606812960601461;" Width="500">Отчет по результатам подготовки и сертификации ИБП</Button>
+
+    <Label></Label>
+
+    <Button Click="OPENWINDOW=/_wt/custom_report/7132820218166401243;" Width="500">Отчет по тестам доп. программ</Button>
+
+    <HTMLBox Dynamic="true" ><![CDATA[
+        <style>
+            .grid_header{
+                background-color: #bdbdbd;
+                font-size: 22px;
+                text-align: center;
+            }
+            .text{
+                font-size: 22px;
+            }
+            .text_bold{
+                font-size: 22px;
+                font-weight: bold;
+            }
+        </style>
+        <div id="my_div" >
+        </div>
+        <script>
+            $(function() {
+                $(".x-btn.x-unselectable.x-box-item.x-toolbar-item.x-btn-default-small").click(function() {
+                    console.log( $("textarea[name=my_editbox]").val() )
+                });
+            })
+
+        </script>
+        ]]>
+    </HTMLBox>
+</SPXMLScreen>

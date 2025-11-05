@@ -72,6 +72,7 @@ try {
                 result.response.count += 1;
             }
 
+            result.response.count = count;
             result.response.code1 = promoList[0].promo_code1;
             result.response.name1 = promoList[0].name1;
             result.response.url1 = promoList[0].url1;

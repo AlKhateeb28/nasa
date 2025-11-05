@@ -58,9 +58,31 @@ function assignCoursesByFlag(execute, ids, flag) {
             coursesIds = ArrayExtractKeys(tools.read_object(ids), "course_id");
 
             for(courseId in coursesIds) {
-                tools.activate_course_to_person(OptInt(data.id), courseId);
+                personId = OptInt(data.id);
 
-                isSaved = setForcedActivationDate(data.id, data.fullname, flag);
+                newLearningDoc = tools.activate_course_to_person(personId, courseId);
+
+                try {
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] Trying to set creator by Doc");
+
+                    newLearningDoc.TopElem.custom_elems.ObtainChildByKey("learning_creator").value = 7218494067134789318;
+                    newLearningDoc.Save();
+                } catch (e) {
+                    try {
+                        addLogMessage(loggerName, "[agent.id: " + agentId + "] Trying to set creator by ID");
+
+                        learningDoc = tools.open_doc(newLearningDoc);
+
+                        if(learningDoc != undefined) {
+                            learningDoc.TopElem.custom_elems.ObtainChildByKey("learning_creator").value = 7218494067134789318;
+                            learningDoc.Save();
+                        }
+                    } catch(err) {
+                        addLogMessage(loggerName, "[agent.id: " + agentId + "] Error: " + e);
+                    }
+                }
+
+                isSaved = setForcedActivationDate(personId, data.fullname, flag);
             }
 
             processed++;
