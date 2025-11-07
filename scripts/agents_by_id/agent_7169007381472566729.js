@@ -19,13 +19,13 @@ function setForcedActivationDate(collaboratorId, fullName, flag) {
     return isSaved;
 }
 
-function assignCoursesByFlag(execute, ids, flag) {
+function assignCoursesByFlag(execute, ids, flag, step, max) {
     isSaved = false;
 
     if(OptInt(execute) == 1) {
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Flag: " + flag);
 
-        agent.message = "Получение данных " + flag + " ...";
+        agent.message = "Шаг " + step + " из " + max + ". Получение данных " + flag + " ...";
         ws = sendMessageToWebsocket(ws, agent);
         prevDate = new Date();
 
@@ -48,7 +48,7 @@ function assignCoursesByFlag(execute, ids, flag) {
 
         agent.total = total;
         agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        agent.message = "Обработка данных...";
+        agent.message = "Шаг " + step + " из " + max + ". Обработка данных...";
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
@@ -130,13 +130,15 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
 addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
 try {
-    assignCoursesByFlag(Param.in_program, Param.in_program_courses_ids, "in_program");
-    assignCoursesByFlag(Param.is_rck, Param.is_rck_courses_ids, "is_rck");
-    assignCoursesByFlag(Param.is_ock, Param.is_ock_courses_ids, "is_ock");
-    assignCoursesByFlag(Param.is_fcc, Param.is_fcc_courses_ids, "is_fcc");
-    assignCoursesByFlag(Param.is_roiv, Param.is_roiv_courses_ids, "is_roiv");
-    assignCoursesByFlag(Param.is_partner, Param.is_partner_courses_ids, "is_partner");
-    assignCoursesByFlag(Param.with_no_right, Param.with_no_right_courses_ids, "With_no_right");
+    max = 7;
+
+    assignCoursesByFlag(Param.in_program, Param.in_program_courses_ids, "in_program", 1, max);
+    assignCoursesByFlag(Param.is_rck, Param.is_rck_courses_ids, "is_rck", 2, max);
+    assignCoursesByFlag(Param.is_ock, Param.is_ock_courses_ids, "is_ock", 3, max);
+    assignCoursesByFlag(Param.is_fcc, Param.is_fcc_courses_ids, "is_fcc", 4, max);
+    assignCoursesByFlag(Param.is_roiv, Param.is_roiv_courses_ids, "is_roiv", 5, max);
+    assignCoursesByFlag(Param.is_partner, Param.is_partner_courses_ids, "is_partner", 6, max);
+    assignCoursesByFlag(Param.with_no_right, Param.with_no_right_courses_ids, "With_no_right", 7, max);
 
     agent.state = 1;
     agent.processed = processed;

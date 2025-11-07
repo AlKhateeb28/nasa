@@ -1,0 +1,41 @@
+<!-- 7218573144510818185 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>INN</title>
+
+    <script type="text/javascript" src="./scripts/jquery.js"></script>
+    <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+
+</head>
+<body>
+
+<script>
+    function getOrgByInn(inn) {
+        $.ajax({
+            url: "https://apiv2.vbr.ru/next/api/v2/pc/search/?query=0100001671&page=1&pageSize=20",
+            method: "GET",
+            dataType: "json",
+            data: {
+                searchQuery: inn,
+                page: 1,
+                pageSize: 20
+            },
+            async: true,
+            success: function (data) {
+                alert("1 " + data);
+            },
+            error: function (httpRequest, textStatus, errorThrown) {
+                alert("2 " + httpRequest + textStatus + errorThrown);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        getOrgByInn("0100001671");
+    });
+</script>
+
+</body>
+</html>
