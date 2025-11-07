@@ -30,7 +30,7 @@ function addGlovarRecord() {
 }
 
 function updateSingleFlag(flag, step) {
-    agent.message = step + " из 9. Получение " + flag + " данных ...";
+    agent.message = "Шаг " + step + " из 9. Получение " + flag + " данных ...";
     ws = sendMessageToWebsocket(ws, agent);
     prevDate = new Date();
 
