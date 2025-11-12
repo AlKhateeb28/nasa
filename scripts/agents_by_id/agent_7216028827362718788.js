@@ -53,7 +53,7 @@ if (!LdsIsServer) {
     } catch(err) {
         //alert("В процессе выполнения агента произошла ошибка.");
         Cancel();
-    };
+    }
 
     if (ArrayCount(selected) > 0 && selected[0].value != "") {
         var agentId = 7216028827362718788;
@@ -112,7 +112,7 @@ if (!LdsIsServer) {
                     }
                 }
 
-            };
+            }
 
             agent.state = 1;
             agent.processed = processed;
@@ -154,7 +154,7 @@ if (!LdsIsServer) {
     } else {
         alert("Не выбрана 'Сфера'.");
         Cancel();
-    };
+    }
 } else {
     Screen.MsgBox("Запустите агент на стороне клиента!", ms_tools.get_const('c_info'), 'info', 'ok');
 }
