@@ -89,8 +89,8 @@ try {
     reportString.AppendStr("<td class='header'>Результат отбора</td>");
     reportString.AppendStr("<td class='header'>Дата трудоустройства</td>");
     reportString.AppendStr("<td class='header'>Тип трудоустройства</td>");
-    reportString.AppendStr("<td class='header'>Рекомендован на подготовку</td>");
     reportString.AppendStr("<td class='header'>Дата увольнения</td>");
+    reportString.AppendStr("<td class='header'>Рекомендован на подготовку</td>");
     reportString.AppendStr("<td class='header'>Подготовка РП Модуль1</td>");
     reportString.AppendStr("<td class='header'>Подготовка РП Модуль2</td>");
     reportString.AppendStr("<td class='header'>Подготовка РП Модуль3</td>");
@@ -130,12 +130,8 @@ try {
             reportString.AppendStr("<td>" + data.result_selection + "</td>");
             reportString.AppendStr("<td>" + (data.date_position == null ? "" : StrDate(data.date_position, false, false)) + "</td>");
             reportString.AppendStr("<td>" + data.type_position + "</td>");
-
-            typeValue = getAvailableTypesAsString(dossierDocTE);
-
-
-            reportString.AppendStr("<td>" + typeValue + "</td>");
             reportString.AppendStr("<td>" + (data.dismiss_date == null ? "" : StrDate(data.dismiss_date, false, false)) + "</td>");
+            reportString.AppendStr("<td>" + getAvailableTypesAsString(dossierDocTE) + "</td>");
             reportString.AppendStr("<td style='text-align: center;'>" + ArrayCount(dossierDocTE.rcc_rp_programs_m1s) + "</td>");
             reportString.AppendStr("<td style='text-align: center;'>" + ArrayCount(dossierDocTE.rcc_rp_programs_m2s) + "</td>");
             reportString.AppendStr("<td style='text-align: center;'>" + ArrayCount(dossierDocTE.rcc_rp_programs_m3s) + "</td>");

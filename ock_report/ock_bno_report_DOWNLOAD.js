@@ -146,6 +146,7 @@ try {
     reportString.AppendStr("<th class='header' style='width: 200px;'>Должность</th>");
     reportString.AppendStr("<th class='header'>Дата отбора</th>");
     reportString.AppendStr("<th class='header'>Дата трудостройства</th>");
+    reportString.AppendStr("<th class='header'>Дата увольнения</th>");
     reportString.AppendStr("<th class='header'>Рекомендован на подготовку</th>");
     reportString.AppendStr("<th class='header'>Включен в группу на обучение</th>");
     reportString.AppendStr("<th class='header'>ФП дата</th>");
@@ -206,7 +207,7 @@ try {
     reportString.AppendStr("<th class='header'>ТТ_РТК дата статус</th>");
     reportString.AppendStr("<th class='header'>Серт_РП_БНО дата дата</th>");
     reportString.AppendStr("<th class='header'>Серт_РП_БНО дата статус</th>");
-    reportString.AppendStr("<th class='header'>Дата увольнения</th>");
+
 
     reportString.AppendStr("</tr>");
 
@@ -247,6 +248,8 @@ try {
             reportString.AppendStr("<td>" + data.student_position + "</td>")
             reportString.AppendStr("<td>" + StrDate(data.date_selection, false, false) + "</td>");
             reportString.AppendStr("<td>" + StrDate(data.date_position, false, false) + "</td>");
+            // dismiss_date
+            reportString.AppendStr("<td class='align-center'>" + (data.dismiss_date == null ? "" : StrDate(data.dismiss_date, false, false))  + "</td>");
             reportString.AppendStr("<td>" + typeValue + "</td>");
             reportString.AppendStr("<td>" + isInGroup + "</td>");
             // ФП
@@ -365,8 +368,6 @@ try {
             certificateData = getCertificationData( data.student_id, 7143846913328314346);
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
-            // dismiss_date
-            reportString.AppendStr("<td class='align-center'>" + (data.dismiss_date == null ? "" : StrDate(data.dismiss_date, false, false))  + "</td>");
 
             reportString.AppendStr("</tr>");
         } else {
