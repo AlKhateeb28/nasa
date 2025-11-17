@@ -82,6 +82,20 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
                     }
                 }
 
+                if(flag == "is_fcc") {
+                    groupDoc = tools.open_doc(7222721531820341074);
+
+                    if(groupDoc != undefined) {
+                        groupDocTE = groupDoc.TopElem;
+
+                        if (groupDocTE.collaborators.GetOptChildByKey(personId) == undefined) {
+                            groupDocTE.collaborators.ObtainChildByKey();
+                            groupDoc.Save();
+                        }
+                    } else {
+                        addLogMessage(loggerName, "[agent.id: " + agentId + "] Group with ID 7222721531820341074 is not exist!");
+                    }
+                }
                 isSaved = setForcedActivationDate(personId, data.fullname, flag);
             }
 

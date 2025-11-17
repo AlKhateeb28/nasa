@@ -96,6 +96,7 @@ if (LdsIsServer) {
             "       es.education_org_name, " +
             "       ems.id AS education_method_id, " +
             "       em.data.value('(//custom_elems/custom_elem[name=''subcode'']/value)[1]', 'varchar(max)') AS subcode, " +
+            "       em.data.value('(//custom_elems/custom_elem[name=''rck_modul_event'']/value)[1]', 'varchar(max)') AS module_event, " +
             "       ems.name AS education_method_name, " +
             "       es.id AS event_id, " +
             "       es.code AS event_code, " +
@@ -204,6 +205,7 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>Обучающая организация</td>");
         reportString.AppendStr("<td class='header'>ID учебной программы</td>");
         reportString.AppendStr("<td class='header'>Код учебной программы</td>");
+        reportString.AppendStr("<td class='header'>Модуль подготовки</td>");
         reportString.AppendStr("<td class='header'>Учебная программа</td>");
         reportString.AppendStr("<td class='header'>ID мероприятия</td>");
         reportString.AppendStr("<td class='header'>Мероприятие</td>");
@@ -256,6 +258,7 @@ if (LdsIsServer) {
                 "<td>" + data.education_org_name + "</td>" +
                 "<td>'" + data.education_method_id + "</td>" +
                 "<td>" + data.subcode + "</td>" +
+                "<td>" + data.module_event + "</td>" +
                 "<td>" + data.education_method_name + "</td>" +
                 "<td>'" + data.event_id + "</td>" +
                 "<td>" + data.event_name + "</td>" +

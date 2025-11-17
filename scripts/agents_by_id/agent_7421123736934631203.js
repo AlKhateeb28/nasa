@@ -116,7 +116,8 @@ if (LdsIsServer) {
             "    od.data.value('(object_data/custom_elems/custom_elem[name=''task_3''])[1]/value[1]', 'varchar(max)') AS task_3, " +
             "    od.data.value('(object_data/custom_elems/custom_elem[name=''task_comm_1''])[1]/value[1]', 'varchar(max)') AS task_comm_1, " +
             "    od.data.value('(object_data/custom_elems/custom_elem[name=''task_comm_2''])[1]/value[1]', 'varchar(max)') AS task_comm_2, " +
-            "    od.data.value('(object_data/custom_elems/custom_elem[name=''task_comm_3''])[1]/value[1]', 'varchar(max)') AS task_comm_3 " +
+            "    od.data.value('(object_data/custom_elems/custom_elem[name=''task_comm_3''])[1]/value[1]', 'varchar(max)') AS task_comm_3, " +
+            "    od.data.value('(//doc_info/modification)[1]/date[1]', 'datetime') AS modification_date" +
             " FROM [WTDB].[dbo].object_datas ods " +
             "    INNER JOIN [WTDB].[dbo].object_data od ON ods.id = od.id " +
             "    INNER JOIN [WTDB].[dbo].collaborators cs ON ods.object_id = cs.id " +
@@ -164,6 +165,7 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>Изучен онлайн-тренинг Принципы и технологии обучения взрослых</td>");
         reportString.AppendStr("<td class='header'>Пройдена подготовка/Допущен к сертификации</td>");
         reportString.AppendStr("<td class='header' style='width: 200px;'>Дата допуска к сертификации</td>");
+        reportString.AppendStr("<td class='header' style='width: 200px;'>Последнее изменение</td>");
         reportString.AppendStr("<td class='header'>Программа «7 видов потерь» Результат</td>");
         reportString.AppendStr("<td class='header'>Программа «7 видов потерь» Дата сертификации</td>");
         reportString.AppendStr("<td class='header'>Программа «7 видов потерь» Номер сертификата</td>");
@@ -322,6 +324,7 @@ if (LdsIsServer) {
                 "<td>" + item.ibp + "</td>" +
                 "<td>" + item.cert_flag + "</td>" +
                 "<td>" + (item.date_access == "" ? "" : StrDate(Date(item.date_access), false)) + "</td>" +
+                "<td>" + (item.modification_date == "" ? "" : StrDate(Date(item.modification_date), true, true)) + "</td>" +
                 "<td>" + item.result_1 + "</td>" +
                 "<td>" + item.date_1 + "</td>" +
                 "<td>" + item.cert_1 + "</td>" +
