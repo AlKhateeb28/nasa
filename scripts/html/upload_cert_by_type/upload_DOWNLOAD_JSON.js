@@ -27,16 +27,19 @@ try {
         "       certs.number, " +
         "       cs.fullname, " +
         "       rs.name AS region_name, " +
+        "       fact_rs.name AS fact_region_name, " +
         "       os.code, " +
         "       os.name AS org_name, " +
         "       cert.data.value('(//custom_elems/custom_elem[name=''form_dogovor_sootvet'']/value)[1]', 'varchar(max)') AS dogovor, " +
         "       cert.data.value('(//custom_elems/custom_elem[name=''edu_prog_names'']/value)[1]', 'varchar(max)') AS edu_name, " +
         "       cert.data.value('(//custom_elems/custom_elem[name=''programm_name'']/value)[1]', 'varchar(max)') AS prog_name " +
         " FROM [WTDB].[dbo].certificates certs " +
-        "    INNER JOIN [WTDB].[dbo].certificate cert ON certs.id = cert.id " +
-        "    INNER JOIN [WTDB].[dbo].collaborators cs ON certs.person_id = cs.id " +
-        "    INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
-        "    INNER JOIN [WTDB].[dbo].regions rs ON os.region_id = rs.id " +
+        "   INNER JOIN [WTDB].[dbo].certificate cert ON certs.id = cert.id " +
+        "   INNER JOIN [WTDB].[dbo].collaborators cs ON certs.person_id = cs.id " +
+        "   INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
+        "   INNER JOIN [WTDB].[dbo].org o ON os.id = o.id" +
+        "   INNER JOIN [WTDB].[dbo].regions rs ON os.region_id = rs.id " +
+        "   INNER JOIN [WTDB].[dbo].regions fact_rs ON o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = fact_rs.id " +
         (StrCharCount(serial) == 0 ? "" : " WHERE certs.serial = '" + serial + "' ")));
 
     reportString.AppendStr("<html>");
@@ -50,6 +53,7 @@ try {
     reportString.AppendStr("<td class='header'>Дата выдачи</td>");
     reportString.AppendStr("<td class='header'>ФИО сотрудника</td>");
     reportString.AppendStr("<td class='header'>Регион</td>");
+    reportString.AppendStr("<td class='header'>Фактический регион</td>");
     reportString.AppendStr("<td class='header'>ИНН</td>");
     reportString.AppendStr("<td class='header'>Предприятие</td>");
     reportString.AppendStr("<td class='header'>Формулировка</td>");
@@ -64,6 +68,7 @@ try {
             "<td>" + data.delivery_date + "</td>" +
             "<td>" + data.fullname + "</td>" +
             "<td>" + data.region_name + "</td>" +
+            "<td>" + data.fact_region_name + "</td>" +
             "<td>" + data.code + "</td>" +
             "<td>" + data.org_name + "</td>" +
             "<td>" + data.dogovor + "</td>" +
