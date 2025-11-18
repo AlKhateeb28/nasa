@@ -38,9 +38,41 @@ var result = {};
 result.errorMessage = "";
 
 try {
-    year = OptInt(Request.Query.GetOptProperty("year", "2025"));
+    date = Request.Query.GetOptProperty("date", "01.01.2025 00:00:00");
+    year = date.split(" ")[0];
+    year = year.split(".")[2];
 
-    // STATE4 (Пройдено)
+    // STATE4 (Пройдено) по дню года
+    result.state4ByDayData = [];
+    state4ByDayList = ArrayDirect(XQuery("sql: " +
+        " SET DATEFORMAT dmy;" +
+        " DECLARE @from datetime = '01.01." + year + " 00:00:00' " +
+        " DECLARE @to datetime = '" + date + "' " +
+        " SET DATEFIRST 1; " +
+        " SELECT DATEPART(day, ls.last_usage_date) AS day, " +
+        "       DATEPART(month, ls.last_usage_date) AS month, " +
+        "       MAX(DATEPART(week, ls.last_usage_date)) AS week, " +
+        "       COUNT(ls.id) AS cnt " +
+        " FROM [WTDB].[dbo].learnings ls " +
+        "       INNER JOIN [WTDB].[dbo].courses crs ON ls.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE ls.state_id = 4 " +
+        "       AND ls.last_usage_date BETWEEN @from AND @to " +
+        "GROUP BY DATEPART(day, ls.last_usage_date), DATEPART(month, ls.last_usage_date) " +
+        "ORDER BY month, day "));
+
+    for(state4ByDayElement in state4ByDayList) {
+        element = {};
+
+        element.day = state4ByDayElement.day;
+        element.month = state4ByDayElement.month;
+        element.year = year;
+        element.week = state4ByDayElement.week;
+        element.count = state4ByDayElement.cnt;
+
+        result.state4ByDayData.push(element);
+    }
+
+    // STATE4 (Пройдено) по неделе года
     result.state4Data = [];
     state4List = ArrayDirect(XQuery("sql: " +
         " SET DATEFIRST 1; " +

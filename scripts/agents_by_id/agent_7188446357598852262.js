@@ -43,7 +43,8 @@ try {
     for (data in dataList) {
         eventResultList = ArrayDirect(XQuery("sql: " +
             " SELECT ers.id, " +
-            "       ems.code " +
+            "       ems.code, " +
+            "       ers.person_id" +
             " FROM [WTDB].[dbo].event_results ers " +
             "    INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id AND UPPER(es.status_id) = 'CLOSE' AND YEAR(es.start_date) >= 2025 " +
             "    INNER JOIN [WTDB].[dbo].education_methods ems ON es.education_method_id = ems.id " +
@@ -124,6 +125,7 @@ try {
 
                 dossierDoc.Save();
 
+                saved++;
             } else {
                 addLogMessage(loggerName, "[agent.id: " + agentId + "] Dossier OCK/RCK with ID " + data.id + " is not exist!");
 
