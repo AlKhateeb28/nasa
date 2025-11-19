@@ -10,6 +10,8 @@ class IndexPage extends Object {
     }
 
     static onDownloadOCK() {
+        $("#ock_image").css("visibility", "visible");
+
         IndexPage.beforeReport("Формируется выгрузка ОЦК ...");
 
         const messageElement = $("message");
@@ -28,14 +30,20 @@ class IndexPage extends Object {
 
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
+
+                $("#ock_image").css("visibility", "hidden");
             },
             error: function(error) {
                 IndexPage.onError(7137494958071545430);
+
+                $("#ock_image").css("visibility", "hidden");
             }
         });
     }
 
     static onDownloadOCKBNO() {
+        $("#ock_bno_image").css("visibility", "visible");
+
         IndexPage.beforeReport("Формируется выгрузка ОЦК БНО...");
 
         const messageElement = $("message");
@@ -54,14 +62,20 @@ class IndexPage extends Object {
 
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
+
+                $("#ock_bno_image").css("visibility", "hidden");
             },
             error: function(error) {
                 IndexPage.onError(7151616261867663994);
+
+                $("#ock_bno_image").css("visibility", "hidden");
             }
         });
     }
 
     static onDownloadRCK() {
+        $("#rck_image").css("visibility", "visible");
+
         IndexPage.beforeReport("Формируется выгрузка РЦК...");
 
         const messageElement = $("message");
@@ -80,9 +94,13 @@ class IndexPage extends Object {
 
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
+
+                $("#rck_image").css("visibility", "hidden");
             },
             error: function(error) {
                 IndexPage.onError(7159099470552366682);
+
+                $("#rck_image").css("visibility", "hidden");
             }
         });
     }
