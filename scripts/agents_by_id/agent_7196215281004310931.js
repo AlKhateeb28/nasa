@@ -139,9 +139,9 @@ if (LdsIsServer) {
             "       doss.region_name AS current_region, " +
             "       cur_os.code AS current_inn, " +
             "       cur_os.name AS current_org, " +
-            "       IIF(o.data.value('(//custom_elems/custom_elem[name=''is_rcc'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rcc'']/value)[1]', 'bit') AS INT)) AS is_rcc, " +
-            "       IIF(o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') AS INT)) AS is_ock_ss, " +
-            "       IIF(o.data.value('(//custom_elems/custom_elem[name=''is_ock_bno'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock_bno'']/value)[1]', 'bit') AS INT)) AS is_ock_bno, " +
+            "       IIF(cur_o.data.value('(//custom_elems/custom_elem[name=''is_rcc'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rcc'']/value)[1]', 'bit') AS INT)) AS is_rcc, " +
+            "       IIF(cur_o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock_ss'']/value)[1]', 'bit') AS INT)) AS is_ock_ss, " +
+            "       IIF(cur_o.data.value('(//custom_elems/custom_elem[name=''is_ock_bno'']/value)[1]', 'bit') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock_bno'']/value)[1]', 'bit') AS INT)) AS is_ock_bno, " +
             "       pas.name AS pas_name, " +
             "       o.data.value('(//custom_elems/custom_elem[name=''short_name'']/value)[1]', 'varchar(max)') AS short_name," +
             "       doss.date_position, " +
