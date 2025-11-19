@@ -161,15 +161,16 @@ if (LdsIsServer) {
             "         INNER JOIN [WTDB].[dbo].cc_collaborator_dossiers cds ON ers.person_id = cds.collaborator_id " +
             "         INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employees doss ON cds.dossier_id = doss.id " +
             "         INNER JOIN [WTDB].[dbo].orgs cur_os ON doss.subdivision_name = cur_os.id " +
+            "         INNER JOIN [WTDB].[dbo].org cur_o ON cur_os.id = cur_o.id " +
             "         LEFT JOIN [WTDB].[dbo].positions AS ps ON cs.position_id = ps.id " +
             "         INNER JOIN [WTDB].[dbo].orgs AS os ON cs.org_id = os.id " +
             "         INNER JOIN [WTDB].[dbo].org AS o ON os.id = o.id " +
             "         INNER JOIN [WTDB].[dbo].regions AS rs ON os.region_id = rs.id " +
-            "         INNER JOIN [WTDB].[dbo].regions AS f_rs ON o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = f_rs.id " +
+            "         INNER JOIN [WTDB].[dbo].regions AS f_rs ON cur_o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = f_rs.id " +
             "         INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +
             "         LEFT JOIN [WTDB].[dbo].contracts AS e_cont ON e.data.value('(event/contract_id)[1]', 'bigint') = e_cont.id " +
             "         LEFT JOIN [WTDB].[dbo].contracts AS er_cont ON er.data.value('(//custom_elems/custom_elem[name=''contract'']/value)[1]', 'bigint') = er_cont.id " +
-            "         LEFT JOIN [WTDB].[dbo].professional_areas pas ON o.data.value('(//custom_elems/custom_elem[name=''professional_area'']/value)[1]', 'bigint') = pas.id " +
+            "         LEFT JOIN [WTDB].[dbo].professional_areas pas ON cur_o.data.value('(//custom_elems/custom_elem[name=''professional_area'']/value)[1]', 'bigint') = pas.id " +
             " ORDER BY cs.fullname, os.name, es.finish_date "
         ));
 
@@ -197,8 +198,8 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>Текущая организация</td>");
         reportString.AppendStr("<td class='header'>Сокращенное название организации</td>");
         reportString.AppendStr("<td class='header'>Фактический регион обучения</td>");
-        reportString.AppendStr("<td class='header'>ИНН</td>");
-        reportString.AppendStr("<td class='header'>Организация</td>");
+        reportString.AppendStr("<td class='header'>ИНН организации обучения</td>");
+        reportString.AppendStr("<td class='header'>Организация обучения</td>");
         reportString.AppendStr("<td class='header'>Код участника</td>");
         reportString.AppendStr("<td class='header'>ФИО участника</td>");
         reportString.AppendStr("<td class='header'>Должность участника</td>");
