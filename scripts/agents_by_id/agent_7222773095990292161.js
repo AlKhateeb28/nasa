@@ -208,5 +208,5 @@ if (!LdsIsServer) {
         ws.Send("close");
     } catch (e) {}
 
-    alert("Сертифицировано: " + cert + "\n Не сертифицировано: " + noCert);
+    alert("Сертифицировано: " + cert + "\n Не сертифицировано: " + noCert + "\nПропущено: " + skipped);
 }
