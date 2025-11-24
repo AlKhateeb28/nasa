@@ -1,0 +1,83 @@
+<!-- 7209020971651852354 -->
+<!-- found_al = ArrayOptFirstElem( XQuery( "for $elem in active_learnings where $elem/person_id=" + objDoc.person_id + " and $elem/course_id=" + objDoc.course_id + " return $elem" ) ) -->
+<%
+found_al = ArrayOptFirstElem( XQuery( "for $elem in active_learnings where $elem/person_id=" + objDocID + " and $elem/course_id=7119812308457777642 return $elem" ) )
+%>
+<style>
+    body {
+        font-family: 'Noto Sans', sans-serif;
+    }
+
+    .top-block {
+        width: 600px;
+        height: 50px;
+        margin-top: -10px;
+        margin-left: -10px;
+        background-color: #1e2b4c;
+    }
+
+    .top-image {
+        height: 24px;
+        width: 237px;
+        margin-top: 14px;
+        margin-left: 10px;
+    }
+
+    .middle-block {
+        height: 500px;
+        width: 600px;
+        margin-left: -10px;
+        margin-top: -20px;
+        background-repeat: no-repeat;
+        background-image: url(https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/download_file.html?file_id=7280447688293041983);
+    }
+
+    .bottom-block {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 600px;
+        height: 50px;
+        background-color: #1e2b4c;
+        color: whitesmoke;
+    }
+</style>
+
+<div>
+    <div class="top-block">
+        <img class="top-image" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/download_file.html?file_id=7209342748652181663"/>
+    </div>
+    <div class="middle-block">
+        <div>
+            <p style="font-size: 20px; color: #d3008b; margin-right: 240px; padding-top: 24px; margin-left: 40px;">
+                ЭЛЕКТРОННЫЙ КУРС
+            </p>
+            <p style="margin-left: 40px; margin-right: 240px; color: #5992cd; font-size: 21px;">
+                «Методические рекомендации_Реализация программы по повышению производительности труда на предприятии (стандартная поддержка)<!-- %=objDoc.course_name%-->»
+            </p>
+            <p style="font-size: 21px; margin-left: 40px;">
+                <%=objDoc.firstname%> <%=objDoc.middlename%><!--%=objDoc.person_fullname%-->,
+                приглашаем пройти обучение.
+            </p>
+            <p style="font-size: 18px; margin-left: 40px;">
+                После успешного прохождения курса Вы сможете скачать<br/>
+                сертификат в разделе <a style="color: #2b218a; font-weight: bold; text-decoration: none;" href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/view_doc.html?mode=my_account">МОЁ ОБУЧЕНИЕ</a>
+            </p>
+            <p style="margin-left: 40px;">
+                Рекомендуется проходить курс на персональном компьютере<br/>
+                в браузере Google Chrome.
+            </p>
+            <p>
+            <div style="margin-left: 40px; background-image: linear-gradient(290deg, #bf664a, #aa214b, #6656ae, #7b93cc); width: 200px; ">
+                <a href="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/view_doc.html?mode=learning_proc&object_id=<%=found_al.id%>"  style="color: whitesmoke;  text-decoration: none; margin-left: 32px;">ПЕРЕЙТИ К КУРСУ</a>
+            </div>
+            </p>
+        </div>
+    </div>
+    <div class="bottom-block">
+        <p style="font-size: 12px; margin-left: 10px; line-height: 120%;">
+            Данное письмо сгенерировано автоматически, не отвечайте на него. При возникновении технических
+            проблем просим обращаться по адресу - <a style="color: whitesmoke; font-weight: bold; text-decoration: none;" href="mailto:support@pptrf.ru">support@pptrf.ru</a>
+        </p>
+    </div>
+</div>
