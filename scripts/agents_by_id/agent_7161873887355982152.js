@@ -83,6 +83,26 @@ try {
             }
         }
 
+        // DOSSIER VNTREN_2025
+        dossierList = ArrayDirect(XQuery("sql: " +
+            " SELECT id " +
+            " FROM [WTDB].[dbo].cc_dossier_vntren_2025s " +
+            " WHERE trainer_id = " + data.id));
+
+        for (dossier in dossierList) {
+            dossierDoc = tools.open_doc(dossier.id);
+
+            if(dossierDoc != undefined) {
+                dossierDoc.TopElem.status_trainer = 'уволен';
+
+                dossierDoc.Save();
+
+                isSaved = true;
+            } else {
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] Dossier for VNTREN with ID " + dossier.id + " is not exists!");
+            }
+        }
+
         processed++;
 
         if(isSaved) {
