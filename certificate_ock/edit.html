@@ -46,6 +46,7 @@
 
     <script type="text/javascript" src="./scripts/jquery.js"></script>
     <script type="text/javascript" src="./fcc/js/jquery.mask.js"></script>
+    <script type="text/javascript" src="./fcc/js/moment.js"></script>
     <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
     <script type="text/javascript" src="./fcc/js/common_classes.js"></script>
     <script type="text/javascript" src="./fcc/js/calendar.js"></script>
@@ -66,7 +67,7 @@
                 </div>
 
                 <div style="padding-top: 30px;">
-                    <div id="organization" class="float-left" style="margin-top: 5px; padding-left: 20px; width: 80%"></div>
+                    <div id="organization" class="float-left" style="margin-top: 5px; padding-left: 20px; width: 80%; min-height: 85px; height: 85px;"></div>
                 </div>
 
                 <div style="padding-top: 90px;">
@@ -97,7 +98,7 @@
                 <div style="padding-top: 60px;">
                     <div class="float-left" style="margin-top: 5px; margin-left: 21px;">Дата сертификации: </div>
                     <div class="float-left" style="margin-left: 48px; width: 7%;">
-                        <input id="certificate_date" type="text" class="input-control" size="6"/>
+                        <input id="certificate_date" type="text" class="input-control" size="6" onfocusout="EditPage.validateCertificateDate(this)"/>
                     </div>
                     <div class="float-left" style="margin-left: 71px;">
                         <button id="certificate_button" class="button-control enable-button" onclick="event.stopPropagation(); showCalendar('certificate_date')">
@@ -140,6 +141,20 @@
                         </div>
                     </div>
                 </div>
+                <div style="padding-top: 52px; padding-right: 30px;">
+                    <div class="float-right">
+                        <div class="float-left" style="padding-right: 10px;">
+                            <button id="print_pdf_button" class="button-control enable-button" onclick="EditPage.onPdf()">
+                                <div class="text">Распечатать PDF</div>
+                            </button>
+                        </div>
+                        <div class="float-left">
+                            <button id="print_all_pdf_button" class="button-control enable-button" onclick="EditPage.onAllPdf()">
+                                <div class="text">Распечатать все PDF</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -160,14 +175,13 @@
     }
 
     $(document).ready(function () {
-        $("#education_date_date").mask("99.99.9999");
         $("#certificate_date").mask("99.99.9999");
 
         $("#calendar_element").html(Calendar.getContent());
         Calendar.initialize();
         Calendar.hide();
 
-        EditPage.getJson("obp"/*13*/);
+        EditPage.getJson("obp");
     });
 </script>
 

@@ -2,29 +2,33 @@
 // 7205436617131291755
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
 
-function getProgramNamePrefixByIndex(index, personId) {
+function getCertificateByIndex(index, personId) {
     dataList = ArrayDirect(XQuery("sql: " +
         " SELECT doss.id, " +
         "       dos.data.value('(//custom_elems/custom_elem[name=''ss_result_" + index + "'']/value)[1]', 'varchar(max)') AS result, " +
-        "       dos.data.value('(//custom_elems/custom_elem[name=''ss_cert_" + index + "_id'']/value)[1]', 'bigint') AS certificate " +
+        "       dos.data.value('(//custom_elems/custom_elem[name=''ss_cert_" + index + "_id'']/value)[1]', 'bigint') AS certificate_id " +
         " FROM [WTDB].[dbo].object_datas doss " +
         "         INNER JOIN [WTDB].[dbo].object_data dos ON doss.id = dos.id " +
         " WHERE doss.object_id = " + personId +
         "       AND doss.object_data_type_id = 7205394578516177541"));
 
+    certificateData = {};
+    certificateData.id = "";
+    certificateData.prefix = "";
+
     if(ArrayCount(dataList) > 0) {
-        if(dataList[0].result == "Сертифицировать" && dataList[0].certificate != null) {
-            return "&#9873; ";
+        if(dataList[0].result == "Сертифицировать" && dataList[0].certificate_id != null) {
+            certificateData.id = dataList[0].certificate_id;
+            certificateData.prefix = "&#9873; ";
         } else {
-            if(dataList[0].result == "Не сертифицировать" && dataList[0].certificate == null) {
-                return "&#9872; ";
-            } else {
-                return "";
+            if(dataList[0].result == "Не сертифицировать" && dataList[0].certificate_id == null) {
+                certificateData.id = "";
+                certificateData.prefix = "&#9872; ";
             }
         }
     }
 
-    return "";
+    return certificateData;
 }
 
 agentId = 7205436617131291755;
@@ -67,48 +71,66 @@ try {
     }
 
     // BASE PROGRAMS
+    certificateData = getCertificateByIndex("obp", personId);
     element = {};
-    element.name = getProgramNamePrefixByIndex("obp", personId) + "Основы бережливого производства в социальной сфере";
+    element.certificateId = certificateData.id;
+    element.name = certificateData.prefix + "Основы бережливого производства в социальной сфере";
     element.index = "obp";
     element.certificateTypeId = "" + 7129685550282174837;
     element.serial = "Т-С";
+    element.printForm = "" + 7206147180817478603;
     result.baseProgram.push(element);
 
+    certificateData = getCertificateByIndex("vsm", personId);
     element = {};
-    element.name = getProgramNamePrefixByIndex("vsm", personId) + "Картирование процессов в социальной сфере";
+    element.certificateId = certificateData.id;
+    element.name = certificateData.prefix + "Картирование процессов в социальной сфере";
     element.index = "vsm";
     element.certificateTypeId = "" + 7129685550282174837;
     element.serial = "Т-С";
+    element.printForm = "" + 7206147180817478603;
     result.baseProgram.push(element);
 
+    certificateData = getCertificateByIndex("mrp", personId);
     element = {};
-    element.name = getProgramNamePrefixByIndex("mrp", personId) + "Методика решения проблем для социальной сферы";
+    element.certificateId = certificateData.id;
+    element.name = certificateData.prefix + "Методика решения проблем для социальной сферы";
     element.index = "mrp";
     element.certificateTypeId = "" + 7129685550282174837;
     element.serial = "Т-С";
+    element.printForm = "" + 7206147180817478603;
     result.baseProgram.push(element);
 
+    certificateData = getCertificateByIndex("5c", personId);
     element = {};
-    element.name = getProgramNamePrefixByIndex("5c", personId) + "5С в организации социальной сферы";
+    element.certificateId = certificateData.id;
+    element.name = certificateData.prefix + "5С в организации социальной сферы";
     element.index = "5c";
     element.certificateTypeId = "" + 7129685550282174837;
     element.serial = "Т-С";
+    element.printForm = "" + 7206147180817478603;
     result.baseProgram.push(element);
 
     // RP PROGRAMS
+    certificateData = getCertificateByIndex("rp", personId);
     element = {};
-    element.name = getProgramNamePrefixByIndex("rp", personId) + "Руководитель проекта";
+    element.certificateId = certificateData.id;
+    element.name = certificateData.prefix + "Руководитель проекта";
     element.index = "rp";
     element.certificateTypeId = "" + 7129689286386417453;
     element.serial = "РП-С";
+    element.printForm = "" + 7206147797616163353;
     result.rpProgram.push(element);
 
     // EXTRA PROGRAMS
+    certificateData = getCertificateByIndex("am", personId);
     element = {};
-    element.name = getProgramNamePrefixByIndex("am", personId) + "Аналитик-методолог";
+    element.certificateId = certificateData.id;
+    element.name = certificateData.prefix + "Аналитик-методолог";
     element.index = "am";
     element.certificateTypeId = "" + 7129689433552140002;
     element.serial = "А-С";
+    element.printForm = "" + 7206147797616163353;
     result.extraProgram.push(element);
 
     dossierList = ArrayDirect(XQuery("sql: " +

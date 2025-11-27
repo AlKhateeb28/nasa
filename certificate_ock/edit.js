@@ -1,4 +1,5 @@
-var selectedOption = null;
+let selectedOption = null;
+let programs = [];
 
 class EditPage extends Object {
     constructor() {
@@ -47,6 +48,8 @@ class EditPage extends Object {
                         $("#organization").html(data.org_code + ", " + data.org_name);
                     }
 
+                    programs = [];
+
                     $("#main_group").empty();
                     data.baseProgram.forEach((element, index) => {
                         const optionElement = EditPage.addOption("main_group", element.name, element.index);
@@ -54,6 +57,13 @@ class EditPage extends Object {
                         optionElement.attr("data-dossier-index", element.index);
                         optionElement.attr("data-cert-type-id", element.certificateTypeId);
                         optionElement.attr("data-cert", element.serial);
+                        optionElement.attr("data-print-form", element.printForm);
+                        optionElement.attr("data-cert-id", element.certificateId);
+
+                        const program = {};
+                        program.certificateId = element.certificateId;
+                        program.printForm = element.printForm;
+                        programs.push(program);
                     });
 
                     $("#rp_group").empty();
@@ -63,6 +73,13 @@ class EditPage extends Object {
                         optionElement.attr("data-dossier-index", element.index);
                         optionElement.attr("data-cert-type-id", element.certificateTypeId);
                         optionElement.attr("data-cert", element.serial);
+                        optionElement.attr("data-print-form", element.printForm);
+                        optionElement.attr("data-cert-id", element.certificateId);
+
+                        const program = {};
+                        program.certificateId = element.certificateId;
+                        program.printForm = element.printForm;
+                        programs.push(program);
                     });
 
                     $("#additional_group").empty();
@@ -72,6 +89,13 @@ class EditPage extends Object {
                         optionElement.attr("data-dossier-index", element.index);
                         optionElement.attr("data-cert-type-id", element.certificateTypeId);
                         optionElement.attr("data-cert", element.serial);
+                        optionElement.attr("data-print-form", element.printForm);
+                        optionElement.attr("data-cert-id", element.certificateId);
+
+                        const program = {};
+                        program.certificateId = element.certificateId;
+                        program.printForm = element.printForm;
+                        programs.push(program);
                     });
 
                     if (programId !== undefined) {
@@ -117,9 +141,15 @@ class EditPage extends Object {
                 } else {
                     console.log("Error: " + data.errorMessage);
                 }
+
+                EditPage.checkEnablePdfPrint();
+                EditPage.checkEnableAllPdfPrint();
             },
             error: function(error) {
                 console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+
+                EditPage.checkEnablePdfPrint();
+                EditPage.checkEnableAllPdfPrint();
             }
         });
     }
@@ -140,15 +170,17 @@ class EditPage extends Object {
     }
 
     static onProgramChange() {
+        EditPage.setCorrectBackgroundColor(false);
+
         const selectedOption = $('#program').find(":selected");
 
-        this.getJson(selectedOption.attr("data-dossier-index"), selectedOption.val());
+        EditPage.getJson(selectedOption.attr("data-dossier-index"), selectedOption.val());
     }
 
     static disableAllElements() {
         $("#program").attr("disabled", true);
 
-        this.refreshElements("enable-button", "disable-button", true);
+        EditPage.refreshElements("enable-button", "disable-button", true);
     }
 
     static save() {
@@ -204,9 +236,15 @@ class EditPage extends Object {
 
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
+
+                EditPage.checkEnablePdfPrint();
+                EditPage.checkEnableAllPdfPrint();
             },
             error: function(error) {
                 console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+
+                EditPage.checkEnablePdfPrint();
+                EditPage.checkEnableAllPdfPrint();
             }
         });
     }
@@ -249,9 +287,15 @@ class EditPage extends Object {
 
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
+
+                EditPage.checkEnablePdfPrint();
+                EditPage.checkEnableAllPdfPrint();
             },
             error: function(error) {
                 console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+
+                EditPage.checkEnablePdfPrint();
+                EditPage.checkEnableAllPdfPrint();
             }
         });
     }
@@ -296,5 +340,131 @@ class EditPage extends Object {
             deleteButtonElement.removeClass("disable-button");
             deleteButtonElement.addClass("enable-button");
         }
+    }
+
+    static setIncorrectBackgroundColor(id) {
+        const dateElement = $("#" + id);
+        const saveButtonElement = $("#save_button");
+
+        dateElement.css("background-color", "#fa8989");
+
+        saveButtonElement.removeClass("enable-button");
+        saveButtonElement.addClass("disable-button");
+        saveButtonElement.attr("disabled", true);
+    }
+
+    static setCorrectBackgroundColor(isOperateSaveButton) {
+        $("#certificate_date").css("background-color", "#ffffff");
+
+        if(isOperateSaveButton) {
+            const saveButtonElement = $("#save_button");
+            saveButtonElement.removeClass("disable-button");
+            saveButtonElement.addClass("enable-button");
+            saveButtonElement.attr("disabled", false);
+        }
+    }
+
+    static validateCertificateDate(element) {
+        if($("#" + element.id).val().length === 0) {
+            return;
+        }
+
+        const certificateDate = moment($("#" + element.id).val(), "DD.MM.YYYY");
+
+        if(!certificateDate.isValid()) {
+            EditPage.setIncorrectBackgroundColor(element.id);
+
+            alert("Некорректный формат даты!");
+        } else {
+            const year = parseInt(certificateDate.format("DD.MM.YYYY").split(",")[0].split(".")[2]);
+
+            if(year < 2018 || year > 2030) {
+                EditPage.setIncorrectBackgroundColor(element.id);
+
+                alert("Год за пределами периода реализации национального, федерального проекта (2018 - 2030)!");
+            } else {
+                EditPage.setCorrectBackgroundColor(true);
+            }
+        }
+    }
+
+    static onPdf() {
+        const selectedOption = $('#program').find(":selected");
+
+        const printForm = selectedOption.attr("data-print-form");
+        const certificateId = selectedOption.attr("data-cert-id");
+
+        if(certificateId.length > 0) {
+            EditPage.printPdf(certificateId, printForm);
+        }
+    }
+
+    static onAllPdf() {
+        programs.forEach((certificate, index) => {
+            if(certificate.certificateId.length > 0) {
+                EditPage.printPdf(certificate.certificateId, certificate.printForm);
+            }
+        });
+    }
+
+    static printPdf(certificateId, printForm) {
+        window.open(
+            "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/view_print_form.html?print_form_id=" + printForm + "&object_id=" + certificateId + "&sid=7863045222699914512",
+            "_blank"
+        );
+    }
+
+    static checkEnablePdfPrint() {
+        const selectedOption = $('#program').find(":selected");
+
+        if(selectedOption.attr("data-cert-id").length > 0) {
+            EditPage.enablePdfPrint();
+        } else {
+            EditPage.disabledPdfPrint();
+        }
+    }
+
+    static enablePdfPrint() {
+        const printPdfButtonElement = $("#print_pdf_button");
+        printPdfButtonElement.removeClass("disable-button");
+        printPdfButtonElement.addClass("enable-button");
+        printPdfButtonElement.attr("disabled", false);
+    }
+
+    static disabledPdfPrint() {
+        const printPdfButtonElement = $("#print_pdf_button");
+        printPdfButtonElement.removeClass("enable-button");
+        printPdfButtonElement.addClass("disable-button");
+        printPdfButtonElement.attr("disabled", true);
+    }
+
+    static checkEnableAllPdfPrint() {
+        let hasCertificates = false;
+
+        programs.forEach((certificate, index) => {
+            if (certificate.certificateId.length > 0) {
+                hasCertificates = true;
+            }
+        });
+
+        if(hasCertificates) {
+            EditPage.enabledAllPdfPrint();
+        } else {
+            EditPage.disabledAllPdfPrint();
+        }
+    }
+
+    static enabledAllPdfPrint() {
+        const printPdfButtonElement = $("#print_all_pdf_button");
+        printPdfButtonElement.removeClass("disable-button");
+        printPdfButtonElement.addClass("enable-button");
+        printPdfButtonElement.attr("disabled", false);
+    }
+
+    static disabledAllPdfPrint() {
+        const printPdfButtonElement = $("#print_all_pdf_button");
+        printPdfButtonElement.removeClass("enable-button");
+        printPdfButtonElement.addClass("disable-button");
+        printPdfButtonElement.attr("disabled", true);
     }
 }
