@@ -67,7 +67,7 @@ try {
         if(ArrayCount(duplicateCoursesData) == OptInt(data.count)) {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] --------");
 
-            deleted += ArrayCount(duplicateCoursesData) - 1;
+            deleted = ArrayCount(duplicateCoursesData) - 1;
 
             // DELETE COURSE'S DUPLICATES
             for(i = 1; i < ArrayCount(duplicateCoursesData); i++) {
