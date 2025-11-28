@@ -105,7 +105,7 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
                         groupDocTE = groupDoc.TopElem;
 
                         if (groupDocTE.collaborators.GetOptChildByKey(personId) == undefined) {
-                            groupDocTE.collaborators.ObtainChildByKey();
+                            groupDocTE.collaborators.ObtainChildByKey(personId);
                             groupDoc.Save();
                         }
                     } else {
