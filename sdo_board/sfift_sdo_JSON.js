@@ -21,6 +21,17 @@ function getLongQuery(regionId) {
         " INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id AND os.region_id = " + regionId;
 }
 
+function createDefaultWeeklyList(list) {
+    for(i = 1; i <= 53; i++) {
+        element = {};
+
+        element.week = i;
+        element.count = 0;
+
+        list.push(element);
+    }
+}
+
 var adminIds = [
     7351734047845980789, // AA
     6743923349751162819, //FK
@@ -41,6 +52,25 @@ try {
     date = Request.Query.GetOptProperty("date", "01.01.2025 00:00:00");
     year = date.split(" ")[0];
     year = year.split(".")[2];
+
+    // STATE0 (Назначено)
+    result.state0Data = [];
+    createDefaultWeeklyList(result.state0Data);
+
+    state0List = ArrayDirect(XQuery("sql: " +
+        " SET DATEFIRST 1; " +
+        " SELECT DATEPART(week, als.start_usage_date) AS week, " +
+        "       COUNT(als.id) AS cnt " +
+        " FROM [WTDB].[dbo].active_learnings als " +
+        "       INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE als.state_id = 0 " +
+        "       AND YEAR(als.start_usage_date) = " + year +
+        " GROUP BY DATEPART(week, als.start_usage_date) " +
+        " ORDER BY week "));
+
+    for(state0Element in state0List) {
+        result.state0Data[state0Element.week - 1].count = state0Element.cnt;
+    }
 
     // STATE4 (Пройдено) по дню года
     result.state4ByDayData = [];
@@ -74,6 +104,8 @@ try {
 
     // STATE4 (Пройдено) по неделе года
     result.state4Data = [];
+    createDefaultWeeklyList(result.state4Data);
+
     state4List = ArrayDirect(XQuery("sql: " +
         " SET DATEFIRST 1; " +
         " SELECT DATEPART(week, ls.last_usage_date) AS week, " +
@@ -86,12 +118,25 @@ try {
         " ORDER BY week "));
 
     for(state4Element in state4List) {
-        element = {};
+        result.state4Data[state4Element.week - 1].count = state4Element.cnt;
+    }
 
-        element.week = state4Element.week;
-        element.count = state4Element.cnt;
+    // DELETED DUPLICATES
+    result.stateDelDupData = [];
+    createDefaultWeeklyList(result.stateDelDupData);
 
-        result.state4Data.push(element);
+    stateDelDupList = ArrayDirect(XQuery("sql: " +
+        " SET DATEFIRST 1; " +
+        " SELECT DATEPART(week, ames.start_date) AS week, " +
+        "       SUM(CAST(IIF(ames.saved = '--', 0, ames.saved) AS INT)) AS deleted " +
+        " FROM [WTDB].[dbo].cc_agent_monitor_events ames " +
+        " WHERE ames.agent_id = 7225211062640770399 " +
+        "    AND YEAR(ames.start_date) = " + year +
+        " GROUP BY DATEPART(week, ames.start_date) " +
+        " ORDER BY week "));
+
+    for(stateDelDupElement in stateDelDupList) {
+        result.stateDelDupData[stateDelDupElement.week - 1].count = stateDelDupElement.deleted;
     }
 
     // COMPLETED
@@ -119,35 +164,78 @@ try {
         result.prevYearCount = list[0].cnt;
     }
 
-
-    result.yesterdayCount = 0;
+    // ПРОЙДЕНО ПОЗАВЧЕРА
+    result.beforeYesterdayCount = 0;
     list = ArrayDirect(XQuery("sql: " +
         " SELECT COUNT(als.id) AS cnt " +
+        " FROM [WTDB].[dbo].learnings als " +
+        "         INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE als.state_id IN (3, 4) " +
+        "  AND DAY(als.last_usage_date) = DAY(DATEADD(DAY, -2, GETDATE())) " +
+        "  AND MONTH(als.last_usage_date) = MONTH(DATEADD(DAY, -2, GETDATE())) " +
+        "  AND YEAR(als.last_usage_date) = YEAR(DATEADD(DAY, -2, GETDATE())) " +
+        " GROUP BY DAY(als.last_usage_date) "));
+
+    if(ArrayCount(list) > 0) {
+        result.beforeYesterdayCount = list[0].cnt;
+    }
+
+    // ПРОЙДЕНО ВЧЕРА
+    result.yesterdayCount = 0;
+    list = ArrayDirect(XQuery("sql: " +
+        " SELECT als.id, " +
+        "       als.last_usage_date " +
         " FROM [WTDB].[dbo].learnings als " +
         "         INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
         " WHERE als.state_id IN (3, 4) " +
         "  AND DAY(als.last_usage_date) = DAY(DATEADD(DAY, -1, GETDATE())) " +
         "  AND MONTH(als.last_usage_date) = MONTH(DATEADD(DAY, -1, GETDATE())) " +
         "  AND YEAR(als.last_usage_date) = YEAR(DATEADD(DAY, -1, GETDATE())) " +
-        " GROUP BY DAY(als.last_usage_date) "));
+        " ORDER BY als.last_usage_date "));
+
+    result.yesterdayCount = ArrayCount(list);
+    result.beforeYesterdayReachedTime = "--:--";
 
     if(ArrayCount(list) > 0) {
-        result.yesterdayCount = list[0].cnt;
+        count = 1;
+
+        for(learning in list) {
+            if(OptInt(count) == OptInt(result.beforeYesterdayCount)) {
+                result.beforeYesterdayReachedTime = Hour(learning.last_usage_date) + ":" + Minute(learning.last_usage_date);
+                break;
+            }
+
+            count++;
+        }
     }
 
+    // ПРОЙДЕНО СЕГОДНЯ
     result.todayCount = 0;
     list = ArrayDirect(XQuery("sql: " +
-        " SELECT COUNT(als.id) AS cnt " +
+        " SELECT als.id, " +
+        "       als.last_usage_date " +
         " FROM [WTDB].[dbo].learnings als " +
         "         INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
         " WHERE als.state_id IN (3, 4) " +
         "  AND DAY(als.last_usage_date) = DAY(GETDATE()) " +
         "  AND MONTH(als.last_usage_date) = MONTH(GETDATE()) " +
         "  AND YEAR(als.last_usage_date) = YEAR(GETDATE()) " +
-        " GROUP BY DAY(als.last_usage_date) "));
+        " ORDER BY als.last_usage_date "));
+
+    result.todayCount = ArrayCount(list);;
+    result.yesterdayReachedTime = "--:--";
 
     if(ArrayCount(list) > 0) {
-        result.todayCount = list[0].cnt;
+        count = 1;
+
+        for(learning in list) {
+            if(OptInt(count) == OptInt(result.yesterdayCount)) {
+                result.yesterdayReachedTime = Hour(learning.last_usage_date) + ":" + Minute(learning.last_usage_date);
+                break;
+            }
+
+            count++;
+        }
     }
 
     Response.Write(EncodeJson(result));

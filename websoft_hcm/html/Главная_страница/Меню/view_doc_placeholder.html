@@ -133,11 +133,11 @@ var sTooltipPart = bDisplayTooltip ? ' title="' + HtmlEncode(sTitle) + '"' : '';
 	%>
 	}
 </script>
-<div class="<%=sMainCSS%> block block-user-info" style="margin-top: 25px;">
+<div class="<%=sMainCSS%> block block-user-info" style="margin-top: 25px; line-height: normal; font-size: 15px;">
 	<div class="wrapper">
 		<div class="help-container" style="float: left; margin-top: 3px;">
-			<div style="float: left; padding: 2px;"><img class="user-photo" src="pptrf2019/baseline-contact_support-24px.png" /></div>
-			<div style="float: left; color: #FFFFFF; margin-top: 4px; margin-left: 10px;"><a href="<%=sHelpLink%>" style="color: #FFFFFF; text-transform: none">Помощь</a></div>
+			<div style="float: left; padding: 2px; cursor: pointer;" onclick="document.location.href='mailto:support@pptrf.ru'"><img class="user-photo" src="pptrf2019/baseline-contact_support-24px.png"/></div>
+			<div style="float: left; margin-top: 4px; margin-left: 10px; text-transform: none;"><a class="help-link" style="text-decoration: none; color: #000000; cursor: pointer;" href="mailto:support@pptrf.ru">Помощь</a></div>
 		</div>
 		<div id="wt-user-cabinet" wt-id="wt-user-cabinet" class="user-cabinet" <%=sTooltipPart%>>
 		<%
@@ -149,33 +149,17 @@ var sTooltipPart = bDisplayTooltip ? ' title="' + HtmlEncode(sTitle) + '"' : '';
 		{
 
 		%>
-		<table cellpadding="0" cellspacing="0" border="0">
-			<tr>
-				<td><div class="<%=sIconCSS%> user-photo-container" <%=sOnclick%>><img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(<%=sIconURL%>);" border="0"/></div></td>
-
-	<%
-	if(bUseDropdown)
-	{
-	%>
-	<td><div class="button-dropdown" <%=sOnclick%>></div></td>
-<%
-}
-if(bDisplayExitButton)
-{
-%>
-<td>
-	<div class="exit-button-container" style="margin-top: 5px;">
-		<a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><%=curUser.lastname + " " + curUser.firstname%>
-			<div id="logout_btn" style="margin-left: 110px; margin-top: -28px;">
-				<i class="icon-sign-out-ico  icon-2x" style="margin-left: 10px; font-size: 1.5em;"></i>
+		<div style="float: left">
+			<div class="<%=sIconCSS%> user-photo-container btnimg" <%=sOnclick%>>
+				<img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(pptrf2019/baseline-account_circle-24px.png); cursor: pointer;" border="0"/>
 			</div>
-		</a>
-	</div>
-</td>
-<%
-}
-%>
-</tr></table>
+		</div>
+		<div class="btnname username" style="color: #000000; float: left; margin-top: 2px; cursor: pointer;" onclick="document.location.href='view_doc.html?mode=my_account'" title="Персональный кабинет">
+			<%=HtmlEncode(curUser.firstname)%>
+		</div>
+		<div class="btnexit exit-button-container" style="float: left; margin-top: -3px;">
+			<a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico icon-2x" style="color: #000000;"></i></a>
+		</div>
 <%
 break;
 }

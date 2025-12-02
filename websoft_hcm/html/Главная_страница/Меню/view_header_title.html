@@ -1,0 +1,43 @@
+﻿<div id="wt-header-title">
+<%
+sTitleType = tools_web.get_web_param( curParams, 'sTitleType', 'text', true );
+sTitleURL = tools_web.get_web_param( curParams, 'sTitleURL', 'pics/header_center.gif', true );
+iTitleWidth = tools_web.get_web_param( curParams, 'iTitleWidth', 274, true );
+iTitleHeight = tools_web.get_web_param( curParams, 'iTitleHeight', 80, true );
+sTitleText = tools_web.get_web_param( curParams, 'sTitleText', 'WebSoft HCM Portal', true );
+
+switch(sTitleType)
+{
+	case "flash":
+	{
+%>
+		<object class="WTCSS-header-title-flashobj" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="<%=iTitleWidth%>" height="<%=iTitleHeight%>">
+			<param name="AllowScriptAccess" value="sameDomain"/>
+			<param name="Menu" value="-1"/>
+			<param name="Movie" value="<%=sTitleURL%>"/>
+			<param name="Play" value="1"/>
+			<param name="Quality" value="High"/>
+			<param name="Scale" value="ShowAll"/>
+			<param name="WMode" value="transparent"/>
+			<embed class="WTCSS-header-title-flashembed" quality="high" type="application/x-shockwave-flash" pluginspace="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" width="<%=iTitleWidth%>" height="<%=iTitleHeight%>" src="<%=sTitleURL%>" wmode="transparent"></embed>
+<%
+		break;
+	}
+	case "image":
+	{
+%>
+		<img class="WTCSS-header-title-image" src="<%=sTitleURL%>" width="<%=iTitleWidth%>" height="<%=iTitleHeight%>" border="0"/>
+<%
+		break;
+	}
+	case "text":
+	default:
+	{
+%>
+	<div class="WTCSS-header-title-text" style="float: left; display: block;"><%=sTitleText%></div>
+<%
+		break;
+	}
+}
+%>
+</div>

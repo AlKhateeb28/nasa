@@ -8,6 +8,15 @@
 }
 
 @font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat-Regular.ttf");
+}
+
+.montserrat {
+    font-family: 'Montserrat', serif;
+}
+
+@font-face {
     font-family: "Rubic";
     src: url("../font/Rubik-Regular.ttf");
 }
@@ -15,6 +24,16 @@
 .rubic {
     font-family: 'Rubic', serif;
 }
+
+@font-face {
+    font-family: "Programme-Pan";
+    src: url("../font/Programme-Pan-Regular.otf");
+}
+
+.programme-pan {
+    font-family: 'Programme-Pan', serif;
+}
+
 
 :root {
     --color-whitesmoke: #f5f5f5ff;
@@ -26,7 +45,7 @@
 }
 
 .body {
-    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background-color: var(--color-whitesmoke);
     background-attachment: fixed;
     background-size: cover;
@@ -39,6 +58,11 @@
     display: grid;
     grid-template-columns: minmax(1rem, 1%) 1fr minmax(1rem, 1%);
     grid-template-rows: auto;
+}
+
+.courses_count_grid {
+    display: grid;
+    grid-template-columns: 3rem 2rem 2rem;
 }
 
 .bottom-panel {
@@ -84,8 +108,10 @@
 .loader-view {
     cursor: pointer;
     position: absolute;
-    top: 20px;
-    left: 20px;
+    /*top: 20px;
+    left: 20px;*/
+    left: 520px;
+    top: 25px;
     width: 32px;
     height: 32px;
 }
@@ -147,16 +173,16 @@
 .course-value-info {
     position: fixed;
     font-size: xx-large;
-    margin-left: 80px;
+    margin-left: 90px;
     z-index: 1000;
     text-shadow: 1px 0 var(--color-whitesmoke),
-                -1px 0 var(--color-whitesmoke),
-                0 1px var(--color-whitesmoke),
-                0 -1px var(--color-whitesmoke),
-                1px 1px var(--color-whitesmoke),
-                -1px -1px var(--color-whitesmoke),
-                1px -1px var(--color-whitesmoke),
-                -1px 1px var(--color-whitesmoke);
+    -1px 0 var(--color-whitesmoke),
+    0 1px var(--color-whitesmoke),
+    0 -1px var(--color-whitesmoke),
+    1px 1px var(--color-whitesmoke),
+    -1px -1px var(--color-whitesmoke),
+    1px -1px var(--color-whitesmoke),
+    -1px 1px var(--color-whitesmoke);
     width: 160px;
     text-align: end;
     font-family: 'Rubic';
@@ -194,7 +220,7 @@
     font-weight: bold;
     padding-left: 10px;
     padding-right: 10px;
-    margin-left: 13%;
+    margin-left: 258px;
     margin-top: 11px;
     border-radius: 4px;
     width: 23px;
@@ -205,7 +231,7 @@
     z-index: 1000;
     text-shadow: 1px 0 var(--color-black), -1px 0 var(--color-black), 0 1px var(--color-black), 0 -1px var(--color-black), 1px 1px var(--color-black), -1px -1px var(--color-black), 1px -1px var(--color-black), -1px 1px var(--color-black);
     cursor: pointer;
-    font-family: monospace;
+    /*font-family: monospace;*/
 }
 
 .expected-values {
@@ -214,7 +240,7 @@
     width: 60px;
     cursor: pointer;
     text-shadow: 1px 0 var(--color-black), -1px 0 var(--color-black), 0 1px var(--color-black), 0 -1px var(--color-black), 1px 1px var(--color-black), -1px -1px var(--color-black), 1px -1px var(--color-black), -1px 1px var(--color-black);
-    font-family: monospace;
+    /*font-family: monospace;*/
 }
 
 .courses_shadow {
@@ -223,8 +249,6 @@
 
 .convergence-value {
     min-height:24px;
-    margin-left: 70px;
-    margin-top: 26px;
     width: 80px;
 }
 
@@ -234,14 +258,53 @@
     font-weight: bold;
     padding-left: 10px;
     padding-right: 10px;
-    margin-left: 156px;
-    margin-top: -23px;
+    margin-left: 130px;
     border-radius: 4px;
-    width: 23px;
+    width: 30px;
     text-align: center;
     border: 1px solid var(--color-whitesmoke);
     background-color: #6088fc;
     text-shadow: 1px 0 var(--color-black), -1px 0 var(--color-black), 0 1px var(--color-black), 0 -1px var(--color-black), 1px 1px var(--color-black), -1px -1px var(--color-black), 1px -1px var(--color-black), -1px 1px var(--color-black);
     cursor: pointer;
-    font-family: monospace;
+    height: 16px;
+}
+
+.flag-block {
+    width: 120px;
+    height: 120px;
+    border-radius: 19px;
+    background: #5e5e5e;
+    box-shadow: 5px 5px 27px #333333, -5px -5px 27px #5e5e5e;
+    margin-left: 11px;
+    margin-top: 10px;
+}
+
+.flag-caption {
+    color: whitesmoke;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.owner-value {
+    font-size: xx-large;
+    font-family: 'Rubic', serif;
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.course-count-margin {
+    margin-left: 300px;
+}
+
+.number-field-shadow {
+    text-shadow: 1px 0 var(--color-whitesmoke),
+        -1px 0 var(--color-whitesmoke),
+        0 1px var(--color-whitesmoke),
+        0 -1px var(--color-whitesmoke),
+        1px 1px var(--color-whitesmoke),
+        -1px -1px var(--color-whitesmoke),
+        1px -1px var(--color-whitesmoke),
+        -1px 1px var(--color-whitesmoke);
 }

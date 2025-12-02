@@ -1,0 +1,15 @@
+﻿<%
+try
+{
+	sGreetingDocCode = tools_web.get_web_param( curParams, 'sGreetingDocCode', 'startup_page', true );
+	if ( curLng.startup_page_document_id == null )
+		_url = UrlFromDocID( ArrayFirstElem( XQuery( "for $document in documents where $document/code = '" + sGreetingDocCode + "' return $document" ) ).id );
+	else
+		_url = UrlFromDocID( curLng.startup_page_document_id );
+		
+	Response.Write( tools_web.get_web_desc( OpenDoc( _url ).document.text_area, _url, "document.text_area" ) );
+}
+catch ( ec )
+{
+}
+%>

@@ -1,6 +1,6 @@
-let sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+var sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
-let weekList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+var weekList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
     "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
     "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
     "31", "32", "33", "34", "35", "36", "37", "38", "39", "40",
@@ -8,12 +8,14 @@ let weekList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
     "51", "52", "53"
 ];
 
-let coursesPlan = 1120000;
-let coursesChart;
-let completedCount = 0;
-let isInitialized = false;
-let prevExpectedMilliseconds = 0;
-let prevExpectedDate = new Date();
+var prevReportData = [];
+
+var coursesPlan = 1120000;
+var coursesChart;
+var completedCount = 0;
+var isInitialized = false;
+var prevExpectedMilliseconds = 0;
+var prevExpectedDate = new Date();
 
 function getCurrentDateTime() {
     const currentDate = new Date();
@@ -26,6 +28,10 @@ function getCurrentYearNumber() {
     const currentDate = new Date().toLocaleString("ru-RU").split(",")[0];
 
     return currentDate.split(".")[2];
+}
+
+function getCurrentWeekNumber() {
+    return getWeek(getCurrentDateTime());
 }
 
 function getFilledList(value) {
@@ -43,26 +49,35 @@ function getCoursesChartOption() {
     return {
         series: [
             {
-                name: "Пройденые",
-                color: "#2a60fc",
+                name: "Назначено",
+                color: "#ff9719",
                 data: getFilledList(0)
             },
             {
-                name: "",
-                color: "#141414",
+                name: "Пройдено",
+                color: "#89fc19",
                 data: getFilledList(0)
-            }
+            },
+            {
+                name: "Удаленные дубликаты",
+                color: "#cd5c5c",
+                data: getFilledList(0)
+            },
         ],
         chart: {
-            type: "line",
-            width: 1190,
+            type: "line",//"line",
+            width: 1220,
             height: 550,
             toolbar: {show: false},
             zoom: {enabled: false},
             fontFamily: "Rubic, sans-serif",
             events: {
-                click: function (event, chartContext, opts) {
+                click: function(event, chartContext, opts) {
+                    if(opts.dataPointIndex + 1 === 0) {
+                        return;
+                    }
 
+                    refreshCurrentAssignedFlagsData(opts.dataPointIndex + 1);
                 }
             }
         },
@@ -72,18 +87,17 @@ function getCoursesChartOption() {
         },
         dataLabels: {
             enabled: true,
-            offsetX: 0,
             fontWeight: "normal",
             formatter: function (val) {
                 return val === 0 ? "" : val;
             },
             style: {
-                fontSize: "10px",
-                fontWeight: "bold"
+                fontSize: "9px",
+                //fontWeight: "bold"
             },
             background: {
                 enabled: true,
-                foreColor: "#f5f5f5ff"
+                foreColor: "#000000"
             }
         },
         grid: {
@@ -102,7 +116,7 @@ function getCoursesChartOption() {
                 style: {
                     fontSize: "10px",
                     fontFamily: "'Noto Sans', sans-serif",
-                    colors: getFilledList("#f5f5f5ff")
+                    colors: getFilledList("#f5f5f5")
                 }
             }
         },
@@ -113,7 +127,7 @@ function getCoursesChartOption() {
             lines: {show: false}
         },
         legend: {
-            show: false,
+            show: true,
             labels: {
                 colors: "#f5f5f5ff"
             }
@@ -128,89 +142,69 @@ function getCoursesChartOption() {
 function getCoursesOfWeekList(list) {
     clearedWeekData = [];
 
-    /*for(let i = 0; i < 53; i++) {
-        clearedWeekData.push(0);
-    }*/
-
     list.forEach((element, index) => {
-        clearedWeekData[element.week - 1] = element.count;
+        clearedWeekData.push(element.count);
     });
 
     return clearedWeekData;
 }
 
-function calculateExpectedWeekNumber(data) {
-    const prevYearCount = parseInt(data.prevYearCount);
-    const leaveCount = coursesPlan - prevYearCount;
+function getWeekXAxisColors(currentWeekNumber, expectedWeekNumber, stateData){
+    function getWeekColorByWeekCount(weekNumber, stateData) {
+        prevCount = 0;
+        for(let i = 0; i < prevReportData.length; i++) {
+            if(weekNumber === parseInt(prevReportData[i].week)) {
+                prevCount = prevReportData[i].count;
+                break;
+            }
+        }
 
-    let currentWeek = 0;
-    let passedCount = 0;
+        stateDataCount = 0;
+        for(let i = 0; i < stateData.length; i++) {
+            if(weekNumber === parseInt(stateData[i].week)) {
+                stateDataCount = stateData[i].count;
+                break;
+            }
+        }
 
-    data.state4Data.forEach((element, index) => {
-        currentWeek = element.week;
-        passedCount += element.count;
-    })
-
-    const r = leaveCount - passedCount;
-    const v = passedCount / currentWeek;
-    const t = r / v;
-
-    return {
-        current: currentWeek,
-        expected: currentWeek + t,
-        expectedStr: (currentWeek + t).toFixed(2)
-    };
-}
-
-function getWeekDates(year, weekNumber, expectedSuffix) {
-    function getWholeFromFractionalPart(value, fractional) {
-        value = (value - Math.trunc(value)) * 100;
-
-        return  value * fractional / 100;
+        return {
+            prevWeekCount: parseInt(prevCount),
+            currentWeekCount: parseInt(stateDataCount)
+        };
     }
 
-    const firstDay = new Date(year, 0, 1);
-    const daysToMonday = (1 - firstDay.getDay() + 7) % 7;
-    const firstMonday = new Date(firstDay);
-
-    firstMonday.setDate(firstDay.getDate() + daysToMonday);
-
-    let startDate = new Date(firstMonday);
-    //startDate.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
-    startDate.setDate(firstMonday.getDate() + (weekNumber - 2) * 7);
-
-    const endDate = new Date(startDate);
-    const expectedFloatDay = expectedSuffix * 7;
-
-    startDate.setDate(startDate.getDate() + Math.floor(expectedFloatDay) - 1 );
-    endDate.setDate(endDate.getDate() + Math.ceil(expectedFloatDay) - 1);
-
-    hours = getWholeFromFractionalPart(expectedFloatDay, 24);
-    minutes = getWholeFromFractionalPart(hours, 60);
-
-    return {
-        start: startDate,
-        end: endDate,
-        startStr: startDate.toLocaleString("ru-RU").split('T')[0].split(",")[0],
-        endStr: endDate.toLocaleString("ru-RU").split('T')[0].split(",")[0],
-        hours: Math.floor(hours).toString().padStart(2, "0"),
-        minutes: Math.ceil(minutes).toString().padStart(2, "0"),
-    };
-}
-
-function getWeekXAxisColors(currentWeekNumber, expectedWeekNumber){
     let colors = [];
 
     weekList.forEach((weekNumber, index) => {
         weekNumber = parseInt(weekNumber);
 
+        const counts = getWeekColorByWeekCount(weekNumber, stateData);
+
         if(weekNumber === expectedWeekNumber) {
-            colors.push("#a1b8fc");
-        } else {
-            if(weekNumber === currentWeekNumber) {
+            if(counts.prevWeekCount === counts.currentWeekCount) {
+                colors.push("#a1b8fc");
+            } else if(counts.prevWeekCount < counts.currentWeekCount) {
                 colors.push("#adff2f");
             } else {
-                colors.push("#f5f5f5ff");
+                colors.push("#cd5c5c");
+            }
+        } else {
+            if(weekNumber === currentWeekNumber) {
+                if(counts.prevWeekCount === counts.currentWeekCount) {
+                    colors.push("#ffc107");
+                } else if(counts.prevWeekCount < counts.currentWeekCount) {
+                    colors.push("#adff2f");
+                } else {
+                    colors.push("#cd5c5c");
+                }
+            } else {
+                if(counts.prevWeekCount === counts.currentWeekCount) {
+                    colors.push("#f5f5f5ff");
+                } else if(counts.prevWeekCount < counts.currentWeekCount) {
+                    colors.push("#adff2f");
+                } else {
+                    colors.push("#cd5c5c");
+                }
             }
         }
     });
@@ -246,7 +240,7 @@ function calculateCatchUpTime(yesterdayTotal, todaySoFar, currentTime) {
         today.setHours(hours, minutes, 0, 0);
 
         prevExpectedDate = today;
-        
+
         return {
             type: 0, // today
             time: today.toLocaleString("ru-RU"),
@@ -260,9 +254,9 @@ function calculateCatchUpTime(yesterdayTotal, todaySoFar, currentTime) {
         const hours = Math.floor(overflowHours);
         const minutes = Math.round((overflowHours - hours) * 60);
         tomorrow.setHours(hours, minutes, 0, 0);
-        
+
         prevExpectedDate = tomorrow;
-        
+
         return {
             type: 1, // tomorrow
             time: tomorrow.toLocaleString("ru-RU"),
@@ -282,9 +276,11 @@ function getNormalizedTime(timeAsString) {
 function refreshBoardData() {
     $("#wait").css("visibility", "visible");
 
+    const currentDateTime = getCurrentDateTime();
+
     $.ajax({
-        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7208564163180227555&year=" + getCurrentYearNumber(),
-        async: false,
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7208564163180227555&date=" + currentDateTime,
+        async: true,
         type: "GET",
         dataType: "json",
         success: function (data) {
@@ -322,55 +318,46 @@ function refreshBoardData() {
                     } else if (increasedValue > 0) {
                         increaseCountElement.html("+" + increasedValue);
                     } else {
-                        increaseCountElement.html("-" + increasedValue);
+                        increaseCountElement.html(increasedValue);
                     }
                 }
 
-                weekData = calculateExpectedWeekNumber(data);
-
-                let expectedWeekNumber = weekData.expectedStr;
-
-                expectedWeekNumberSuffix = expectedWeekNumber;
-                if(expectedWeekNumberSuffix.indexOf(".") > -1) {
-                    expectedWeekNumberSuffix = parseFloat("0." + expectedWeekNumberSuffix.split(".")[1]);
-                }
-
-                expectedWeekNumber = Math.floor(weekData.expected);
-
-                const weekDays = getWeekDates(getCurrentYearNumber(), expectedWeekNumber, expectedWeekNumberSuffix);
+                weekData = calculateExpectedWeekNumber(data, currentDateTime);
 
                 // MOMENT. GET WEEK WHEN IT STARTS FROM MONDAY
-                let leaveWeek = moment(weekDays.startStr, "DD.MM.YYYY").isoWeekday(1).startOf('week').week() - expectedWeekNumber;
+                let leaveWeek = weekData.expectedWeek - weekData.currentWeek;
 
                 if(leaveWeek > 0) {
                     leaveWeek = "+" + leaveWeek;
                 }
 
-                $("#expected_week").html(expectedWeekNumber + " (" + leaveWeek + ")");
-                $("#expected_start").html(weekDays.startStr + " " + weekDays.hours + ":" + weekDays.minutes);
+                $("#expected_week").html(weekData.expectedWeek + " (" + leaveWeek + ")");
+                $("#expected_start").html(weekData.expected);
                 //$("#expected_finish").html(weekDays.endStr);
 
                 coursesChart.updateOptions({
                     xaxis: {
                         labels: {
                             style: {
-                                colors: getWeekXAxisColors(weekData.current, expectedWeekNumber)
+                                colors: getWeekXAxisColors(weekData.currentWeek, weekData.expectedWeek, data.state4Data)
                             }
                         }
                     }
                 });
 
+                prevReportData = [];
+                data.state4Data.forEach((weekState, index) => {
+                    element = {};
+                    element.week = weekState.week;
+                    element.count = weekState.count;
+
+                    prevReportData.push(element);
+                });
+
                 coursesChart.updateSeries([
-                    {
-                        name: "Пройденые",
-                        color: "#2a60fc",
-                        data: getCoursesOfWeekList(data.state4Data)
-                    },
-                    {
-                        name: "",
-                        color: "#141414",
-                        data: getFilledList(0)
-                    }
+                    {data: getCoursesOfWeekList(data.state0Data)},
+                    {data: getCoursesOfWeekList(data.state4Data)},
+                    {data: getCoursesOfWeekList(data.stateDelDupData)},
                 ]);
 
                 //$(".apexcharts-series").addClass("courses_shadow");
@@ -379,10 +366,12 @@ function refreshBoardData() {
 
                 const expectedTimeElement = $("#courses_expected_time");
 
-                let time = "";
+                let time;
 
                 if(result.type === 0) {
                     time = getNormalizedTime(result.time.toLocaleString("ru-RU"));
+                } else if(result.type === 2) {
+                    time = "--:--"
                 } else {
                     time  = getNormalizedDateTime(result.time.toLocaleString("ru-RU"));
                 }
@@ -411,12 +400,13 @@ function refreshBoardData() {
                     todayCountElement.css("color", "var(--color-course-minus)")
                 }
                 todayCountElement.html(data.todayCount);
-                todayLeaveElement.html(todayLeavePrefix + (data.todayCount - data.yesterdayCount) );
+                todayLeaveElement.html(todayLeavePrefix + (data.todayCount - data.yesterdayCount));
 
+                $("#today_reached_time").html(data.yesterdayReachedTime.split(":")[0].padStart(2, "0") + ":" + data.yesterdayReachedTime.split(":")[1].padStart(2, "0"));
+
+                $("#courses_before_yesterday_count").html(data.beforeYesterdayCount);
                 $("#courses_yesterday_count").html(data.yesterdayCount);
-
-                if(data.todayCount - data.yesterdayCount)
-                courses_today_leave
+                $("#yesterday_reached_time").html(data.beforeYesterdayReachedTime.split(":")[0].padStart(2, "0") + ":" + data.beforeYesterdayReachedTime.split(":")[1].padStart(2, "0"));
 
                 isInitialized = true;
 
@@ -428,6 +418,126 @@ function refreshBoardData() {
 
                 $("#wait").css("visibility", "hidden");
 
+                showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
+                    "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
+            }
+        },
+        error: function() {
+            showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
+        }
+    });
+}
+
+function getFlagValue(value, weekTotal) {
+    return (parseInt(value) * 100 / weekTotal).toFixed(2);
+}
+
+function refreshCurrentAssignedFlagsData(week) {
+    if(week === undefined) {
+        week = getCurrentWeekNumber();
+    }
+
+    const ownerWeekElement = $("#owner_week");
+    ownerWeekElement.html("--");
+    ownerWeekElement.css("color", "whitesmoke");
+    
+    $("#owner_value_rck").html("--");
+    $("#owner_value_ock").html("--");
+    $("#owner_value_fck").html("--");
+    $("#owner_value_roiv").html("--");
+    $("#owner_value_partner").html("--");
+    $("#owner_value_commerce").html("--");
+    $("#owner_value_with_no_right").html("--");
+
+    $.ajax({
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7226648571481683640&year=" + getCurrentYearNumber() + "&week="+ week,
+        async: true,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            if(data.errorMessage.indexOf("#") < 0) {
+                const ownerWeekElement = $("#owner_week");
+                ownerWeekElement.html(week);
+
+                if(parseInt(week) === parseInt(getCurrentWeekNumber())) {
+                    ownerWeekElement.css("color", "#ffc107");
+                } else {
+                    ownerWeekElement.css("color", "var(--color-course-passed)");
+                }
+
+                const weekTotal = data.weekTotal;
+
+                const rckElement = $("#owner_value_rck");
+                if(weekTotal === 0) {
+                    rckElement.html("0%");
+                } else {
+                    const value = getFlagValue(data.rck, weekTotal);
+
+                    rckElement.html( value + "%");
+                }
+                $("#owner_bottom_rck").html(data.rck.toLocaleString());
+
+                const ockElement = $("#owner_value_ock");
+                if(weekTotal === 0) {
+                    ockElement.html("0%");
+                } else {
+                    const value = getFlagValue(data.ock, weekTotal);
+
+                    ockElement.html(value  + "%");
+                }
+                $("#owner_bottom_ock").html(data.ock.toLocaleString());
+
+                const fckElement = $("#owner_value_fck");
+                if(weekTotal === 0) {
+                    fckElement.html("0%");
+                } else {
+                    const value = getFlagValue(data.fck, weekTotal);
+
+                    fckElement.html(value  + "%");
+                }
+                $("#owner_bottom_fck").html(data.fck.toLocaleString());
+
+                const roivElement = $("#owner_value_roiv");
+                if(weekTotal === 0) {
+                    roivElement.html("0%");
+                } else {
+                    const value = getFlagValue(data.roiv, weekTotal);
+
+                    roivElement.html(value  + "%");
+                }
+                $("#owner_bottom_roiv").html(data.roiv.toLocaleString());
+
+                const partnerElement = $("#owner_value_partner");
+                if(weekTotal === 0) {
+                    partnerElement.html("0%");
+                } else {
+                    const value = getFlagValue(data.partner, weekTotal);
+
+                    partnerElement.html(value  + "%");
+                }
+                $("#owner_bottom_partner").html(data.partner.toLocaleString());
+
+                const commerceElement = $("#owner_value_commerce");
+                if(weekTotal === 0) {
+                    commerceElement.html("0%");
+                } else {
+                    const value = getFlagValue(data.commerce, weekTotal);
+
+                    commerceElement.html(value  + "%");
+                    commerceElement.attr("data-prev-val", value);
+                }
+                $("#owner_bottom_commerce").html(data.commerce.toLocaleString());
+
+                const withNoRightElement = $("#owner_value_with_no_right");
+                if(weekTotal === 0) {
+                    withNoRightElement.html("0%");
+                } else {
+                    const value = getFlagValue(data.withNoRight, weekTotal);
+
+                    withNoRightElement.html(value  + "%");
+                }
+                $("#owner_bottom_with_no_right").html(data.withNoRight.toLocaleString());
+            } else {
                 showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
             }
@@ -471,15 +581,84 @@ function showNotification(message){
     }, 30000 );
 }
 
+function calculateExpectedWeekNumber(data, currentDateAsString) {
+    const prevYearCount = parseInt(data.prevYearCount);
+    const leaveCount = coursesPlan - prevYearCount;
+    const planCount = Math.ceil(leaveCount / 365);
+
+    let passed = 0;
+
+    let leaveDays = {};
+    leaveDays.days = 0;
+    leaveDays.time = "";
+
+    test = [];
+    let element = {count: 206079};
+    test.push(element);
+
+    let leave = 0;
+    let expected = "31.12." + getCurrentYearNumber() + " 23:59:59";
+
+    //data.state4ByDayData.forEach((element, index) => {
+    let isFinishProcess = false;
+
+    for(let i = 0; i < data.state4ByDayData.length; i++) {
+        passed += data.state4ByDayData[i].count;
+
+        leave = (leaveCount - passed) / planCount;
+
+        if (moment(currentDateAsString, "DD.MM.YYYY").format("DD.MM.YYYY") === moment(expected, "DD.MM.YYYY").format("DD.MM.YYYY")) {
+            expected = data.state4ByDayData[i].day + "." + data.state4ByDayData[i].month + "." + data.state4ByDayData[i].year;
+
+            isFinishProcess = true;
+        } else {
+            expected = moment(currentDateAsString, "DD.MM.YYYY").add(Math.floor(leave), 'days').format("DD.MM.YYYY");
+        }
+
+        if(isFinishProcess) {
+            break;
+        }
+    }
+
+    return {
+        currentWeek: getWeek(currentDateAsString),
+        expected: expected,
+        expectedWeek: moment(expected, "DD.MM.YYYY").isoWeekday(1).startOf('week').week(),
+        passed: passed,
+        leave: leave
+    };
+}
+
+function getWeek(dateAsString) {
+    return moment(dateAsString, "DD.MM.YYYY").isoWeekday(1).startOf('week').week();
+}
+
+function appendOwnerChild(id, name) {
+    $("#courses_owners").append(getTemplate("owner_template"));
+    $("#owner_caption").attr("id", "owner_caption_" + id);
+    $("#owner_caption_" + id).html(name);
+    $("#owner_value").attr("id", "owner_value_" + id);
+
+    const valueElement = $("#owner_value_" + id);
+    valueElement.html("--");
+    valueElement.attr("data-prev-val", "0");
+
+    $("#owner_bottom").attr("id", "owner_bottom_" + id);
+    $("#owner_bottom_" + id).html("--");
+}
+
 function initialize() {
     $("#courses_expected_time").html(getNormalizedTime(new Date().toLocaleString("ru-RU")));
 
-    sleep(100).then(() => {
-        refreshBoardData();
-    });
-
     coursesChart = new ApexCharts($("#courses_chart").get(0), getCoursesChartOption());
     coursesChart.render();
+
+    refreshBoardData();
+    refreshCurrentAssignedFlagsData();
+}
+
+function getTemplate(templateId) {
+    return $("#" + templateId).html();
 }
 
 $(document).ready(function () {

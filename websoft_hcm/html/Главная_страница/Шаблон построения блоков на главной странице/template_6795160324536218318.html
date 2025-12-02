@@ -1,0 +1,371 @@
+<!-- 6795160324536218318 -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="bootstrap4/js/jquery-3.1.1.min.js"></script>
+<link rel="stylesheet" href="bootstrap4/css/bootstrap.min.css">
+
+<style>
+    .blockLink {
+        border: 2px solid #FFFFFF;
+        color: #FFFFFF;
+        font-size: 16px;
+        border-radius: 8px;
+        padding: 16px 24px;
+        box-sizing: border-box;
+        display: inline-block;
+        cursor: pointer;
+        width: fit-content;
+    }
+
+    .blockLink:hover {
+        border: 2px solid transparent;
+        color: #1a4b81;
+        background-color: #FFFFFF;
+        font-size: 16px;
+        border-radius: 8px;
+        padding: 16px 24px;
+        box-sizing: border-box;
+        display: inline-block;
+        cursor: pointer;
+        width: fit-content;}
+
+    .myBlockClass{
+        background-size: cover;
+        background-repeat: round;
+        display: flex;
+        flex-flow: column;
+        height: 30em;
+        justify-content: space-between;
+        border-radius: 24px;
+    }
+
+    a{
+        text-decoration: none !important;
+    }
+
+    a:hover{
+        text-decoration: none !important;
+    }
+
+    .block-name{
+        font-size: 36px;
+        color: #000000;
+    }
+
+    .block-desc{
+        font-size: 16px;
+        color: #000000;
+    }
+
+    .file-desc{
+        font-size: 25px;
+        color: #000000;
+    }
+
+    .file-link{
+        font-size: 16px;
+        color: #ea486d;
+    }
+
+    .file-link:hover{
+        font-size: 16px;
+        color: #ea93a4;
+    }
+
+    @media screen and (max-width: 550px) {
+        html {
+            -webkit-text-size-adjust: none;
+        }
+        .block-name{
+            font-size: 28px;
+            color: #000000;
+        }
+
+        .block-desc{
+            font-size: 14px;
+            color: #000000;
+        }
+
+        .file-desc{
+            font-size: 19px;
+            color: #000000;
+        }
+
+        .file-link{
+            font-size: 14px;
+            color: #00C2F2;
+        }
+    }
+</style>
+
+<%
+//var imgStr = "download_file.html?file_id=7227745124413316176";
+
+function getAccessedArray(docs){
+var result = new Array();
+var docDoc = null;
+
+for(doc in docs){
+docDoc = tools.open_doc(doc.id);
+
+if(docDoc != undefined && tools.check_access( docDoc.TopElem, curUserID ))
+{
+result.push(doc);
+}
+}
+return result;
+}
+
+function getBigImgStr(doc){
+var imgStr = null;
+if(StrLen(String(doc.TopElem.resource_id)) != 0){
+imgStr = "download_file.html?file_id=" + doc.TopElem.resource_id;
+}
+else{
+imgStr = "download_file.html?file_id=6764283758366107728";
+}
+return imgStr;
+}
+
+function getSmallImgStr(doc){
+var imgStr = null;
+if(StrLen(String(doc.TopElem.resource_id)) != 0){
+imgStr = "download_file.html?file_id=" + doc.TopElem.resource_id;
+}
+else{
+imgStr = "download_file.html?file_id=6795402587093008545";
+}
+return imgStr;
+}
+
+function getDocLink(doc){
+var temp = ArrayOptFirstElem(XQuery("for $elem in documents where $elem/id='" + doc.TopElem.id + "' return $elem"));
+
+var docLink = "";
+
+if(temp.custom_template_type == null && (temp.template == "view_doc.html?mode=doc" || temp.template == "") && temp.link_href == ""){
+//docLink = UrlAppendPath( global_settings.settings.portal_base_url, '/view_doc.html?mode=doc&doc_id=' + temp.id );
+docLink = '/view_doc.html?mode=doc&doc_id=' + temp.id
+}
+else if(temp.custom_template_type == null && (StrContains(temp.template, 'custom_web_template_id')==false || StrContains(temp.template, 'object_id')==false) && temp.link_href == ""){
+//docLink = UrlAppendPath( global_settings.settings.portal_base_url, "/" + temp.template + "&doc_id=" + temp.id );
+docLink = "/" + temp.template + "&doc_id=" + temp.id
+}
+else if(temp.custom_template_type != null && (StrContains(temp.template, 'custom_web_template_id')==false || StrContains(temp.template, 'object_id')==false) && temp.link_href == ""){
+//docLink = UrlAppendPath( global_settings.settings.portal_base_url, "/" + temp.template + "&doc_id=" + temp.id + "&object_id=" + temp.custom_template_type);
+docLink = "/" + temp.template + "&doc_id=" + temp.id + "&object_id=" + temp.custom_template_type
+}
+else if(temp.custom_template_type != null && (StrContains(temp.template, 'custom_web_template_id')==true || StrContains(temp.template, 'object_id')==true) && temp.link_href == ""){
+//docLink = UrlAppendPath( global_settings.settings.portal_base_url, "/" + temp.template + "&doc_id=" + temp.id);
+docLink = "/" + temp.template + "&doc_id=" + temp.id
+}
+else if(temp.link_href != ""){
+//docLink = UrlAppendPath( global_settings.settings.portal_base_url, "/" + temp.link_href);
+docLink = "/" + temp.link_href
+}
+
+return docLink;
+}
+
+function createBigBlockWFile(doc){
+var docFile = ArrayOptFirstElem(ArraySelectAll(doc.TopElem.files));
+var fileLink = "download_file.html?file_id=" + docFile.file_id;
+var imgStr = getBigImgStr(doc);
+
+%>
+<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 my-4">
+    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>');">
+        <div class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></div>
+        <div style="background: url(pptrf2019/outline-book-24px.png); padding-left: 60px; display: block;">
+            <div class="file-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.custom_elems.ObtainChildByKey("file_desc").value%></div>
+            <div><a class="file-link" href="<%=fileLink%>" style="font-family: Montserrat, sans-serif;">Скачать</a></div>
+        </div>
+    </div>
+</div>
+<%
+}
+
+function createBigBlockWOFile(doc){
+var docLink = getDocLink(doc);
+var imgStr = getBigImgStr(doc);
+
+%>
+<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 my-4">
+    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>');">
+        <div>
+            <p class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></p>
+            <p class="block-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.comment%></p>
+        </div>
+        <div class="myBlockLink" onClick="document.location.href='<%=docLink%>'"  style="font-family: Montserrat, sans-serif;">Подробнее</div>
+    </div>
+</div>
+<%
+}
+
+function createSmallBlockWFile(doc){
+var docFile = ArraySelectAll(doc.TopElem.files);
+var fileLink = "download_file.html?file_id=" + docFile[0].file_id;
+var imgStr = getSmallImgStr(doc);
+
+%>
+<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 my-4">
+    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>'); background-repeat: no-repeat;">
+        <div class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></div>
+        <div style="background: url(pptrf2019/outline-book-24px.png) left top no-repeat; padding-left: 60px; display: block;">
+            <div class="file-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.custom_elems.ObtainChildByKey("file_desc").value%></div>
+            <div><a class="file-link" href="<%=fileLink%>" style="font-family: Montserrat, sans-serif;">Скачать</a></div>
+        </div>
+    </div>
+</div>
+<%
+}
+
+function createSmallBlockWOFile(doc){
+var docLink = getDocLink(doc);
+var imgStr = getSmallImgStr(doc);
+
+%>
+<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 my-4">
+    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>');">
+        <div>
+            <p class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></p>
+            <p class="block-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.comment%></p>
+        </div>
+        <div class="myBlockLink" onClick="document.location.href='<%=docLink%>'" style="font-family: Montserrat, sans-serif;">Подробнее</div>
+    </div>
+</div>
+<%
+}
+
+function createEvenRow(docs){
+if(ArrayCount(docs) > 1){
+var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+var secondDoc = OpenDoc(UrlFromDocID(docs[1].id));
+
+%>
+<div class="row">
+    <%
+    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
+    createBigBlockWFile(firstDoc);
+    }
+    else{
+    createBigBlockWOFile(firstDoc);
+    }
+
+    if(ArrayCount(ArraySelectAll(secondDoc.TopElem.files)) == 1){
+    createSmallBlockWFile(secondDoc);
+    }
+    else{
+    createSmallBlockWOFile(secondDoc);
+    }
+    %>
+</div>
+<%
+}
+else{
+var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+%>
+<div class="row">
+    <%
+    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
+    createBigBlockWFile(firstDoc);
+    }
+    else{
+    createBigBlockWOFile(firstDoc);
+    }
+    %>
+</div>
+<%
+}
+}
+
+function createOddRow(docs){
+if(ArrayCount(docs) > 1){
+var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+var secondDoc = OpenDoc(UrlFromDocID(docs[1].id));
+%>
+<div class="row">
+    <%
+    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
+    createSmallBlockWFile(firstDoc);
+    }
+    else{
+    createSmallBlockWOFile(firstDoc);
+    }
+
+    if(ArrayCount(ArraySelectAll(secondDoc.TopElem.files)) == 1){
+    createBigBlockWFile(secondDoc);
+    }
+    else{
+    createBigBlockWOFile(secondDoc);
+    }
+    %>
+</div>
+<%
+}
+else{
+var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+%>
+<div class="row">
+    <%
+    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
+    createSmallBlockWFile(firstDoc);
+    }
+    else{
+    createSmallBlockWOFile(firstDoc);
+    }
+    %>
+</div>
+<%
+}
+}
+
+function createBlocks(docs){
+var resultDocs = getAccessedArray(docs);
+if( ArrayCount(resultDocs) ) {
+var rows = ArrayCount(resultDocs)/2 + (ArrayCount(resultDocs)%2);
+var docsRow = null;
+
+for(r = 0; r < rows - 1; r++){
+docsRow = new Array();
+if((r+1)%2 == 0){
+for(j = 0; j < 2; j++){
+docsRow.push(resultDocs[r*2+j]);
+}
+createOddRow(docsRow);
+}
+else if((r+1)%2 != 0){
+for(j = 0; j < 2; j++){
+docsRow.push(resultDocs[r*2+j]);
+}
+createEvenRow(docsRow);
+}
+}
+
+var i = (rows - 1) * 2;
+docsRow = new Array();
+if((rows)%2 == 0){
+for(i; i < ArrayCount(resultDocs); i++){
+docsRow.push(resultDocs[i]);
+}
+createOddRow(docsRow);
+}
+else if((rows)%2 != 0){
+for(i; i < ArrayCount(resultDocs); i++){
+docsRow.push(resultDocs[i]);
+}
+createEvenRow(docsRow);
+}
+}
+}
+%>
+
+<div style="display: inline-block; width: 100%;">
+    <%
+    var blocks = ArraySelectAll(XQuery("for $elem in documents where contains($elem/tags, '6795148673911631885') order by $elem/position return $elem"));
+    createBlocks(blocks);
+    %>
+</div>
+
+<script src="bootstrap4/js/bootstrap.min.js"></script>

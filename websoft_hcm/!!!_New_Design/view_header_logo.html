@@ -1,0 +1,65 @@
+﻿<div id="wt-header-logo" class="logo-container">
+<%
+// 200909  OBSOLETE
+bUseFlashLogo = String( tools_web.get_web_param( curParams, 'bUseFlashLogo', false, true ));
+bUseFlashLogo = ( bUseFlashLogo=="1" || bUseFlashLogo=="true" );
+sLogoURL = tools_web.get_web_param( curParams, 'sLogoURL', 'design/default/images/logo.png', true );
+
+iLogoWidth = tools_web.get_web_param( curParams, 'iLogoWidth', 120, true );
+iLogoHeight = tools_web.get_web_param( curParams, 'iLogoHeight', 29, true );
+bUseLogoAsLink = String(tools_web.get_web_param( curParams, 'bUseLogoAsLink', true, true ));
+bUseLogoAsLink = ( bUseLogoAsLink=="1" || bUseLogoAsLink=="true" );
+sLogoLink = tools_web.get_web_param( curParams, 'sLogoLink', tools_web.get_mode_clean_url( "home", null, {} ), true );
+
+if(bUseFlashLogo)
+{
+%>
+
+	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="<%=iLogoWidth%>" height="<%=iLogoHeight%>"
+<%
+	if(bUseLogoAsLink)
+	{
+%>
+		onmouseup="document.location.href='<%=sLogoLink%>'"
+
+<%
+	}
+%>
+	>
+		<param name="AllowScriptAccess" value="sameDomain"/>
+		<param name="Loop" value="-1"/>
+		<param name="Menu" value="-1"/>
+		<param name="Movie" value="<%=sLogoURL%>"/>
+		<param name="Play" value="1"/>
+		<param name="Quality" value="High"/>
+		<param name="Scale" value="ShowAll"/>
+		<param name="WMode" value="transparent"/>
+		<embed quality="high" type="application/x-shockwave-flash" pluginspace="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" width="<%=iLogoWidth%>" height="<%=iLogoHeight%>" src="<%=sLogoURL%>" wmode="transparent"
+<%
+	if(bUseLogoAsLink)
+	{
+%>
+		onmouseup="document.location.href='<%=sLogoLink%>'"
+
+<%
+	}
+%>
+		</embed>
+	</object>
+<%
+}
+else
+{
+	if(bUseLogoAsLink)
+	{
+%>
+	<a href="<%=sLogoLink%>"><img src="<%=sLogoURL%>" width="<%=iLogoWidth%>" height="<%=iLogoHeight%>" border="0"/></a>
+<%
+	} else {
+%>
+		<img src="<%=sLogoURL%>" width="<%=iLogoWidth%>" height="<%=iLogoHeight%>" border="0"/>
+<%
+	}
+}
+%>
+</div>

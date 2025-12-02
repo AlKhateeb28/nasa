@@ -1,0 +1,17 @@
+<!-- 6760576445698543932 -->
+<%
+hBlockHeader = tools_web.get_web_param( curParams, "mypage.header", "", true );
+hBlockDesc = tools_web.get_web_param( curParams, "mypage.desc", "", true );
+hBlockLink = tools_web.get_web_param( curParams, "mypage.link", "", true );
+hBlockImage = tools_web.get_web_param( curParams, "mypage.resource", "", true );
+if (hBlockImage!=null && hBlockImage!='' )
+sDopStyles = "background-image: url(download_file.html?file_id=" + Int(hBlockImage) + ") !important"
+else
+sDopStyles = "";
+%>
+
+<div class="myBlock" style="<%=sDopStyles%>">
+    <div class="myBlockHeader"><%=hBlockHeader%></div>
+    <div class="myBlockDesc"><%=hBlockDesc%></div>
+    <div class="myBlockLink" onClick="document.location.href='<%=hBlockLink%>'">Подробнее</div>
+</div>

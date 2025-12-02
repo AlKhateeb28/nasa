@@ -1,6 +1,5 @@
 ﻿<style type="text/css">
 /************ Horizontal menu *************************************/
-/* 5455214134066951883*/
 /* Height is mandatory, level0_height + level0_borders + level0_padding */
 .WTCSS-menu-h  { height: auto; border-top: 0px solid transparent; border-bottom: 0px solid transparent; width: 100%; background-color: transparent; background: none; }
 .WTCSS-menu-h div.menu-wrapper { height: auto; padding: 0px; }
@@ -93,13 +92,13 @@ function drawMenuItems(arrMenuItemsParam, iCurLevelParam )
 		{
 %>
 		<li class="wtmenu-h item-level-<%=oMenuItem.level%> <%=oMenuItem.active_class%>">
-			<div class="item-wrapper">
+			<div class="item-wrapper aa-menu">
 <%
 		}
 		bUseTwistie = ArrayCount( oMenuItem.items ) > 0;
 
 %>
-				<a class="wtmenu-h item-link item-link-level-<%=oMenuItem.level%> <%=oMenuItem.active_class%>" href="<%=oMenuItem.link_href%>" target="<%=oMenuItem.link_target%>">
+				<a class="wtmenu-h item-link item-link-level-<%=oMenuItem.level%> <%=oMenuItem.active_class%>" style="color: #000000 !important;" href="<%=oMenuItem.link_href%>" target="<%=oMenuItem.link_target%>">
 <%
 		if ( oMenuItem.icon_url != "" )
 		{
@@ -164,7 +163,7 @@ $(document).ready( function ()
 });
 </script>
 
-<div class="<%=sMainCSS%>" _wt_widthtype="<%=sWidthType%>" _wt_menu_h="1" _wt_submenu_side="<%=sSubMenuSide%>" style="width: 920px !important;">
+<div class="<%=sMainCSS%>" _wt_widthtype="<%=sWidthType%>" _wt_menu_h="1" _wt_submenu_side="<%=sSubMenuSide%>">
 	<div class="menu-wrapper">
 	<%
 	if ( ArrayOptFirstElem( arrMenuItems ) != undefined )

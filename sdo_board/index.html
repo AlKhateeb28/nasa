@@ -30,22 +30,39 @@
     <div id="grid_box">
         <div id="top_block" style="min-height: 580px; margin-top: 5px;">
             <div id="top_left_block" class="float-left" style="min-width: 30%; min-height: 580px;">
-                <div class="box" style="min-height: 130px; width: 530px;">
+                <div class="box" style="min-height: 158px; width: 538px;">
                     <div style="font-size: x-large; text-indent: 10px;">Прогноз временно́й конвергенции</div>
-                    <div class="float-left" style="min-height:24px; min-width: 290px;">
-                        <div id="courses_expected_time" class="course-value-info course-left-color" style="margin-top: 28px; font-size: xx-large; text-align: center; margin-left: 10px; width: 290px; color: var(--color-course-passed)"></div>
+                    <div>
+                        <div class="float-left" style="min-height:24px; min-width: 250px;">
+                            <div id="courses_expected_time" class="course-value-info course-left-color" style="margin-top: 38px; font-size: xx-large; text-align: center; margin-left: 10px; width: 290px; color: var(--color-course-passed)"></div>
+                        </div>
+                        <div class="float-left">
+                            <div class="courses_count_grid course-count-margin">
+                                <div>позавчера</div>
+                                <div id="courses_before_yesterday_count" class="course-value-info course-left-color convergence-value" style="margin-top: -15px;">0</div>
+                                <div></div>
+                            </div>
+                            <div class="courses_count_grid course-count-margin">
+                                <div style="margin-top: 16px; margin-left: 39px;">вчера</div>
+                                <div id="courses_yesterday_count" class="course-value-info course-left-color convergence-value">0</div>
+                                <div id="yesterday_reached_time" class="expected-passed-count" style="margin-top: 10px;" title="Достигнуто позавчерашнее количества прохождений">--:--</div>
+                            </div>
+                            <div class="courses_count_grid course-count-margin">
+                                <div style="margin-top: 16px; margin-left: 21px;">сегодня</div>
+                                <div id="courses_today_count" class="course-value-info course-left-color convergence-value">0</div>
+                                <div style="margin-top: -1px;">
+                                    <div id="courses_today_leave" class="expected-passed-count" title="Осталось до вчерашнего количества прохождений">0</div>
+                                    <div id="today_reached_time" class="expected-passed-count" style="margin-top: 2px;" title="Достигнуто вчерашнее количества прохождений">--:--</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="float-left" style="margin-left: 20px;">
-                        <div>
-                            <div class="float-left" style=" margin-top: 24px; margin-left: 14px;">вчера</div>
-                            <div id="courses_yesterday_count" class="float-left course-value-info course-left-color convergence-value" style="margin-top: 10px;"></div>
-                        </div>
-
-                        <div>
-                            <div class="float-left" style="margin-top: 64px; margin-left: -59px;">сегодня</div>
-                            <div id="courses_today_count" class="float-left course-value-info course-left-color convergence-value" style="margin-top: 52px;"></div>
-                            <div id="courses_today_leave" class="float-left expected-passed-count" title="Осталось до вчерашнего количества прохождений">0</div>
-                        </div>
+                </div>
+                <div id="courses_owners" class="box" style="margin-top: 10px; min-height: 304px; width: 538px;">
+                    <!-- OWNERS BLOCK -->
+                    <div>
+                        <div class="float-left" style="font-size: x-large; text-indent: 5px;">Назначаемость (%).</div>
+                        <div class="float-left" style="font-size: x-large; text-indent: 5px; min-width: 50%;">Неделя: <span id="owner_week" style="font-family: 'Programme-Pan'">--</span></div>
                     </div>
                 </div>
             </div>
@@ -64,7 +81,7 @@
                     <div id="courses_left" class="float-left course-value-info course-left-color">0</div>
                     <div>
                         <div id="expected_week" class="increase-count expected-values" style="margin-top: 1px; width: 70px;" title="Ожидаемая неделя выполнение плана"></div>
-                        <div id="expected_start" class="increase-count expected-values" style="margin-top: 19px; width: 97px;" title="Ожидаемая дата/время выполнения плана"></div>
+                        <div id="expected_start" class="increase-count expected-values" style="margin-top: 19px; width: 70px;" title="Ожидаемая дата/время выполнения плана"></div>
                         <!--div id="expected_finish" class="increase-count expected-values" style="margin-top: 28px;" title="Или выполнение плана в этот день"></div-->
                     </div>
                 </div>
@@ -82,6 +99,24 @@
 
     <div id="right_box"></div>
 </div>
+
+<script type="text/html" id="owner_template">
+    <div class="float-left flag-block">
+        <div id="owner_caption" class="flag-caption"></div>
+        <div id="owner_value" class="float-left owner-value number-field-shadow" style="color: var(--color-course-passed)"></div>
+        <div id="owner_bottom" class="flag-caption" style="text-align: right; margin-left: -5px; color: burlywood; font-family: 'Programme-Pan';"></div>
+    </div>
+</script>
+
+<script type="application/javascript">
+    appendOwnerChild("rck", "РЦК");
+    appendOwnerChild("ock", "ОЦК");
+    appendOwnerChild("fck", "ФЦК");
+    appendOwnerChild("roiv", "РОИВ");
+    appendOwnerChild("partner", "Партнер");
+    appendOwnerChild("commerce", "Коммерция");
+    appendOwnerChild("with_no_right", "Без прав");
+</script>
 
 </body>
 </html>

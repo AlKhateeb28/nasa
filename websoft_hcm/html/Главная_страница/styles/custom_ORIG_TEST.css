@@ -1,0 +1,1418 @@
+/*6760576445698543899*/
+.desktop.mode-default { background-image: none }
+.login-block { margin-top: 200px; background-color: #0c2c4d; border-radius: 10px; }
+.login-text, .login-header { color: #FFFFFF }
+.login-block .logo { background-image: url(pptrf2019/logo-std.svg); background-size: 240px 38px; width: 240px; height: 38px; }
+.login-block button { border: 1px solid #FFFFFF; color: #FFFFFF }
+.login-block button:hover { background-color: #19477f }
+.login-block .login-label { color: #FFFFFF }
+
+/*body.mobile #wt-user-cabinet { position: absolute }*/
+body.mobile #wt-user-cabinet table { background: transparent !important; border: solid 0px transparent !important; margin-bottom: 0px !important; }
+body.mobile #wt-user-cabinet .btnname { display: none }
+body.mobile #wt-user-cabinet .btnexit { display: none }
+body.mobile .header .block-user-info { width: 60px !important }
+body.mobile.mode-main_book_shelves td.btnimg, body.mobile.mode-library_material_shelves td.btnimg { padding: 8px 0px; }
+body.mobile.mode-main_book_shelves .menu-mobile-button-container .menu-bar { padding-top: 0px !important }
+body.mobile.mode-library_material_shelves .menu-mobile-button-container .menu-bar { padding-top: 0px !important }
+body.mobile.mode-library_material_shelves .help-container { min-width: 130px !important }
+
+body.mode-library_material_shelves #wt-user-cabinet table { background: transparent !important; border: solid 0px transparent !important; margin-bottom: 0px !important; }
+body.mode-library_material_shelves #wt-user-cabinet table td { padding: 0px 0px !important }
+body.mode-library_material_shelves div.help-container { width: 130px; padding: 14px 20px 8px 0px !important; }
+body.mode-library_material_shelves .block-user-info .user-photo-container { width: 24px }
+body.mode-library_material_shelves #wt-user-cabinet table td.btnexit { padding-top: 4px !important }
+
+body.mode-main_book_shelves #wt-user-cabinet table { background: transparent !important; border: solid 0px transparent !important; margin-bottom: 0px !important; }
+body.mode-main_book_shelves #wt-user-cabinet table td { padding: 0px 0px !important }
+body.mode-main_book_shelves div.help-container { width: 130px; padding: 14px 20px 8px 0px !important; }
+/*body.mode-main_book_shelves .block-user-info .user-photo-container { width: 24px }*/
+body.mode-main_book_shelves #wt-user-cabinet table td.btnexit { padding-top: 4px !important }
+
+/*body.mode-main_book_shelves .header .block-user-info, body.mode-library_material_shelves .header .block-user-info { width: 260px !important }*/
+
+body.mobile.mode-main_book_shelves .dropdown { position: absolute !important }
+body.mobile.mode-library_material_shelves .dropdown { position: absolute !important }
+body.mobile.mode-main_book_shelves .pt-3 { padding-top: 64px !important }
+body.mobile.mode-library_material_shelves .pt-3 { padding-top: 64px !important }
+
+body.desktop.mode-home { background: url(pptrf2019/main_bg.jpg) center top repeat-x }
+body.desktop { background: url(pptrf2019/second_bg.jpg) center top repeat-x }
+
+body.desktop .page { padding-top: 0px }
+body.desktop.mode-home .page { padding-top: 0px }
+
+header { z-index: 900; position: relative; }
+
+body.desktop header.header { background-color: transparent; border-bottom: 0px solid transparent; height: 225px;  position: relative !important; }
+body.desktop.111mode-home header.header { height: 400px; }
+#wt-header-top-right { position: relative }
+.WTCSS-menu-h ul li ul {left: 0 !important}
+
+#header-middle-content { height: 132px; }
+body.desktop.mode-home #header-middle-content { height: 66px }
+
+body.desktop .header-content { width: 1176px; margin: 0 auto; }
+body.desktop .header-top { height: 93px; background-color: #002b4e; border-bottom: 0px solid transparent }
+body.desktop .logo-container { margin: 26px 0px 0px 0px }
+.WTCSS-header-title-text { color: #FFFFFF; font-size: 24px; font-weight: bold; margin: 40px 0px 0px 40px; text-transform: uppercase; }
+
+body.mobile .page { padding-top: 0px }
+body.mobile #wt-header-title { display: none }
+body.mobile .header-content { background-color: #002b4e; }
+body.mobile .icon-menu { color: #FFFFFF !important }
+body.mobile .WTCSS-menu-h { display: none }
+body.mobile .WTCSS-user-info { /* display: none */ position: absolute; top: 0px; right: 80px; border-right: 0px solid transparent; }
+body.mobile.mode-main_book_shelves .WTCSS-user-info { /* display: none */ position: absolute; top: 0px; right: 56px; border-right: 0px solid transparent; }
+body.mobile.mode-library_material_shelves .WTCSS-user-info { /* display: none */ position: absolute; top: 0px; right: 56px; border-right: 0px solid transparent; }
+body.mobile .help-container { display: none }
+body.mobile .block-user-info img.user-photo { width: 48px; height: 48px }
+body.mobile .block-user-info img.user-photo { background-image: url(pptrf2019/baseline-account_circle-48px.png) !important; }
+
+@media screen and (max-width: 374px) {
+    body.mobile #wt-header-logo img { width: 190px !important; height: 30px !important }
+    body.mobile .logo-container { margin: 0px 4px !important }
+    body.mobile .logo-container a { margin-top: 12px !important }
+}
+
+@media screen and (max-width:980px){
+    #header-middle-content { height: 66px; }
+}
+
+/* Меню горизонтальное */
+
+.WTCSS-menu-h { width: 800px !important; float: left; height: 66px !important; }
+.WTCSS-menu-h a { color: #FFFFFF !important; font-size: 15px; font-weight: normal; }
+.WTCSS-menu-h ul li a { padding: 20px 10px 20px 0px !important }
+.WTCSS-menu-h ul li:hover { border-bottom: 3px solid #FFFFFF !important }
+.WTCSS-menu-h ul li.active { border-bottom: 3px solid #FFFFFF !important }
+.WTCSS-menu-h ul li:hover ul { z-index: 950 !important; top: 56px !important; border-radius: 4px !important; background-color: #FFFFFF !important; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+.WTCSS-menu-h .item-wrapper ul li:hover ul { z-index: 950 !important; }
+.WTCSS-menu-h ul li ul li a { padding: 6px 10px 6px 0px !important; font-size: 14px; color: #004781 !important;  }
+.WTCSS-menu-h ul li ul li:first-child a { padding-top: 12px !important; }
+.WTCSS-menu-h ul li ul li:last-child a { padding-bottom: 12px !important; }
+.WTCSS-menu-h ul li ul li:hover a { color: #0086cd !important;  }
+.WTCSS-menu-h ul li:hover ul li:first-child a { border-top: 0px solid transparent !important;  }
+.WTCSS-menu-h ul li:hover ul li, .WTCSS-menu-h ul li:hover ul li:hover ul li, .WTCSS-menu-h ul li:hover ul li:hover ul li:hover ul li { background-color: transparent !important; border: 0px solid transparent !important; min-width: 100px; }
+
+
+/* Блок Личные данные */
+
+header .block-user-info .wrapper { padding-right: 0px !important }
+.header .block-user-info { border-left: 0px solid transparent }
+.block-user-info a { color: #FFFFFF }
+.block-user-info .user-photo { height: 24px; width: 24px }
+.block-user-info .username { /* margin-right: 0px */ }
+div.block-user-info a:hover { color: #FFFFFF !important; text-decoration: none }
+
+
+/* Новости */
+
+.last-news-on-main { width: 1176px; height: 320px; position: relative;  border-radius: 0px; display: inline-block; border: 0px solid red; background-color: #004781; margin-bottom: 24px; }
+.last-news-bg { width: 1176px; height: 320px; position: absolute; top: 0; left: 0; border-radius: 0px;}
+.last-news-content-bg { display: none; width: 600px; height: 320px;  background-color: #004781; opacity: 0.6; border-radius: 8px 0px 0px 8px; position: absolute; top: 0; left: 0; box-sizing: border-box; }
+.last-news-content { width: 600px; height: 320px;  color: #FFFFFF; position: absolute; top: 0; left: 0; padding: 42px 38px; box-sizing: border-box; }
+.last-news-date { color: #FFFFFF; font-size: 16px; padding-bottom: 16px; }
+.last-news-header { color: #FFFFFF; font-size: 20px; font-weight: 500; padding-bottom: 32px; }
+.last-news-button input { border: 0px solid transparent; background-color: #00C2F2; border-radius: 8px; font-size: 16px; padding: 16px 32px; box-sizing: border-box; color: #FFFFFF; cursor: pointer; text-align: center;  width: 160px; }
+
+/* Блок Моя страница */
+
+#wt-hor-12-1 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-hor-12-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+.myBlock { width: 359px; height: 309px; background: url(pptrf2019/frame1.png) center center no-repeat; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.myBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; }
+.myBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 45px; }
+.myBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.myBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+.objBlock {
+    width: 777px;
+    height: 309px;
+    background: url(pptrf2019/main_bg_1_2.jpg) center center no-repeat;
+    background-size: cover;
+    margin-right: 0px;
+    box-sizing: border-box;
+    padding: 24px 32px;
+}
+
+.objBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; width: 320px; }
+.objBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 60px;  width: 320px; }
+.objBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.objBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+.courses-header { padding-left: 32px; font-size: 36px; color: #000000; padding-bottom: 16px; float: left; width: 968px; }
+.courses-all { width: 170px; float: left; text-align: right; cursor: pointer; }
+.courses-all-button { border: 1px solid #004781; padding: 8px 16px; border-radius: 8px; display: inline-block; }
+div.courses-on-main { margin-bottom: 32px; display: inline-block; }
+div.courses-on-main div.courses-content div.course_tab { box-shadow: 0px 8px 16px rgba(0, 71, 129, 0.25); float: left; width: 270px; height: 170px; vertical-align: top; margin-right: 32px; padding: 24px 32px; box-sizing: border-box; }
+div.courses-on-main div.course_tab { position: relative }
+div.courses-on-main div.course_tab:nth-child(4) { margin-right: 0px !important }
+div.courses-on-main div.course_tab:nth-child(1)  { background-image: url(pptrf2019/el1.png); background-position: right top; background-repeat: no-repeat; background-size: auto 100px; }
+div.courses-on-main div.course_tab:nth-child(2)  { background-image: url(pptrf2019/el2.png); background-position: left top; background-repeat: no-repeat; background-size: auto 100px; }
+div.courses-on-main div.course_tab:nth-child(3)  { background-image: url(pptrf2019/el3.png); background-position: right bottom; background-repeat: no-repeat; background-size: auto 100px; }
+div.courses-on-main div.course_tab:nth-child(4)  { background-image: url(pptrf2019/el4.png); background-position: left bottom; background-repeat: no-repeat; background-size: auto 100px; }
+
+div.course_tab a.course_tab_name { font-size: 18px; color: #000000; }
+div.course_tab_arrow { position: absolute; right: 24px; bottom: 24px; cursor: pointer; }
+
+#wt-hor-21-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-21-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+/* Блок Страницы Школы Тренеров */
+
+.pstBlock { width: 777px; height: 309px; background: url(pptrf2019/page_trainers.jpg) center center no-repeat; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.pstBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; width: 320px; }
+.pstBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 40px;  width: 320px; }
+.pstBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.pstBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+/* Блок Материалы Тренингов */
+
+.mtBlock { width: 359px; height: 309px; background: url(pptrf2019/frame2.png) center center no-repeat; background-size: cover; margin-right: 0px; box-sizing: border-box; padding: 24px 32px; }
+.mtBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; }
+.mtBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 40px; }
+.mtBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.mtBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+
+#wt-hor-3-12-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-3-12-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+/* Блок Больше, чем обучение */
+
+.bBlock { width: 359px; height: 309px; background: url(pptrf2019/frame3.png) center center no-repeat; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.bBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 100px; }
+.bBlockFileContainer { background: url(pptrf2019/outline-book-24px.png) left top no-repeat; padding-left: 60px; height: 60px; display: block; }
+.BlockFileName { color: #FFFFFF; font-size: 24px }
+.BlockFileLink a { font-size: 16px; color: #00C2F2 }
+
+/* Блок Форумы тренеров */
+
+.forumBlock { width: 777px; height: 309px; background: url(pptrf2019/trainers_forum.jpg) center center no-repeat; background-size: cover; margin-right: 0px; box-sizing: border-box; padding: 24px 32px; }
+.forumBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom:  150px; width: 320px; }
+.forumBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.forumBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+#wt-hor-4-21-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-4-21-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+.methodsBlock { width: 777px; height: 309px; background: url(pptrf2019/page_trainers.jpg) center center no-repeat; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.methodsBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 60px; width: 300px; }
+.methodsBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 40px;  width: 300px; }
+.methodsBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.methodsBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+.pollBlock { width: 359px; height: 309px; background: url(pptrf2019/frame4.png) center center no-repeat; background-size: cover; margin-right: 0px; box-sizing: border-box; padding: 24px 32px; }
+.pollBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; }
+.pollBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 80px; }
+.pollBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.pollBlockLink:hover { border: 2px solid transparent; color: #2d8179; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+.lBlock { border: 1px solid #E2E7ED; display: inline-block; width: 100%; margin-bottom: 10px;  box-shadow: 0px 8px 16px rgba(0, 71, 129, 0.25); }
+.lBlock-left { float: left; width: 425px; text-align: center; padding: 36px; }
+.lBlock-center { float: left; width: 150px; text-align: center; padding: 36px 20px;}
+.lBlock-right { float: left; width:400px; text-align: left; padding: 36px 20px; }
+
+.lBlockHeader { font-size: 36px; font-weight: bold; margin-top: 48px; }
+.lBlockLink { display: block; background-color: #00C2F2; border-radius: 8px; padding: 12px 12px; font-size: 16px; color: #FFFFFF; width: 150px; margin: 20px auto 40px auto; cursor: pointer; }
+
+.weekbook { color: #004781; font-size: 16px; padding-bottom: 16px; font-weight: 500; cursor: pointer; }
+.weekbookheader { font-size: 24px; color: #3B4256; padding-bottom: 8px; cursor: pointer; }
+.weekbookauthor { font-size: 16px; color: #848E99; font-size: 16px; cursor: pointer; }
+
+@media screen and (min-width:0\0) { /* IE 9+ hack*/
+    header{
+        border-top: 0px solid transparent !important;
+    }
+
+}
+
+.mode-main_book_shelves .pt-3 { padding-top: 10px !important }
+
+.mode-library_material_shelves #main_content-material { margin-top: 2em }
+
+a.WTCSS-view-switch { /* display: none */ }
+body.desktop .mode-main_book_shelves .pt-3 { padding-top: 0px !important }
+body.desktop .mode-main_book_shelves .pt-3 { padding-top: 64px !important }
+
+body.desktop .mode-main_book_shelves header.header table { background-color: transparent; border: 1px solid transparent }
+body.desktop .mode-main_book_shelves header.header td { padding: 0px !important }
+body.desktop .mode-main_book_shelves header.header .help-container { width: 130px !important; padding-top: 0px !important; }
+body.desktop .mode-main_book_shelves header.header .WTCSS-user-info { padding-top: 10px !important }
+body.desktop .mode-main_book_shelves header.header .block-user-info .user-photo-container { width: 24px !important }
+
+body.desktop .mode-library_material_shelves header.header table { background-color: transparent; border: 1px solid transparent }
+body.desktop .mode-library_material_shelves header.header td { padding: 0px !important }
+body.desktop .mode-library_material_shelves header.header .help-container { width: 130px !important; padding-top: 0px !important; }
+body.desktop .mode-library_material_shelves header.header .WTCSS-user-info { padding-top: 10px !important }
+body.desktop .mode-library_material_shelves header.header .block-user-info .user-photo-container { width: 24px !important }
+
+.smallBlockFileLeft{ width: 359px; height: 309px; background: url(pptrf2019/frame3.png) center center no-repeat; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.smallBlockFileRight{ width: 359px; height: 309px; background: url(pptrf2019/frame3.png) center center no-repeat; background-size: cover; margin-right: 0px; box-sizing: border-box; padding: 24px 32px; }
+.smallBlockFileHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 100px; }
+.smallBlockFileContainer { background: url(pptrf2019/outline-book-24px.png) left top no-repeat; padding-left: 60px; height: 60px; display: block; }
+.smallBlockFileName { color: #FFFFFF; font-size: 24px }
+.smallBlockFileLink a { font-size: 16px; color: #00C2F2 }
+
+
+.smallBlockWOFileLeft{width: 359px; height: 309px; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.smallBlockWOFileRight{ width: 359px; height: 309px; background-size: cover; margin-right: 0px; box-sizing: border-box; padding: 24px 32px; }
+.smallBlockWOFileHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; }
+.smallBlockWOFileDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 40px; }
+.smallBlockWOFileLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.smallBlockWOFileLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+
+.bigBlockLeft{ width: 777px; height: 309px; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.bigBlockRight{ width: 777px; height: 309px; background-size: cover; margin-right: 0px; box-sizing: border-box; padding: 24px 32px; }
+.bigBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; width: 320px; }
+.bigBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 40px;  width: 320px; }
+.bigBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.bigBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+
+#wt-hor-5-12-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-5-12-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-hor-6-21-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-6-21-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-hor-7-12-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-7-12-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-hor-8-21-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-8-21-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-hor-9-12-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-9-12-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-hor-10-21-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-10-21-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-hor-11-12-1 { float: left; display: inline-block; margin-bottom: 24px; }
+#wt-hor-11-12-2 { float: left; display: inline-block; margin-bottom: 24px; }
+
+#wt-zone-footer { display: none !important; }
+
+body.mobile .last-news-on-main { width: 100%; height: auto; min-height: 450px; }
+body.mobile .last-news-content { width: 100%; height: auto; min-height: 450px; display: block;   }
+body.mobile .last-news-content-bg { width: 100%; height: auto;  }
+body.mobile .last-news-bg { height: auto; min-height: 450px; }
+body.mobile .last-news-button { display: inline-block; position: absolute; bottom: 24px; }
+
+body.mobile .last-news-bg { width: 100% }
+body.mobile .objBlock { width: 100%; padding-left: 20px; padding-right: 20px; }
+body.mobile .myBlock  { width: 100%; padding-left: 20px; padding-right: 20px; }
+body.mobile .objBlockHeader { width: 100%; font-size: 30px; }
+body.mobile .objBlockDesc { width: 100% }
+
+body.mobile .pstBlock {  width: 100%; height: auto; }
+body.mobile .pstBlockHeader {  width: 100%; font-size: 30px; }
+body.mobile .pstBlockDesc { width: 100% }
+
+body.mobile .myBlockHeader { font-size: 30px !important }
+
+body.mobile .mtBlock, body.mobile .bBlock { width: 100% }
+body.mobile .mtBlockHeader { font-size: 30px }
+body.mobile .methodsBlock { margin-right: 0px }
+
+body.mobile .forumBlock, body.mobile .methodsBlock, body.mobile .pollBlock {  width: 100%; height: auto; }
+body.mobile .forumBlockHeader, body.mobile .methodsBlockHeader { width: 100%; font-size: 30px; }
+
+body.mobile .lBlock-left, body.mobile .lBlock-right { width: 100%; box-sizing: border-box; }
+body.mobile .lBlock-left { padding-bottom: 0px }
+body.mobile .lBlockHeader { margin-top: 10px; font-size: 30px; }
+body.mobile .bBlockHeader { font-size: 30px; }
+body.mobile .lBlockLink { margin: 20px auto 0px auto; }
+body.mobile .lBlock-center { display: none }
+body.mobile .pollBlockHeader { font-size: 30px }
+
+body.mobile .courses-header { width: 100%; box-sizing: border-box; padding-left: 0px; font-size: 30px; }
+body.mobile div.courses-on-main div.courses-content div.course_tab { width: 100%; height: auto; min-height: 150px; margin-bottom: 20px; }
+body.mobile .courses-all { padding-bottom: 20px; width: 100%; text-align: left }
+body.mobile .courses-all .courses-all-button { box-sizing: border-box; width: 100% !important; text-align: center; padding: 16px; }
+
+body.mobile #wt-hor-12-1 { width: 100% }
+body.mobile #wt-hor-12-2 { width: 100% }
+body.mobile #wt-hor-21-1 { width: 100% }
+body.mobile #wt-hor-21-2 { width: 100% }
+body.mobile #wt-hor-3-12-1 { width: 100% }
+body.mobile #wt-hor-3-12-2 { width: 100% }
+body.mobile #wt-hor-4-21-1 { width: 100% }
+body.mobile #wt-hor-4-21-2 { width: 100% }
+body.mobile #wt-hor-5-12-1 { width: 100% }
+
+body.mobile .smallBlockFileRight { width: 100%; box-sizing: border-box; }
+body.mobile .bigBlockLeft { width: 100% !important; box-sizing: border-box; }
+body.mobile .bigBlockHeader { width: 100% !important; box-sizing: border-box; }
+body.mobile .bigBlockDesc { width: 100% !important; box-sizing: border-box; }
+
+/* 22.05.2020 */
+header .block-user-info .wrapper { padding: 0px !important; }
+body.mobile .header .block-user-info { position: absolute; top: 0px; right: 56px; border-right: 0px solid transparent; }
+body.mobile .menu-mobile-button-container .menu-bar { padding-top: 0px !important; }
+body.mobile.mode-doc .menu-mobile-button-container .menu-bar { padding-top: 8px !important; }
+body.mobile.mode-boss_panel .menu-mobile-button-container .menu-bar { padding-top: 8px !important; }
+body.mobile.mode-my_account .menu-mobile-button-container .menu-bar { padding-top: 8px !important; }
+body div.help-container { padding: 14px 20px 8px 0px !important; }
+
+/*--------------------------------------------------------------------------- Личный кабинет ---------------------------------------------------------------------------*/
+/*
+	body, html {
+		color: white !important;
+		background-color: #ffffff !important;
+		font-size: 17px;
+		height: 100%;
+		width:100%;
+	}
+*/
+
+/*Шапка старницы
+body .shapka {
+color: #ffffff !important; /*цвет текста в шапке. Онлайн школа и т.д.
+float:center; /*положение
+}*/
+
+/*Верхняя часть шапки
+   .header-top {
+        background-color: #002B4E; /*швет верхней части шапки
+        width: 100%;/*ширина верхней части шапки
+        height: 65px;/*высота верхней части шапки
+   }
+*/
+
+/*Правая часть нижней части шапки*/
+/*
+	#header-bottom {
+		/* border: 1px solid black; /
+		background: #003B73 !important;
+		height: 52px !important;
+	}
+*/
+
+/*Вставить треугольник в шапку
+	a.lastItemMenu{
+		width: 100px !important;
+		background-repeat: no-repeat;
+		pointer-events:none;/*отменить переход по ссылке
+		color:transparent;
+	}
+*/
+
+/*Ширина треугольника в шапке
+	a.menu-icon {
+		width: 100px;
+	}
+*/
+
+/*Убрать цвет буквы на треугольнике
+	a.lastItemMenu >span{
+		color:#FFFFFF00;
+	 }
+*/
+
+/*Панель верхнего меню
+	.menu-main li {
+		 background-color: #004681;/*Цвет фона
+		 color: #ffffff;/*Цвет текста
+		 width:auto;
+		 height: 30px;/*Высота данного блока
+
+	}
+*/
+
+/*Выделение цветом при наведении курсора на панель верхнего меню
+	.menu-main li a:hover {
+		font-weight: bold!important;
+		color:#FFFFFF!important;
+		background-color:#003B73!important;
+	}
+ */
+
+/*Текст верхнего меню
+	.menu-link span{
+	 color: #FFFFFF;
+	 font-family:Verdana, serif !important;
+	}
+*/
+
+
+
+/*Цвет текста*/
+/*
+.mode-my_account .div, p,span, a, input, textarea, keygen, select, button {
+    color:#000000;
+    width:auto;
+	font-family:'Verdana', serif;
+}
+*/
+
+/*Иконка для входа в личный кабинет*/
+.block-user-info a {
+    color: #ffffff;/*Цвет иконки, которая в шапке справа*/
+}
+/*Выделение иконки личного кабинета цветом при наведении на нее*/
+.block-user-info a:hover{
+
+    color:#FFFFFF!important;
+    background-color:#003B73!important;
+}
+
+.header .block-user-info {
+    border-left: 0 !important;
+}
+
+/*Выпадающее меню личного кабинета*/
+.block-user-info .dropdown {
+    background-color:#003B73;
+    border:none;
+    font-size:17px;
+}
+
+/*Тень для выпадающего меню личного кабинета*/
+#wt-user-cabinet-box{
+    opacity: .93!important;
+    box-shadow: -3px 5px 6px #504f55!important;/*Тень от рамки*/
+    border: 1px solid #003B73!important;
+}
+
+/* Блок картинки  помощь*/
+.helpImageContainer{
+    background-color:#003B73;
+    padding-top: 11px;
+}
+/*Картинка помощи*/
+.helpImageContainer img{
+    width:30px !important;
+    height:30px !important;
+
+
+}
+/*Слово помощь*/
+.helpContainer >a{
+    color:#FFFFFF;
+    margin-left:10px;
+    display:block;
+    padding-top:14px;
+    padding-right:15px;
+}
+
+
+.block-user-info a:hover {
+    font-weight: normal !important;
+}
+
+/*Выделение цветом ссылки о помощи при наведении курсора*/
+.helpContainer:hover{
+    background-color:#003B73!important;
+
+}
+
+.helpContainer >a:hover, .HelpBlock:hover {
+/ color: red; /
+font-size: 16px;
+    font-weight: normal !important;
+}
+/*
+img:hover {
+    border: 0;
+}*/
+
+/*Общий контейнер для слова и картинки о помощи*/
+.HelpBlock{
+    width:135px;
+    display:flex;
+    margin-left: auto;
+    font-weight: normal !important;
+}
+
+
+
+/*Логотип компании
+.logo-container img{
+    float: left;/*Положение слева
+    width: auto;
+    height:65px;
+}
+*/
+
+/*Вся зона до верхнего header
+.mode-my_account .page-content {
+    padding: 53px 0 0px 0;
+}
+*/
+
+/*Весь блок зоны main */
+.zone-main {
+    margin: 0px;
+    padding: 0px;
+}
+
+/*Зона первой страницы*/
+.mode-my_account .x-component, .mode-my_account .x-container {
+    display: flex;
+    top: 0px;
+}
+
+
+/*Шрифт первой строчки в таблицах*/
+.mode-my_account .x-column-header-text{
+    color: #BDB7BA;
+    font-size: 17px;
+}
+
+.mode-my_account .cssXPDataGrid .x-grid-header-ct, .cssXPResourceFieldGridSelect .x-grid-header-ct {
+    color: #BDB7BA;/*Цвет текста верхней строчки таблицы*/
+    background-color: #F3F3F4; /*Цвет таблички*/
+}
+
+.mode-my_account .cssXPDataGrid .x-grid-item .x-grid-cell-first, .cssXPResourceFieldGridSelect .x-grid-item .x-grid-cell-first {
+    color: #517FEB;/*Цвет текста первой колонки таблицы*/
+    background-color: #F3F3F4;/*Цвет таблички*/
+    font-family:'Verdana', serif;
+}
+
+.mode-my_account .cssXPDataGrid .x-grid-cell, .cssXPResourceFieldGridSelect .x-grid-cell {
+    color: #4C4060;/*Цвет текста второй и третьей колонки таблицы*/
+    background-color: #F3F3F4;/*Цвет таблички*/
+    font-family:'Verdana', serif;
+}
+
+/*Меню левое*/
+.mode-my_account .cssXPTabControl-left>.x-tab-bar {
+    float:left;/*Положение слева*/
+    width: 16% !important;/*Ширина*/
+    height:auto;/*Высота*/
+    border:none;/*Рамка*/
+    padding-left:2px;/*Внутренний отступ слева*/
+    margin-left: 2px !important; /*Внешний отступ слева*/
+    margin-right:0px;	/*Внешний отступ справа*/
+    min-width:248px;
+}
+/*Прикрепление первой картинки "Мои курсы"*/
+.mode-my_account .imageTabs1-title {
+    display: block;
+    padding-left: 40px;
+    padding-top: 10px;
+    background-image: url(/ftsk/z1.png);
+    background-size: 26px;
+    background-repeat: no-repeat;
+    background-position: 4px 13px;/*положение картинки в блоке*/
+
+}
+
+/*Прикрепление второй картинки "Моя библиотека"*/
+.mode-my_account .imageTabs2-title {
+    display: block;
+    padding-left: 40px;
+    padding-top: 10px;
+    background-image: url(/ftsk/z2.png);
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: 5px 13px;
+}
+
+/*Прикрепление третьей картинки "Мои подборки"*/
+.mode-my_account .imageTabs3-title {
+    display: block;
+    padding-left: 40px;
+    padding-top: 10px;
+    background-image: url(/ftsk/z3.png);
+    background-size: 21px;
+    background-repeat: no-repeat;
+    background-position: 6px 13px;/*положение картинки в блоке*/
+}
+/*Прикрепление четвертой картинки "Мои траектории"*/
+.mode-my_account .imageTabs4-title {
+    display: block;
+    padding-left: 40px;
+    padding-top: 10px;
+    background-image: url(/ftsk/z4.png);
+    background-size: 31px;
+    background-repeat: no-repeat;
+    background-position: 2px 9px;
+}
+
+/*.mode-my_account .myTrajectory div.wt-paging-toolbar.x-toolbar-default-docked-bottom{
+    display: none;
+}*/
+
+/*Прикрепление пятой картинки "Мои достижения"*/
+.mode-my_account .imageTabs5-title {
+    display: block;
+    padding-left: 40px;
+    padding-top: 10px;
+    background-image: url(/ftsk/z5.png);
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: 3px 14px;/*положение картинки в блоке*/
+}
+
+
+
+/*Выделение сслыки цветом для левого меню
+div> a:hover{
+	background-color:#F2F2F2;
+}
+*/
+
+/*Чтобы ссылка при открытой владке подсвечивала фон в левом меню*/
+.mode-my_account a.x-tab-active{
+    background-color:#F2F2F2;
+}
+
+/*Левое меню, расстояние между вкладками*/
+.mode-my_account .cssXPTabControl-left a.x-tab-left {
+    margin-bottom: 0 !important;
+    padding: 7px 7px 7px 7px !important;
+    left: 4px !important;
+}
+
+.mode-my_account h2, .XAML-label-header-2, .XAML-label-block-header{
+    color: black !important;
+}
+
+.mode-my_account .x-container .cssXPHTMLBox .XAML-description-block .x-container-default{
+    color: black !important;/**/
+}
+
+header .block-user-info .wrapper {
+    padding: 5px 5px 21px 5px;/*Внутренние отступы для иконки которая в шапке*/
+}
+
+.mode-my_account .x-tab-inner-default {
+    line-height: 35px;/*Междустрочный интервал меню*/
+    margin-left:30px;
+}
+
+
+.mode-my_account .cssXPTabControl-left>.x-tab-bar-left>.x-tab-bar-body {
+    padding-left:0px;
+}
+
+.mode-my_account .cssXPTabControl-left .x-tab-bar-vertical .x-tab-inner {
+    font-size: 18px; /*Размер шрифта левого меню*/
+    margin-left:3%; /*Отступ между иконкой и текстом меню*/
+}
+
+
+/*Таблица положение*/
+.mode-my_account .x-tab-bar-strip .x-tab-bar-strip-default {
+    float:left !important;
+    width: 70% !important;
+
+}
+
+/*класс для таблиц*/
+.mode-my_account .SelectLibralyMatReportForTrainer{
+    padding-top:20px;
+    border: 2px solid #CED1D8;
+    /* Old
+    border-top:2px solid #CED1D8;
+    border-left:2px solid #CED1D8;
+    border-bottom:2px solid #CED1D8;
+    */
+    padding-left:20px;
+    margin-top: 4px;
+    margin-left: 7%;
+}
+
+
+
+/*Первая строчка в моих курсах в картинке */
+.mode-my_account .XAML-stack-tile-title-container {
+    margin:0 0 0 0;
+    height: 0px !important;
+    padding-left: 24px;
+    /*width: 308px;*/
+    width: 150px;
+    font-size: 21px;
+}
+
+
+/*Текст к картинкам на первой сранице*/
+.mode-my_account .x-autocontainer-innerCt{
+    /* color: #517FEB !important;
+    font-size: 17px; */
+}
+
+.mode-my_account .x-grid-cell-inner{
+    color: #4C4060;
+}
+
+
+.mode-my_account .x-border-box, .x-border-box {
+    -webkit-box-sizing: border-box;
+}
+
+
+/*Картинки в тайликах раздел мои курсы*/
+.mode-my_account .ViewTileCourseForNewDesign .XAML-image-tile-image {
+    width: 295px !important;
+    height:20%;
+}
+/*Картинки в тайликах раздел мои курсы*/
+.mode-my_account .ViewTileTrajForNewDesign .XAML-image-tile-image {
+    width: 100% !important;
+    height:20%;
+}
+
+.mode-my_account .ViewTileTrajForNewDesign .x-table-layout-cell{
+    padding:0px;
+}
+
+/*Текст к картинкам на первой странице 1 строчка*/
+.mode-my_account .XAML-stack-tile-title-container {
+    margin: 0 0 0 0;
+    width: 417px;
+    font-size:12px;
+
+}
+
+/* Класс "МОЕ ОБУЧЕНИЕ*/
+.mode-my_account .tileForNewDesignLeftPanel {
+    font-family: 'Roboto', 'Open Sans', Trebuchet MS, Verdana, Tahoma, sans-serif !important;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 44px;
+    line-height: 125%;
+    color: #3b4256;
+    word-break: break-word;
+    margin-left: 2px;
+    margin-bottom: 1%;
+
+}
+
+/*ФУТЕР*/
+.footer{
+    height:10%;
+    margin-bottom:0px;
+}
+
+/*
+.mode-my_account .x-table-layout {
+    height: 20%;
+}*/
+
+
+
+
+
+
+
+
+/*Вкладка :МОИ КУРСЫ*/
+
+/*Фильтр*/
+.mode-my_account .XAML-stack-filters-container{
+    margin-right: 24px;
+    margin-top: 24px;
+    margin-left: 24px;
+}
+
+/*Общий класс для тайликов для вкладки мои курсы*/
+.mode-my_account .FCK-course-tile{
+    margin-left:2px !important;
+    border:none!important;
+}
+.mode-my_account .ViewTileTrajForNewDesign .FCK-course-tile{
+    margin-left:0px !important;
+    border:none!important;
+}
+.ViewTileTrajForNewDesign .XAML-stack-tile-image-container{
+    border-radius: 0px;
+}
+/*Высота промежутков текста в тайликах на вкладке мои курсы*/
+.mode-my_account .x-table-layout {
+    height: 20px;
+}
+/*Первая строка в тайликах вкладка "Мои курсы"*/
+.mode-my_account a.XAML-course-link-tile-title{
+    color: #3b4256;
+    font-size: 18px;
+    font-weight: 400;
+    width: 417px !important;
+    margin-left: -20px;
+    right: 14px;
+    font-family: 'Verdana', serif;
+    height: 66px;
+    vertical-align: middle;
+    display: table-cell;
+}
+.mode-my_account .ViewTileTrajForNewDesign a.XAML-course-link-tile-title{
+    background: #FFFFFFB0;
+    position: absolute;
+    color: #0E58A4;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 'Verdana', serif;
+    margin-left: 0px !important;
+    white-space: normal;
+    height: 100px;
+    align-items: center;
+    text-align: center;
+    width: 376px !important;
+    place-content: center;
+    right: unset;
+    display: flex;
+}
+/*Текст:"В процессе" вкалдка мои курсы*/
+.mode-my_account div.XAML-state-name{
+    justify-content: center;
+    border-radius: 2px;
+    margin-top: 35px;
+    color: #FFF;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Verdana', serif;
+    margin-left: -14px;
+    padding: 0 5px 0 5px;
+    height: 19px;
+}
+.mode-my_account .ViewTileTrajForNewDesign div.XAML-state-name{
+    justify-content: center;
+    border-radius: 2px;
+    margin-top: 49px;
+    color: #FFF;
+    font-size: 14px;
+    min-width: 100px !important;
+    font-family: 'Verdana', serif;
+    margin-left: -21px;
+    padding: 6px;
+    height: auto;
+}
+.mode-my_account div.XAML-state-name.stateYellow{
+    background: #FFAC3E;
+}
+.mode-my_account div.XAML-state-name.stateGreen{
+    background: #8ed100;
+}
+.mode-my_account div.XAML-state-name.stateRed{
+    background: #EB4970;
+}
+.mode-my_account div.XAML-state-name.stateViolet{
+    background: #8C80C8;
+}
+
+/*0% вкладка мои курсы*/
+.mode-my_account div.XAML-indicator-name{
+    margin-top: 9px;
+    color: #3b4256;
+    font-size: 16px;
+    padding-left: 30px;
+    display: block;
+    background-image: url(/ftsk/z6.png);
+    background-size: 22px;
+    background-repeat: no-repeat;
+    position: absolute !important;
+    right: 0;
+    top: unset !important;
+    font-weight: 600;
+}
+.mode-my_account .ViewTileTrajForNewDesign div.XAML-indicator-name{
+    /* margin-top: 48px; */
+    margin-top: 15px;
+    color: #A6A5A5;
+    font-size: 19px;
+    padding-left: 30px;
+    display: block;
+    background-image: url(/ftsk/z6.png);
+    background-size: 22px;
+    background-repeat: no-repeat;
+    /* background-position: 344px -2px; */
+    position: absolute !important;
+    right: 55px;
+    top: unset !important;
+    font-weight: 500;
+}
+/*Текст:"Основы бережливого производства" вкладка "Мои курсы"*/
+.mode-my_account .myCourseTeg{
+    margin-top:5px;
+    color:#A6A6A6;
+    font-size:14px;
+    font-family:'Verdana', serif;
+    margin-left: -19px;
+}
+
+/*Вкладка :МОИ ТРАЕКТОРИИ*/
+
+/*Общий класс для траекторий
+	.mode-my_account .myTrajectory >div>div>div>div>div>div>div>div{
+	  display:flex !important;
+	  flex-direction:column !important;
+	}
+.mode-my_account .myTrajectory >div>div>div>div>div>div>div>div>div.spxmltileview-tile{
+		min-width:800px;
+        margin-left: 70px;
+		margin-top: 19px;
+		margin-bottom: -51px!important;
+	}
+
+	.mode-my_account .myTrajectory >div>div>div>div>div>div>div>div>div{
+		margin-bottom:-60px;
+	}
+/*Конкретный класс для карточки траектории
+	.mode-my_account .TileTrajectory{
+		width: 100% !important;
+		height:140px;
+		min-width:750px;
+		border:1px solid #DFDFDF;
+		box-shadow:5px 3px 4px 3px #E4E4E4; /*Тень от рамки*/
+padding-left: 30px;
+display: flex;
+align-items: flex-end;
+padding-right: 30px;
+}
+/*Текст: корпоративный университет карточка траекторий
+	.mode-my_account div.titleTrajectory{
+		color:#7F7F7F;
+		font-size: initial;
+		/*padding-top: 46px;
+		/*padding-left: 197px;
+		font-family:'Verdana', serif;
+		 max-width: max-content;
+         margin-left: auto;
+         margin-right: auto;
+	}
+/*Текст: назначен карточка траекторий
+	.mode-my_account div.stateTrajectory{
+		margin-top: 22px;
+		color:#00B0F0;
+		font-weight:bold;
+		font-size:14px;
+		min-width: 100px !important;
+		font-family:'Verdana', serif;
+	}
+/*Текст с процентом и иконкой рядом в карточке траекторий
+	.mode-my_account div.protsentTrajectory{
+		margin-top: 32px;
+		color:#A6A5A5;
+		font-size:16px;
+		padding-right:13px;
+		display: block;
+		padding-left: 360px;
+		background-image: url(/ftsk/z6.png);
+		background-size: 22px;
+		background-repeat: no-repeat;
+		background-position: 495px -2px;
+		font-family:'Verdana', serif;
+	}*/
+
+/*Вкладка :МОИ ДОСТИЖЕНИЯ*/
+
+/*Класс к карточкам для страинцы "Мои достижения" общий*/
+.mode-my_account .ViewTileCourseForNewDesign >div>div>div>div{
+    display: flex;
+    flex-wrap: wrap;
+}
+/*Класс к карточкам для вкладки "Мои достижения"(выделяется одна карточка)*/
+.mode-my_account .ViewTileCourseForNewDesign >div>div>div>div>div{
+    width: 90% !important;
+    border: 1px solid black;
+    margin-left: 5px !important;
+    margin-top: 5px !important;
+}
+/* Общий класс на все 4 каринки во вкладке "Мои достижения"*/
+.mode-my_account .ViewTileCourseForNewDesignAchievements >div>div>div>div{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    justify-content:space-around;/*растягивание карточек*/
+    width: 90% !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Вкладка "Мои достижения" конкретный класс для картинки*/
+.mode-my_account .ViewTileCourseForNewDesignAchievements >div>div>div>div>div{
+    width:45% !important;
+    border:1px solid #E4E4E4;/*Рамка*/
+    box-shadow:5px 3px 4px 3px #E4E4E4!important; /*Тень от рамки*/
+    text-align:center!important;/*Положение текста на карточке*/
+    color: #7F7F7F;/*Цвет текста*/
+    margin-left:0px;
+    margin-top: 33px;
+}
+/*Класс к карточкам для вкладки "Мои достижения"(выделяется одна карточка)*/
+.mode-my_account .ViewTileTrajForNewDesign >div>div>div>div>div{
+    height: 250px !important;
+    width: 376px !important;
+    border: 1px solid black;
+    margin-left: 5px !important;
+    margin-top: 5px !important;
+}
+/* Общий класс на все 4 каринки во вкладке "Мои достижения"*/
+.mode-my_account .ViewTileCourseForNewDesignAchievements >div>div>div>div{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    justify-content:space-around;/*растягивание карточек*/
+    width: 90% !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Вкладка "Мои достижения" конкретный класс для картинки*/
+.mode-my_account .ViewTileCourseForNewDesignAchievements >div>div>div>div>div{
+    width:45% !important;
+    border:1px solid #E4E4E4;/*Рамка*/
+    box-shadow:5px 3px 4px 3px #E4E4E4!important; /*Тень от рамки*/
+    text-align:center!important;/*Положение текста на карточке*/
+    color: #7F7F7F;/*Цвет текста*/
+    margin-left:0px;
+    margin-top: 33px;
+}
+/*Вернула картнику посередине блока во вкладке "Мои достижения"*/
+.mode-my_account .TileAchivmentsContent{
+    min-height: 210px;
+}
+/*Класс для фоновой картинки в "Моих достижениях"*/
+.mode-my_account .imageAchivements {
+/ text-align: center; /
+display: block;
+    opacity: .13 !important;
+    position: absolute;
+    z-index: 0;
+    width: 100% !important;
+}
+
+/*Класс для текста в "Моих достижениях"*/
+.mode-my_account .nameProcAchivments{
+    color:#7F7F7F;
+    font-weight: bold!important;
+    text-align:center !important;
+    display: block;
+    font-size:20px;
+    font-stretch:normal;
+    top: 20px;
+}
+/*Класс для цифры в моих достижениях*/
+.mode-my_account .stateProcAchivments{
+    color:black !important;
+    text-align:center !important;
+    display: block;
+    font-size: 62px !important;
+    font-family:'Verdana', serif;
+}
+/*Уменьшила высоту картинок тайликов во вкладке "мои достижения"*/
+.mode-my_account div .XAML-stack-tile-image-container {
+    height:197px;
+}
+
+.mode-my_account .ViewTileTrajForNewDesign div .XAML-stack-tile-image-container {
+    height:160px;
+}
+
+
+
+/*"Мои достижения" класс на 1 картинку*/
+.mode-my_account .TileCourseForNewDesignAchievementsAchievementsInterior{
+    height: 200px !important;
+}
+
+.mode-my_account .x-panel-body.x-panel-body-default.x-panel-body-default{
+    /*height:800px !important;*/
+}
+
+.mode-my_account .cssXPTabControl-left>.x-panel-body{
+    float:left !important;
+    /*width:73% !important;*/
+}
+
+/*Медиа-запрос для первой страницы, для картинок*/
+@media screenan and(min-width:1450px){
+    .mode-my_account .cssXPTabControl-left>.x-panel-body{
+        float:left !important;
+        width:75% !important;
+    }
+}
+
+/*Чтобы в табилцах не было на просмотре красной обводки*/
+.mode-my_account .cssXPDataGrid .x-grid-item, .cssXPResourceFieldGridSelect .x-grid-item {
+    background-color: #FFF;
+}
+
+/*.x-container.cssXPLink.urlTrajectory.x-container-default{
+	position: absolute !important;
+    top: 0 !important;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-image: unset !important;
+}*/
+
+.urlCoursesAllBlock{
+    position: absolute !important;
+    top: 0 !important;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-image: unset !important;
+}
+
+.urlAchivmentsAllBlock{
+    position: absolute !important;
+    top: 0 !important;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-image: unset !important;
+}
+
+
+
+/* 03.03.20 */
+
+.mode-my_account .cssXPTabControl-left>.x-panel-body>.my_courses_for_new_design{
+    margin-top: 24px;
+    top: 0 !important;
+    margin-left: 2% !important;
+    padding-left: 2%;
+}
+
+.mode-my_account .cssXPTabControl-left>.x-panel-body>.my_tests_for_new_design{
+    top: 0px;
+    margin-left: 2% !important;
+    padding-left: 2%;
+}
+
+/*.mode-my_account .cssXPTabControl-left>.x-panel-body>.myTrajectory>div{
+    overflow: hidden;
+}
+
+.mode-my_account .cssXPTabControl-left>.x-panel-body>.myTrajectory{
+    /* border: 2px solid #CED1D8;
+    border-radius: 4px;
+    margin-top: 24px;
+    margin-left: 2% !important;
+    left: 0 !important;
+    min-height: 500px;
+}
+
+.mode-my_account .trajectory-tile-image{
+    position: absolute !important;
+    top: 0 !important;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-size: 100% !important;
+    z-index: 0;
+    opacity: 0.2;
+}
+
+.mode-my_account .stateTrajectory, .mode-my_account .protsentTrajectory, .mode-my_account .TileTrajectoryContent{z-index: 100;}
+.mode-my_account .urlTrajectory {z-index: 200;}*/
+
+.mode-my_account .tabControlNewDesign .x-panel-body.x-panel-body-default.x-panel-body-default{overflow: visible !important; margin-bottom: 4%;}
+
+.mode-my_account .ViewTileCourseForNewDesign >div>div>div>div>div {
+    margin-left: 56px !important;
+    margin-top: 10px !important;
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+    border-radius: 20px;
+    border-bottom: 4px solid #0086CD;
+}
+/*.ViewTileCourseForNewDesign {
+    height: 510px !important;
+}*/
+.mode-my_account .ViewTileTrajForNewDesign >div>div>div>div>div {margin-left: 28px !important; margin-top: 20px !important; margin-bottom: 10px; /*box-shadow: 0 8px 16px rgba(0,71,129,.25);*/ border: 1px solid #ddd4d4; background-color: #F6F4F5;}
+.ViewTileTrajForNewDesign {
+    height: 510px !important;
+}
+
+@media screen and (max-width: 980px){
+    .mode-my_account .menu-mobile-button-container .menu-bar {
+        display: table;
+        box-sizing: border-box;
+        vertical-align: middle;
+        height: 100%;
+        padding: 8px 14px 0px 16px;
+        margin-top: 8px;
+    }
+}
+
+/*.mode-my_account .ViewTileCourseForNewDesign >div>div>div>div { height: 505px !important;}*/
+
+.mode-my_account .ViewTileCourseForNewDesign >div>div>div>div {display: block;}
+
+.mode-my_account .ViewTileTrajForNewDesign >div>div>div>div { height: 505px !important;}
+
+.mode-my_account .ViewTileTrajForNewDesign >div>div>div>div {display: block; margin: 6px 0px 0px 10px;}
+
+.mode-my_account .x-container .spxmltileview-tile .x-container-default .x-border-box .x-table-layout-ct{
+    height:143px!important;
+}*/
+
+
+@media screen and (max-width: 1200px) { /*.mode-my_account .ViewTileCourseForNewDesign >div>div>div>div {display: grid !important;} */
+    .mode-my_account .cssXPTabControl-left>.x-tab-bar {display: contents;}
+    .mode-my_account .ViewTileCourseForNewDesign >div>div>div>div {height: auto !important;}
+    .my_courses_for_new_design {height: auto !important;}
+    .ViewTileCourseForNewDesign {
+        height: auto !important;
+    }
+    .mode-my_account .ViewTileCourseForNewDesign >div>div>div>div {padding-bottom: 30px !important;}}
+
+@media screen and (max-width: 950px) {.mode-my_account .ViewTileCourseForNewDesign >div>div>div>div>div {width: 97% !important; display: flex;} .mode-my_account div.XAML-indicator-name {right: -41em;}}
+
+.mode-my_account .ViewTileTrajForNewDesign >div>div>div>div {height: auto !important;}
+.my_courses_for_new_design {height: auto !important;}
+.ViewTileTrajForNewDesign {
+    height: auto !important;
+    left: 10px;
+    margin-left: 4% !important;
+}
+.mode-my_account .ViewTileTrajForNewDesign >div>div>div>div {padding-bottom: 30px !important;}}
+
+@media screen and (max-width: 950px) {.mode-my_account .ViewTileTrajForNewDesign >div>div>div>div>div {width: 97% !important; display: flex;} .mode-my_account div.XAML-indicator-name {right: -41em;}}
+
+
+body.mobile .logo-container img {width: 100%;}
+body.mobile .spxmltileview-tile {max-width: 100% !important;}
+body.mobile .ViewTileCourseForNewDesign >div>div>div>div>div {margin-left: 17px !important;}
+body.mobile .ViewTileTrajForNewDesign >div>div>div>div>div {margin-left: 17px !important;}
+body.mobile a.XAML-course-link-tile-title {width: 22em !important;}
+body.mobile .myCourseTeg {font-size: 12px;}
+body.mobile .XAML-state-name {margin-top: 54px;}
+body.mobile .XAML-indicator-name {right: -9em !important;}
+body.mobile .tileForNewDesignLeftPanel {width: 97%;}
+
+body.mobile .myTrajectory >div>div>div>div>div>div>div>div>div {width: 100% !important;}
+body.mobile .TileTrajectory {min-width: unset !important;}
+
+body.mobile .myTrajectory >div>div>div>div>div>div>div>div>div {min-width: 100%;}
+
+body.mobile .TileTrajectory table {width: 70% !important;}
+
+body.mobile .protsentTrajectory {padding-left: 11em; background-position: right; padding-right: 25px;}
+body.mobile .x-panel-body.x-panel-body-default.x-panel-body-default {width: 100% !important;}
+
+/*Выделенная строка resourseFile*/
+.x-grid-with-row-lines .x-grid-item.x-grid-item-selected td {
+    background: #ebebec;
+}
+
+/*Стрелочка назад - личный кабинет (скрыть)*/
+.mode-my_account .x-container.cssXPLink.icon-arrow-left.x-container-default {display:none}
+
+/*12.06.2020 рамки и текст на отсутствие результатов*/
+.mode-my_account .objectsNotFound{ height: 150px; color: #6F7070; align-items: center; padding: 5%; margin-top: 24px; margin-left: 2%;}
+
+.mode-my_account .cssXPTabControl-left>.x-tab-bar-left>.x-tab-bar-body{padding: 7px 2px 7px 2px; margin-right: 49px; margin-top: 24px;background-color: rgb(236, 236, 236);}
+
+.mode-my_account .MPmanual{border: 1px solid #CED1D8; border-radius: 4px; margin-top: 24px; margin-left: calc(4% + 47px) !important; padding: 2px 1% 2px 1%;}
+
+/* Полоса прокрутки в кабинете организатора/календарь */
+.mode-trainer_personal_account .event_calendar_body_for_trainer.x-tabpanel-child .x-panel-body {
+    overflow-x: hidden;
+}
+
+
+/* Убрать ссылку на мобильную версию в кабинете организатора */
+.mode-custom_event #footer_text a.WTCSS-view-switch {
+    display: none;
+}
+.mode-trainer_personal_account #footer_text a.WTCSS-view-switch {
+    display: none;
+}
+
+.mode-my_account .cssXPDataGrid {
+    border: none;
+}
+
+.mode-my_account .cssXPTabControl-left a.x-tab-left.x-tab-active span, .cssXPTabControl-left a.x-tab-left:hover span {
+    color: #FFFFFF !important;
+}
+
+.mode-my_account .cssXPTabControl-left a.x-tab-left.x-tab-active, .cssXPTabControl-left a.x-tab-left:hover {
+    background-color: rgb(200, 69, 106);
+}
+
+.mode-my_account .cssXPTabControl-left .x-tab-bar-vertical .x-tab-inner {
+    width: 230px;
+    color: rgb(30, 134, 200);
+}
+
+.mode-my_account .XAML-tab-template-container.my_account_certificates {
+    border: none !important;
+}
+
+.FCK-course-tile
+{
+    position: relative;
+}
+
+.my_courses_tile>table>tbody>tr>td
+{
+    vertical-align: top;
+}
+
+.FCK-course-tile>table>tbody>tr>td
+{
+    vertical-align: top;
+}
+
+.FCK-course-tile>table>tbody>tr>td>div
+{
+    top: unset !important;
+}
+
+.FCK-course-tile>table>tbody>tr:first-child>td
+{
+    height: 100px;
+}
+
+.FCK-course-tile>table>tbody>tr:last-child>td
+{
+    height: 30px;
+}
+
+.FCK-course-tile>table>tbody>tr:last-child>td>div
+{
+    margin: 0 !important;
+}
+
+.my_courses_tile_info
+{
+    max-height: calc(100%-30px);
+}
+
+.my_courses_tile_indicators
+{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    height: 30px;
+}
+
+.my_courses_tile_desc
+{
+    margin-left: -14px;
+    text-align: justify;
+    color: #3b4256;
+    font-family: 'Verdana', serif;
+    font-weight: 400;
+}
+
+.ViewTileCourseForNewDesign .wt-paging-toolbar
+{
+    display: none;
+}
+
+.my_account_certificates
+{
+    left: 30px;
+}
+
+.my_account_certificates .block_selector_title
+{
+    left: 24px;
+}
