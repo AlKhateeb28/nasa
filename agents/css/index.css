@@ -357,15 +357,25 @@
 .link-icon {
     width: 100px;
     height: 100px;
-    margin-left: 30px;
     margin-top: 3px;
     border: 1px solid mintcream;
     border-radius: 5px;
     box-shadow: 2px 2px 3px #bebebe, 0 0 9px #ffffff;
     cursor: pointer;
+    margin-left: -15px;
 }
 
-.link-icon:hover {
+.link-icon:hover{
     transform: scale(0.9);
     opacity: 0.5;
+}
+
+.link-desc {
+    cursor: pointer;
+    transform: rotate(-90deg);
+    transform-origin: left top 0;
+    color: orange;
+    position: relative;
+    top: 106px;
+    left: 10px;
 }
