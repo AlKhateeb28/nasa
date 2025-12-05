@@ -1,0 +1,40 @@
+﻿<%
+// const_start
+if (curLngID == 'russian') {
+var sConstSwitchToMobile = "Мобильная версия";
+var sConstSwitchToDesktop = "Полная версия";
+} else {
+var sConstSwitchToMobile = "Mobile version";
+var sConstSwitchToDesktop = "Full version";
+}
+
+displayMode = curDevice.disp_type != "mobile" ? "mobile" : "desktop";
+
+Request.Session.SetProperty("displayMode", displayMode);
+%>
+<script>
+	function changeCookieValue() {
+		if(getCookie("displayMode") === "mobile") {
+			document.cookie = "displayMode=desktop";
+		} else {
+			document.cookie = "displayMode=mobile";
+		}
+	}
+</script>
+
+<div id="footer_text" class="WTCSS-footer-text copyright-container">
+	<div class="copyright"><%=tools_web.get_web_const( "copyright_msg", curLngWeb )%></div>
+	<div class="view-switch"><a id="display_mode_link" href="javascript:void(0)" class="WTCSS-view-switch" onclick="changeCookieValue(); location.reload();  return false;"></a></div>
+</div>
+
+<script>
+	let linkName = "";
+
+	if(getCookie("displayMode") === "mobile") {
+		linkName = "Полная версия";
+	} else {
+		linkName = "Мобильная версия";
+	}
+
+	$("#display_mode_link").html(linkName);
+</script>

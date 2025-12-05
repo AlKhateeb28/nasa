@@ -32,12 +32,12 @@
 
     .myBlockClass{
         background-size: cover;
-        background-repeat: round;
         display: flex;
         flex-flow: column;
         height: 30em;
         justify-content: space-between;
         border-radius: 24px;
+        background-position: center top;
     }
 
     a{
@@ -63,14 +63,22 @@
         color: #000000;
     }
 
-    .file-link{
+    .download-big-link{
         font-size: 16px;
         color: #ea486d;
     }
 
-    .file-link:hover{
+    .download-big-link:hover{
+        color: #fd93ab;
+    }
+
+    .download-small-link{
         font-size: 16px;
-        color: #ea93a4;
+        color: #fcecb3;
+    }
+
+    .download-small-link:hover{
+        color: #fdf8e5;
     }
 
     @media screen and (max-width: 550px) {
@@ -96,6 +104,30 @@
             font-size: 14px;
             color: #00C2F2;
         }
+    }
+
+    .main-box-grid {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 24px;
+    }
+
+    .main-box-bg {
+        border-radius: 24px;
+        border: 0px solid red;
+        background-size: cover;
+    }
+
+    .box-big-cut {
+        clip-path: polygon(0 0, calc(100% - 50px) 0, 100% 50px, 100% 100%, 0 100%);
+    }
+
+    .box-small-cut {
+        clip-path: polygon(0 0, calc(100% - 64px) 0, 100% 64px, 100% 100%, 0 100%);
+    }
+
+    .box-desc {
+        margin: 20px 18px 20px 20px;
     }
 </style>
 
@@ -168,69 +200,42 @@ docLink = "/" + temp.link_href
 return docLink;
 }
 
-function createBigBlockWFile(doc){
-var docFile = ArrayOptFirstElem(ArraySelectAll(doc.TopElem.files));
-var fileLink = "download_file.html?file_id=" + docFile.file_id;
-var imgStr = getBigImgStr(doc);
-
-%>
-<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 my-4">
-    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>');">
-        <div class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></div>
-        <div style="background: url(pptrf2019/outline-book-24px.png); padding-left: 60px; display: block;">
-            <div class="file-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.custom_elems.ObtainChildByKey("file_desc").value%></div>
-            <div><a class="file-link" href="<%=fileLink%>" style="font-family: Montserrat, sans-serif;">Скачать</a></div>
-        </div>
-    </div>
-</div>
-<%
-}
-
-function createBigBlockWOFile(doc){
+// WITHOUT BIG
+function createBigBlockWithoutFile(doc){
 var docLink = getDocLink(doc);
 var imgStr = getBigImgStr(doc);
 
 %>
-<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 my-4">
-    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>');">
+<div class="main-box-grid main-box-bg box-big-cut col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 my-4" style="background-image: url(pptrf2019/banner.png);">
+    <div class="p-5 myBlockClass" style="height: 100%; min-height: 224px;">
         <div>
-            <p class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></p>
+            <p class="block-name" style="font-size: 34px; font-weight: 600; font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></p>
             <p class="block-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.comment%></p>
         </div>
-        <div class="myBlockLink" onClick="document.location.href='<%=docLink%>'"  style="font-family: Montserrat, sans-serif;">Подробнее</div>
+        <div class="myBlockLink" onClick="document.location.href='<%=docLink%>'" style="font-family: Montserrat, sans-serif;">Подробнее</div>
+    </div>
+        <div id="" class="p-5 myBlockClass main-box-bg box-desc big-bg-image" style="background-image: url('<%=imgStr%>'); clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);">
+            <script>
+                if(getCookie("displayMode") === "mobile") {
+                    $(".big-bg-image").css("visibility", "hidden");
+                }
+            </script>
     </div>
 </div>
 <%
 }
 
-function createSmallBlockWFile(doc){
-var docFile = ArraySelectAll(doc.TopElem.files);
-var fileLink = "download_file.html?file_id=" + docFile[0].file_id;
-var imgStr = getSmallImgStr(doc);
-
-%>
-<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 my-4">
-    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>'); background-repeat: no-repeat;">
-        <div class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></div>
-        <div style="background: url(pptrf2019/outline-book-24px.png) left top no-repeat; padding-left: 60px; display: block;">
-            <div class="file-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.custom_elems.ObtainChildByKey("file_desc").value%></div>
-            <div><a class="file-link" href="<%=fileLink%>" style="font-family: Montserrat, sans-serif;">Скачать</a></div>
-        </div>
-    </div>
-</div>
-<%
-}
-
-function createSmallBlockWOFile(doc){
+// WITHOUT SMALL
+function createSmallBlockWithoutFile(doc){
 var docLink = getDocLink(doc);
 var imgStr = getSmallImgStr(doc);
 
 %>
-<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 my-4">
-    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>');">
+<div class="box-small-cut col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 my-4" style=" ">
+    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>'); height: 100%; min-height: 224px;">
         <div>
-            <p class="block-name" style="font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></p>
-            <p class="block-desc" style="font-family: Montserrat, sans-serif;"><%=doc.TopElem.comment%></p>
+            <p class="block-name" style="color: #ffffff; font-size: 34px; font-weight: 600; font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></p>
+            <p class="block-desc" style="color: #ffffff; font-family: Montserrat, sans-serif;"><%=doc.TopElem.comment%></p>
         </div>
         <div class="myBlockLink" onClick="document.location.href='<%=docLink%>'" style="font-family: Montserrat, sans-serif;">Подробнее</div>
     </div>
@@ -238,132 +243,174 @@ var imgStr = getSmallImgStr(doc);
 <%
 }
 
-function createEvenRow(docs){
-if(ArrayCount(docs) > 1){
-var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
-var secondDoc = OpenDoc(UrlFromDocID(docs[1].id));
+// WITH BIG
+function createBigBlockWithFile(doc){
+var docFile = ArrayOptFirstElem(ArraySelectAll(doc.TopElem.files));
+var fileLink = "download_file.html?file_id=" + docFile.file_id;
+var imgStr = getBigImgStr(doc);
 
 %>
-<div class="row">
-    <%
-    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
-    createBigBlockWFile(firstDoc);
-    }
-    else{
-    createBigBlockWOFile(firstDoc);
-    }
-
-    if(ArrayCount(ArraySelectAll(secondDoc.TopElem.files)) == 1){
-    createSmallBlockWFile(secondDoc);
-    }
-    else{
-    createSmallBlockWOFile(secondDoc);
-    }
-    %>
+<div class="main-box-grid main-box-bg box-big-cut col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 my-4" style="background-image: url(pptrf2019/banner.png);">
+    <div style="height: 100%; min-height: 224px;">
+        <div class="block-name" style="font-weight: 600; font-size: 34px; font-family: Montserrat, sans-serif; line-height: 1; margin-bottom: 1rem; margin-top: 3rem; margin-left: 12px;"><%=doc.TopElem.name%></div>
+        <div style="background: url(pptrf2019/outline-book-black-24px.png) left top no-repeat; padding-left: 60px; display: block; margin-top: 150px;">
+            <div class="file-desc" style="font-family: Montserrat, sans-serif; margin-bottom: 1rem;"><%=doc.TopElem.custom_elems.ObtainChildByKey("file_desc").value%></div>
+            <div><a class="download-big-link" href="<%=fileLink%>" style="font-family: Montserrat, sans-serif;">Скачать</a></div>
+        </div>
+    </div>
+    <div class="p-5 myBlockClass main-box-bg box-desc big-bg-image" style="background-image: url('<%=imgStr%>'); clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);">
+        <script>
+            if(getCookie("displayMode") === "mobile") {
+                $(".big-bg-image").css("visibility", "hidden");
+            }
+        </script>
+    </div>
 </div>
 <%
 }
-else{
-var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+
+// WITH SMALL
+function createSmallBlockWithFile(doc){
+var docFile = ArraySelectAll(doc.TopElem.files);
+var fileLink = "download_file.html?file_id=" + docFile[0].file_id;
+var imgStr = getSmallImgStr(doc);
+
 %>
-<div class="row">
-    <%
-    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
-    createBigBlockWFile(firstDoc);
-    }
-    else{
-    createBigBlockWOFile(firstDoc);
-    }
-    %>
+<div class="box-small-cut col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 my-4" style=" ">
+    <div class="p-5 myBlockClass" style="background-image: url('<%=imgStr%>'); background-repeat: no-repeat; height: 100%;">
+        <div class="block-name" style="font-weight: 600; color: #ffffff; font-size: 34px; font-family: Montserrat, sans-serif; line-height: 1;"><%=doc.TopElem.name%></div>
+        <div style="background: url(pptrf2019/outline-book-24px.png) left top no-repeat; padding-left: 60px; display: block;">
+            <div class="file-desc" style="color: #ffffff; font-family: Montserrat, sans-serif;"><%=doc.TopElem.custom_elems.ObtainChildByKey("file_desc").value%></div>
+            <div><a class="download-small-link" href="<%=fileLink%>" style="font-family: Montserrat, sans-serif;">Скачать</a></div>
+        </div>
+    </div>
 </div>
 <%
-}
 }
 
 function createOddRow(docs){
-if(ArrayCount(docs) > 1){
-var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
-var secondDoc = OpenDoc(UrlFromDocID(docs[1].id));
+    if(ArrayCount(docs) > 1){
+        var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+        var secondDoc = OpenDoc(UrlFromDocID(docs[1].id));
 %>
-<div class="row">
+<div data-row-num="3" class="row" style="margin-right: 0px; margin-left: -15px;">
     <%
-    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
-    createSmallBlockWFile(firstDoc);
-    }
-    else{
-    createSmallBlockWOFile(firstDoc);
-    }
+        if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
+            createSmallBlockWithFile(firstDoc);
+        } else {
+            createSmallBlockWithoutFile(firstDoc);
+        }
 
-    if(ArrayCount(ArraySelectAll(secondDoc.TopElem.files)) == 1){
-    createBigBlockWFile(secondDoc);
-    }
-    else{
-    createBigBlockWOFile(secondDoc);
-    }
+        if(ArrayCount(ArraySelectAll(secondDoc.TopElem.files)) == 1){
+            createBigBlockWithFile(secondDoc);
+        } else {
+            createBigBlockWithoutFile(secondDoc);
+        }
     %>
 </div>
 <%
-}
-else{
-var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+    } else {
+        var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
 %>
-<div class="row">
+<div data-row-num="4" class="row" style="margin-right: 0px; margin-left: 0px;">
     <%
-    if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
-    createSmallBlockWFile(firstDoc);
-    }
-    else{
-    createSmallBlockWOFile(firstDoc);
-    }
+        if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1){
+            createSmallBlockWithFile(firstDoc);
+        } else {
+            createSmallBlockWithoutFile(firstDoc);
+        }
     %>
 </div>
 <%
+    }
 }
+
+function createEvenRow(docs){
+    if(ArrayCount(docs) > 1) {
+        var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+        var secondDoc = OpenDoc(UrlFromDocID(docs[1].id));
+
+    %>
+    <div data-row-num="1" class="row" style="margin-right: 0px; margin-left: 0px;">
+        <%
+        if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1) {
+            createBigBlockWithFile(firstDoc);
+        } else {
+            createBigBlockWithoutFile(firstDoc);
+        }
+
+        if(ArrayCount(ArraySelectAll(secondDoc.TopElem.files)) == 1) {
+            createSmallBlockWithFile(secondDoc);
+        } else {
+            createSmallBlockWithoutFile(secondDoc);
+        }
+        %>
+    </div>
+    <%
+    } else {
+        var firstDoc = OpenDoc(UrlFromDocID(docs[0].id));
+    %>
+    <div data-row-num="2" class="row" style="margin-right: 0px; margin-left: 0px;">
+        <%
+        if(ArrayCount(ArraySelectAll(firstDoc.TopElem.files)) == 1) {
+            createBigBlockWithFile(firstDoc);
+        } else {
+            createBigBlockWithoutFile(firstDoc);
+        }
+        %>
+    </div>
+    <%
+    }
 }
 
 function createBlocks(docs){
-var resultDocs = getAccessedArray(docs);
-if( ArrayCount(resultDocs) ) {
-var rows = ArrayCount(resultDocs)/2 + (ArrayCount(resultDocs)%2);
-var docsRow = null;
+    var resultDocs = getAccessedArray(docs);
+    if( ArrayCount(resultDocs) ) {
+        var rows = ArrayCount(resultDocs)/2 + (ArrayCount(resultDocs)%2);
+        var docsRow = null;
 
-for(r = 0; r < rows - 1; r++){
-docsRow = new Array();
-if((r+1)%2 == 0){
-for(j = 0; j < 2; j++){
-docsRow.push(resultDocs[r*2+j]);
-}
-createOddRow(docsRow);
-}
-else if((r+1)%2 != 0){
-for(j = 0; j < 2; j++){
-docsRow.push(resultDocs[r*2+j]);
-}
-createEvenRow(docsRow);
-}
-}
+        for(r = 0; r < rows - 1; r++) {
+            docsRow = new Array();
 
-var i = (rows - 1) * 2;
-docsRow = new Array();
-if((rows)%2 == 0){
-for(i; i < ArrayCount(resultDocs); i++){
-docsRow.push(resultDocs[i]);
-}
-createOddRow(docsRow);
-}
-else if((rows)%2 != 0){
-for(i; i < ArrayCount(resultDocs); i++){
-docsRow.push(resultDocs[i]);
-}
-createEvenRow(docsRow);
-}
-}
+            if((r+1)%2 == 0) {
+                for(j = 0; j < 2; j++){
+                    docsRow.push(resultDocs[r*2+j]);
+                }
+
+                createEvenRow(docsRow);
+            } else if((r+1)%2 != 0) {
+                for(j = 0; j < 2; j++) {
+                    docsRow.push(resultDocs[r*2+j]);
+                }
+
+                createOddRow(docsRow);
+            }
+        }
+
+        var i = (rows - 1) * 2;
+        docsRow = new Array();
+
+        if((rows)%2 == 0) {
+            for(i; i < ArrayCount(resultDocs); i++){
+                docsRow.push(resultDocs[i]);
+            }
+
+            createEvenRow(docsRow);
+        } else if((rows)%2 != 0) {
+            for(i; i < ArrayCount(resultDocs); i++){
+                docsRow.push(resultDocs[i]);
+            }
+
+            createOddRow(docsRow);
+        }
+    }
 }
 %>
 
-<div style="display: inline-block; width: 100%;">
+<div style="display: inline-block; width: 100%; margin-top: -12px;">
     <%
     var blocks = ArraySelectAll(XQuery("for $elem in documents where contains($elem/tags, '6795148673911631885') order by $elem/position return $elem"));
+
     createBlocks(blocks);
     %>
 </div>

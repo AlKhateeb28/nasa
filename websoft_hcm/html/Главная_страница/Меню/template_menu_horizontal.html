@@ -74,7 +74,7 @@
 </style>
 
 <%
-function drawMenuItems(arrMenuItemsParam, iCurLevelParam )
+function drawMenuItems(arrMenuItemsParam, iCurLevelParam, noBold )
 {
 	var sClass =(iCurLevelParam==0) ? 'class="wtmenu-top-level"' : '';
 %>
@@ -98,26 +98,30 @@ function drawMenuItems(arrMenuItemsParam, iCurLevelParam )
 		bUseTwistie = ArrayCount( oMenuItem.items ) > 0;
 
 %>
-				<a class="wtmenu-h item-link item-link-level-<%=oMenuItem.level%> <%=oMenuItem.active_class%>" style="color: #000000 !important;" href="<%=oMenuItem.link_href%>" target="<%=oMenuItem.link_target%>">
+				<a class="wtmenu-h item-link item-link-level-<%=oMenuItem.level%> <%=oMenuItem.active_class%>" style="color: #000000 !important; font-size: 15px;" href="<%=oMenuItem.link_href%>" target="<%=oMenuItem.link_target%>">
 <%
 		if ( oMenuItem.icon_url != "" )
 		{
 %>
 					<div class="item-icon" style="background-image: url(<%=oMenuItem.icon_url%>);"><span><%=oMenuItem.name%></span></div>
 <%
-		}
-		else
-		{
+		} else {
+				if(noBold != undefined && !noBold) {
 %>
-					<div class="item-no-icon" <%=(bUseTwistie ? '' : 'style="background-image: none"')%>><span><nobr><%=oMenuItem.name%></nobr></span></div>
+					<div class="item-no-icon" <%=(bUseTwistie ? '' : 'style="background-image: none"')%>><span style="font-family: Montserrat, sans-serif !important;"><nobr><%=oMenuItem.name%></nobr></span></div>
 <%
+				} else {
+%>
+					<div class="item-no-icon" <%=(bUseTwistie ? '' : 'style="background-image: none"')%>><span style="font-weight: 600; font-family: Montserrat, sans-serif !important;"><nobr><%=oMenuItem.name%></nobr></span></div>
+<%
+				}
 		}
 %>
 				</a>
 <%
 
 		if(ArrayCount(oMenuItem.items) > 0)
-			drawMenuItems(oMenuItem.items, oMenuItem.level + 1);
+			drawMenuItems(oMenuItem.items, oMenuItem.level + 1, false);
 %>
 			</div>
 		</li>

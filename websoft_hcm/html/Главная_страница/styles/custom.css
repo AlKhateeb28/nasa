@@ -75,7 +75,7 @@ body.desktop .logo-container { margin: 26px 0px 0px 0px }
 body.mobile .page { padding-top: 0px }
 body.mobile #wt-header-title { display: none }
 body.mobile .header-content { background-color: #ffffff; }
-body.mobile .icon-menu { color: #FFFFFF !important }
+body.mobile .icon-menu { color: #000000 !important }
 body.mobile .WTCSS-menu-h { display: none }
 body.mobile .WTCSS-user-info { /* display: none */ position: absolute; top: 0px; right: 80px; border-right: 0px solid transparent; }
 body.mobile.mode-main_book_shelves .WTCSS-user-info { /* display: none */ position: absolute; top: 0px; right: 56px; border-right: 0px solid transparent; }
@@ -127,28 +127,53 @@ div.block-user-info a:hover { color: #000000 !important; text-decoration: none }
     width: 1176px;
     height: 320px;
     position: relative;
-    border-radius: 0px;
     display: inline-block;
-    border: 0px solid red;
     margin-bottom: 24px;
-    clip-path: polygon(0 0, calc(100% - 80px) 0, 100% 80px, 100% 100%, 0 100%);
+    clip-path: polygon(0 0, calc(100% - 50px) 0, 100% 50px, 100% 100%, 0 100%);
     border-radius: 24px;
+    border: 0px solid red;
+    background: url(pptrf2019/banner.png) center top no-repeat;
+    background-size: cover;
 }
 
 .last-news-bg {
-    width: 1176px;
-    height: 320px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    clip-path: polygon(0 0, calc(100% - 80px) 0, 100% 80px, 100% 100%, 0 100%);
+    width: 600px;
+    height: 280px;
+    margin-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     border-radius: 20px;
+    background-size: cover;
+    background-attachment: local;
+    background-repeat: no-repeat;
+}
+
+.last_news_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.last-news-content {
+    color: #000000;
+    padding: 42px 38px;
+    box-sizing: border-box;
+}
+
+.last-news-date {
+    color: #000000;
+    font-size: 16px;
+    padding-bottom: 16px;
+}
+
+.last-news-header {
+    color: #000000;
+    font-size: 20px;
+    font-weight: 500;
+    padding-bottom: 32px;
 }
 
 .last-news-content-bg { display: none; width: 600px; height: 320px;  background-color: #004781; opacity: 0.6; border-radius: 8px 0px 0px 8px; position: absolute; top: 0; left: 0; box-sizing: border-box; }
-.last-news-content { width: 600px; height: 320px;  color: #FFFFFF; position: absolute; top: 0; left: 0; padding: 42px 38px; box-sizing: border-box; }
-.last-news-date { color: #FFFFFF; font-size: 16px; padding-bottom: 16px; }
-.last-news-header { color: #FFFFFF; font-size: 20px; font-weight: 500; padding-bottom: 32px; }
 .last-news-button input { border: 0px solid transparent; background-color: #00C2F2; border-radius: 8px; font-size: 16px; padding: 16px 32px; box-sizing: border-box; color: #FFFFFF; cursor: pointer; text-align: center;  width: 160px; }
 
 /* Блок Моя страница */
@@ -157,7 +182,18 @@ div.block-user-info a:hover { color: #000000 !important; text-decoration: none }
 
 #wt-hor-12-2 { float: left; display: inline-block; margin-bottom: 24px; }
 
-.myBlock { width: 359px; height: 309px; background: url(pptrf2019/frame1.png) center center no-repeat; background-size: cover; margin-right: 40px; box-sizing: border-box; padding: 24px 32px; }
+.myBlock {
+    width: 384px;
+    height: 309px;
+    box-sizing: border-box;
+    padding: 24px 32px;
+    clip-path: polygon(0 0, calc(100% - 50px) 0, 100% 50px, 100% 100%, 0 100%);
+    border-radius: 24px;
+    border: 0px solid red;
+    background: url(pptrf2019/banner.png) center top no-repeat;
+    background-size: cover;
+}
+
 .myBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; }
 .myBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 45px; }
 .myBlockLink {
@@ -182,18 +218,57 @@ div.block-user-info a:hover { color: #000000 !important; text-decoration: none }
 .objBlock {
     width: 777px;
     height: 309px;
-    background-size: cover !important;
-    background: url(pptrf2019/main_bg_1_2.jpg) no-repeat fixed;
-    clip-path: polygon(0 0, calc(100% - 80px) 0, 100% 80px, 100% 100%, 0 100%);
-    border-radius: 20px;
-    margin-right: 0px;
+    margin-right: 15px;
     box-sizing: border-box;
     padding: 24px 32px;
+    clip-path: polygon(0 0, calc(100% - 50px) 0, 100% 50px, 100% 100%, 0 100%);
+    border-radius: 24px;
+    border: 0px solid red;
+    background: url(pptrf2019/banner.png) center top no-repeat;
+    background-size: cover;
 }
 
-.objBlockHeader { font-size: 36px; color: #FFFFFF; padding-bottom: 12px; width: 320px; }
-.objBlockDesc { font-size: 16px; color: #FFFFFF;  padding-bottom: 60px;  width: 320px; }
-.objBlockLink { border: 2px solid #FFFFFF; color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
+.objBlock-bg {
+    width: 360px;
+    margin-left: -8px;
+    /* margin-top: 20px; */
+    /* margin-bottom: 20px; */
+    border-radius: 20px;
+    background-size: cover;
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+.objBlock-content {
+    color: #000000;
+    box-sizing: border-box;
+}
+
+.objBlockHeader {
+    font-size: 36px;
+    color: #000000;
+    padding-bottom: 12px;
+    width: 320px;
+}
+
+.objBlockDesc {
+    font-size: 16px;
+    color: #000000;
+    padding-bottom: 60px;
+    width: 320px;
+}
+.objBlockLink {
+    border: 2px solid #FFFFFF;
+    color: #000000;
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    display: inline-block;
+    cursor: pointer;
+}
+
 .objBlockLink:hover { border: 2px solid transparent; color: #1a4b81; background-color: #FFFFFF; font-size: 16px; border-radius: 8px; padding: 16px 24px; box-sizing: border-box; display: inline-block; cursor: pointer; }
 
 .courses-header { padding-left: 32px; font-size: 36px; color: #000000; padding-bottom: 16px; float: left; width: 968px; }
@@ -357,7 +432,13 @@ body.mobile .last-news-button { display: inline-block; position: absolute; botto
 
 body.mobile .last-news-bg { width: 100% }
 body.mobile .objBlock { width: 100%; padding-left: 20px; padding-right: 20px; }
-body.mobile .myBlock  { width: 100%; padding-left: 20px; padding-right: 20px; }
+
+body.mobile .myBlock  {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 body.mobile .objBlockHeader { width: 100%; font-size: 30px; }
 body.mobile .objBlockDesc { width: 100% }
 
@@ -1491,7 +1572,7 @@ body.mobile .x-panel-body.x-panel-body-default.x-panel-body-default {width: 100%
 }
 
 .logo-text-wrapper {
-    background-color: #ea486d;;
+    background-color: #ea486d;
     justify-content: center;
     align-items: center;
     width: 100%;

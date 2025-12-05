@@ -62,7 +62,7 @@
 
 .courses_count_grid {
     display: grid;
-    grid-template-columns: 3rem 2rem 2rem;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 .bottom-panel {
@@ -108,10 +108,8 @@
 .loader-view {
     cursor: pointer;
     position: absolute;
-    /*top: 20px;
-    left: 20px;*/
-    left: 520px;
-    top: 25px;
+    margin-left: 5px;
+    margin-top: 2px;
     width: 32px;
     height: 32px;
 }
@@ -171,9 +169,7 @@
 }
 
 .course-value-info {
-    position: fixed;
     font-size: xx-large;
-    margin-left: 90px;
     z-index: 1000;
     text-shadow: 1px 0 var(--color-whitesmoke),
     -1px 0 var(--color-whitesmoke),
@@ -192,26 +188,6 @@
     margin-top: 17px;
     color: var(--color-whitesmoke);
     font-size: 14px;
-    position: fixed;
-    z-index: 1000;
-}
-
-.increase-count {
-    color: var(--color-whitesmoke);
-    font-size: x-small;
-    font-family: 'RockAndRoll', serif;
-    font-weight: bold;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: 13%;
-    margin-top: 13px;
-    border-radius: 4px;
-    width: 23px;
-    text-align: center;
-    border: 1px solid var(--color-whitesmoke);
-    background-color: #6088fc;
-    position: fixed;
-    z-index: 1000;
 }
 
 .increase-count {
@@ -220,18 +196,14 @@
     font-weight: bold;
     padding-left: 10px;
     padding-right: 10px;
-    margin-left: 258px;
-    margin-top: 11px;
     border-radius: 4px;
     width: 23px;
     text-align: center;
     border: 1px solid var(--color-whitesmoke);
     background-color: #6088fc;
-    position: fixed;
-    z-index: 1000;
     text-shadow: 1px 0 var(--color-black), -1px 0 var(--color-black), 0 1px var(--color-black), 0 -1px var(--color-black), 1px 1px var(--color-black), -1px -1px var(--color-black), 1px -1px var(--color-black), -1px 1px var(--color-black);
     cursor: pointer;
-    /*font-family: monospace;*/
+    height: 14px;
 }
 
 .expected-values {
@@ -258,7 +230,7 @@
     font-weight: bold;
     padding-left: 10px;
     padding-right: 10px;
-    margin-left: 130px;
+    margin-left: 10px;
     border-radius: 4px;
     width: 30px;
     text-align: center;
@@ -291,11 +263,16 @@
     font-family: 'Rubic', serif;
     width: 100%;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 15px;
+    color: var(--color-course-passed);
 }
 
-.course-count-margin {
-    margin-left: 300px;
+.owner-bottom {
+    text-align: right;
+    margin-right: 6px;
+    margin-top: 60px;
+    color: burlywood;
+    font-family: 'Programme-Pan';
 }
 
 .number-field-shadow {

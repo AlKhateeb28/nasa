@@ -66,7 +66,7 @@ function getCoursesChartOption() {
         ],
         chart: {
             type: "line",//"line",
-            width: 1220,
+            width: 1300,
             height: 550,
             toolbar: {show: false},
             zoom: {enabled: false},
@@ -274,7 +274,7 @@ function getNormalizedTime(timeAsString) {
 }
 
 function refreshBoardData() {
-    $("#wait").css("visibility", "visible");
+    $("#chart_wait").css("display", "block");
 
     const currentDateTime = getCurrentDateTime();
 
@@ -410,13 +410,13 @@ function refreshBoardData() {
 
                 isInitialized = true;
 
-                $("#wait").css("visibility", "hidden");
+                $("#chart_wait").css("display", "none");
 
                 $("#refreshed_datetime").html("обновлено: " + getCurrentDateTime());
             } else {
                 isInitialized = true;
 
-                $("#wait").css("visibility", "hidden");
+                $("#chart_wait").css("display", "none");
 
                 showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
@@ -432,7 +432,19 @@ function getFlagValue(value, weekTotal) {
     return (parseInt(value) * 100 / weekTotal).toFixed(2);
 }
 
+function refreshValueAndBottomElements(elementId, flag, total, value) {
+    const rckElement = $("#" + elementId + "_value_" + flag);
+    if(total === 0) {
+        rckElement.html("0%");
+    } else {
+        rckElement.html( getFlagValue(value, total) + "%");
+    }
+    $("#" + elementId + "_bottom_" + flag).html(value.toLocaleString());
+}
+
 function refreshCurrentAssignedFlagsData(week) {
+    $("#owner_wait").css("display", "block");
+
     if(week === undefined) {
         week = getCurrentWeekNumber();
     }
@@ -441,13 +453,35 @@ function refreshCurrentAssignedFlagsData(week) {
     ownerWeekElement.html("--");
     ownerWeekElement.css("color", "whitesmoke");
     
-    $("#owner_value_rck").html("--");
-    $("#owner_value_ock").html("--");
-    $("#owner_value_fck").html("--");
-    $("#owner_value_roiv").html("--");
-    $("#owner_value_partner").html("--");
-    $("#owner_value_commerce").html("--");
-    $("#owner_value_with_no_right").html("--");
+    $("#courses_assign_value_rck").html("--");
+    $("#courses_assign_value_ock").html("--");
+    $("#courses_assign_value_fck").html("--");
+    $("#courses_assign_value_roiv").html("--");
+    $("#courses_assign_value_partner").html("--");
+    $("#courses_assign_value_commerce").html("--");
+    $("#courses_assign_value_with_no_right").html("--");
+    $("#courses_assign_bottom_rck").html("--");
+    $("#courses_assign_bottom_ock").html("--");
+    $("#courses_assign_bottom_fck").html("--");
+    $("#courses_assign_bottom_roiv").html("--");
+    $("#courses_assign_bottom_partner").html("--");
+    $("#courses_assign_bottom_commerce").html("--");
+    $("#courses_assign_bottom_with_no_right").html("--");
+
+    $("#courses_pass_value_rck").html("--");
+    $("#courses_pass_value_ock").html("--");
+    $("#courses_pass_value_fck").html("--");
+    $("#courses_pass_value_roiv").html("--");
+    $("#courses_pass_value_partner").html("--");
+    $("#courses_pass_value_commerce").html("--");
+    $("#courses_pass_value_with_no_right").html("--");
+    $("#courses_pass_bottom_rck").html("--");
+    $("#courses_pass_bottom_ock").html("--");
+    $("#courses_pass_bottom_fck").html("--");
+    $("#courses_pass_bottom_roiv").html("--");
+    $("#courses_pass_bottom_partner").html("--");
+    $("#courses_pass_bottom_commerce").html("--");
+    $("#courses_pass_bottom_with_no_right").html("--");
 
     $.ajax({
         url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7226648571481683640&year=" + getCurrentYearNumber() + "&week="+ week,
@@ -465,84 +499,32 @@ function refreshCurrentAssignedFlagsData(week) {
                     ownerWeekElement.css("color", "var(--color-course-passed)");
                 }
 
-                const weekTotal = data.weekTotal;
+                refreshValueAndBottomElements("courses_assign", "rck", data.weekTotal, data.rck);
+                refreshValueAndBottomElements("courses_assign", "ock", data.weekTotal, data.ock);
+                refreshValueAndBottomElements("courses_assign", "fck", data.weekTotal, data.fck);
+                refreshValueAndBottomElements("courses_assign", "roiv", data.weekTotal, data.roiv);
+                refreshValueAndBottomElements("courses_assign", "partner", data.weekTotal, data.partner);
+                refreshValueAndBottomElements("courses_assign", "commerce", data.weekTotal, data.commerce);
+                refreshValueAndBottomElements("courses_assign", "with_no_right", data.weekTotal, data.withNoRight);
 
-                const rckElement = $("#owner_value_rck");
-                if(weekTotal === 0) {
-                    rckElement.html("0%");
-                } else {
-                    const value = getFlagValue(data.rck, weekTotal);
+                refreshValueAndBottomElements("courses_pass", "rck", data.passWeekTotal, data.passRck);
+                refreshValueAndBottomElements("courses_pass", "ock", data.passWeekTotal, data.passOck);
+                refreshValueAndBottomElements("courses_pass", "fck", data.passWeekTotal, data.passFck);
+                refreshValueAndBottomElements("courses_pass", "roiv", data.passWeekTotal, data.passRoiv);
+                refreshValueAndBottomElements("courses_pass", "partner", data.passWeekTotal, data.passPartner);
+                refreshValueAndBottomElements("courses_pass", "commerce", data.passWeekTotal, data.passCommerce);
+                refreshValueAndBottomElements("courses_pass", "with_no_right", data.passWeekTotal, data.passWithNoRight);
 
-                    rckElement.html( value + "%");
-                }
-                $("#owner_bottom_rck").html(data.rck.toLocaleString());
-
-                const ockElement = $("#owner_value_ock");
-                if(weekTotal === 0) {
-                    ockElement.html("0%");
-                } else {
-                    const value = getFlagValue(data.ock, weekTotal);
-
-                    ockElement.html(value  + "%");
-                }
-                $("#owner_bottom_ock").html(data.ock.toLocaleString());
-
-                const fckElement = $("#owner_value_fck");
-                if(weekTotal === 0) {
-                    fckElement.html("0%");
-                } else {
-                    const value = getFlagValue(data.fck, weekTotal);
-
-                    fckElement.html(value  + "%");
-                }
-                $("#owner_bottom_fck").html(data.fck.toLocaleString());
-
-                const roivElement = $("#owner_value_roiv");
-                if(weekTotal === 0) {
-                    roivElement.html("0%");
-                } else {
-                    const value = getFlagValue(data.roiv, weekTotal);
-
-                    roivElement.html(value  + "%");
-                }
-                $("#owner_bottom_roiv").html(data.roiv.toLocaleString());
-
-                const partnerElement = $("#owner_value_partner");
-                if(weekTotal === 0) {
-                    partnerElement.html("0%");
-                } else {
-                    const value = getFlagValue(data.partner, weekTotal);
-
-                    partnerElement.html(value  + "%");
-                }
-                $("#owner_bottom_partner").html(data.partner.toLocaleString());
-
-                const commerceElement = $("#owner_value_commerce");
-                if(weekTotal === 0) {
-                    commerceElement.html("0%");
-                } else {
-                    const value = getFlagValue(data.commerce, weekTotal);
-
-                    commerceElement.html(value  + "%");
-                    commerceElement.attr("data-prev-val", value);
-                }
-                $("#owner_bottom_commerce").html(data.commerce.toLocaleString());
-
-                const withNoRightElement = $("#owner_value_with_no_right");
-                if(weekTotal === 0) {
-                    withNoRightElement.html("0%");
-                } else {
-                    const value = getFlagValue(data.withNoRight, weekTotal);
-
-                    withNoRightElement.html(value  + "%");
-                }
-                $("#owner_bottom_with_no_right").html(data.withNoRight.toLocaleString());
             } else {
                 showNotification("<div>Возможно произошла ошибка.<br/>Пожалуйста, проверте логи веб шаблонов WebSoft HCM.<br/>IDs: 7428923418845716087</div>" +
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
             }
+
+            $("#owner_wait").css("display", "none");
         },
         error: function() {
+            $("#owner_wait").css("display", "none");
+
             showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
         }
     });
@@ -633,18 +615,19 @@ function getWeek(dateAsString) {
     return moment(dateAsString, "DD.MM.YYYY").isoWeekday(1).startOf('week').week();
 }
 
-function appendOwnerChild(id, name) {
-    $("#courses_owners").append(getTemplate("owner_template"));
-    $("#owner_caption").attr("id", "owner_caption_" + id);
-    $("#owner_caption_" + id).html(name);
-    $("#owner_value").attr("id", "owner_value_" + id);
+function appendOwnerChild(parentId, id, name) {
+    $("#" + parentId).append(getTemplate("owner_template"));
+    $("#owner_caption").attr("id", parentId + "_caption_" + id);
+    $("#" + parentId + "_caption_" + id).html(name);
 
-    const valueElement = $("#owner_value_" + id);
+    $("#owner_value").attr("id", parentId + "_value_" + id);
+
+    const valueElement = $("#" + parentId + "_value_" + id);
     valueElement.html("--");
     valueElement.attr("data-prev-val", "0");
 
-    $("#owner_bottom").attr("id", "owner_bottom_" + id);
-    $("#owner_bottom_" + id).html("--");
+    $("#owner_bottom").attr("id", parentId + "_bottom_" + id);
+    $("#" + parentId + "_bottom_" + id).html("--");
 }
 
 function initialize() {

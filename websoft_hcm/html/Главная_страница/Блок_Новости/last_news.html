@@ -28,14 +28,16 @@ bgURL = "download_file.html?file_id=" + getNewsCard.resource_id + "&sid=" + tool
 else
 bgURL = "pics/1blank.gif";
 %>
-<div class="last-news-on-main"> <!-- last-news-on-main -->
-    <div class="last-news-bg" style="background: url(<%=bgURL%>) center top no-repeat; background-size: cover;"><!-- background-color: #004781; -->
-    </div>
-    <div class="last-news-content-bg"></div>
+<div id="last_news_on_main" class="last-news-on-main last_news_grid">
+    <script>
+        if(getCookie("displayMode") !== "mobile") {
+            $("#last_news_on_main").append("<div class='last-news-bg' style='background-image: url(<%=bgURL%>);'></div>");
+        }
+    </script>
     <div class="last-news-content">
-        <div class="last-news-date" style="font-size: 36px; color: #000000; padding-bottom: 12px; margin-top: -20px; font-family: Montserrat, sans-serif !important;">Новости академии</div>
-        <div class="last-news-header" style="color: #000000; font-family: Montserrat, sans-serif !important"><%=getNewsCard.name%></div>
-        <div class="myBlockLink" style="position: absolute; bottom: 20px; font-family: Montserrat, sans-serif !important" onClick="document.location.href='<%=sLink%>'">Подробнее</div> <!-- myBlockLink -->
+        <div class="last-news-date" style="font-size: 34px; font-weight: 600; padding-bottom: 12px; margin-top: -20px; font-family: Montserrat, sans-serif !important;">Новости академии</div>
+        <div class="last-news-header" style="font-family: Montserrat, sans-serif !important"><%=getNewsCard.name%></div>
+        <div class="myBlockLink" style="font-family: Montserrat, sans-serif !important; margin-top: 90px;" onClick="document.location.href='<%=sLink%>'">Подробнее</div> <!-- myBlockLink -->
     </div>
 </div>
 <%

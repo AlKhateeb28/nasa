@@ -27,7 +27,6 @@ oDopStyles = "";
         display: inline-block;
         cursor: pointer;
         position: relative;
-        top: 3.5em;
         transition: opacity .2s;
         justify-content: center;
         align-items: center;
@@ -70,9 +69,15 @@ oDopStyles = "";
     }
 </style>
 
-<div class="objBlock" style="<%=oDopStyles%>;">
-    <!-- <div class="objBlockHeader"><%=oBlockHeader%></div> -->
-    <div style="font-size: 36px; color: #000000; padding-bottom: 12px; font-family: Montserrat, sans-serif !important"><%=oBlockHeader%></div>
-    <div class="objBlockDesc" style="color: #000000; font-family: Montserrat, sans-serif !important"><%=oBlockDesc%></div>
-    <div class="blockLinkCourse" onClick="document.location.href='<%=oBlockLink%>'" style="margin-top: -20px; font-family: Montserrat, sans-serif !important">Перейти в каталог</div>
+<div id="el_courses_on_main" class="objBlock last_news_grid">
+    <script>
+        if(getCookie("displayMode") !== "mobile") {
+            $("#el_courses_on_main").append("<div class='objBlock-bg' style='<%=oDopStyles%>;'></div>");
+        }
+    </script>
+    <div class="objBlock-content" data-type="<%=Request.Session.GetProperty('displayMode')%>">
+        <div style="font-size: 34px; font-weight: 600; padding-bottom: 12px; font-family: Montserrat, sans-serif !important; line-height: 1;"><%=oBlockHeader%></div>
+        <div class="objBlockDesc" style="font-family: Montserrat, sans-serif !important"><%=oBlockDesc%></div>
+        <div class="blockLinkCourse" onClick="document.location.href='<%=oBlockLink%>'" style="margin-top: 15px; font-family: Montserrat, sans-serif !important">Перейти в каталог</div>
+    </div>
 </div>

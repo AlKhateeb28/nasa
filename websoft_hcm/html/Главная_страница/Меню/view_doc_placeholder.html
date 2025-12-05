@@ -145,24 +145,30 @@ var sTooltipPart = bDisplayTooltip ? ' title="' + HtmlEncode(sTitle) + '"' : '';
 		{
 		case "photo":
 		case "icon":
-		case "avatar":
-		{
-
+		case "avatar": {
 		%>
-		<div style="float: left">
-			<div class="<%=sIconCSS%> user-photo-container btnimg" <%=sOnclick%>>
-				<img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(pptrf2019/baseline-account_circle-24px.png); cursor: pointer;" border="0"/>
+		<div id="user_info_block">
+			<div style="float: left">
+				<div class="<%=sIconCSS%> user-photo-container btnimg" title="Мое обучение" <%=sOnclick%>>
+					<img class="<%=sIconCSS%> user-photo" src="pics/1blank.gif" style="background-image: url(pptrf2019/baseline-account_circle-24px.png); cursor: pointer;" border="0"/>
+				</div>
+			</div>
+			<div class="btnname username" style="color: #000000; float: left; margin-top: 2px; cursor: pointer;" onclick="document.location.href='view_doc.html?mode=my_account'" title="Мое обучение">
+				<%=HtmlEncode(curUser.firstname)%>
+			</div>
+			<div class="btnexit exit-button-container" style="float: left; margin-top: -3px;">
+				<a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico icon-2x" style="color: #000000;"></i></a>
 			</div>
 		</div>
-		<div class="btnname username" style="color: #000000; float: left; margin-top: 2px; cursor: pointer;" onclick="document.location.href='view_doc.html?mode=my_account'" title="Персональный кабинет">
-			<%=HtmlEncode(curUser.firstname)%>
-		</div>
-		<div class="btnexit exit-button-container" style="float: left; margin-top: -3px;">
-			<a href="javascript:void(0)" onclick="fnLogout()" title="<%=sLogoutString%>"><i class="icon-sign-out-ico icon-2x" style="color: #000000;"></i></a>
-		</div>
+
+		<script>
+			if(getCookie("displayMode") === "mobile") {
+				$("#user_info_block").css("display", "none");
+			}
+		</script>
 <%
-break;
-}
+			break;
+		}
 case "name":
 {
 %>
