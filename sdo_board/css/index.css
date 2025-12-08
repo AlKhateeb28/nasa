@@ -238,7 +238,7 @@
     background-color: #6088fc;
     text-shadow: 1px 0 var(--color-black), -1px 0 var(--color-black), 0 1px var(--color-black), 0 -1px var(--color-black), 1px 1px var(--color-black), -1px -1px var(--color-black), 1px -1px var(--color-black), -1px 1px var(--color-black);
     cursor: pointer;
-    height: 16px;
+    height: 14px;
 }
 
 .flag-block {
