@@ -65,7 +65,7 @@ try {
                 "       rs.code AS region_code, " +
                 "       rs.name AS region_name " +
                 " FROM _view " +
-                "         INNER JOIN [WTDB].[dbo].courses cos ON _view.course_id = cos.id AND cos.code LIKE '%IBP-COURSE%' " +
+                "         INNER JOIN [WTDB].[dbo].courses cos ON _view.course_id = cos.id AND (cos.code LIKE '%IBP-COURSE%' OR cos.code LIKE '%IBP-TT%' OR cos.code LIKE '%IBP-METOD%') " +
                 "         INNER JOIN [WTDB].[dbo].collaborators cs ON _view.person_id = cs.id " +
                 "         INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
                 "         INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
@@ -103,7 +103,7 @@ try {
         {"data": "course_code", "hidden": false, "sortable": true, "title": "Код курса"},
         {"data": "course_name", "hidden": false, "sortable": true, "title": "Название курса"},
         {"data": "start_usage", "hidden": false, "sortable": true, "title": "Дата активации"},
-        {"data": "self", "hidden": false, "sortable": true, "title": "Тип активации"},
+        //{"data": "self", "hidden": false, "sortable": true, "title": "Тип активации"},
         {"data": "start_learning", "hidden": false, "sortable": true, "title": "Дата начала"},
         {"data": "last_usage", "hidden": false, "sortable": true, "title": "Дата завершения"},
         {"data": "duration", "hidden": false, "sortable": true, "title": "Время прохождения"},
