@@ -1,6 +1,10 @@
 <SPXMLScreen>
     <%
     // 6971291415981615202
+
+    // Выборка для "Время" 7230203611008990351 code = report_cert_ibp_all_time
+    // Выборка для "Отчет 2024" 7156594026239955098 code = report_cert_ibp_all_2024
+
     curTitle = {
     "type": "simple",
     "title": "Кабинет куратора подготовки инструкторов по бережливому производству"
@@ -32,15 +36,22 @@
     group_name = func_manager.object_name
     group_collaborators_arr = XQuery( "for $elem in group_collaborators where $elem/group_id=" + group_id + " return $elem" )
     group_collaborators_display_object_ids = ArrayMerge( group_collaborators_arr, 'collaborator_id', ';' )
-    te_group = tools.open_doc( group_id ).TopElem
+    te_group = tools.open_doc( group_id ).TopElem;
+
     %>
+    <Action Name="report_time_action_name<%=i%>" Source="my_ExcelExporterAction" Success="ALERT=Отчет сформирован.;OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="ALERT={messageText}">
+        <Param Name="sCollection" Value="report_cert_ibp_all_time"/>
+        <Param Name="sMode" Value="datagrid"/>
+        <Param Name="curObjectID" Value="<%=group_id%>"/>
+    </Action>
+
     <Action Name="export_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="">
         <Param Name="sCollection" Value="cols_from_group_cert_ibp"/>
         <Param Name="sMode" Value="datagrid"/>
         <Param Name="sSearchWord" Value="{!CatalogListSearchQWE<%=i%>}"/>
         <Param Name="curObjectID" Value="<%=group_id%>"/>
     </Action>
-    <Action Name="report_2024_action_name<%=i%>" Source="my_ExcelExporterAction" Success="OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="">
+    <Action Name="report_2024_action_name<%=i%>" Source="my_ExcelExporterAction" Success="ALERT=Отчет сформирован.;OPENWINDOW=assessment_excel_export.html?flush=1&mode=htmlfileurl&htmlfileurl={xls_url}&header={header}" Failure="ALERT={messageText}">
         <Param Name="sCollection" Value="report_cert_ibp_all_2024"/>
         <Param Name="sMode" Value="datagrid"/>
         <Param Name="curObjectID" Value="<%=group_id%>"/>
@@ -144,6 +155,13 @@
     }
     ,*/
     {
+    "name": "report_time_action_name"+i,
+    "title": "Время",
+    "click": ("ACTION=report_time_action_name"+i)
+
+    }
+    ,
+    {
     "name": "export_action_name"+i,
     "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
     "click": ("ACTION=export_action_name"+i)
@@ -204,6 +222,13 @@
     "click": ("OPENDIALOG=col_selector_del"+i)
     }
     ,*/
+    {
+    "name": "report_time_action_name"+i,
+    "title": "Время",
+    "click": ("ACTION=report_time_action_name"+i)
+
+    }
+    ,
     {
     "name": "export_action_name"+i,
     "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
