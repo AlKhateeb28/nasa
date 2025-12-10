@@ -3,7 +3,7 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 
 function getData(eventId, result) {
     return ArrayDirect(XQuery("sql: " +
-        " SELECT er.id, " +
+        " SELECT ers.id, " +
         "       es.id AS event_id, " +
         "       ers.person_id AS person_id, " +
         "       os.name AS org_name, " +
@@ -54,6 +54,20 @@ function createCertificate(personId, certificateTypeId, serial, orgName, deliver
     }
 
     tools.create_notification(templateCode, OptInt(personId), "", OptInt(certificateDoc.DocID));
+
+    return certificateDoc.DocID;
+}
+
+function addCertificateIdIntoEventResult(eventResultId, certificateId) {
+    eventResultDoc = tools.open_doc(eventResultId);
+
+    if(eventResultId != undefined) {
+        eventResultId.TopElem.certificate_id = certificateId;
+
+        eventResultDoc.Save();
+    } else {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] EventResult with ID " + eventResultId + " is not exist!");
+    }
 }
 
 if (!LdsIsServer) {
@@ -106,7 +120,9 @@ if (!LdsIsServer) {
                     if (data.is_rck_alone == "РЦК самостоятельно") {
                         if (getCertificateCount(data.person_id, 7164453663916057169) == 0) {
                             // CREATE CERTIFICATE
-                            createCertificate(data.person_id, 7164453663916057169, "РП", data.org_name, data.cert_date, 14, data.event_id);
+                            certificateId = createCertificate(data.person_id, 7164453663916057169, "РП", data.org_name, data.cert_date, 14, data.event_id);
+
+                            addCertificateIdIntoEventResult(data.id, certificateId);
 
                             cert++;
                             saved++;
@@ -118,8 +134,11 @@ if (!LdsIsServer) {
                     } else if (data.is_rck_alone == "ФЦК") {
                         if (getCertificateCount(data.person_id, 7164453267946338582) == 0) {
                             // CREATE CERTIFICATE
-                            createCertificate(data.person_id, 7164453267946338582, "РП", data.org_name, data.cert_date, 13, data.event_id);
+                            certificateId = createCertificate(data.person_id, 7164453267946338582, "РП", data.org_name, data.cert_date, 13, data.event_id);
 
+                            addCertificateIdIntoEventResult(data.id, certificateId);
+
+                            cert++;
                             saved++;
                         } else {
                             addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID already has a certificate with type 7164453267946338582!");

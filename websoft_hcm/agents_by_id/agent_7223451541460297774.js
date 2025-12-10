@@ -3,7 +3,7 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 
 function getData(eventId, result) {
     return ArrayDirect(XQuery("sql: " +
-        " SELECT er.id, " +
+        " SELECT ers.id, " +
         "       es.id AS event_id, " +
         "       ers.person_id AS person_id, " +
         "       os.name AS org_name, " +
@@ -71,6 +71,20 @@ function createCertificate(personId, certificateTypeId, serial, orgName, deliver
     templateCode = "cert_tr_rck_t_print";
 
     tools.create_notification(templateCode, OptInt(personId), "", OptInt(certificateDoc.DocID));
+
+    return certificateDoc.DocID;
+}
+
+function addCertificateIdIntoEventResult(eventResultId, certificateId) {
+    eventResultDoc = tools.open_doc(eventResultId);
+
+    if(eventResultId != undefined) {
+        eventResultId.TopElem.certificate_id = certificateId;
+
+        eventResultDoc.Save();
+    } else {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] EventResult with ID " + eventResultId + " is not exist!");
+    }
 }
 
 if (!LdsIsServer) {
@@ -128,7 +142,9 @@ if (!LdsIsServer) {
                             eduMethodName = getNormalizedName(eduMethodName);
                         }
 
-                        createCertificate(data.person_id, 7164452761309690093, "Т", data.org_name, data.cert_date, data.event_id, eduMethodName);
+                        certificateId = createCertificate(data.person_id, 7164452761309690093, "Т", data.org_name, data.cert_date, data.event_id, eduMethodName);
+
+                        addCertificateIdIntoEventResult(data.id, certificateId);
 
                         cert++;
                         saved++;
