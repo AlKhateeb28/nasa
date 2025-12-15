@@ -121,9 +121,11 @@ Request.Session.SetProperty("displayMode", displayMode);*/
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    const displayMode = getCookie("displayMode");
+    let displayMode = getCookie("displayMode");
 
     if(displayMode === undefined) {
+        displayMode = "desktop";
+
         document.cookie = "displayMode=desktop";
     }
 

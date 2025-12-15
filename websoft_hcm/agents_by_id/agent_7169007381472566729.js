@@ -42,7 +42,7 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
         prevDate = new Date();
 
         dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT TOP 50 cs.id, " +
+            " SELECT TOP 15 cs.id, " +
             "       cs.fullname " +
             " FROM [WTDB].[dbo].collaborators cs " +
             "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
