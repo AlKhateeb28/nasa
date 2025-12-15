@@ -62,7 +62,7 @@ function addCertificateIdIntoEventResult(eventResultId, certificateId) {
     eventResultDoc = tools.open_doc(eventResultId);
 
     if(eventResultId != undefined) {
-        eventResultId.TopElem.certificate_id = certificateId;
+        eventResultDoc.TopElem.certificate_id = certificateId;
 
         eventResultDoc.Save();
     } else {
