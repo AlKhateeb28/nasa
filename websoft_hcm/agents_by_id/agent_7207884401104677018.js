@@ -15,6 +15,8 @@ function downWithNoRightFlag() {
         "       AND (o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') = 1 " +
         "       OR o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') = 1 " +
         "       OR o.data.value('(//custom_elems/custom_elem[name=''is_partner'']/value)[1]', 'bit') = 1 " +
+        "       OR o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'bit') = 1 " +
+        "       OR o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') = 1 " +
         "       OR o.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'varchar(max)') != '') "));
 
     total += ArrayCount(dataList);
@@ -168,6 +170,7 @@ function clearSpecialFlags() {
         "           os.id AS org_id, " +
         "           o.data.value('(//custom_elems/custom_elem[name=''format_part'']/value)[1]', 'varchar(max)') AS format_part, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_project_ended''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_project_ended'']/value)[1]', 'bit') AS INT)) AS is_project_ended, " +
+        "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_fcc''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'bit') AS INT)) AS is_fcc, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_rck''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') AS INT)) AS is_rck, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_ock''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') AS INT)) AS is_ock, " +
         "           IIF(o.data.exist('(//custom_elems/custom_elem[name=''is_roiv''])') = 0, 0, CAST(o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') AS INT)) AS is_roiv, " +
@@ -182,8 +185,9 @@ function clearSpecialFlags() {
         " WHERE is_project_ended = 1 " +
         "       AND ((format_part IS NOT NULL " +
         "       AND format_part != '') " +
+        "       OR is_fcc > 0 " +
         "       OR is_rck > 0 " +
-        "       OR is_rck > 0 " +
+        "       OR is_ock > 0 " +
         "       OR is_roiv > 0 " +
         "       OR is_partner > 0) " +
         " GROUP BY org_id "));
