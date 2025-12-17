@@ -9,7 +9,8 @@ function getData(eventId, result) {
         "       os.name AS org_name, " +
         "       es.name AS event_name, " +
         "       er.data.value('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]', 'varchar(max)') AS cert_date, " +
-        "       er.data.value('(//custom_elems/custom_elem[name=''is_rck_alone''])[1]/value[1]', 'varchar(max)') AS is_rck_alone " +
+        "       er.data.value('(//custom_elems/custom_elem[name=''is_rck_alone''])[1]/value[1]', 'varchar(max)') AS is_rck_alone, " +
+        "       cs.fullname " +
         " FROM [WTDB].[dbo].event_results ers " +
         "    INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
         "            AND er.data.exist('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]') = 1 " +
@@ -70,6 +71,62 @@ function addCertificateIdIntoEventResult(eventResultId, certificateId) {
     }
 }
 
+function pushToDuties(duties, personId, eventId, eventName, finishDate) {
+    isExist = false;
+
+    for(duty in duties) {
+        if(duty.personId == personId) {
+            for(eventElement in duty.events) {
+                if(eventElement.eventId == eventId) {
+                    isExist = true;
+
+                    break;
+                }
+            }
+
+            if(isExist) {
+                break;
+            }
+        }
+    }
+
+    if(!isExist) {
+        element = {};
+        element.personId = personId;
+        element.events = [];
+
+        eventElement = {};
+        eventElement.eventId = eventId;
+        eventElement.eventName = eventName;
+        eventElement.finishDate = StrDate(finishDate);
+        eventElement.certNames = [];
+        eventElement.noCertNames = [];
+
+        element.events.push(eventElement);
+        duties.push(element);
+    }
+}
+
+function addToCertNames(duties, eventId, personFullname) {
+    for(duty in duties) {
+        for(eventElement in duty.events) {
+            if(eventElement.eventId == eventId) {
+                eventElement.certNames.push(personFullname);
+            }
+        }
+    }
+}
+
+function addToNoCertNames(duties, eventId, personFullname) {
+    for(duty in duties) {
+        for(eventElement in duty.events) {
+            if(eventElement.eventId == eventId) {
+                eventElement.noCertNames.push(personFullname);
+            }
+        }
+    }
+}
+
 if (!LdsIsServer) {
     var agentId = 7222773095990292161;
     var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
@@ -101,90 +158,140 @@ if (!LdsIsServer) {
         if (OBJECTS_ID_STR != '') {
             ids = OBJECTS_ID_STR.split(";");
 
+            duties = [];
+
             for(id in ids) {
-                certList = getData(id, "СЕРТИФИЦИРОВАН");
+                eventDoc = tools.open_doc(id);
 
-                noCertList = getData(id, "НЕ СЕРТИФИЦИРОВАН");
+                if (eventDoc != undefined) {
+                    eventDocTE = eventDoc.TopElem;
 
-                total = ArrayCount(certList) + ArrayCount(noCertList);
-
-                agent.total = total;
-                agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-                agent.message = "Обработка данных...";
-                if (ws != null) {
-                    ws = sendMessageToWebsocket(ws, agent);
-                }
-                prevDate = new Date();
-
-                for (data in certList) {
-                    if (data.is_rck_alone == "РЦК самостоятельно") {
-                        if (getCertificateCount(data.person_id, 7164453663916057169) == 0) {
-                            // CREATE CERTIFICATE
-                            certificateId = createCertificate(data.person_id, 7164453663916057169, "РП", data.org_name, data.cert_date, 14, data.event_id);
-
-                            addCertificateIdIntoEventResult(data.id, certificateId);
-
-                            cert++;
-                            saved++;
-                        } else {
-                            addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID already has a certificate with type 7164453663916057169!");
-
-                            skipped++;
-                        }
-                    } else if (data.is_rck_alone == "ФЦК") {
-                        if (getCertificateCount(data.person_id, 7164453267946338582) == 0) {
-                            // CREATE CERTIFICATE
-                            certificateId = createCertificate(data.person_id, 7164453267946338582, "РП", data.org_name, data.cert_date, 13, data.event_id);
-
-                            addCertificateIdIntoEventResult(data.id, certificateId);
-
-                            cert++;
-                            saved++;
-                        } else {
-                            addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID already has a certificate with type 7164453267946338582!");
-
-                            skipped++;
-                        }
+                    for(collaborator in eventDocTE.tutors) {
+                        pushToDuties(duties, collaborator.collaborator_id, id, eventDocTE.name, eventDocTE.finish_date);
                     }
 
-                    processed++;
+                    certList = getData(id, "СЕРТИФИЦИРОВАН");
 
-                    agent.processed = processed;
-                    agent.skipped = skipped;
-                    agent.saved = saved;
-                    refreshMsPerRow(agent, startDate, processed);
+                    noCertList = getData(id, "НЕ СЕРТИФИЦИРОВАН");
+
+                    total = ArrayCount(certList) + ArrayCount(noCertList);
+
+                    agent.total = total;
+                    agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+                    agent.message = "Обработка данных...";
                     if (ws != null) {
                         ws = sendMessageToWebsocket(ws, agent);
                     }
+                    prevDate = new Date();
 
-                    if (processed % 1000 == 0) {
-                        addLogMessage(
-                            loggerName,
-                            "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
-                        );
+                    for (data in certList) {
+                        if (data.is_rck_alone == "РЦК самостоятельно") {
+                            if (getCertificateCount(data.person_id, 7164453663916057169) == 0) {
+                                // CREATE CERTIFICATE
+                                //certificateId = createCertificate(data.person_id, 7164453663916057169, "РП", data.org_name, data.cert_date, 14, data.event_id);
+
+                                //addCertificateIdIntoEventResult(data.id, certificateId);
+
+                                addToCertNames(duties, id, data.fullname);
+
+                                cert++;
+                                saved++;
+                            } else {
+                                addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID already has a certificate with type 7164453663916057169!");
+
+                                skipped++;
+                            }
+                        } else if (data.is_rck_alone == "ФЦК") {
+                            if (getCertificateCount(data.person_id, 7164453267946338582) == 0) {
+                                // CREATE CERTIFICATE
+                                //certificateId = createCertificate(data.person_id, 7164453267946338582, "РП", data.org_name, data.cert_date, 13, data.event_id);
+
+                                //addCertificateIdIntoEventResult(data.id, certificateId);
+
+                                addToCertNames(duties, id, data.fullname);
+
+                                cert++;
+                                saved++;
+                            } else {
+                                addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID already has a certificate with type 7164453267946338582!");
+
+                                skipped++;
+                            }
+                        }
+
+                        processed++;
+
+                        agent.processed = processed;
+                        agent.skipped = skipped;
+                        agent.saved = saved;
+                        refreshMsPerRow(agent, startDate, processed);
+                        if (ws != null) {
+                            ws = sendMessageToWebsocket(ws, agent);
+                        }
+
+                        if (processed % 1000 == 0) {
+                            addLogMessage(
+                                loggerName,
+                                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
+                            );
+                        }
                     }
-                }
 
-                for (data in noCertList) {
-                    tools.create_notification("cert_tr_rck_cancel_rp", OptInt(data.person_id), "");
+                    for (data in noCertList) {
+                        //tools.create_notification("cert_tr_rck_cancel_rp", OptInt(data.person_id), "");
 
-                    noCert++;
-                    processed++;
+                        addToNoCertNames(duties, id, data.fullname);
 
-                    agent.processed = processed;
-                    agent.skipped = skipped;
-                    agent.saved = saved;
-                    refreshMsPerRow(agent, startDate, processed);
-                    if (ws != null) {
-                        ws = sendMessageToWebsocket(ws, agent);
+                        noCert++;
+                        processed++;
+
+                        agent.processed = processed;
+                        agent.skipped = skipped;
+                        agent.saved = saved;
+                        refreshMsPerRow(agent, startDate, processed);
+                        if (ws != null) {
+                            ws = sendMessageToWebsocket(ws, agent);
+                        }
+
+                        if (processed % 1000 == 0) {
+                            addLogMessage(
+                                loggerName,
+                                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
+                            );
+                        }
                     }
 
-                    if (processed % 1000 == 0) {
-                        addLogMessage(
-                            loggerName,
-                            "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
-                        );
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] Noti " + ArrayCount(duties));
+
+                    for(duty in duties) {
+                        for(eventElement in duty.events) {
+                            eventName = "<div>Мероприятие: <b>" + eventElement.eventName + "</b>" + " ( " + eventElement.finishDate + " )</div>";
+
+                            certNames = "";
+                            if(ArrayCount(eventElement.certNames) > 0) {
+                                certNames = "<br/><div>Уведомление о сертифицировании тренеров РЦК РП направлено следующим участникам:</div>";
+
+                                for (name in eventElement.certNames) {
+                                    certNames += "<div> - " + name + "</div>";
+                                }
+                            }
+
+                            noCertNames = "";
+                            if(ArrayCount(eventElement.noCertNames) > 0) {
+                                noCertNames = "<br/><div>Уведомление о несертифицировании тренеров РЦК РП направлено следующим участникам:</div>";
+
+                                for (name in eventElement.noCertNames) {
+                                    noCertNames += "<div> - " + name + "</div>";
+                                }
+                            }
+                        }
+
+                        addLogMessage(loggerName, "[agent.id: " + agentId + "] Sent " + duty.personId);
+
+                        tools.create_notification("cert_tr_rck_duty", OptInt(duty.personId), eventName + certNames + noCertNames);
                     }
+                } else {
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] Event with ID " + id + " is not exist!");
                 }
             }
         }
