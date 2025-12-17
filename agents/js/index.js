@@ -5,7 +5,10 @@ var pingTimeout = 300000;
 var currentState = 1;
 
 var hourBackgroundColors = [];
-var importantAgentIds = [7437057559620972968];
+var importantAgentIds = [
+    7437057559620972968,
+    7169007381472566729
+];
 
 function isImportantAgent(id) {
     let result = false;
