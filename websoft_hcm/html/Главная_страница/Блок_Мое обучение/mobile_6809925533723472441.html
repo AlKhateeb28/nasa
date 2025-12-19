@@ -1,0 +1,155 @@
+<!-- 6809925533723472441 -->
+<%
+if(curDevice.disp_type == "mobile"){
+
+aTemplatesId = [
+    {
+        id: 6809944762428760672,
+        parentId: 6792866794908377563
+    },
+    {
+        id: 6809958776969640606,
+        parentId: 6792677314194661666
+    },
+    {
+        id: 6834818300926315355,
+        parentId: 6834587051525877926
+    }
+];
+
+aTemplatesId = ArraySelect(aTemplatesId, "tools_web.check_access(tools.open_doc(This.parentId).TopElem, curUserID)");
+
+%>
+<link rel="stylesheet" type="text/css" href="LKmobile/custom_new.css" />
+
+<style>
+    .display-none{display: none;}
+</style>
+
+<script type="text/javascript">
+
+    let aTemplates = <%=tools.object_to_text( aTemplatesId, 'json')%>;
+    console.log(aTemplates);
+
+    $(document).on('click', '#reload-chart1', function () {
+        let iTempId = $(this).attr('data-templateID');
+        let data = new FormData();
+        data.append('status', '0');
+        sendDataByServer(data, iTempId, function (data) {
+            $('div[menuLK]').toggleClass('display-none');
+            $('div[data-table]').toggleClass('display-none');
+            $("div[data-table]").html(data);
+        })
+    });
+
+    $(document).on('click', '#openTabNext', function () {
+        let data = new FormData();
+        data.append('status', '0');
+
+        let aTemplateIds = <%=tools.object_to_text(aTemplatesId, 'json')%>;
+        let iTempId = $(this).attr('data-templateID');
+
+        iNextPageID = aTemplateIds.map(function(e) { return e.id; }).indexOf(iTempId) + 1;
+
+        if(iNextPageID > (aTemplateIds.length - 1)) {
+            iNextPageID = 0;
+        }
+
+        sendDataByServer(data, aTemplateIds[iNextPageID].id, function (data) {
+            $("div[data-table]").html(data);
+        })
+    });
+
+    $(document).on('click', '#openTabBack', function () {
+        let data = new FormData();
+        data.append('status', '0');
+
+        let aTemplateIds = <%=tools.object_to_text(aTemplatesId, 'json')%>;
+        let iTempId = $(this).attr('data-templateID');
+
+        iNextPageID = aTemplateIds.map(function(e) { return e.id; }).indexOf(iTempId) - 1;
+
+        if(iNextPageID < 0) {
+            iNextPageID = (aTemplateIds.length - 1);
+        }
+
+        sendDataByServer(data, aTemplateIds[iNextPageID].id, function (data) {
+            $("div[data-table]").html(data);
+        })
+    });
+
+    $(document).on('click', '.knop_menu', function () {
+        $('div[menuLK]').toggleClass('display-none');
+        $('div[data-table]').toggleClass('display-none');
+    });
+
+    function sendDataByServer(data, tempID, functionSuccess) {
+        $.ajax({
+            url: "/custom_web_template.html?object_id=" + tempID,
+            type: 'post',
+            data: data,
+            processData: false,
+            contentType: false,
+
+            success: functionSuccess,
+            error: function (data, textError, one) {
+                console.info('errror', data);
+            }
+        });
+    }
+</script>
+
+<div id="my_education" menuLK="true" style="display: none;">
+    <div class="lesson"><img class="fon_lesson" src="LKmobile\img\fon_moe_obuchen.jpg" alt="user">
+        <h1>МОЕ ОБУЧЕНИЕ</h1>
+    </div>
+
+    <div class="main-content_left">
+        <!--Левое меню-->
+        <div class="lef-menu">
+            <style>
+                li {
+                    list-style-type: none;
+                    /* Убираем маркеры */
+                }
+
+                ul {
+                    margin-left: 0;
+                    /* Отступ слева в браузере IE и Opera */
+                    padding-left: 0;
+                    /* Отступ слева в браузере Firefox, Safari, Chrome */
+                }
+            </style>
+            <ul class="left-menu">
+                <%
+                for(oTemp in aTemplatesId){
+                docTempTE = tools.open_doc(oTemp.id).TopElem;
+
+                %>
+                <li><a id="reload-chart1" data-templateID="<%=oTemp.id%>"><img class="kurs1" src="" alt=""><span
+                        class="text-menu1"><%=ArrayOptFind(docTempTE.wvars, "This.name == 'LKmobileTitle'").value%></span></a></li>
+                <%
+                }
+                %>
+            </ul>
+            <!-- LKmobile\img\z1.png
+            LKmobile\img\z2.png
+            LKmobile\img\z3.png
+            LKmobile\img\z4.png -->
+        </div>
+    </div>
+</div>
+
+<div data-table='true' class="display-none">
+</div>
+
+<script>
+    console.log("-" + getCookie("displayMode") + "-");
+
+    if(getCookie("displayMode") === "mobile") {
+        $("#my_education").css("display", "block");
+    }
+</script>
+<%
+}
+%>

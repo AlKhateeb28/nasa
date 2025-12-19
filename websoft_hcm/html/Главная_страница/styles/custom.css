@@ -74,7 +74,8 @@ body.desktop .logo-container { margin: 26px 0px 0px 0px }
 
 body.mobile .page { padding-top: 0px }
 body.mobile #wt-header-title { display: none }
-body.mobile .header-content { background-color: #ffffff; }
+/*body.mobile .header-content { background-color: #ffffff; }*/
+body.mobile .header-content { width: 1176px; margin: 0 auto; }
 body.mobile .icon-menu { color: #000000 !important }
 body.mobile .WTCSS-menu-h { display: none }
 body.mobile .WTCSS-user-info { /* display: none */ position: absolute; top: 0px; right: 80px; border-right: 0px solid transparent; }
