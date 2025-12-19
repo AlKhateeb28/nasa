@@ -64,15 +64,16 @@ try {
     }
     prevDate = new Date();
 
-    adminIds = [7351734047845980789, 6743923349751162819, 6614087247971038079]; // AA, FK, TO
+    fewIds = [7351734047845980789, 6743923349751162819, 6614087247971038079]; // AA, FK, TO
+    moreIds = [7351734047845980789, 6743923349751162819]; // AA, FK
 
     if(isScheduledDay(Date())) {
         if (total < 5) {
-            for (id in adminIds) {
+            for (id in fewIds) {
                 tools.create_notification("few_new_person_count", id, getNormalizedMessage(total));
             }
         } else if (total > 200) {
-            for (id in adminIds) {
+            for (id in moreIds) {
                 tools.create_notification("more_new_person_count", id, getNormalizedMessage(total));
             }
         }
