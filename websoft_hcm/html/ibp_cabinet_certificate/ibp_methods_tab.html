@@ -218,11 +218,13 @@
                             diffColor = "black";
 
                             if(data.diff < 10) {
-                                if(data.diff <= 3) {
+                                diffColor = "red";
+
+                                /*if(data.diff <= 3) {
                                     diffColor = "red";
                                 } else {
                                     diffColor = "orange";
-                            }
+                                }*/
                         }
                         %>
                         <td style='color: <%=diffColor%>; text-align: center;'><%=data.diff%></td>
