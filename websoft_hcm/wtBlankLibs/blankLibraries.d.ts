@@ -33,6 +33,7 @@ function ArrayOptFindByKey(list: object, key: any, field: string);
 function ArrayOptFind(array: any, expression: string);
 function StrUpperCase(value: string): string;
 function StrLowerCase(value: string): string;
+function StrTitleCase(value: string): string;
 function StrCharRangePos(value: string, start: number, stop: number): string;
 function StrBegins(value: string, part: string): boolean;
 function StrBegins(value: string, part: string, ignoreCase: boolean): boolean;
