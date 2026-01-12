@@ -47,7 +47,7 @@ try {
             "       ers.person_id" +
             " FROM [WTDB].[dbo].event_results ers " +
             "    INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id AND UPPER(es.status_id) = 'CLOSE' AND YEAR(es.start_date) >= 2025 " +
-            "    INNER JOIN [WTDB].[dbo].education_methods ems ON es.education_method_id = ems.id " +
+            "    INNER JOIN [WTDB].[dbo].education_methods ems ON es.education_method_id = ems.id AND LOWER(ems.code) NOT IN ('fck_rck_rp_m5_01', 'fck_com_rck_rp_m5_01') " +
             " WHERE ers.person_id = " + data.person_id +
             "    AND ers.is_assist = 1 "));
 
