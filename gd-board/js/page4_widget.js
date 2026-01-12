@@ -138,7 +138,8 @@ function getPage4Content() {
                         <option value="2022">2022</option>
                         <option value="2023">2023</option>
                         <option value="2024">2024</option>
-                        <option value="2025" selected="selected">2025</option>
+                        <option value="2025">2025</option>
+                        <option value="2026" selected="selected">2026</option>
                     </select>               
                 </div>
                 <div class="float-left-box" style="margin-top: -6px; width: 92%;">
