@@ -11,7 +11,7 @@ function isEventExist(eventList, dossierId) {
     return false;
 }
 
-function getUniqueEvents(list, childTagName, max) {
+function getUniqueEvents(data, list, childTagName, max, module) {
     start = null;
     finish = null;
 
@@ -57,15 +57,21 @@ function getUniqueEvents(list, childTagName, max) {
         }
     }
 
+    name = ArrayCount(eventList) + " из " + max;
+
+    if(data.qualification_id == 7195880997527743133) {
+        name = "-";
+    }
+
     return {
         count: ArrayCount(eventList),
-        name : ArrayCount(eventList) + " из " + max,
+        name :  name,
         start : start,
         finish : finish
     }
 }
 
-function getRPCertificateNumbers(certificateIds) {
+function getRpCertificateNumbers(certificateIds) {
     result = "";
 
     for(certificate in certificateIds) {
@@ -87,7 +93,7 @@ function getRPCertificateNumbers(certificateIds) {
     return result;
 }
 
-function getRPOtherEvents(eventResultList) {
+function getRpOtherEvents(eventResultList) {
     result = "";
 
     for(eventResult in eventResultList) {
@@ -105,7 +111,7 @@ function getRPOtherEvents(eventResultList) {
     return result;
 }
 
-function getRPEduMethodNames(dossierAccountingIds) {
+function getRpEduMethodNames(dossierAccountingIds) {
     result = "";
 
     for(collaborator in dossierAccountingIds) {
@@ -130,7 +136,7 @@ function getRPEduMethodNames(dossierAccountingIds) {
     return result;
 }
 
-function getRPEventResultNames(dossierAccountingIds) {
+function getRpEventResultNames(dossierAccountingIds) {
     result = "";
 
     for(collaborator in dossierAccountingIds) {
@@ -156,7 +162,7 @@ function getRPEventResultNames(dossierAccountingIds) {
     return result;
 }
 
-function  getRPNotPassedEduMethods(dossierAccountingIds) {
+function  getRpNotPassedEduMethods(dossierAccountingIds) {
     result = "";
 
     for(collaborator in dossierAccountingIds) {
@@ -238,6 +244,148 @@ function getReportHeader() {
     reportString.AppendStr("</tr>");
 }
 
+// РП
+function operateRpBlock() {
+    agent.message = "РП блок. Получение данных...";
+    ws = sendMessageToWebsocket(ws, agent);
+    prevDate = new Date();
+
+    dataList = ArrayDirect(XQuery("sql: " +
+        " SELECT qas.id AS qas_id, " +
+        "       doss.id AS dossier_id, " +
+        "       rs.name AS doss_fact_region, " +
+        "       kvota_rs.name AS reg_kvota, " +
+        "       os.code AS doss_inn, " +
+        "       os.name AS doss_org_name, " +
+        "       doss.student_fullname, " +
+        "       ps.name AS position_name, " +
+        "       cs.fullname, " +
+        "       doss.date_selection, " +
+        "       doss.result_selection, " +
+        "       doss.date_position, " +
+        "       doss.dismiss_date, " +
+        "       doss.type_position, " +
+        "       qa.data.value('(//custom_elems/custom_elem[name=''f_l99s''])[1]/value[1]', 'varchar(max)') AS type_prep, " +
+        "       qas.reason, " +
+        "       q.name AS qual_name, " +
+        "       CASE " +
+        "           WHEN qas.status = 'assigned' THEN 'Присвоена' " +
+        "           WHEN qas.status = 'not_assigned' THEN 'Неприсвоена' " +
+        "           WHEN qas.status = 'in_process' THEN 'В процессе' " +
+        "           WHEN qas.status = 'expired' THEN 'Истекла' " +
+        "           ELSE '' END AS status, " +
+        "       qas.expiration_date, " +
+        "       qas.qualification_id " +
+        "   FROM [WTDB].[dbo].qualification_assignments qas " +
+        "         INNER JOIN [WTDB].[dbo].qualification_assignment qa ON qas.id = qa.id " +
+        "         INNER JOIN [WTDB].[dbo].collaborators cs ON qas.person_id = cs.id " +
+        "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
+        "         INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employees doss ON c.data.value('(//custom_elems/custom_elem[name=''dossier_id'']/value)[1]', 'bigint') = doss.id " +
+        "         INNER JOIN [WTDB].[dbo].orgs os ON doss.subdivision_name = os.id " +
+        "         INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
+        "         INNER JOIN [WTDB].[dbo].regions AS rs ON o.data.value('(//custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = rs.id " +
+        "         INNER JOIN [WTDB].[dbo].regions AS kvota_rs ON qa.data.value('(//custom_elems/custom_elem[name=''f_qn4n''])[1]/value[1]', 'bigint') = kvota_rs.id " +
+        "         INNER JOIN [WTDB].[dbo].positions ps ON cs.position_id = ps.id " +
+        "         LEFT JOIN [WTDB].[dbo].qualifications q ON qas.qualification_id = q.id " +
+        " WHERE qas.qualification_id IN (7289051946840112569, 7195880997527743133) "));
+
+    total = ArrayCount(dataList);
+
+    agent.total = total;
+    agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+    agent.message = "РП блок. Обработка данных...";
+    if (ws != null) {
+        ws = sendMessageToWebsocket(ws, agent);
+    }
+    prevDate = new Date();
+
+    for (data in dataList) {
+        dossierDoc = tools.open_doc(OptInt(data.dossier_id));
+
+        if(dossierDoc != undefined) {
+            dossierDocTE = dossierDoc.TopElem;
+
+            result1 = getUniqueEvents(data, dossierDocTE.rcc_rp_programs_m1s, "rcc_rp_programs_m1_id", 5, 1);
+            result2 = getUniqueEvents(data, dossierDocTE.rcc_rp_programs_m2s, "rcc_rp_programs_m2_id", 2, 2);
+            result3 = getUniqueEvents(data, dossierDocTE.rcc_rp_programs_m3s, "rcc_rp_programs_m3_id", 5, 3);
+            result4 = getUniqueEvents(data, dossierDocTE.rcc_rp_programs_m4s, "rcc_rp_programs_m4_id", 5, 4);
+
+            successRate = OptInt((result1.count + result2.count + result3.count + result4.count) * 100 / 16);
+
+            state = "В процессе";
+
+            if(result1.count == 0 && result2.count == 0 && result3.count == 0 && result4.count == 0) {
+                state = "Не начата";
+            } else if(result1.count > 0 && result2.count > 0 && result3.count > 0 && result4.count > 0 && successRate >= 80) {
+                state = "Завершена";
+            }
+
+            reportString.AppendStr(
+                "<tr>" +
+                "<td>" + data.doss_fact_region + "</td>" +
+                "<td>" + data.reg_kvota + "</td>" +
+                "<td>" + data.doss_inn + "</td>" +
+                "<td>" + data.doss_org_name + "</td>" +
+                "<td>" + data.student_fullname + "</td>" +
+                "<td>" + data.position_name + "</td>" +
+                "<td>" + data.fullname + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(data.date_selection, false, false) + "</td>" +
+                "<td>" + data.result_selection + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(data.date_position, false, false) + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(data.dismiss_date, false, false) + "</td>" +
+                "<td>" + data.type_position + "</td>" +
+                "<td>" + data.type_prep + "</td>" +
+                "<td>" + data.reason + "</td>" +
+                "<td>" + data.qual_name + "</td>" +
+                "<td style='text-align: center;'>" + data.status + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(data.expiration_date, false, false) + "</td>" +
+                "<td style='text-align: center;'>" + result1.name + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(result1.start, true, false) + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(result1.finish, true, false) + "</td>" +
+                "<td style='text-align: center;'>" + result2.name + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(result2.start, true, false) + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(result2.finish, true, false) + "</td>" +
+                "<td style='text-align: center;'>" + result3.name + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(result3.start, true, false) + "</td>" +
+                "<td style='text-align: center;'>" + StrDate(result3.finish, true, false) + "</td>" +
+                "<td style='text-align: center;'>" + result4.name + "</td>" +
+                "<td>" + StrDate(result4.start, true, false) + "</td>" +
+                "<td>" + StrDate(result4.finish, true, false) + "</td>" +
+                "<td>" + getRpNotPassedEduMethods(dossierDocTE.collaborator_lists) + "</td>" +
+                "<td>" + getRpCertificateNumbers(dossierDocTE.rcc_rp_certificates) + "</td>" +
+                "<td>" + getRpOtherEvents(dossierDocTE.other_eventss) + "</td>" +
+                "<td>" + getRpEduMethodNames(dossierDocTE.collaborator_lists) + "</td>" +
+                "<td>" + getRpEventResultNames(dossierDocTE.collaborator_lists) + "</td>" +
+                "<td style='text-align: center;'>" + successRate + "</td>" +
+                "<td style='text-align: center;'>" + state + "</td>" +
+                "<td>'" + data.qas_id + "</td>" +
+                "</tr>");
+        } else {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Dossier with ID " + data.id + " is not exist");
+
+            skipped++;
+        }
+
+        processed++;
+
+        agent.processed = processed;
+        agent.skipped = skipped;
+        agent.saved = saved;
+        agent.notFound = notFound;
+        refreshMsPerRow(agent, startDate, processed);
+        if (ws != null) {
+            ws = sendMessageToWebsocket(ws, agent);
+        }
+
+        if (processed % 1000 == 0) {
+            addLogMessage(
+                loggerName,
+                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
+            );
+        }
+    }
+}
+
 if (LdsIsServer) {
     var agentId = 7235161744774528808;
     var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
@@ -258,152 +406,15 @@ if (LdsIsServer) {
     var excel = new ActiveXObject("Websoft.Office.Excel.Document");
     var reportString = new Binary();
 
-    agent.message = "Получение данных...";
-    ws = sendMessageToWebsocket(ws, agent);
-    prevDate = new Date();
-
     addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
     try {
         getReportHeader();
-
-        dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT qas.id AS qas_id, " +
-            "       doss.id AS dossier_id, " +
-            "       rs.name AS doss_fact_region, " +
-            "       kvota_rs.name AS reg_kvota, " +
-            "       os.code AS doss_inn, " +
-            "       os.name AS doss_org_name, " +
-            "       doss.student_fullname, " +
-            "       ps.name AS position_name, " +
-            "       cs.fullname, " +
-            "       doss.date_selection, " +
-            "       doss.result_selection, " +
-            "       doss.date_position, " +
-            "       doss.dismiss_date, " +
-            "       doss.type_position, " +
-            "       qa.data.value('(//custom_elems/custom_elem[name=''f_l99s''])[1]/value[1]', 'varchar(max)') AS type_prep, " +
-            "       qas.reason, " +
-            "       q.name AS qual_name, " +
-            "       CASE " +
-            "           WHEN qas.status = 'assigned' THEN 'Присвоена' " +
-            "           WHEN qas.status = 'not_assigned' THEN 'Неприсвоена' " +
-            "           WHEN qas.status = 'in_process' THEN 'В процессе' " +
-            "           WHEN qas.status = 'expired' THEN 'Истекла' " +
-            "           ELSE '' END AS status, " +
-            "       qas.expiration_date " +
-            "   FROM [WTDB].[dbo].qualification_assignments qas " +
-            "         INNER JOIN [WTDB].[dbo].qualification_assignment qa ON qas.id = qa.id " +
-            "         INNER JOIN [WTDB].[dbo].collaborators cs ON qas.person_id = cs.id " +
-            "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
-            "         INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employees doss ON c.data.value('(//custom_elems/custom_elem[name=''dossier_id'']/value)[1]', 'bigint') = doss.id " +
-            "         INNER JOIN [WTDB].[dbo].orgs os ON doss.subdivision_name = os.id " +
-            "         INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
-            "         INNER JOIN [WTDB].[dbo].regions AS rs ON o.data.value('(//custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = rs.id " +
-            "         INNER JOIN [WTDB].[dbo].regions AS kvota_rs ON qa.data.value('(//custom_elems/custom_elem[name=''f_qn4n''])[1]/value[1]', 'bigint') = kvota_rs.id " +
-            "         INNER JOIN [WTDB].[dbo].positions ps ON cs.position_id = ps.id " +
-            "         LEFT JOIN [WTDB].[dbo].qualifications q ON qas.qualification_id = q.id " +
-            " WHERE qas.qualification_id IN (7289051946840112569, 7195880997527743133) "));
-
-        total = ArrayCount(dataList);
-
-        agent.total = total;
-        agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        agent.message = "Обработка данных...";
-        if (ws != null) {
-            ws = sendMessageToWebsocket(ws, agent);
-        }
-        prevDate = new Date();
-
-        for (data in dataList) {
-            dossierDoc = tools.open_doc(OptInt(data.dossier_id));
-
-            if(dossierDoc != undefined) {
-                dossierDocTE = dossierDoc.TopElem;
-
-                result1 = getUniqueEvents(dossierDocTE.rcc_rp_programs_m1s, "rcc_rp_programs_m1_id", 5);
-                result2 = getUniqueEvents(dossierDocTE.rcc_rp_programs_m2s, "rcc_rp_programs_m2_id", 2);
-                result3 = getUniqueEvents(dossierDocTE.rcc_rp_programs_m3s, "rcc_rp_programs_m3_id", 5);
-                result4 = getUniqueEvents(dossierDocTE.rcc_rp_programs_m4s, "rcc_rp_programs_m4_id", 5);
-
-                successRate = OptInt((result1.count + result2.count + result3.count + result4.count) * 100 / 16);
-
-                state = "В процессе";
-
-                if(result1.count == 0 && result2.count == 0 && result3.count == 0 && result4.count == 0) {
-                    state = "Не начата";
-                } else if(result1.count > 0 && result2.count > 0 && result3.count > 0 && result4.count > 0 && successRate >= 80) {
-                    state = "Завершена";
-                }
-
-                // РП закладка
-                reportString.AppendStr(
-                    "<tr>" +
-                    "<td>" + data.doss_fact_region + "</td>" +
-                    "<td>" + data.reg_kvota + "</td>" +
-                    "<td>" + data.doss_inn + "</td>" +
-                    "<td>" + data.doss_org_name + "</td>" +
-                    "<td>" + data.student_fullname + "</td>" +
-                    "<td>" + data.position_name + "</td>" +
-                    "<td>" + data.fullname + "</td>" +
-                    "<td>" + StrDate(data.date_selection, false, false) + "</td>" +
-                    "<td>" + data.result_selection + "</td>" +
-                    "<td>" + StrDate(data.date_position, false, false) + "</td>" +
-                    "<td>" + StrDate(data.dismiss_date, false, false) + "</td>" +
-                    "<td>" + data.type_position + "</td>" +
-                    "<td>" + data.type_prep + "</td>" +
-                    "<td>" + data.reason + "</td>" +
-                    "<td>" + data.qual_name + "</td>" +
-                    "<td>" + data.status + "</td>" +
-                    "<td>" + StrDate(data.expiration_date, false, false) + "</td>" +
-                    "<td>" + result1.name + "</td>" +
-                    "<td>" + StrDate(result1.start, true, false) + "</td>" +
-                    "<td>" + StrDate(result1.finish, true, false) + "</td>" +
-                    "<td>" + result2.name + "</td>" +
-                    "<td>" + StrDate(result2.start, true, false) + "</td>" +
-                    "<td>" + StrDate(result2.finish, true, false) + "</td>" +
-                    "<td>" + result3.name + "</td>" +
-                    "<td>" + StrDate(result3.start, true, false) + "</td>" +
-                    "<td>" + StrDate(result3.finish, true, false) + "</td>" +
-                    "<td>" + result4.name + "</td>" +
-                    "<td>" + StrDate(result4.start, true, false) + "</td>" +
-                    "<td>" + StrDate(result4.finish, true, false) + "</td>" +
-                    "<td>" + getRPNotPassedEduMethods(dossierDocTE.collaborator_lists) + "</td>" +
-                    "<td>" + getRPCertificateNumbers(dossierDocTE.rcc_rp_certificates) + "</td>" +
-                    "<td>" + getRPOtherEvents(dossierDocTE.other_eventss) + "</td>" +
-                    "<td>" + getRPEduMethodNames(dossierDocTE.collaborator_lists) + "</td>" +
-                    "<td>" + getRPEventResultNames(dossierDocTE.collaborator_lists) + "</td>" +
-                    "<td>" + successRate + "</td>" +
-                    "<td>" + state + "</td>" +
-                    "<td>'" + data.qas_id + "</td>" +
-                    "</tr>");
-            } else {
-                addLogMessage(loggerName, "[agent.id: " + agentId + "] Dossier with ID " + data.id + " is not exist");
-
-                skipped++;
-            }
-
-            processed++;
-
-            agent.processed = processed;
-            agent.skipped = skipped;
-            agent.saved = saved;
-            agent.notFound = notFound;
-            refreshMsPerRow(agent, startDate, processed);
-            if (ws != null) {
-                ws = sendMessageToWebsocket(ws, agent);
-            }
-
-            if (processed % 1000 == 0) {
-                addLogMessage(
-                    loggerName,
-                    "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
-                );
-            }
-        }
-
+        // РП
+        operateRpBlock();
+        
         agent.processed = processed;
         agent.saved = saved;
         agent.skipped = skipped;

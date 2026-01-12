@@ -188,9 +188,9 @@ if (!LdsIsServer) {
                         if (data.is_rck_alone == "РЦК самостоятельно") {
                             if (getCertificateCount(data.person_id, 7164453663916057169) == 0) {
                                 // CREATE CERTIFICATE
-                                //certificateId = createCertificate(data.person_id, 7164453663916057169, "РП", data.org_name, data.cert_date, 14, data.event_id);
+                                certificateId = createCertificate(data.person_id, 7164453663916057169, "РП", data.org_name, data.cert_date, 14, data.event_id);
 
-                                //addCertificateIdIntoEventResult(data.id, certificateId);
+                                addCertificateIdIntoEventResult(data.id, certificateId);
 
                                 addToCertNames(duties, id, data.fullname);
 
@@ -204,9 +204,9 @@ if (!LdsIsServer) {
                         } else if (data.is_rck_alone == "ФЦК") {
                             if (getCertificateCount(data.person_id, 7164453267946338582) == 0) {
                                 // CREATE CERTIFICATE
-                                //certificateId = createCertificate(data.person_id, 7164453267946338582, "РП", data.org_name, data.cert_date, 13, data.event_id);
+                                certificateId = createCertificate(data.person_id, 7164453267946338582, "РП", data.org_name, data.cert_date, 13, data.event_id);
 
-                                //addCertificateIdIntoEventResult(data.id, certificateId);
+                                addCertificateIdIntoEventResult(data.id, certificateId);
 
                                 addToCertNames(duties, id, data.fullname);
 
@@ -238,7 +238,7 @@ if (!LdsIsServer) {
                     }
 
                     for (data in noCertList) {
-                        //tools.create_notification("cert_tr_rck_cancel_rp", OptInt(data.person_id), "");
+                        tools.create_notification("cert_tr_rck_cancel_rp", OptInt(data.person_id), "");
 
                         addToNoCertNames(duties, id, data.fullname);
 
