@@ -1657,6 +1657,7 @@ function pinUnpinParent(element) {
 
         parentElement.addClass("pinned");
         parentElement.css("z-index", 1000);
+        parentElement.css("cursor", "pointer");
         parentElement.attr("pin", 1);
         parentElement.draggable();
 
@@ -1668,6 +1669,7 @@ function pinUnpinParent(element) {
 
         parentElement.removeClass("pinned");
         parentElement.css("z-index", 0);
+        parentElement.css("cursor", "default");
         parentElement.attr("pin", 0);
 
         if(parentElement.hasClass("thread-inactive")) {
