@@ -10,7 +10,7 @@ var weekList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 
 var prevReportData = [];
 
-var coursesPlan = 1120000;
+var coursesPlan = 1500000;
 var coursesChart;
 var completedCount = 0;
 var isInitialized = false;

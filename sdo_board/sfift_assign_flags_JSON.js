@@ -68,7 +68,7 @@ result.passWithNoRight = 0;
 
 try {
     week = OptInt(Request.Query.GetOptProperty("week", "1"));
-    year = OptInt(Request.Query.GetOptProperty("year", "2025"));
+    year = OptInt(Request.Query.GetOptProperty("year", "2026"));
 
     assignList = getTotal("active_learnings", 0, week, year);
     passList = getTotal("learnings", 4, week, year);;

@@ -49,7 +49,7 @@ var result = {};
 result.errorMessage = "";
 
 try {
-    date = Request.Query.GetOptProperty("date", "01.01.2025 00:00:00");
+    date = Request.Query.GetOptProperty("date", "01.01.2026 00:00:00");
     year = date.split(" ")[0];
     year = year.split(".")[2];
 
