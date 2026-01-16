@@ -325,13 +325,19 @@ function refreshBoardData() {
                 weekData = calculateExpectedWeekNumber(data, currentDateTime);
 
                 // MOMENT. GET WEEK WHEN IT STARTS FROM MONDAY
-                let leaveWeek = weekData.expectedWeek - weekData.currentWeek;
+                let leaveWeek= 0;
+
+                if(parseInt(weekData.currentYear) === parseInt(weekData.expectedYear)) {
+                    leaveWeek = weekData.expectedWeek - weekData.currentWeek;
+                } else {
+                    leaveWeek = 53 - weekData.currentWeek + weekData.expectedWeek;
+                }
 
                 if(leaveWeek > 0) {
                     leaveWeek = "+" + leaveWeek;
                 }
 
-                $("#expected_week").html(weekData.expectedWeek + " (" + leaveWeek + ")");
+                $("#expected_week").html(weekData.expectedWeek + " / " + weekData.expectedYear + " (" + leaveWeek + ")");
                 $("#expected_start").html(weekData.expected);
                 //$("#expected_finish").html(weekDays.endStr);
 
@@ -604,8 +610,10 @@ function calculateExpectedWeekNumber(data, currentDateAsString) {
 
     return {
         currentWeek: getWeek(currentDateAsString),
+        currentYear: currentDateAsString.split(" ")[0].split(".")[2],
         expected: expected,
         expectedWeek: moment(expected, "DD.MM.YYYY").isoWeekday(1).startOf('week').week(),
+        expectedYear: expected.split(".")[2],
         passed: passed,
         leave: leave
     };
