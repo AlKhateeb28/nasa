@@ -24,12 +24,14 @@ function getData(eventId, result) {
         " WHERE UPPER(er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)')) = '" + result + "' "));
 }
 
-function getCertificateCount(personId, certificateTypeId) {
+function getCertificateCount(personId, certificateTypeId, programName) {
     certificationList = ArrayDirect(XQuery("sql: " +
-        " SELECT id " +
-        " FROM [WTDB].[dbo].certificates " +
-        " WHERE person_id = " + personId +
-        "    AND type_id = " + certificateTypeId));
+        " SELECT cs.id " +
+        " FROM [WTDB].[dbo].certificates cs " +
+        "       INNER JOIN [WTDB].[dbo].certificate c ON cs.id = c.id " +
+        " WHERE cs.person_id = " + personId +
+        "       AND cs.type_id = " + certificateTypeId +
+        "       AND c.data.value('(//custom_elems/custom_elem[name=''programm_name'']/value)[1]', 'varchar(max)') = '" + programName + "' "));
 
     return ArrayCount(certificationList);
 }
@@ -79,8 +81,8 @@ function createCertificate(personId, certificateTypeId, serial, orgName, deliver
 function addCertificateIdIntoEventResult(eventResultId, certificateId) {
     eventResultDoc = tools.open_doc(eventResultId);
 
-    if(eventResultId != undefined) {
-        eventResultId.TopElem.certificate_id = certificateId;
+    if(eventResultDoc != undefined) {
+        eventResultDoc.TopElem.certificate_id = certificateId;
 
         eventResultDoc.Save();
     } else {
@@ -202,14 +204,14 @@ if (!LdsIsServer) {
                     prevDate = new Date();
 
                     for (data in certList) {
-                        if (getCertificateCount(data.person_id, 7164452761309690093) == 0) {
+                        eduMethodName = data.edu_method_name;
+
+                        if (StrContains(eduMethodName, "_")) {
+                            eduMethodName = getNormalizedName(eduMethodName);
+                        }
+
+                        if (getCertificateCount(data.person_id, 7164452761309690093, eduMethodName) == 0) {
                             // CREATE CERTIFICATE
-                            eduMethodName = data.edu_method_name;
-
-                            if (StrContains(eduMethodName, "_")) {
-                                eduMethodName = getNormalizedName(eduMethodName);
-                            }
-
                             certificateId = createCertificate(data.person_id, 7164452761309690093, "Т", data.org_name, data.cert_date, data.event_id, eduMethodName);
 
                             addCertificateIdIntoEventResult(data.id, certificateId);
@@ -335,5 +337,5 @@ if (!LdsIsServer) {
         ws.Send("close");
     } catch (e) {}
 
-    alert("Сертифицировано: " + cert + "\nНе сертифицировано: " + noCert + "\nПропущено: " + skipped);
+    alert("Сертифицировано: " + cert + " Не сертифицировано: " + noCert + " Пропущено: " + skipped);
 }

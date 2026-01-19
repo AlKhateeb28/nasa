@@ -62,7 +62,7 @@ function createCertificate(personId, certificateTypeId, serial, orgName, deliver
 function addCertificateIdIntoEventResult(eventResultId, certificateId) {
     eventResultDoc = tools.open_doc(eventResultId);
 
-    if(eventResultId != undefined) {
+    if(eventResultDoc != undefined) {
         eventResultDoc.TopElem.certificate_id = certificateId;
 
         eventResultDoc.Save();
