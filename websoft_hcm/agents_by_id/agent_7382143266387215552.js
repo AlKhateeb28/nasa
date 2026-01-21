@@ -31,8 +31,10 @@ try {
         " WHERE colls.id IS NULL OR evs.id IS NULL"));
 
     processed = 0;
+    saved = 0;
     deleted = 0;
     skipped = 0;
+
     total = ArrayCount(eventResultsList);
 
     addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
