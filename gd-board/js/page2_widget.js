@@ -49,7 +49,7 @@ function getPage2Content() {
                     <div class="float-left-box page2-basic mode_caption">базовый</div>
                 </div>
                 <div id="pg2_block5_value" class="block-value" style="margin-top: 0px;">0</div>
-                <div id="pg2_block5_remains" style="left: 90px; top: 90px; position: relative; margin-top: -16px; min-height: 17px;"></div>
+                <div id="pg2_block5_remains" style="left: 75px; top: 90px; position: relative; margin-top: -16px; min-height: 17px;"></div>
                 <div id="pg2_block5_chart" class="chart-block"></div>
             </div>
         </div>
@@ -511,7 +511,7 @@ function updateOtherCharts(accumulationMode) {
     });
     $("#pg2_block5_value").html(totalValue.toLocaleString());
 
-    const remainsValue = totalValue - 1120000;
+    const remainsValue = totalValue - 1500000;
 
     const remainsElement = $("#pg2_block5_remains");
     remainsElement.html(remainsValue.toLocaleString());
