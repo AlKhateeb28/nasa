@@ -54,7 +54,8 @@ try {
                     "    INNER JOIN [WTDB].[dbo].certificate_types cts ON cs.type_id = cts.id " +
                     " WHERE cs.person_id = " + collaborator.collaborator_list_id +
                     "    AND (cts.code = 'RCC-RG-RCC' " +
-                    "    OR cts.code = 'RCC-RG-FCC') "));
+                    "    OR cts.code = 'RCC-RG-FCC' " +
+                    "    OR cts.code = 'RCC-T-RCC') "));
 
                 for (rpCetrificate in rpCetrificateList) {
                     if(dossierDocTE.rcc_rp_certificates.GetOptChildByKey(rpCetrificate.id) == undefined) {
