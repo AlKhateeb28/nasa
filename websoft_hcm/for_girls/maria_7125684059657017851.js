@@ -11,7 +11,7 @@ function upp_first_char( str ) {
     return new_str;
 }
 
-function addPersonToEvent(personId, eventId, defaultEventResultTypeId) {
+function addPersonToEventResult(personId, eventId, defaultEventResultTypeId, isWorkGroup) {
     tools.add_person_to_event(personId,eventId);
 
     if(defaultEventResultTypeId != null) {
@@ -25,6 +25,9 @@ function addPersonToEvent(personId, eventId, defaultEventResultTypeId) {
             eventResultDoc = tools.open_doc(dataList[0].id);
 
             eventResultDoc.TopElem.event_result_type_id = defaultEventResultTypeId;
+            if(isWorkGroup) {
+                eventResultDoc.TopElem.custom_elems.ObtainChildByKey("col_rg").value = true;
+            }
 
             eventResultDoc.Save();
         }
@@ -87,7 +90,7 @@ if(LdsIsClient) {
 
                 processed++;
 
-                excelSheet.Cells(currentRow, 6).Value = "";
+                excelSheet.Cells(currentRow, 7).Value = "";
 
                 col_fullname = excelSheet.Cells(currentRow, 1).Value == undefined ? "" : Trim(UnifySpaces(excelSheet.Cells(currentRow, 1).Value));
                 col_email = excelSheet.Cells(currentRow, 2).Value == undefined ? "" : Trim(UnifySpaces(excelSheet.Cells(currentRow, 2).Value));
@@ -102,7 +105,7 @@ if(LdsIsClient) {
                 if (StrContains(col_fullname, '.', false)) {
                     alert_message += "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как неверно заполнено ФИО. 01");
@@ -114,7 +117,7 @@ if(LdsIsClient) {
                 if (col_fullname_arr_count < 2 || col_fullname_arr_count > 4) {
                     alert_message += "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как неверно заполнено ФИО. 02");
@@ -141,7 +144,7 @@ if(LdsIsClient) {
                 if (StrCharCount(col_firstname) == 1 || StrCharCount(col_middlename) == 1) {
                     alert_message += "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как неверно заполнено ФИО. 03");
@@ -156,7 +159,7 @@ if(LdsIsClient) {
                 if (organization == null) {
                     alert_message += "Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn + "; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn + "; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn + "; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn);
@@ -170,7 +173,7 @@ if(LdsIsClient) {
                     if (Param.checkFormPart && StrCharCount(organizationTE.custom_elems.ObtainChildByKey("format_part").value) == 0) {
                         alert_message += "Участник " + col_fullname + " не является участником нац.проекта; ";
                         if (send_message_to == 'excel') {
-                            excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не является участником нац.проекта; ";
+                            excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не является участником нац.проекта; ";
                         }
 
                         addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не является участником нац.проекта");
@@ -180,7 +183,7 @@ if(LdsIsClient) {
                         continue;
                     }
 
-                    found_collaborator = ArrayOptFirstElem(XQuery("sql: " +
+                    collaboratorList = ArrayOptFirstElem(XQuery("sql: " +
                         " SELECT" +
                         " collaborators.id AS col_id" +
                         " FROM collaborators" +
@@ -191,53 +194,61 @@ if(LdsIsClient) {
                         " AND orgs.code = '" + col_org_inn + "'"
                     ));
 
-                    if (found_collaborator == undefined) {
+                    isWorkGroup = false;
+                    if(excelSheet.Cells(currentRow, 6).Value != undefined && StrUpperCase(excelSheet.Cells(currentRow, 6).Value) == "ДА") {
+                        isWorkGroup = true;
+                    }
+
+                    if (collaboratorList == undefined) {
                         a1 = StrDate(Date()).split(" ");
                         a2 = a1[0].split(".");
                         a3 = a1[1].split(":");
                         my_str = "load_muc_" + a2[2] + a2[1] + a2[0] + "_" + a3[0] + a3[1] + a3[2] + "_" + tools.random_string(5);
 
-                        new_col_doc = tools.new_doc_by_name('collaborator', false);
-                        new_col_doc.BindToDb(DefaultDb);
-                        new_col_doc_te = new_col_doc.TopElem;
-                        new_col_doc_te.lastname = col_lastname;
-                        new_col_doc_te.firstname = col_firstname;
-                        new_col_doc_te.middlename = col_middlename;
-                        new_col_doc_te.code = my_str;
-                        new_col_doc_te.login = my_str;
-                        //new_col_doc_te.password = tools.random_string( 20 );
-                        new_col_doc_te.custom_elems.ObtainChildByKey("uf_inn").value = col_org_inn;
-                        new_col_doc_te.custom_elems.ObtainChildByKey("load_muc").value = true;
-                        new_col_doc_te.custom_elems.ObtainChildByKey("guid_status").value = "Надо получить";
-                        new_col_doc_te.custom_elems.ObtainChildByKey("comment").value = "|||" + StrDate(Date()) + " - Создан агентом для добавление в мероприятие «" + event_doc.TopElem.name + "» в качестве участника.";
-                        new_col_doc_te.access.web_banned = true;
-                        new_col_doc_te.org_id = organizationTE.id;
-                        new_col_doc_te.org_name = organizationTE.name;
-                        new_col_doc_te.last_import_date = Date();
-                        new_col_doc_te.system_email = col_email;
-                        new_col_doc_te.mobile_phone = col_phone;
-                        new_col_doc_te.birth_date.Clear();
+                        collaboratorDoc = tools.new_doc_by_name('collaborator', false);
+                        collaboratorDoc.BindToDb(DefaultDb);
+                        collaboratorDocTE = collaboratorDoc.TopElem;
+                        collaboratorDocTE.lastname = col_lastname;
+                        collaboratorDocTE.firstname = col_firstname;
+                        collaboratorDocTE.middlename = col_middlename;
+                        collaboratorDocTE.code = my_str;
+                        collaboratorDocTE.login = my_str;
+                        //collaboratorDocTE.password = tools.random_string( 20 );
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("uf_inn").value = col_org_inn;
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("load_muc").value = true;
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("guid_status").value = "Надо получить";
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("comment").value = "|||" + StrDate(Date()) + " - Создан агентом для добавление в мероприятие «" + event_doc.TopElem.name + "» в качестве участника.";
+                        if(isWorkGroup) {
+                            collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                        }
+                        collaboratorDocTE.access.web_banned = true;
+                        collaboratorDocTE.org_id = organizationTE.id;
+                        collaboratorDocTE.org_name = organizationTE.name;
+                        collaboratorDocTE.last_import_date = Date();
+                        collaboratorDocTE.system_email = col_email;
+                        collaboratorDocTE.mobile_phone = col_phone;
+                        collaboratorDocTE.birth_date.Clear();
 
-                        new_position_doc = tools.new_doc_by_name('position', false);
-                        new_position_doc.BindToDb(DefaultDb);
-                        new_position_doc_te = new_position_doc.TopElem;
-                        new_position_doc_te.name = col_position_name;
-                        new_position_doc_te.org_id = organizationTE.id;
-                        new_position_doc_te.position_appointment_type_id = 6820005324597779239; // Тип назначения Основная
+                        positionDoc = tools.new_doc_by_name('position', false);
+                        positionDoc.BindToDb(DefaultDb);
+                        positionDocTE = positionDoc.TopElem;
+                        positionDocTE.name = col_position_name;
+                        positionDocTE.org_id = organizationTE.id;
+                        positionDocTE.position_appointment_type_id = 6820005324597779239; // Тип назначения Основная
 
-                        new_col_doc.Save();
-                        new_position_doc.Save();
+                        collaboratorDoc.Save();
+                        positionDoc.Save();
 
-                        new_position_doc_te.basic_collaborator_id = new_col_doc.DocID;
-                        //new_position_doc_te.parent_object_id = subdivision_id_1;
-                        new_col_doc_te.position_id = new_position_doc.DocID;
-                        //new_col_doc_te.position_parent_id = subdivision_id_1;
-                        //new_col_doc_te.position_parent_name = subdivision_name_1;
+                        positionDocTE.basic_collaborator_id = collaboratorDoc.DocID;
+                        //positionDocTE.parent_object_id = subdivision_id_1;
+                        collaboratorDocTE.position_id = positionDoc.DocID;
+                        //collaboratorDocTE.position_parent_id = subdivision_id_1;
+                        //collaboratorDocTE.position_parent_name = subdivision_name_1;
 
-                        new_col_doc.Save();
-                        new_position_doc.Save();
+                        collaboratorDoc.Save();
+                        positionDoc.Save();
 
-                        addPersonToEvent(new_col_doc.DocID, event_id, defaultEventResultTypeId);
+                        addPersonToEventResult(collaboratorDoc.DocID, event_id, defaultEventResultTypeId, isWorkGroup);
 
                         saved++;
                     } else {
@@ -247,30 +258,46 @@ if(LdsIsClient) {
                             " FROM event_results" +
                             " LEFT JOIN events" +
                             " ON events.id = event_results.event_id" +
-                            " WHERE event_results.person_id = " + found_collaborator.col_id +
+                            " WHERE event_results.person_id = " + collaboratorList.col_id +
                             " AND event_results.is_assist = 1" +
                             " AND events.education_method_id = " + education_method_id
                         ));
-                        if (ArrayCount(found_events_arr) == 0) {
-                            addPersonToEvent(found_collaborator.col_id, event_id, defaultEventResultTypeId);
 
-                            col_doc = tools.open_doc(found_collaborator.col_id);
-                            col_doc.TopElem.system_email = col_email;
-                            col_doc.TopElem.mobile_phone = col_phone;
-                            col_doc.Save();
+                        collaboratorDoc = tools.open_doc(collaboratorList.col_id);
 
-                            saved++;
-                        } else {
-                            alert_message += "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
-                            if (send_message_to == 'excel') {
-                                excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
+                        if(collaboratorDoc != undefined) {
+                            if (ArrayCount(found_events_arr) == 0) {
+                                addPersonToEventResult(collaboratorList.col_id, event_id, defaultEventResultTypeId, isWorkGroup);
+
+                                collaboratorDoc = tools.open_doc(collaboratorList.col_id);
+                                collaboratorDoc.TopElem.system_email = col_email;
+                                collaboratorDoc.TopElem.mobile_phone = col_phone;
+                                if (isWorkGroup) {
+                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                                }
+                                collaboratorDoc.Save();
+
+                                saved++;
+                            } else {
+                                if (isWorkGroup) {
+                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+
+                                    collaboratorDoc.Save();
+                                }
+
+                                alert_message += "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
+                                if (send_message_to == 'excel') {
+                                    excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
+                                }
+
+                                addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", "));
+
+                                currentRow++;
+                                skipped++;
+                                continue;
                             }
-
-                            addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", "));
-
-                            currentRow++;
-                            skipped++;
-                            continue;
+                        } else {
+                            addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID  " + collaboratorList.col_id + " is not found!");
                         }
                     }
                 }

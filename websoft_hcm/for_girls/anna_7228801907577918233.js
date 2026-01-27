@@ -1,4 +1,4 @@
-// 6909065177311892212
+// 7228801907577918233
 function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
 function upp_first_char_low_other( str ) {
@@ -11,7 +11,7 @@ function upp_first_char( str ) {
     return new_str;
 }
 
-function addPersonToEvent(personId, eventId, defaultEventResultTypeId) {
+function addPersonToEventResult(personId, eventId, defaultEventResultTypeId, isWorkGroup) {
     tools.add_person_to_event(personId,eventId);
 
     if(defaultEventResultTypeId != null) {
@@ -25,13 +25,16 @@ function addPersonToEvent(personId, eventId, defaultEventResultTypeId) {
             eventResultDoc = tools.open_doc(dataList[0].id);
 
             eventResultDoc.TopElem.event_result_type_id = defaultEventResultTypeId;
+            if(isWorkGroup) {
+                eventResultDoc.TopElem.custom_elems.ObtainChildByKey("col_rg").value = true;
+            }
 
             eventResultDoc.Save();
         }
     }
 }
 
-var agentId = 6909065177311892212;
+var agentId = 7228801907577918233;
 var userId = tools.cur_user.Object.id;
 var msPerRecord = 0.01;
 
@@ -43,7 +46,7 @@ if(LdsIsClient) {
 
     var startDate = Date();
     var prevDate = new Date();
-    var loggerName = "aa_agent_add.to.event.from.excel";
+    var loggerName = "agent_7228801907577918233";
     var ws = getWebsocketClient();
     var agent = getAgentInstance(agentId, userId, loggerName);
 
@@ -87,7 +90,7 @@ if(LdsIsClient) {
 
                 processed++;
 
-                excelSheet.Cells(currentRow, 6).Value = "";
+                excelSheet.Cells(currentRow, 7).Value = "";
 
                 col_fullname = excelSheet.Cells(currentRow, 1).Value == undefined ? "" : Trim(UnifySpaces(excelSheet.Cells(currentRow, 1).Value));
                 col_email = excelSheet.Cells(currentRow, 2).Value == undefined ? "" : Trim(UnifySpaces(excelSheet.Cells(currentRow, 2).Value));
@@ -102,7 +105,7 @@ if(LdsIsClient) {
                 if (StrContains(col_fullname, '.', false)) {
                     alert_message += "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как неверно заполнено ФИО. 01");
@@ -114,7 +117,7 @@ if(LdsIsClient) {
                 if (col_fullname_arr_count < 2 || col_fullname_arr_count > 4) {
                     alert_message += "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как неверно заполнено ФИО. 02");
@@ -141,7 +144,7 @@ if(LdsIsClient) {
                 if (StrCharCount(col_firstname) == 1 || StrCharCount(col_middlename) == 1) {
                     alert_message += "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как неверно заполнено ФИО; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как неверно заполнено ФИО. 03");
@@ -156,7 +159,7 @@ if(LdsIsClient) {
                 if (organization == null) {
                     alert_message += "Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn + "; ";
                     if (send_message_to == 'excel') {
-                        excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn + "; ";
+                        excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn + "; ";
                     }
 
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как не найдена организация с ИНН - " + col_org_inn);
@@ -170,7 +173,7 @@ if(LdsIsClient) {
                     if (Param.checkFormPart && StrCharCount(organizationTE.custom_elems.ObtainChildByKey("format_part").value) == 0) {
                         alert_message += "Участник " + col_fullname + " не является участником нац.проекта; ";
                         if (send_message_to == 'excel') {
-                            excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не является участником нац.проекта; ";
+                            excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не является участником нац.проекта; ";
                         }
 
                         addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не является участником нац.проекта");
@@ -180,7 +183,7 @@ if(LdsIsClient) {
                         continue;
                     }
 
-                    found_collaborator = ArrayOptFirstElem(XQuery("sql: " +
+                    collaboratorList = ArrayOptFirstElem(XQuery("sql: " +
                         " SELECT" +
                         " collaborators.id AS col_id" +
                         " FROM collaborators" +
@@ -191,53 +194,61 @@ if(LdsIsClient) {
                         " AND orgs.code = '" + col_org_inn + "'"
                     ));
 
-                    if (found_collaborator == undefined) {
+                    isWorkGroup = false;
+                    if(excelSheet.Cells(currentRow, 6).Value != undefined && StrUpperCase(excelSheet.Cells(currentRow, 6).Value) == "ДА") {
+                        isWorkGroup = true;
+                    }
+
+                    if (collaboratorList == undefined) {
                         a1 = StrDate(Date()).split(" ");
                         a2 = a1[0].split(".");
                         a3 = a1[1].split(":");
                         my_str = "load_muc_" + a2[2] + a2[1] + a2[0] + "_" + a3[0] + a3[1] + a3[2] + "_" + tools.random_string(5);
 
-                        new_col_doc = tools.new_doc_by_name('collaborator', false);
-                        new_col_doc.BindToDb(DefaultDb);
-                        new_col_doc_te = new_col_doc.TopElem;
-                        new_col_doc_te.lastname = col_lastname;
-                        new_col_doc_te.firstname = col_firstname;
-                        new_col_doc_te.middlename = col_middlename;
-                        new_col_doc_te.code = my_str;
-                        new_col_doc_te.login = my_str;
-                        //new_col_doc_te.password = tools.random_string( 20 );
-                        new_col_doc_te.custom_elems.ObtainChildByKey("uf_inn").value = col_org_inn;
-                        new_col_doc_te.custom_elems.ObtainChildByKey("load_muc").value = true;
-                        new_col_doc_te.custom_elems.ObtainChildByKey("guid_status").value = "Надо получить";
-                        new_col_doc_te.custom_elems.ObtainChildByKey("comment").value = "|||" + StrDate(Date()) + " - Создан агентом для добавление в мероприятие «" + event_doc.TopElem.name + "» в качестве участника.";
-                        new_col_doc_te.access.web_banned = true;
-                        new_col_doc_te.org_id = organizationTE.id;
-                        new_col_doc_te.org_name = organizationTE.name;
-                        new_col_doc_te.last_import_date = Date();
-                        new_col_doc_te.system_email = col_email;
-                        new_col_doc_te.mobile_phone = col_phone;
-                        new_col_doc_te.birth_date.Clear();
+                        collaboratorDoc = tools.new_doc_by_name('collaborator', false);
+                        collaboratorDoc.BindToDb(DefaultDb);
+                        collaboratorDocTE = collaboratorDoc.TopElem;
+                        collaboratorDocTE.lastname = col_lastname;
+                        collaboratorDocTE.firstname = col_firstname;
+                        collaboratorDocTE.middlename = col_middlename;
+                        collaboratorDocTE.code = my_str;
+                        collaboratorDocTE.login = my_str;
+                        //collaboratorDocTE.password = tools.random_string( 20 );
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("uf_inn").value = col_org_inn;
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("load_muc").value = true;
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("guid_status").value = "Надо получить";
+                        collaboratorDocTE.custom_elems.ObtainChildByKey("comment").value = "|||" + StrDate(Date()) + " - Создан агентом для добавление в мероприятие «" + event_doc.TopElem.name + "» в качестве участника.";
+                        if(isWorkGroup) {
+                            collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                        }
+                        collaboratorDocTE.access.web_banned = true;
+                        collaboratorDocTE.org_id = organizationTE.id;
+                        collaboratorDocTE.org_name = organizationTE.name;
+                        collaboratorDocTE.last_import_date = Date();
+                        collaboratorDocTE.system_email = col_email;
+                        collaboratorDocTE.mobile_phone = col_phone;
+                        collaboratorDocTE.birth_date.Clear();
 
-                        new_position_doc = tools.new_doc_by_name('position', false);
-                        new_position_doc.BindToDb(DefaultDb);
-                        new_position_doc_te = new_position_doc.TopElem;
-                        new_position_doc_te.name = col_position_name;
-                        new_position_doc_te.org_id = organizationTE.id;
-                        new_position_doc_te.position_appointment_type_id = 6820005324597779239; // Тип назначения Основная
+                        positionDoc = tools.new_doc_by_name('position', false);
+                        positionDoc.BindToDb(DefaultDb);
+                        positionDocTE = positionDoc.TopElem;
+                        positionDocTE.name = col_position_name;
+                        positionDocTE.org_id = organizationTE.id;
+                        positionDocTE.position_appointment_type_id = 6820005324597779239; // Тип назначения Основная
 
-                        new_col_doc.Save();
-                        new_position_doc.Save();
+                        collaboratorDoc.Save();
+                        positionDoc.Save();
 
-                        new_position_doc_te.basic_collaborator_id = new_col_doc.DocID;
-                        //new_position_doc_te.parent_object_id = subdivision_id_1;
-                        new_col_doc_te.position_id = new_position_doc.DocID;
-                        //new_col_doc_te.position_parent_id = subdivision_id_1;
-                        //new_col_doc_te.position_parent_name = subdivision_name_1;
+                        positionDocTE.basic_collaborator_id = collaboratorDoc.DocID;
+                        //positionDocTE.parent_object_id = subdivision_id_1;
+                        collaboratorDocTE.position_id = positionDoc.DocID;
+                        //collaboratorDocTE.position_parent_id = subdivision_id_1;
+                        //collaboratorDocTE.position_parent_name = subdivision_name_1;
 
-                        new_col_doc.Save();
-                        new_position_doc.Save();
+                        collaboratorDoc.Save();
+                        positionDoc.Save();
 
-                        addPersonToEvent(new_col_doc.DocID, event_id, defaultEventResultTypeId);
+                        addPersonToEventResult(collaboratorDoc.DocID, event_id, defaultEventResultTypeId, isWorkGroup);
 
                         saved++;
                     } else {
@@ -247,30 +258,46 @@ if(LdsIsClient) {
                             " FROM event_results" +
                             " LEFT JOIN events" +
                             " ON events.id = event_results.event_id" +
-                            " WHERE event_results.person_id = " + found_collaborator.col_id +
+                            " WHERE event_results.person_id = " + collaboratorList.col_id +
                             " AND event_results.is_assist = 1" +
                             " AND events.education_method_id = " + education_method_id
                         ));
-                        if (ArrayCount(found_events_arr) == 0) {
-                            addPersonToEvent(found_collaborator.col_id, event_id, defaultEventResultTypeId);
 
-                            col_doc = tools.open_doc(found_collaborator.col_id);
-                            col_doc.TopElem.system_email = col_email;
-                            col_doc.TopElem.mobile_phone = col_phone;
-                            col_doc.Save();
+                        collaboratorDoc = tools.open_doc(collaboratorList.col_id);
 
-                            saved++;
-                        } else {
-                            alert_message += "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
-                            if (send_message_to == 'excel') {
-                                excelSheet.Cells(currentRow, 6).Value = "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
+                        if(collaboratorDoc != undefined) {
+                            if (ArrayCount(found_events_arr) == 0) {
+                                addPersonToEventResult(collaboratorList.col_id, event_id, defaultEventResultTypeId, isWorkGroup);
+
+                                collaboratorDoc = tools.open_doc(collaboratorList.col_id);
+                                collaboratorDoc.TopElem.system_email = col_email;
+                                collaboratorDoc.TopElem.mobile_phone = col_phone;
+                                if (isWorkGroup) {
+                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                                }
+                                collaboratorDoc.Save();
+
+                                saved++;
+                            } else {
+                                if (isWorkGroup) {
+                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+
+                                    collaboratorDoc.Save();
+                                }
+
+                                alert_message += "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
+                                if (send_message_to == 'excel') {
+                                    excelSheet.Cells(currentRow, 7).Value = "Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", ");
+                                }
+
+                                addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", "));
+
+                                currentRow++;
+                                skipped++;
+                                continue;
                             }
-
-                            addLogMessage(loggerName, "[agent.id: " + agentId + "] Участник " + col_fullname + " не добален, так как участвовал в мероприятиях: " + ArrayMerge(found_events_arr, "This.event_id", ", "));
-
-                            currentRow++;
-                            skipped++;
-                            continue;
+                        } else {
+                            addLogMessage(loggerName, "[agent.id: " + agentId + "] Collaborator with ID  " + collaboratorList.col_id + " is not found!");
                         }
                     }
                 }
