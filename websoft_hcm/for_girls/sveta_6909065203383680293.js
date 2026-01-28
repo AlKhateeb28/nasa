@@ -273,7 +273,7 @@ if(LdsIsClient) {
                                 collaboratorDoc.TopElem.system_email = col_email;
                                 collaboratorDoc.TopElem.mobile_phone = col_phone;
                                 if (isWorkGroup) {
-                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                                    collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("col_rg").value = true;
                                 }
                                 collaboratorDoc.Save();
 
