@@ -37,6 +37,21 @@ var hoursChartBottomColor = "#ceff86";
 var overloadChartTopColor = "#8B0000";
 var overloadChartBottomColor = "#FC0202";
 
+const lowSVG = "<svg fill='#fc0202' width='26px' height='26px' viewBox='0 0 32 32' version='1.1' xmlns='http://www.w3.org/2000/svg'>\n" +
+    "<title>alt-battery-1</title>\n" +
+    "<path d='M0 20q0 2.496 1.76 4.256t4.256 1.76h17.984q2.496 0 4.256-1.76t1.76-4.256h1.984v-8h-1.984q0-2.464-1.76-4.224t-4.256-1.76h-17.984q-2.496 0-4.256 1.76t-1.76 4.224v8zM4 20v-8q0-0.832 0.576-1.408t1.44-0.576h17.984q0.832 0 1.408 0.576t0.608 1.408v8q0 0.832-0.608 1.44t-1.408 0.576h-17.984q-0.832 0-1.44-0.576t-0.576-1.44zM6.016 20h1.984v-8h-1.984v8z'></path>\n" +
+    "</svg>";
+
+const middleSVG = "<svg fill='#ffffff' width='26px' height='26px' viewBox='0 0 32 32' version='1.1' xmlns='http://www.w3.org/2000/svg'>\n" +
+    "<title>alt-battery-2</title>\n" +
+    "<path d='M0 20q0 2.496 1.76 4.256t4.256 1.76h17.984q2.496 0 4.256-1.76t1.76-4.256h1.984v-8h-1.984q0-2.464-1.76-4.224t-4.256-1.76h-17.984q-2.496 0-4.256 1.76t-1.76 4.224v8zM4 20v-8q0-0.832 0.576-1.408t1.44-0.576h17.984q0.832 0 1.408 0.576t0.608 1.408v8q0 0.832-0.608 1.44t-1.408 0.576h-17.984q-0.832 0-1.44-0.576t-0.576-1.44zM6.016 20h1.984v-8h-1.984v8zM10.016 20h1.984v-8h-1.984v8z'></path>\n" +
+    "</svg>";
+
+const fullSVG = "<svg fill='#ffffff' width='26px' height='26px' viewBox='0 0 32 32' version='1.1' xmlns='http://www.w3.org/2000/svg'>" +
+    "<title>alt-battery-5</title>" +
+    "<path d='M0 20q0 2.496 1.76 4.256t4.256 1.76h17.984q2.496 0 4.256-1.76t1.76-4.256h1.984v-8h-1.984q0-2.464-1.76-4.224t-4.256-1.76h-17.984q-2.496 0-4.256 1.76t-1.76 4.224v8zM4 20v-8q0-0.832 0.576-1.408t1.44-0.576h17.984q0.832 0 1.408 0.576t0.608 1.408v8q0 0.832-0.608 1.44t-1.408 0.576h-17.984q-0.832 0-1.44-0.576t-0.576-1.44zM6.016 20h1.984v-8h-1.984v8zM10.016 20h1.984v-8h-1.984v8zM14.016 20h1.984v-8h-1.984v8zM18.016 20h1.984v-8h-1.984v8zM22.016 20h1.984v-8h-1.984v8z'></path>" +
+    "</svg>";
+
 const networkOption = {
     series: [{
         data: []
@@ -395,7 +410,7 @@ function setWSStateAsAlive() {
     wsServerElement.removeClass("ws-server-inactive");
     wsServerElement.addClass("ws-server-active");
 
-    wsServerElement.html("Active");
+    wsServerElement.html("Active<div style='position: absolute; left: 260px; top: 63px;'>" + fullSVG + "</div>");
 }
 
 function setWSStateAsDead() {
@@ -403,9 +418,9 @@ function setWSStateAsDead() {
     wsServerElement.removeClass("ws-server-active");
     wsServerElement.addClass("ws-server-inactive");
 
-    wsServerElement.html("Inactive");
+    wsServerElement.html("Inactive <div style='position: absolute; left: 260px; top: 63px;'>" + lowSVG + "</div>");
 
-    $("#start_datetime").css("color", "silver")
+    $("#start_datetime").css("color", "silver");
 }
 
 function checkPingState() {
@@ -1711,6 +1726,8 @@ function refreshHourChart() {
 
 $(document).ready(function () {
     $("#start_datetime").html("Activated: " + getCurrentDateTime());
+
+    $("#ws_server").html(lowSVG);
 
     const options = getSummaryOption();
     options.series[0].data = challengesData;
