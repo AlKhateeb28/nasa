@@ -124,7 +124,6 @@
 .ws-server-inactive {
     background-image: linear-gradient(290deg, #212529, #5e5f5e, #212529) !important;
     color: darkgray;
-    text-indent: 16px;
 }
 
 .ws-server-unknown {
