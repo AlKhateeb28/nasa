@@ -4,17 +4,21 @@ function getCurrentDate() {
     return currentDate.toLocaleString("ru-RU").split(",")[0];
 }
 
+function getTemplate(templateId) {
+    return $("#" + templateId).html();
+}
+
 class IndexPage extends Object {
     constructor() {
         super();
     }
 
-    static onDownloadOCK() {
-        $("#ock_image").css("visibility", "visible");
-
+    static onDownloadOCK(element, id) {
         IndexPage.beforeReport("Формируется выгрузка ОЦК ...");
 
-        const messageElement = $("message");
+        IndexPage.awake(element, id);
+
+        const messageElement = $("#message");
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7137494958071545430",
@@ -31,22 +35,23 @@ class IndexPage extends Object {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
 
-                $("#ock_image").css("visibility", "hidden");
+                IndexPage.sleep(element, id);
+
             },
             error: function(error) {
                 IndexPage.onError(7137494958071545430);
 
-                $("#ock_image").css("visibility", "hidden");
+                IndexPage.sleep(element, id);
             }
         });
     }
 
-    static onDownloadOCKBNO() {
-        $("#ock_bno_image").css("visibility", "visible");
-
+    static onDownloadOCKBNO(element, id) {
         IndexPage.beforeReport("Формируется выгрузка ОЦК БНО...");
 
-        const messageElement = $("message");
+        IndexPage.awake(element, id);
+
+        const messageElement = $("#message");
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7151616261867663994",
@@ -55,7 +60,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("Выгрузка ОЦК БНО сформирована!", "report_ock_2025/report_ock_bno_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport("Выгрузка ОЦК-БНО сформирована!", "report_ock_2025/report_ock_bno_" + getCurrentDate() + ".xlsx");
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7151616261867663994'");
@@ -63,22 +68,22 @@ class IndexPage extends Object {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
 
-                $("#ock_bno_image").css("visibility", "hidden");
+                IndexPage.sleep(element, id);
             },
             error: function(error) {
                 IndexPage.onError(7151616261867663994);
 
-                $("#ock_bno_image").css("visibility", "hidden");
+                IndexPage.sleep(element, id);
             }
         });
     }
 
-    static onDownloadRCK() {
-        $("#rck_image").css("visibility", "visible");
-
+    static onDownloadRCK(element, id) {
         IndexPage.beforeReport("Формируется выгрузка РЦК...");
 
-        const messageElement = $("message");
+        IndexPage.awake(element, id);
+
+        const messageElement = $("#message");
 
         $.ajax({
             url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7159099470552366682",
@@ -87,7 +92,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("Выгрузка РЦКсформирована!", "report_ock_2025/report_rck_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport("Выгрузка РЦК сформирована!", "report_ock_2025/report_rck_" + getCurrentDate() + ".xlsx");
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7159099470552366682'");
@@ -95,14 +100,50 @@ class IndexPage extends Object {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
 
-                $("#rck_image").css("visibility", "hidden");
+                IndexPage.sleep(element, id);
             },
             error: function(error) {
                 IndexPage.onError(7159099470552366682);
 
-                $("#rck_image").css("visibility", "hidden");
+                IndexPage.sleep(element, id);
             }
         });
+    }
+
+    static onDownloadDossierRckOck(element, id) {
+        IndexPage.beforeReport("Формируется выгрузка из досье РЦК/ОЦК...");
+
+        IndexPage.awake(element, id);
+
+        const messageElement = $("#message");
+
+        $.ajax({
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7248569681397643041",
+            async: true,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if(data.errorMessage.indexOf("#") < 0) {
+                    IndexPage.afterReport("Выгрузка из досье РЦК/ОЦК сформирована!", "report_col_ock_rck/rck_kval_" + getCurrentDate() + ".xlsx");
+                } else {
+                    messageElement.css("color", "hotpink");
+                    messageElement.html("Ошибка! Подробности в логе 'agent_7248569681397643041'");
+
+                    console.log("Error: " + data.errorMessage.indexOf("#"));
+                }
+
+                IndexPage.sleep(element, id);
+            },
+            error: function(error) {
+                IndexPage.sleep(element, id);
+
+                IndexPage.onError(7248569681397643041);
+            }
+        });
+    }
+
+    static onDownloadDossierRckOckSS(id) {
+
     }
 
     static hideMessageBox() {
@@ -143,5 +184,23 @@ class IndexPage extends Object {
         messageElement.html("Системная ошибка! Смотрите лог шаблона документа " + id);
 
         console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+    }
+
+    static sleep(element, id) {
+        $("#" + element.id).removeClass("go-to-up");
+        $("#" + element.id).addClass("go-to-down");
+
+        const cardElement = $("#" + id);
+        cardElement.removeClass("awake");
+        cardElement.addClass("sleep");
+    }
+
+    static awake(element, id) {
+        $("#" + element.id).removeClass("go-to-down");
+        $("#" + element.id).addClass("go-to-up");
+
+        const cardElement = $("#" + id);
+        cardElement.removeClass("sleep");
+        cardElement.addClass("awake");
     }
 }
