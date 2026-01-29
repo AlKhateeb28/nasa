@@ -445,6 +445,19 @@
             }
         }
 
+        .download-text {
+            animation: download-text 3s infinite alternate;
+        }
+
+        @keyframes download-text {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
         .card-content {
             position: relative;
             width: 100%;
@@ -1109,23 +1122,23 @@
 <div class="float-left">
     <div id="ock_report">
         <div class="float-left" style="top: 50%; left: 15%; transform: translate(-50%, -50%); position: absolute;">
-            <div id="ock_button" class="container noselect" onclick="IndexPage.onDownloadOCK(this, 'card_ock')"></div>
+            <div id="ock_button" class="container noselect" onclick="IndexPage.onDownloadOCK(this, 'ock')"></div>
         </div>
 
         <div class="float-left" style="top: 50%; left: 33%; transform: translate(-50%, -50%); position: absolute;">
-            <div id="ock_bno_button" class="container noselect" onclick="IndexPage.onDownloadOCKBNO(this, 'card_ock_bno')"></div>
+            <div id="ock_bno_button" class="container noselect" onclick="IndexPage.onDownloadOCKBNO(this, 'ock_bno')"></div>
         </div>
 
         <div class="float-left" style="top: 50%; left: 50%; transform: translate(-50%, -50%); position: absolute;">
-            <div id="rck_button" class="container noselect" onclick="IndexPage.onDownloadRCK(this, 'card_rck')"></div>
+            <div id="rck_button" class="container noselect" onclick="IndexPage.onDownloadRCK(this, 'rck')"></div>
         </div>
 
         <div class="float-left" style="top: 50%; left: 67.5%; transform: translate(-50%, -50%); position: absolute;">
-            <div id="ock_rck_button" class="container noselect" onclick="IndexPage.onDownloadDossierRckOck(this, 'card_ock_rck')"></div>
+            <div id="ock_rck_button" class="container noselect" onclick="IndexPage.onDownloadDossierRckOck(this, 'ock_rck')"></div>
         </div>
 
         <div class="float-left" style="top: 50%; left: 85%; transform: translate(-50%, -50%); position: absolute;">
-            <div id="ock_rck_ss_button" class="container noselect" onclick="IndexPage.onDownloadDossierRckOckSS(this, 'card_ock_rck_ss')"></div>
+            <div id="ock_rck_ss_button" class="container noselect" onclick="IndexPage.onDownloadDossierRckOckSS(this, 'ock_rck_ss')"></div>
         </div>
     </div>
 </div>
@@ -1147,6 +1160,7 @@
                 <div class="cyber-lines">
                     <span></span><span></span><span></span><span></span>
                 </div>
+                <div id="task_message" class="download-text" style="color: sandybrown; width: 100%; text-align: center; margin-top: 16px;"></div>
                 <p id="prompt" class="prompt"></p>
                 <div id="title" class="title" style="z-index: 1000; position: fixed"></div>
                 <div class="glowing-elements">
@@ -1179,6 +1193,7 @@
         $("#footer").attr("id", "footer_ock");
         $("#footer_ock").html(grass1SVG);
         $("#card").attr("id", "card_ock");
+        $("#task_message").attr("id", "task_message_ock");
 
         $("#ock_bno_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_ock_bno");
@@ -1188,6 +1203,7 @@
         $("#footer").attr("id", "footer_ock_bno");
         $("#footer_ock_bno").html(grass2SVG);
         $("#card").attr("id", "card_ock_bno");
+        $("#task_message").attr("id", "task_message_ock_bno");
 
         $("#rck_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_rck");
@@ -1197,6 +1213,7 @@
         $("#footer").attr("id", "footer_rck");
         $("#footer_rck").html(grass3SVG);
         $("#card").attr("id", "card_rck");
+        $("#task_message").attr("id", "task_message_rck");
 
         $("#ock_rck_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_ock_rck");
@@ -1206,6 +1223,7 @@
         $("#footer").attr("id", "footer_ock_rck");
         $("#footer_ock_rck").html(grass4SVG);
         $("#card").attr("id", "card_ock_rck");
+        $("#task_message").attr("id", "task_message_ock_rck");
 
         $("#ock_rck_ss_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_ock_rck_ss");
@@ -1215,6 +1233,7 @@
         $("#footer").attr("id", "footer_ock_rck_ss");
         $("#footer_ock_rck_ss").html(grass5SVG);
         $("#card").attr("id", "card_ock_rck_ss");
+        $("#task_message").attr("id", "task_message_ock_rck_ss");
     });
 </script>
 

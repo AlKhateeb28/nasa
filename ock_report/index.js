@@ -13,10 +13,12 @@ class IndexPage extends Object {
         super();
     }
 
-    static onDownloadOCK(element, id) {
-        IndexPage.beforeReport("Формируется выгрузка ОЦК ...");
+    static onDownloadOCK(element, taskPrefix) {
+        //IndexPage.beforeReport();
 
-        IndexPage.awake(element, id);
+        IndexPage.awake(element, taskPrefix);
+
+        $("#task_message_" + taskPrefix).html("Формируется...");
 
         const messageElement = $("#message");
 
@@ -27,7 +29,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("Выгрузка ОЦК сформирована!", "report_ock_2025/report_ock_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport(taskPrefix,"report_ock_2025/report_ock_" + getCurrentDate() + ".xlsx");
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7137494958071545430'");
@@ -35,21 +37,23 @@ class IndexPage extends Object {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
 
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
 
             },
             error: function(error) {
                 IndexPage.onError(7137494958071545430);
 
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
             }
         });
     }
 
-    static onDownloadOCKBNO(element, id) {
-        IndexPage.beforeReport("Формируется выгрузка ОЦК БНО...");
+    static onDownloadOCKBNO(element, taskPrefix) {
+        //IndexPage.beforeReport();
 
-        IndexPage.awake(element, id);
+        IndexPage.awake(element, taskPrefix);
+
+        $("#task_message_" + taskPrefix).html("Формируется...");
 
         const messageElement = $("#message");
 
@@ -60,7 +64,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("Выгрузка ОЦК-БНО сформирована!", "report_ock_2025/report_ock_bno_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport(taskPrefix, "report_ock_2025/report_ock_bno_" + getCurrentDate() + ".xlsx");
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7151616261867663994'");
@@ -68,20 +72,22 @@ class IndexPage extends Object {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
 
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
             },
             error: function(error) {
                 IndexPage.onError(7151616261867663994);
 
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
             }
         });
     }
 
-    static onDownloadRCK(element, id) {
-        IndexPage.beforeReport("Формируется выгрузка РЦК...");
+    static onDownloadRCK(element, taskPrefix) {
+        //IndexPage.beforeReport();
 
-        IndexPage.awake(element, id);
+        IndexPage.awake(element, taskPrefix);
+
+        $("#task_message_" + taskPrefix).html("Формируется...");
 
         const messageElement = $("#message");
 
@@ -92,7 +98,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("Выгрузка РЦК сформирована!", "report_ock_2025/report_rck_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport(taskPrefix, "report_ock_2025/report_rck_" + getCurrentDate() + ".xlsx");
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7159099470552366682'");
@@ -100,20 +106,22 @@ class IndexPage extends Object {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
 
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
             },
             error: function(error) {
                 IndexPage.onError(7159099470552366682);
 
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
             }
         });
     }
 
-    static onDownloadDossierRckOck(element, id) {
-        IndexPage.beforeReport("Формируется выгрузка из досье РЦК/ОЦК...");
+    static onDownloadDossierRckOck(element, taskPrefix) {
+        //IndexPage.beforeReport();
 
-        IndexPage.awake(element, id);
+        IndexPage.awake(element, taskPrefix);
+
+        $("#task_message_" + taskPrefix).html("Формируется...");
 
         const messageElement = $("#message");
 
@@ -124,7 +132,7 @@ class IndexPage extends Object {
             dataType: "json",
             success: function (data) {
                 if(data.errorMessage.indexOf("#") < 0) {
-                    IndexPage.afterReport("Выгрузка из досье РЦК/ОЦК сформирована!", "report_col_ock_rck/rck_kval_" + getCurrentDate() + ".xlsx");
+                    IndexPage.afterReport(taskPrefix, "report_col_ock_rck/rck_kval_" + getCurrentDate() + ".xlsx");
                 } else {
                     messageElement.css("color", "hotpink");
                     messageElement.html("Ошибка! Подробности в логе 'agent_7248569681397643041'");
@@ -132,10 +140,10 @@ class IndexPage extends Object {
                     console.log("Error: " + data.errorMessage.indexOf("#"));
                 }
 
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
             },
             error: function(error) {
-                IndexPage.sleep(element, id);
+                IndexPage.sleep(element, taskPrefix);
 
                 IndexPage.onError(7248569681397643041);
             }
@@ -150,16 +158,11 @@ class IndexPage extends Object {
         $("#message").css("visibility", "hidden");
     }
 
-    static beforeReport(message) {
+    static beforeReport() {
         $("#loader").css("visibility", "visible");
-
-        const messageElement = $("#message");
-        messageElement.css("color", "whitesmoke");
-        messageElement.css("visibility", "visible");
-        messageElement.html(message);
     }
 
-    static afterReport(message, path) {
+    static afterReport(taskPrefix, path) {
         const fileURL = "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/Reports/" + path;
 
         var link= document.createElement('a');
@@ -170,9 +173,7 @@ class IndexPage extends Object {
 
         $("#loader").css("visibility", "hidden");
 
-        $("#message").html(message);
-
-        setTimeout(IndexPage.hideMessageBox, 15000);
+        $("#task_message_" + taskPrefix).html("");
     }
 
     static onError(id) {
@@ -186,20 +187,20 @@ class IndexPage extends Object {
         console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
     }
 
-    static sleep(element, id) {
+    static sleep(element, taskPrefix) {
         $("#" + element.id).removeClass("go-to-up");
         $("#" + element.id).addClass("go-to-down");
 
-        const cardElement = $("#" + id);
+        const cardElement = $("#card_" + taskPrefix);
         cardElement.removeClass("awake");
         cardElement.addClass("sleep");
     }
 
-    static awake(element, id) {
+    static awake(element, taskPrefix) {
         $("#" + element.id).removeClass("go-to-down");
         $("#" + element.id).addClass("go-to-up");
 
-        const cardElement = $("#" + id);
+        const cardElement = $("#card_" + taskPrefix);
         cardElement.removeClass("sleep");
         cardElement.addClass("awake");
     }
