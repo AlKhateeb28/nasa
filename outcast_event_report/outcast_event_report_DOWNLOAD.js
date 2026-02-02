@@ -48,7 +48,8 @@ try {
         "       es.finish_date, " +
         "       er.data.value('(//custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') AS month, " +
         "       er.data.value('(//custom_elems/custom_elem[name=''year_report''])[1]/value[1]', 'varchar(max)') AS year, " +
-        "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]', 'bit') AS INT)) AS is_dossier_rcc_exist " +
+        "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]', 'bit') AS INT)) AS is_dossier_rcc_exist, " +
+        "       es.id AS event_id " +
         " FROM [WTDB].[dbo].event_results ers " +
         "         INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
         "         INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id AND es.finish_date BETWEEN @from_date AND GETDATE() " +
@@ -91,7 +92,9 @@ try {
     reportString.AppendStr("<th class='header' style='width: 500px;'>Название мероприятия</th>");
     reportString.AppendStr("<th class='header'>Дата мероприятия</th>");
     reportString.AppendStr("<th class='header'>Месяц отчета</th>");
-    reportString.AppendStr("<th class='header'>ГОд отчета</th>");
+    reportString.AppendStr("<th class='header'>Год отчета</th>");
+    reportString.AppendStr("<th class='header'>Ответственный за проведение</th>");
+    reportString.AppendStr("<th class='header'>Тренер</th>");
     reportString.AppendStr("<th class='header'>Включен в уникально обученные</th>");
 
     reportString.AppendStr("</tr>");
@@ -108,12 +111,49 @@ try {
         reportString.AppendStr("<td>" + (data.finish_date == null ? "" : StrDate(data.finish_date, false, false)) + "</td>");
         reportString.AppendStr("<td>" + data.month + "</td>");
         reportString.AppendStr("<td>" + data.year + "</td>");
+
+        responsibles = "";
+        treners = "";
+        if(data.event_id != null) {
+            eventDoc = tools.open_doc(data.event_id);
+
+            if(eventDoc != undefined) {
+                eventDocTE = eventDoc.TopElem;
+
+                // Ответсвенный
+                for(collaborator in eventDocTE.tutors) {
+                    collaboratorDoc = tools.open_doc(collaborator.collaborator_id);
+
+                    if(collaboratorDoc != undefined) {
+                        responsibles += collaboratorDoc.TopElem.fullname + ";";
+                    }
+                }
+                // Тренер
+                for(collaborator in eventDocTE.even_preparations) {
+                    collaboratorDoc = tools.open_doc(collaborator.person_id);
+
+                    if(collaboratorDoc != undefined) {
+                        treners += collaboratorDoc.TopElem.fullname + ";";
+                    }
+                }
+            }
+        }
+
+        if(StrCharCount(responsibles) > 0) {
+            responsibles = StrCharRangePos(responsibles, 0, StrCharCount(responsibles) - 1);
+        }
+        if(StrCharCount(treners) > 0) {
+            treners = StrCharRangePos(treners, 0, StrCharCount(treners) - 1);
+        }
+
+        reportString.AppendStr("<td>" + responsibles + "</td>");
+        reportString.AppendStr("<td>" + treners + "</td>");
+
         if(data.is_dossier_rcc_exist == 0) {
             reportString.AppendStr("<td>Нет</td>");
         } else {
             reportString.AppendStr("<td>Да</td>");
         }
-
 
         reportString.AppendStr("</tr>");
 
