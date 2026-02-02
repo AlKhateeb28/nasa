@@ -36,7 +36,7 @@ try {
         " WHERE orgs.region_id IS NOT NULL " +
         "    AND org.data.exist('(//custom_elems/custom_elem[name=''fact_region_id''])') = 1 " +
         "    AND (org.data.exist('(//custom_elems/custom_elem[name=''report_region_id''])') = 0 " +
-        "    OR org.data.value('(org/custom_elems/custom_elem[name=''report_region_id''])[1]/value[1]', 'varchar(max)') IS NULL) "));
+        "       OR org.data.value('(org/custom_elems/custom_elem[name=''report_region_id''])[1]/value[1]', 'varchar(max)') IS NULL) "));
 
     total = ArrayCount(resultArray);
 
