@@ -8,16 +8,16 @@ var sConstSwitchToMobile = "Mobile version";
 var sConstSwitchToDesktop = "Full version";
 }
 
-displayMode = curDevice.disp_type != "mobile" ? "mobile" : "desktop";
+/*displayMode = curDevice.disp_type != "mobile" ? "mobile" : "desktop";
 
-Request.Session.SetProperty("displayMode", displayMode);
+Request.Session.SetProperty("displayMode", displayMode);*/
 %>
 <script>
 	function changeCookieValue() {
-		if(getCookie("displayMode") === "mobile") {
-			document.cookie = "displayMode=desktop";
+		if(getCookie("disp_type") === "mobile") {
+			document.cookie = "disp_type=desktop";
 		} else {
-			document.cookie = "displayMode=mobile";
+			document.cookie = "disp_type=mobile";
 		}
 	}
 </script>
@@ -30,7 +30,7 @@ Request.Session.SetProperty("displayMode", displayMode);
 <script>
 	let linkName = "";
 
-	if(getCookie("displayMode") === "mobile") {
+	if(getCookie("disp_type") === "mobile") {
 		linkName = "Полная версия";
 	} else {
 		linkName = "Мобильная версия";

@@ -71,13 +71,17 @@ oDopStyles = "";
 
 <div id="el_courses_on_main" class="objBlock last_news_grid">
     <script>
-        if(getCookie("displayMode") !== "mobile") {
+        if(getCookie("disp_type") !== "mobile") {
             $("#el_courses_on_main").append("<div class='objBlock-bg' style='<%=oDopStyles%>;'></div>");
         }
     </script>
-    <div class="objBlock-content" data-type="<%=Request.Session.GetProperty('displayMode')%>">
+    <div id="objBlock-content" class="objBlock-content">
         <div style="font-size: 34px; font-weight: 600; padding-bottom: 12px; font-family: Montserrat, sans-serif !important; line-height: 1;"><%=oBlockHeader%></div>
         <div class="objBlockDesc" style="font-family: Montserrat, sans-serif !important"><%=oBlockDesc%></div>
         <div class="blockLinkCourse" onClick="document.location.href='<%=oBlockLink%>'" style="margin-top: 15px; font-family: Montserrat, sans-serif !important">Перейти в каталог</div>
     </div>
+
+    <script>
+        $("#objBlock-content").attr("data-type", getCookie("disp_type"));
+    </script>
 </div>

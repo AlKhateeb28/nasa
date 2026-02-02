@@ -216,7 +216,7 @@ var imgStr = getBigImgStr(doc);
     </div>
         <div id="" class="p-5 myBlockClass main-box-bg box-desc big-bg-image" style="background-image: url('<%=imgStr%>'); clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);">
             <script>
-                if(getCookie("displayMode") === "mobile") {
+                if(getCookie("disp_type") === "mobile") {
                     $(".big-bg-image").css("visibility", "hidden");
                 }
             </script>
@@ -260,7 +260,7 @@ var imgStr = getBigImgStr(doc);
     </div>
     <div class="p-5 myBlockClass main-box-bg box-desc big-bg-image" style="background-image: url('<%=imgStr%>'); clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);">
         <script>
-            if(getCookie("displayMode") === "mobile") {
+            if(getCookie("disp_type") === "mobile") {
                 $(".big-bg-image").css("visibility", "hidden");
             }
         </script>

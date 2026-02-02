@@ -1,0 +1,19 @@
+﻿<%
+// const_start
+sTextLic = " Лицензия на осуществление образовательной деятельности № 041707 от 29 сентября 2021 г.";
+if (curLngID == 'russian')
+{
+var sConstSwitchToMobile = "Мобильная версия";
+var sConstSwitchToDesktop = "Полная версия";
+}
+else
+{
+var sConstSwitchToMobile = "Mobile version";
+var sConstSwitchToDesktop = "Full version";
+}
+// const_end
+%>
+<div id="footer_text" class="WTCSS-footer-text copyright-container">
+	<div class="copyright"><%=tools_web.get_web_const( "copyright_msg", curLngWeb )%><br><%=sTextLic%></div>
+	<div class="view-switch"><a href="javascript:void(0)" class="WTCSS-view-switch" onclick="setCookie('disp_type', '<%=curDevice.disp_type != "mobile" ? "mobile" : ""%>');location.reload(); return false;"><%=curDevice.disp_type != "mobile" ? sConstSwitchToMobile : sConstSwitchToDesktop%></a></div>
+</div>

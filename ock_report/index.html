@@ -507,12 +507,23 @@
             letter-spacing: 2px;
             transform: translateY(30px);
             color: rgba(255, 255, 255, 0.6);
+            text-align: left !important;
+        }
+
+        .footer-subtitle {
+            position: absolute;
+            bottom: 33px;
+            width: 100%;
+            font-size: 12px;
+            letter-spacing: 2px;
+            transform: translateY(30px);
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .highlight {
             color: #00ffaa;
             margin-left: 5px;
-            background: linear-gradient(90deg, #5c67ff, #ad51ff);
+            background: linear-gradient(90deg, #f4a460, #f4a460);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: bold;
@@ -1163,6 +1174,7 @@
                 <div id="task_message" class="download-text" style="color: sandybrown; width: 100%; text-align: center; margin-top: 16px;"></div>
                 <p id="prompt" class="prompt"></p>
                 <div id="title" class="title" style="z-index: 1000; position: fixed"></div>
+                <div class="title" style="z-index: 1000; position: fixed"></div>
                 <div class="glowing-elements">
                     <div class="glow-1"></div>
                     <div class="glow-2"></div>
@@ -1170,6 +1182,10 @@
                 </div>
                 <div class="subtitle">
                     <div id="footer" class="highlight" style="margin-top: -22px; cursor: pointer;"></div>
+                    <div id="time_footer" class="highlight footer-subtitle" style="margin-left: 30px;">
+                        <span id="svg" style="float: left;"></span>
+                        <span id="running_time" style="float: left; margin-top: 16px; margin-left: 3px;"></span>
+                    </div>
                 </div>
                 <div class="card-particles">
                     <span></span><span></span><span></span> <span></span><span></span><span></span>
@@ -1194,6 +1210,11 @@
         $("#footer_ock").html(grass1SVG);
         $("#card").attr("id", "card_ock");
         $("#task_message").attr("id", "task_message_ock");
+        $("#time_footer").attr("id", "time_footer_ock");
+        $("#running_time").attr("id", "running_time_ock");
+        $("#running_time_ock").html("~ ? мин");
+        $("#svg").attr("id", "svg_ock");
+        IndexPage.getRunningTime("7137494958071545430", "_ock");
 
         $("#ock_bno_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_ock_bno");
@@ -1204,6 +1225,11 @@
         $("#footer_ock_bno").html(grass2SVG);
         $("#card").attr("id", "card_ock_bno");
         $("#task_message").attr("id", "task_message_ock_bno");
+        $("#time_footer").attr("id", "time_footer_ock_bno");
+        $("#running_time").attr("id", "running_time_ock_bno");
+        $("#running_time_ock_bno").html("~ ? сек");
+        $("#svg").attr("id", "svg_ock_bno");
+        IndexPage.getRunningTime("7151616261867663994", "_ock_bno");
 
         $("#rck_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_rck");
@@ -1214,6 +1240,11 @@
         $("#footer_rck").html(grass3SVG);
         $("#card").attr("id", "card_rck");
         $("#task_message").attr("id", "task_message_rck");
+        $("#time_footer").attr("id", "time_footer_rck");
+        $("#running_time").attr("id", "running_time_rck");
+        $("#running_time_rck").html("~ ? сек");
+        $("#svg").attr("id", "svg_rck");
+        IndexPage.getRunningTime("7159099470552366682", "_rck");
 
         $("#ock_rck_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_ock_rck");
@@ -1224,6 +1255,11 @@
         $("#footer_ock_rck").html(grass4SVG);
         $("#card").attr("id", "card_ock_rck");
         $("#task_message").attr("id", "task_message_ock_rck");
+        $("#time_footer").attr("id", "time_footer_ock_rck");
+        $("#running_time").attr("id", "running_time_ock_rck");
+        $("#running_time_ock_rck").html("~ ? мин");
+        $("#svg").attr("id", "svg_ock_rck");
+        IndexPage.getRunningTime("7248569681397643041", "_ock_rck");
 
         $("#ock_rck_ss_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_ock_rck_ss");
@@ -1234,6 +1270,11 @@
         $("#footer_ock_rck_ss").html(grass5SVG);
         $("#card").attr("id", "card_ock_rck_ss");
         $("#task_message").attr("id", "task_message_ock_rck_ss");
+        $("#time_footer").attr("id", "time_footer_ock_rck_ss");
+        $("#running_time").attr("id", "running_time_ock_rck_ss");
+        $("#running_time_ock_rck_ss").html("~ ? мин");
+        $("#svg").attr("id", "svg_ock_rck_ss");
+        $("#svg_ock_rck_ss").append(unknownRunningMan);
     });
 </script>
 

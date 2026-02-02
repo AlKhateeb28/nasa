@@ -1,0 +1,252 @@
+﻿<!DOCTYPE html>
+<html>
+<%
+	// 230207
+	var bUseWebMode = (curWebModeID!=null);
+	var bTracing = false;
+	var sTracingParam = "";
+	var iStart;
+	bUseWebMode = bUseWebMode && (curWebMode.use_lpapi()==true);
+	Server.Execute( "include/head.html" ); // need bUseWebMode in head to include WTLP runtime
+
+	sHTMLHeader = tools_web.place_zone( "header" );
+	sHTMLNavigation = tools_web.place_zone( "navigation" );
+	sHTMLFooter = tools_web.place_zone( "footer" );
+	sHTMLLeft = Trim( tools_web.place_zone( "left" ) );
+	sHTMLRight = Trim( tools_web.place_zone( "right" ) );
+	sHTMLTop = Trim( tools_web.place_zone( "top" ) );
+	sHTMLBottom = Trim( tools_web.place_zone( "bottom" ) );
+	sHTMLMain = "";
+	if(curAccess)
+	{
+		if(bUseWebMode)
+		{
+			bTracing = global_settings.settings.GetOptProperty("tracing", false);
+			sTracingParam = Request.QueryString.GetOptProperty("tracing");
+			var bCreateFCache = (Request.QueryString.GetOptProperty("fcache")=="1");
+			var bLPEPreview = (Request.Query.GetOptProperty("lpe_preview")=="1");
+			if( tools_web.is_true(curWebMode.GetOptProperty("postloading", false)) && !bLPEPreview && !bCreateFCache)
+			{
+				var sURL = Request.UrlPath + (Request.UrlParam!="" ? ("?" + Request.UrlParam) : "");
+				var sDataParam = "stepto=" + curWebModeID;
+				if(sTracingParam!=undefined)
+				{
+					sDataParam += ("&tracing=" + sTracingParam);
+					if(bTracing)
+					{
+						EnableLog("tracing");
+						iStart = GetCurTicks();
+						LogEvent("tracing", "\n*** PAGE '" + curWebMode.GetOptProperty("name", "?web_mode?") + "' " + curWebModeID + " zone main deferred loader start by user " + curUserID + " from URL: " + Request.Url + " ***\n");
+					}
+				}
+				sHTMLMain = '<script id="deferred">$(document).ready(function () { g_jMask = WTLP._CreatePageMask({ jParent: $("#content") });$.ajax({ type: "POST", url: "' + sURL + '", data: "' + sDataParam + '", async: true, dataType: "html" }).done(function (oData, sStatus, jqXHR) { $("#main_container").prepend(oData); fnInitLoaded(); }).fail(function (jqXHR, sStatus, sError) { alert(sStatus + " " + sError); }); });</script>';
+				if(sTracingParam!=undefined && bTracing)
+				{
+					LogEvent("tracing", "\n*** PAGE '" + curWebMode.GetOptProperty("name", "?web_mode?") + "' " + curWebModeID + " zone main deferred loader end " + (GetCurTicks() - iStart) + "ms ***\n");
+				}
+			}
+			else
+			{
+				if(sTracingParam!=undefined && bTracing)
+				{
+					EnableLog("tracing");
+					iStart = GetCurTicks();
+					LogEvent("tracing", "\n*** PAGE '" + curWebMode.GetOptProperty("name", "?web_mode?") + "' " + curWebModeID + " zone main conventional load start by user " + curUserID + " from URL: " + Request.Url + " ***\n");
+				}
+				sHTMLMain = tools_web.place_zone( "main", bCreateFCache, bLPEPreview );
+				if(sTracingParam!=undefined && bTracing)
+				{
+					LogEvent("tracing", "\n*** PAGE '" + curWebMode.GetOptProperty("name", "?web_mode?") + "' " + curWebModeID + " zone main conventional load end " + (GetCurTicks() - iStart) + "ms ***\n");
+				}
+				if(bCreateFCache)
+				{
+					sHTMLMain = tools_lp.collect_all_subs(sHTMLMain);
+					tools_lp.save_template_cache( curWebMode, sHTMLMain );
+				}
+			}
+		}
+		else
+		{
+			sHTMLMain = tools_web.place_zone( "main" );
+		}
+	}
+	else
+	{
+		sHTMLMain = tools_web.insert_custom_code( tools_web.get_web_param( curParams, "access_panel_template_code", "access_panel", true ), null, true, false, 0, null, true );
+	}
+	sWidthLeft = tools_web.get_web_param( curParams, "place_holder_left_panel_width", "200", true );
+	sWidthRight = tools_web.get_web_param( curParams, "place_holder_right_panel_width", "200", true );
+	sPaddingMainLeft = "";
+	sPaddingMainRight = "";
+	sPaddingInterimLeft = "";
+	sPaddingInterimRight = "";
+	sAddClass = "";
+	iColumnsCount = 1;
+	if(sHTMLLeft != "")
+		iColumnsCount++;
+		//sAddClass += " page-zone-left";
+	if(sHTMLRight != "")
+		iColumnsCount++;
+		//sAddClass += " page-zone-right";
+
+	var sDocId = curDocID==null ? "" : curDocID;
+	var sUserId = curUserID==null ? "" : curUserID;
+	var sObjectId = (curObjectID==null || curObjectID=="") ? "" : ("0x" + StrHexInt(curObjectID, 16));
+
+	var sWMId = "";
+	var sWebModeBodyStyle = "";
+	var sWebModeContainerId = "";
+	var sWebModeTitle = "";
+	var sWebModeContainerCSS = "";
+	var sWebModeContainerClass = "";
+	var sWebModeCustomCode = "";
+	var sWMData = "";
+	var sLocalVarsOverride = "";
+	var sPageContentClass = "";
+
+	if(bUseWebMode)
+	{
+		bPostLoading = true;
+		sWMId = "0x" + StrHexInt(curWebModeID, 16);
+		sWebModeBodyStyle = ' style="opacity:0;" wt-lazy="allowed"';
+		sWebModeContainerId = ' id="WT_' + sWMId + '"';
+		Server.Execute( "lpe_common_runtime.bs" );
+		sPageContentClass = "wt-lp-page-content";
+	}
+%>
+<body id="wt-body" class="<%=curDevice.disp_type != "mobile" ? "desktop" : "mobile"%> mode-<%=curMode%> <%=sWebModeContainerClass%>" onload="OnLoad()" onresize="OnResize()" <%=sWebModeBodyStyle%>>
+	<div id="wt-container" class="page page-columns-<%=iColumnsCount%>" wt-id="WT_<%=sWMId%>" style="<%=sWebModeContainerCSS%>">
+<%
+if(sHTMLHeader != "")
+{
+%>
+		<header class="header">
+			<%=sHTMLHeader%>
+		</header>
+<%
+}
+if(sHTMLNavigation != "")
+{
+%>
+		<div class="navigation"><%=sHTMLNavigation%></div>
+<%
+}
+%>
+		<div id="content" class="page-content <%=sPageContentClass%>">
+
+<%
+if(sHTMLTop != "")
+{
+%>
+			<div id="zone-top" class="zone-top" zone="top">
+				<%=sHTMLTop%>
+			</div>
+<%
+}
+
+if(sHTMLLeft != "")
+{
+%>
+			<div id="zone-left" class="zone-left" zone="left">
+				<%=sHTMLLeft%>
+			</div>
+<%
+}
+%>
+			<div id="zone-main" class="zone-main" zone="main">
+				<div id="main_container" class="zone-main-wrapper">
+					<%=sHTMLMain%>
+				</div>
+			</div>
+<%
+if(sHTMLRight != "")
+{
+%>
+			<div id="zone-right" class="zone-right" zone="right"><%=sHTMLRight%></div>
+<%
+}
+if(sHTMLBottom != "")
+{
+%>
+			<div id="zone-bottom" class="zone-bottom" zone="bottom">
+				<%=sHTMLBottom%>
+			</div>
+<%
+}
+
+%>
+		</div>
+<%
+if(sHTMLFooter != "")
+{
+%>
+		<footer class="footer">
+			<%=sHTMLFooter%>
+		</footer>
+<%
+}
+%>
+</div>
+<div class="wt-hidden-box" style="position:absolute;left:-100px;top:-100px;width:0; height:0; overflow:hidden;"></div>
+<%
+if(bUseWebMode)
+{
+%>
+<div class="wt-lp-load-mask" wt-mask="1" wt-template="load-mask" style="display: none;">
+	<div class="wt-lp-load-mask-bg"></div>
+	<div class="wt-lp-load-throbber"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-ellipsis" style="background: none;"><circle cx="84" cy="50" r="3.60859" fill="#999999"><animate attributeName="r" values="10;0;0;0;0" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="0s"></animate><animate attributeName="cx" values="84;84;84;84;84" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="0s"></animate></circle><circle cx="71.7308" cy="50" r="10" fill="#999999"><animate attributeName="r" values="0;10;10;10;0" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="-0.75s"></animate><animate attributeName="cx" values="16;16;50;84;84" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="-0.75s"></animate></circle><circle cx="37.7308" cy="50" r="10" fill="#999999"><animate attributeName="r" values="0;10;10;10;0" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="-0.375s"></animate><animate attributeName="cx" values="16;16;50;84;84" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="-0.375s"></animate></circle><circle cx="16" cy="50" r="6.39141" fill="#999999"><animate attributeName="r" values="0;10;10;10;0" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="0s"></animate><animate attributeName="cx" values="16;16;50;84;84" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="0s"></animate></circle><circle cx="16" cy="50" r="0" fill="#999999"><animate attributeName="r" values="0;0;10;10;10" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="0s"></animate><animate attributeName="cx" values="16;16;16;50;84" keyTimes="0;0.25;0.5;0.75;1" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" calcMode="spline" dur="1.5s" repeatCount="indefinite" begin="0s"></animate></circle></svg></div>
+</div>
+<%
+	curWebDesignID = Env.GetOptProperty( "curWebDesignID", null );
+	var iThrobberId = null;
+	if ( curWebDesignID != null )
+	{
+		curWebDesign = tools_web.get_cur_web_design( Env );
+		if ( curWebDesign.throbber_template_id != null )
+		{
+			iThrobberId = curWebDesign.throbber_template_id;
+		}
+	}
+	if(iThrobberId!=null)
+	{
+		tools_web.write_custom_web_template( iThrobberId );
+	}
+	else
+	{
+%>
+	<div style="display:none">
+	<div class="wt-lp-page-loading-mask" wt-role="page-load">
+		<div class="wt-lp-page-loading-bg"></div>
+		<div class="wt-lp-page-loading-block" wt-role="page-load-block">
+			<div class="cube-grid">
+				<div class="cube cube1"></div>
+				<div class="cube cube2"></div>
+				<div class="cube cube3"></div>
+				<div class="cube cube4"></div>
+				<div class="cube cube5"></div>
+				<div class="cube cube6"></div>
+				<div class="cube cube7"></div>
+				<div class="cube cube8"></div>
+				<div class="cube cube9"></div>
+			</div>
+			<div class="wt-lp-page-loading-text" wt-role="page-load-text">ЗАГРУЗКА...</div>
+		</div>
+	</div>
+	</div>
+<%
+	}
+%>
+<script>
+if("<%=sWebModeTitle%>"!="")
+{
+	document.title = "<%=sWebModeTitle%>";
+}
+var g_oLazy = null;
+$(document).ready(function () { WTLP.bCTracing = <%=bTracing%>; WTLP.sCTracingLevel = "<%=sTracingParam%>"; WTLP.sObjectId = "<%=sObjectId%>"; WTLP.sUserId = "<%=sUserId%>"; WTLP.sDocId = "<%=sDocId%>"; WTLP.oModes["<%=sWMId%>"] = new WTWebMode({ sId: "<%=sWMId%>", sObjectId: "<%=sObjectId%>", oContainer: document.getElementById("WT_<%=sWMId%>"), sLocalVarsOverride: "<%=sLocalVarsOverride%>", sWMData: "<%=sWMData%>", sLang: "<%=curLng.short_id%>", sSecId: "<%=(tools_web.get_secid( Session.sid ))%>" }); WTLP.Unlazy(); $("body").animate({ "opacity": "1" }, 400); });
+</script>
+<%=sWebModeCustomCode%>
+<%
+}
+%>
+</body>
+</html>

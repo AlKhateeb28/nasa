@@ -28,6 +28,7 @@ function checkoutHelperAgent() {
             " WHERE code = 'helper_noti_1_hour' "));
 
         addLogMessage(loggerName, "[agent.id: " + agentId + "] 4");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] 4_1: " + dataList[0].run_count);
 
         if(OptInt(dataList[0].run_count) >= 6) {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] 5");
@@ -93,6 +94,8 @@ function checkoutHelperAgent() {
                 }
             }
         } else {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] 20_0");
+
             docId = OptInt(notiList[0].id);
 
             addLogMessage(loggerName, "[agent.id: " + agentId + "] 20");

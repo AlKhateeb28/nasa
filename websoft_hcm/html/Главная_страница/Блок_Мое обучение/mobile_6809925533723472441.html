@@ -29,7 +29,6 @@ aTemplatesId = ArraySelect(aTemplatesId, "tools_web.check_access(tools.open_doc(
 <script type="text/javascript">
 
     let aTemplates = <%=tools.object_to_text( aTemplatesId, 'json')%>;
-    console.log(aTemplates);
 
     $(document).on('click', '#reload-chart1', function () {
         let iTempId = $(this).attr('data-templateID');
@@ -99,7 +98,7 @@ aTemplatesId = ArraySelect(aTemplatesId, "tools_web.check_access(tools.open_doc(
     }
 </script>
 
-<div id="my_education" menuLK="true" style="display: none;">
+<div id="my_education" menuLK="true">
     <div class="lesson"><img class="fon_lesson" src="LKmobile\img\fon_moe_obuchen.jpg" alt="user">
         <h1>МОЕ ОБУЧЕНИЕ</h1>
     </div>
@@ -142,14 +141,6 @@ aTemplatesId = ArraySelect(aTemplatesId, "tools_web.check_access(tools.open_doc(
 
 <div data-table='true' class="display-none">
 </div>
-
-<script>
-    console.log("-" + getCookie("displayMode") + "-");
-
-    if(getCookie("displayMode") === "mobile") {
-        $("#my_education").css("display", "block");
-    }
-</script>
 <%
 }
 %>
