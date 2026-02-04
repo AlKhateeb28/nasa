@@ -7,6 +7,8 @@ var loggerName = "agent_7248982558480427455";
 
 var result = {};
 result.errorMessage = "";
+result.seconds = 0;
+result.minutes = 0;
 
 try {
     templateId = Request.Query.GetOptProperty("id", "0");
@@ -22,8 +24,8 @@ try {
 
         if(ArrayCount(dataList) > 0) {
             result.isEmptyIdParam = false;
-            result.seconds = dataList[0].sec;
-            result.minutes = dataList[0].min;
+            result.seconds = dataList[0].sec == null ? 0 : dataList[0].sec;
+            result.minutes = dataList[0].min == null ? 0 : dataList[0].min;
         } else {
             result.isEmptyIdParam = true;
         }
