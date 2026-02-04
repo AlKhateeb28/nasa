@@ -60,7 +60,7 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
 
         agent.total = total;
         agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        agent.message = "Шаг " + step + " из " + max + ". Обработка данных...";
+        agent.message = "Шаг " + step + " из " + max + ". Обработка данных " + flag + "...";
         if (ws != null) {
             ws = sendMessageToWebsocket(ws, agent);
         }
