@@ -96,26 +96,28 @@ function checkoutHelperAgent() {
         } else {
             addLogMessage(loggerName, "[agent.id: " + agentId + "] 20_0");
 
-            docId = OptInt(notiList[0].id);
+            if(ArrayCount(notiList) == 1) {
+                docId = OptInt(notiList[0].id);
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] 20");
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] 20");
 
-            glovarDoc = tools.open_doc(docId);
+                glovarDoc = tools.open_doc(docId);
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] 21");
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] 21");
 
-            if(glovarDoc != undefined) {
-                addLogMessage(loggerName, "[agent.id: " + agentId + "] 22");
+                if (glovarDoc != undefined) {
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] 22");
 
-                DeleteDoc(UrlFromDocID(docId));
+                    DeleteDoc(UrlFromDocID(docId));
 
-                addLogMessage(loggerName, "[agent.id: " + agentId + "] 23");
+                    addLogMessage(loggerName, "[agent.id: " + agentId + "] 23");
+                }
             }
         }
     } else if(dataCount  > 1) {
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent code = 'helper_1_hour' is ran more that once");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent code = 'helper_1_hour' has instance more that once");
 
-        throw "Агент helper_1_hour запущен более одного раза!";
+        throw "Агент helper_1_hour имеет больше одного инстанса. Допускается 0 или 1 инстанс!";
     }
 
     processed++;
