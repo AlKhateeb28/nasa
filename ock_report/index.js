@@ -240,6 +240,50 @@ class IndexPage extends Object {
 
     }
 
+    static onDownloadResultRckOck(element, taskPrefix) {
+        if(isTaskRunning(taskPrefix)) {
+            return;
+        }
+
+        setIsRunning(taskPrefix, true);
+
+        IndexPage.awake(element, taskPrefix);
+
+        $("#task_message_" + taskPrefix).html("Формируется...");
+
+        const messageElement = $("#message");
+
+        $.ajax({
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7250788197909477159",
+            async: true,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if(data.errorMessage.indexOf("#") < 0) {
+                    IndexPage.afterReport(taskPrefix, "report_col_ock_rck/rck_ock_result_event_" + getCurrentDate() + ".xlsx");
+
+                    IndexPage.getRunningTime("7250788197909477159", "_result_ock_rck");
+                } else {
+                    messageElement.css("color", "hotpink");
+                    messageElement.html("Ошибка! Подробности в логе 'web_7250788197909477159'");
+
+                    console.log("Error: " + data.errorMessage.indexOf("#"));
+                }
+
+                IndexPage.sleep(element, taskPrefix);
+
+                setIsRunning(taskPrefix, false);
+            },
+            error: function(error) {
+                IndexPage.sleep(element, taskPrefix);
+
+                IndexPage.onError(7250788197909477159);
+
+                setIsRunning(taskPrefix, false);
+            }
+        });
+    }
+
     static hideMessageBox() {
         $("#message").css("visibility", "hidden");
     }
@@ -314,7 +358,7 @@ class IndexPage extends Object {
                     } else {
                         $("#running_time" + taskSuffix).html("~ " + data.minutes + " мин");
 
-                        if(parseInt(data.minutes) <= 5) {
+                        if(parseInt(data.minutes) < 5) {
                             const svgElement = $("#svg" + taskSuffix);
                             svgElement.empty();
                             svgElement.append(runningMan);
