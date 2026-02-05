@@ -764,7 +764,7 @@ function checkWebsocketServerIsLive() {
 
         if(agents[id].getState() === 0) {
             if((new Date() - agents[id].getMessageDate()) > 30000) {
-                if((new Date() - agents[id].getMessageDate()) > 600000) {
+                if((new Date() - agents[id].getMessageDate()) > 60000) {
                     clearDevicesClasses(wsStateElement);
                     wsStateElement.addClass("device-error");
                     wsStateElement.attr("title", "WS maybe not available");
