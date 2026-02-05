@@ -49,10 +49,12 @@ try {
         "       er.data.value('(//custom_elems/custom_elem[name=''month_report''])[1]/value[1]', 'varchar(max)') AS month, " +
         "       er.data.value('(//custom_elems/custom_elem[name=''year_report''])[1]/value[1]', 'varchar(max)') AS year, " +
         "       IIF(c.data.exist('(//custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''is_dossier_rcc_exist''])[1]/value[1]', 'bit') AS INT)) AS is_dossier_rcc_exist, " +
-        "       es.id AS event_id " +
+        "       es.id AS event_id, " +
+        "       e.data.value('(//custom_elems/custom_elem[name=''nps'']/value)[1]', 'varchar(max)') AS nps " +
         " FROM [WTDB].[dbo].event_results ers " +
         "         INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
         "         INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id AND es.finish_date BETWEEN @from_date AND GETDATE() " +
+        "         INNER JOIN [WTDB].[dbo].event e ON es.id = e.id " +
         "         INNER JOIN [WTDB].[dbo].collaborators cs ON ers.person_id = cs.id " +
         "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
         "         INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
@@ -96,6 +98,7 @@ try {
     reportString.AppendStr("<th class='header'>Ответственный за проведение</th>");
     reportString.AppendStr("<th class='header'>Тренер</th>");
     reportString.AppendStr("<th class='header'>Включен в уникально обученные</th>");
+    reportString.AppendStr("<th class='header'>NPS</th>");
 
     reportString.AppendStr("</tr>");
 
@@ -154,6 +157,8 @@ try {
         } else {
             reportString.AppendStr("<td>Да</td>");
         }
+
+        reportString.AppendStr("<td>" + data.nps + "</td>");
 
         reportString.AppendStr("</tr>");
 
