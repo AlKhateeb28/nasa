@@ -46,16 +46,13 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
             " SELECT TOP 15 cs.id, " +
             "       cs.fullname " +
             " FROM [WTDB].[dbo].collaborators cs " +
-            "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
-            "                AND IIF(c.data.exist('(//custom_elems/custom_elem[name=''" + flag + "''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''" + flag + "''])[1]/value[1]', 'bit') AS INT)) = 1 " +
-            "                AND IIF(c.data.exist('(//custom_elems/custom_elem[name=''forced_activation''])[1]/value[1]') = 0, 0, CAST(c.data.value('(//custom_elems/custom_elem[name=''forced_activation''])[1]/value[1]', 'bit') AS INT)) = 0 " +
-            "                AND DAY(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = DAY(GETDATE()) " +
-            "                AND MONTH(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = MONTH(GETDATE()) " +
-            "                AND YEAR(c.data.value('(//doc_info/creation)[1]/date[1]', 'datetime')) = YEAR(GETDATE()) " +
-            " WHERE UPPER(cs.code) NOT LIKE '%_MUC_%' " +
-            "       AND (c.data.exist('(//custom_elems/custom_elem[name=''is_a_commerce_client''])') = 0 " +
-            "           OR " +
-            "       CAST(c.data.value('(//custom_elems/custom_elem[name=''is_a_commerce_client'']/value)[1]', 'bit') AS INT) = 0) "));
+            "    INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id AND UPPER(cs.code) NOT LIKE '%_MUC_%' " +
+            "                AND c.data.value('(//doc_info/creation)[1]/date[1]', 'date') = CAST(GETDATE() AS DATE) " +
+            "                AND c.data.value('(//custom_elems/custom_elem[name=''" + flag + "''])[1]/value[1]', 'bit') = 1 " +
+            "                AND (c.data.exist('(//custom_elems/custom_elem[name=''forced_activation''])[1]/value[1]') = 0 " +
+            "                    OR c.data.value('(//custom_elems/custom_elem[name=''forced_activation''])[1]/value[1]', 'bit') = 0) " +
+            "                AND (c.data.exist('(//custom_elems/custom_elem[name=''is_a_commerce_client''])') = 0 " +
+            "                    OR c.data.value('(//custom_elems/custom_elem[name=''is_a_commerce_client'']/value)[1]', 'bit') = 0) "));
 
         total += ArrayCount(dataList);
 
@@ -71,6 +68,8 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
             personId = OptInt(data.id);
 
             if(isAlreadyCourseActivated(personId)) {
+                processed++;
+
                 loop;
             }
 
