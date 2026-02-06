@@ -58,7 +58,7 @@ if (!LdsIsServer) {
                             collaboratorDocTE.dismiss_date = Date(excelSheet.Cells(currentRow, 2).Value);
                             collaboratorDocTE.access.web_banned = 1;
 
-                            collaboratorDoc.Save();
+                            //collaboratorDoc.Save();
 
                             saved++;
                         } else {
