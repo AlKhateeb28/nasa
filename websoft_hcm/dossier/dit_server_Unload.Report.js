@@ -295,13 +295,13 @@ if(!LdsIsServer) {
 
                             if(orgDoc != undefined) {
                                 excel_sheet.Cells(cur_row, 75).Value = ("'" + orgDoc.TopElem.code);
-                            }
 
-                            regDoc = tools.open_doc(Int(orgDoc.TopElem.region_id));
+                                regDoc = tools.open_doc(Int(orgDoc.TopElem.region_id));
 
-                            if(regDoc != undefined) {
+                                if(regDoc != undefined) {
 
-                                excel_sheet.Cells(cur_row, 77).Value = regDoc.TopElem.name;
+                                    excel_sheet.Cells(cur_row, 77).Value = regDoc.TopElem.name;
+                                }
                             }
                         }
                     }
