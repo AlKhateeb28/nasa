@@ -236,8 +236,48 @@ class IndexPage extends Object {
         });
     }
 
-    static onDownloadDossierRckOckSS(id) {
+    static onDownloadDossierRckOckSS(element, taskPrefix) {
+        if(isTaskRunning(taskPrefix)) {
+            return;
+        }
 
+        setIsRunning(taskPrefix, true);
+
+        IndexPage.awake(element, taskPrefix);
+
+        $("#task_message_" + taskPrefix).html("Формируется...");
+
+        const messageElement = $("#message");
+
+        $.ajax({
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7251444016814704249",
+            async: true,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if(data.errorMessage.indexOf("#") < 0) {
+                    IndexPage.afterReport(taskPrefix, "report_col_ock_rck/ock_kval_" + getCurrentDate() + ".xlsx");
+
+                    IndexPage.getRunningTime("7251444016814704249", "_ock_rck_ss");
+                } else {
+                    messageElement.css("color", "hotpink");
+                    messageElement.html("Ошибка! Подробности в логе 'agent_7251444016814704249'");
+
+                    console.log("Error: " + data.errorMessage.indexOf("#"));
+                }
+
+                IndexPage.sleep(element, taskPrefix);
+
+                setIsRunning(taskPrefix, false);
+            },
+            error: function(error) {
+                IndexPage.sleep(element, taskPrefix);
+
+                IndexPage.onError(7251444016814704249);
+
+                setIsRunning(taskPrefix, false);
+            }
+        });
     }
 
     static onDownloadResultRckOck(element, taskPrefix) {

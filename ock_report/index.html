@@ -1269,7 +1269,7 @@
         $("#prompt").attr("id", "prompt_ock_rck_ss");
         $("#prompt_ock_rck_ss").html("Выгрузка из досье ОЦК");
         $("#title").attr("id", "title_ock_rck_ss");
-        $("#title_ock_rck_ss").html("<div>" + batterySVG + "</div><div style='margin-left: 50px; margin-top: -25px;'>" + lowSVG + "</div>");
+        $("#title_ock_rck_ss").html("<div>" + batterySVG + "</div><div style='margin-left: 50px; margin-top: -25px;'>" + fullSVG + "</div>");
         $("#footer").attr("id", "footer_ock_rck_ss");
         $("#footer_ock_rck_ss").html(grass5SVG);
         $("#card").attr("id", "card_ock_rck_ss");
@@ -1278,7 +1278,8 @@
         $("#running_time").attr("id", "running_time_ock_rck_ss");
         $("#running_time_ock_rck_ss").html("~ ? мин");
         $("#svg").attr("id", "svg_ock_rck_ss");
-        $("#svg_ock_rck_ss").append(unknownRunningMan);
+        IndexPage.getRunningTime("7251444016814704249", "_ock_rck_ss");
+        //$("#svg_ock_rck_ss").append(unknownRunningMan);
 
         $("#result_ock_rck_button").append(getTemplate("button_template"));
         $("#prompt").attr("id", "prompt_result_ock_rck");
