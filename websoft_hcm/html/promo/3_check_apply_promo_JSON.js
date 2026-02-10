@@ -122,9 +122,13 @@ try {
                 // CHECK COUNT ENTERED PROMO BY ORGANIZATION
                 if (isActivationAvailable(promoList[0].id)) {
                     collaboratorList = ArrayDirect(XQuery("sql: " +
-                        " SELECT id " +
-                        " FROM [WTDB].[dbo].collaborators " +
-                        " WHERE id = " + curUserID));
+                        " SELECT cs.id, " +
+                        "       cs.org_id, " +
+                        "       CAST(o.data.value('(//custom_elems/custom_elem[name=''is_a_commerce_client'']/value)[1]', 'bit') AS INT) AS is_client " +
+                        " FROM [WTDB].[dbo].collaborators cs " +
+                        "    INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
+                        "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
+                        " WHERE cs.id = " + curUserID));
 
                     if (ArrayCount(collaboratorList) > 0) {
                         collaboratorDoc = tools.open_doc(collaboratorList[0].id);
@@ -134,8 +138,19 @@ try {
 
                             if(freePromoSlotIndex != null) {
                                 collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("promo_" + freePromoSlotIndex).value = promoList[0].id;
+                                collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "true";
 
                                 collaboratorDoc.Save();
+
+                                if(collaboratorList[0].is_client == 0) {
+                                    orgDoc = tools.open_doc(collaboratorList[0].org_id);
+
+                                    if (orgDoc != undefined) {
+                                        orgDoc.TopElem.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "true";
+
+                                        orgDoc.Save();
+                                    }
+                                }
 
                                 groupList = ArrayDirect(XQuery("sql: " +
                                     " SELECT id " +
