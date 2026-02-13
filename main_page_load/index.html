@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script type="text/javascript" src="../scripts/jquery.js"></script>
+</head>
+<body>
+<div style="width: 500px;">
+    <div style="float: left;">Steps:</div>
+    <div id="steps" style="float: left; margin-left: 20px; padding-right: 20px;"></div>
+</div>
+<div style="width: 500px;">
+    <div style="float: left;">
+        <div style="float: left; font-weight: bold;">Min</div>
+        <div id="min" style="float: left; margin-left: 5px;"></div>
+    </div>
+    <div style="float: left; margin-left: 10px">
+        <div style="float: left; font-weight: bold;">Avg</div>
+        <div id="avg" style="float: left; margin-left: 5px;"></div>
+    </div>
+    <div style="float: left; margin-left: 10px">
+        <div style="float: left; font-weight: bold;">Max</div>
+        <div id="max" style="float: left; margin-left: 5px;"></div>
+    </div>
+</div>
+<div id="parent" style="width: 190px; font-size: smaller; height: 100%;">
+    <div id="empty_block"></div>
+</div>
+
+<script type="text/html" id="child_template">
+    <div id="child">
+        <div id="step" style="float: left; width: 50px; text-align: right; background-color: #f7e7f7; padding-right: 10px;"></div>
+        <div id="time" style="float: left; margin-left: 20px; padding-right: 10px; padding-left: 10px;"></div>
+    </div>
+</script>
+
+<script>
+    let sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
+    const times = [];
+
+    function getTemplate(templateId) {
+        return $("#" + templateId).html();
+    }
+
+    function addChildElement(step, time) {
+        $("#empty_block").after(getTemplate("child_template"));
+        //$("#parent").append(getTemplate("child_template"));
+        $("#child").attr("id", "child_" + step);
+        $("#step").attr("id", "step_" + step);
+        $("#step_" + step).html(step);
+        $("#time").attr("id", "time_" + step);
+        $("#time_" + step).html(time + " ms");
+    }
+
+    function getSdoLoadTime(step) {
+        const start = new Date();
+
+        $.ajax({
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai",
+            async: false,
+            type: "GET",
+            dataType: "html",
+            success: function (data) {
+                const runTime = new Date() - start;
+
+                times.push(runTime);
+
+                $("#min").html(Math.min(...times) + " ms");
+
+                const avg = times.reduce((sum, num) => sum + num, 0) / times.length;
+                $("#avg").html(parseInt(avg) + " ms");
+
+                $("#max").html(Math.max(...times) + " ms");
+
+                addChildElement(step, runTime);
+            },
+            error: function(error) {
+                console.log("Error: " + error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        const steps = 20;
+
+        $("#steps").html(steps);
+        for(let i = 1; i <= steps; i++) {
+            sleep(1).then(r => getSdoLoadTime(i));
+        }
+    });
+</script>
+
+</body>
+</html>
