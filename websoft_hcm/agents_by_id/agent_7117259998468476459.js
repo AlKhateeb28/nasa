@@ -6,33 +6,34 @@ function isCollaboratorExistsInRccDossier(collsCode) {
 }
 
 if (LdsIsServer) {
-    var agentId = 7117259998468476459;
-    var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
-    var msPerRecord = 0.001;
-
-    var startDate = Date();
-    var prevDate;
-    var loggerName = "agent_7117259998468476459";
-    var ws = getWebsocketClient();
-    var agent = getAgentInstance(agentId, userId, loggerName);
-
-    var total = 0;
-    var processed = 0;
-
-    var excel = new ActiveXObject("Websoft.Office.Excel.Document");
-    var reportString = new Binary();
-
-    var dateFrom = Param.date_from == '' ? '01.01.2025 00:00:00' : Param.date_from
-
-    agent.message = "Получение данных...";
-    ws = sendMessageToWebsocket(ws, agent);
-    prevDate = new Date();
-
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
-
     try {
+        var agentId = 7117259998468476459;
+        var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
+        var msPerRecord = 0.001;
+
+        var startDate = Date();
+        var prevDate;
+        var loggerName = "agent_7117259998468476459";
+
+        var ws = getWebsocketClient();
+        var agent = getAgentInstance(agentId, userId, loggerName);
+
+        var total = 0;
+        var processed = 0;
+
+        var excel = new ActiveXObject("Websoft.Office.Excel.Document");
+        var reportString = new Binary();
+
+        var dateFrom = Param.date_from == '' ? '01.01.2025 00:00:00' : Param.date_from
+
+        agent.message = "Получение данных...";
+        ws = sendMessageToWebsocket(ws, agent);
+        prevDate = new Date();
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+
         dataList = ArrayDirect(XQuery("sql: " +
             " SET DATEFORMAT dmy; DECLARE @date_from datetime = '" + dateFrom + "'; DECLARE @date_to datetime = '31.12.2099 23:59:59'; " +
             " " +
