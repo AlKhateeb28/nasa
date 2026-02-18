@@ -4,42 +4,83 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+    <style>
+        /* LOADER ELEMENT */
+        .loader {
+            width: 50px;
+            aspect-ratio: 1;
+            border: 2px solid;
+            display: grid;
+            box-sizing: border-box;
+            animation: l1 4s infinite linear;
+        }
+        .loader::before,
+        .loader::after {
+            content: "";
+            grid-area: 1/1;
+            margin: auto;
+            width: 70.7%;
+            aspect-ratio: 1;
+            border: 2px solid;
+            box-sizing: content-box;
+            animation: inherit;
+        }
+        .loader::after {
+            width: 50%;
+            aspect-ratio: 1;
+            border: 2px solid;
+            animation-duration: 2s;
+        }
+        @keyframes l1{
+            100% {transform:rotate(1turn)}
+        }
+
+        .loader-view {
+            cursor: pointer;
+            position: absolute;
+            margin-left: 5px;
+            margin-top: 2px;
+            width: 32px;
+            height: 32px;
+        }
+    </style>
     <script type="text/javascript" src="../scripts/jquery.js"></script>
 </head>
-<body>
-<div style="width: 500px;">
-    <div style="float: left;">Steps:</div>
-    <div id="steps" style="float: left; margin-left: 20px; padding-right: 20px;"></div>
-</div>
-<div style="width: 500px;">
-    <div style="float: left;">
-        <div style="float: left; font-weight: bold;">Min</div>
-        <div id="min" style="float: left; margin-left: 5px;"></div>
+<body style="color: whitesmoke; background-image: linear-gradient(to right, #434343 0%, black 100%);">
+    <div id="loader" class="loader loader-view"></div>
+    <br/>
+    <div style="width: 500px; margin-top: 30px;">
+        <div style="float: left;">Steps:</div>
+        <div id="steps" style="float: left; margin-left: 20px; padding-right: 20px;"></div>
     </div>
-    <div style="float: left; margin-left: 10px">
-        <div style="float: left; font-weight: bold;">Avg</div>
-        <div id="avg" style="float: left; margin-left: 5px;"></div>
+    <br/>
+    <div style="width: 500px;">
+        <div style="float: left;">
+            <div style="float: left; font-weight: bold;">Min</div>
+            <div id="min" style="float: left; margin-left: 5px;"></div>
+        </div>
+        <div style="float: left; margin-left: 10px">
+            <div style="float: left; font-weight: bold;">Avg</div>
+            <div id="avg" style="float: left; margin-left: 5px;"></div>
+        </div>
+        <div style="float: left; margin-left: 10px">
+            <div style="float: left; font-weight: bold;">Max</div>
+            <div id="max" style="float: left; margin-left: 5px;"></div>
+        </div>
     </div>
-    <div style="float: left; margin-left: 10px">
-        <div style="float: left; font-weight: bold;">Max</div>
-        <div id="max" style="float: left; margin-left: 5px;"></div>
+    <div id="parent" style="width: 190px; font-size: smaller; height: 100%;">
+        <div id="empty_block"></div>
     </div>
-</div>
-<div id="parent" style="width: 190px; font-size: smaller; height: 100%;">
-    <div id="empty_block"></div>
-</div>
 
 <script type="text/html" id="child_template">
     <div id="child">
-        <div id="step" style="float: left; width: 50px; text-align: right; background-color: #f7e7f7; padding-right: 10px;"></div>
+        <div id="step" style="float: left; width: 50px; text-align: right; background-color: darkcyan; padding-right: 10px;"></div>
         <div id="time" style="float: left; margin-left: 20px; padding-right: 10px; padding-left: 10px;"></div>
     </div>
 </script>
 
 <script>
     let sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
-
-    const times = [];
 
     function getTemplate(templateId) {
         return $("#" + templateId).html();
@@ -53,6 +94,13 @@
         $("#step_" + step).html(step);
         $("#time").attr("id", "time_" + step);
         $("#time_" + step).html(time + " ms");
+        if(time > 4000) {
+            if(time > 10000) {
+                $("#time_" + step).css("color", "red");
+            } else {
+                $("#time_" + step).css("color", "orange");
+            }
+        }
     }
 
     function getSdoLoadTime(step) {
@@ -64,6 +112,16 @@
             type: "GET",
             dataType: "html",
             success: function (data) {
+                data = null;
+
+                currentStep++;
+
+                if(currentStep == steps) {
+                    isStarted = false;
+
+                    $("#loader").css("visibility", "hidden");
+                }
+
                 const runTime = new Date() - start;
 
                 times.push(runTime);
@@ -83,12 +141,41 @@
         });
     }
 
-    $(document).ready(function () {
-        const steps = 20;
+    function refreshDuration() {
+        console.log(isStarted);
+        if(isStarted) {
+            $("#duration").html(calculateDurationTime(startDateTime, new Date()));
+        }
+    }
 
+    function calculateDurationTime(startDateTime, currentDateTime) {
+        return durationTimeToString(currentDateTime - startDateTime)
+    }
+
+    function durationTimeToString(duration) {
+        const ms =  duration % 1000;
+        duration = (duration - ms) / 1000;
+        const secs = duration % 60;
+        duration = (duration - secs) / 60;
+        const mins = duration % 60;
+        const hrs = (duration - mins) / 60;
+
+        return hrs.toString().padStart(2, "0") + ':' + mins.toString().padStart(2, "0") + ':' + secs.toString().padStart(2, "0");
+    }
+
+    const times = [];
+
+    const steps = 20;
+    let currentStep = 1;
+
+    const startDateTime = new Date();
+    let isStarted = true;
+
+    $(document).ready(function () {
         $("#steps").html(steps);
-        for(let i = 1; i <= steps; i++) {
-            sleep(1).then(r => getSdoLoadTime(i));
+
+        for (let i = 1; i <= steps; i++) {
+            sleep(10).then(r => getSdoLoadTime(i));
         }
     });
 </script>
