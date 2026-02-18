@@ -24,16 +24,15 @@ if (LdsIsServer) {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
     try {
-        var fromDate = Param.date_from == '' ? '01.01.2010 00:00:00' : Param.date_from;
+        var fromDate = Param.date_from == '' ? '01.01.2018 00:00:00' : Param.date_from;
         var toDate = Param.date_to == '' ? ParseDate( Date() ) + ' 23:59:59' : Param.date_to;
 
         var excel = new ActiveXObject("Websoft.Office.Excel.Document");
         var reportString = new Binary();
 
-        extraCondition = ( Param.with_muc == '0' ) ? " AND cs.code NOT LIKE '%_muc%' " : "";
+        extraCondition = ( Param.with_muc == '0' ) ? " cs.code NOT LIKE '%_muc%' AND " : "";
 
-        dataList = ArraySelectAll( XQuery( "sql: " +
-            " SET DATEFORMAT dmy; " +
+        sql = " SET DATEFORMAT dmy; " +
             " DECLARE @date_from " + "datetime = '" + fromDate + "';" +
             " DECLARE @date_to " + "datetime = '" + toDate + "';" +
             " " +
@@ -82,9 +81,12 @@ if (LdsIsServer) {
             "         INNER JOIN [WTDB].[dbo].orgs ON orgs.id = cs.org_id" +
             "         INNER JOIN [WTDB].[dbo].org ON org.id = orgs.id" +
             "         INNER JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id" +
-            " WHERE c.created BETWEEN @date_from AND @date_to" + extraCondition));
+            " WHERE " + extraCondition + " + c.created BETWEEN @date_from AND @date_to";
 
-        //" + extraCondition + "
+        dataList = ArraySelectAll( XQuery( "sql: " +
+            sql));
+
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] SQL: " + sql);
 
         total = ArrayCount(dataList);
 

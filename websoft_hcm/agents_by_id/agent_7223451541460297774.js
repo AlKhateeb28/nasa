@@ -14,7 +14,7 @@ function getData(eventId, result) {
         " FROM [WTDB].[dbo].event_results ers " +
         "    INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
         "            AND er.data.exist('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]') = 1 " +
-        "            AND er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)') IS NOT NULL " +
+        "            AND er.data.value('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]', 'varchar(max)') IS NOT NULL " +
         "    INNER JOIN [WTDB].[dbo].collaborators cs ON ers.person_id = cs.id " +
         "    INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
         "    INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id AND es.id = " + eventId + " AND es.status_id = 'close' " +
