@@ -138,11 +138,11 @@ try {
 
                             if(freePromoSlotIndex != null) {
                                 collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("promo_" + freePromoSlotIndex).value = promoList[0].id;
-                                collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "true";
+                                //collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("is_a_commerce_client").value = "true";
 
                                 collaboratorDoc.Save();
 
-                                if(collaboratorList[0].is_client == 0) {
+                                /*if(collaboratorList[0].is_client == 0) {
                                     orgDoc = tools.open_doc(collaboratorList[0].org_id);
 
                                     if (orgDoc != undefined) {
@@ -150,7 +150,7 @@ try {
 
                                         orgDoc.Save();
                                     }
-                                }
+                                }*/
 
                                 groupList = ArrayDirect(XQuery("sql: " +
                                     " SELECT id " +
