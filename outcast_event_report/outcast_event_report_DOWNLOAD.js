@@ -217,6 +217,7 @@ try {
         "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
     );
 
+    resultData.total = total;
     resultData.message = "Agent is started";
 
     Response.Write(EncodeJson(resultData));
