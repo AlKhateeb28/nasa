@@ -83,7 +83,7 @@ if (LdsIsServer) {
         agent.processed = processed;
         agent.saved = saved;
         agent.skipped = skipped;
-        agent.notFound = notFound;
+        agent.notFound = notFound;3
         agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
         refreshMsPerRow(agent, startDate, total);
         agent.message = "Сохраняем Excel файл...";
