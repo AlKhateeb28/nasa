@@ -1,0 +1,232 @@
+<!-- 7255735721224921731 -->
+<!-- https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7137455090268372172 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Выгрузка ОЦК</title>
+
+    <link rel="icon" href="./activity/images/up-arrow.ico"/>
+
+    <link rel="stylesheet" href="./fcc/css/common.css"/>
+    <link rel="stylesheet" href="./activity/css/index.css"/>
+
+    <script type="text/javascript" src="./scripts/jquery.js"></script>
+    <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./fcc/js/common_classes.js"></script>
+    <script type="text/javascript" src="./activity/js/index.js"></script>
+    <script type="text/javascript" src="./activity/js/svg.js"></script>
+</head>
+<body>
+<div class="top-grid">
+    <div id="loader" class="loader loader-view" style="visibility: hidden;"></div>
+
+    <div class="float-left" style="padding-top: 20px;">
+        <div>
+            <div class="float-left" style="color: whitesmoke; margin-left: 52px; margin-bottom: 10px;">
+                <div style="float: left">ТОП активности.</div>
+                <div style="float: left; margin-left: 10px;">За весь период ( с</div>
+                <div id="from_date" style="float: left; margin-left: 5px;">--</div>
+                <div style="float: left; margin-left: 5px;">)</div>
+            </div>
+            <div class="float-left" id="message" style="visibility: hidden; color: black; margin-left: 60px; margin-top: 13px; font-size: larger;"></div>
+        </div>
+        <br/>
+        <div style="margin-left: 50px; padding-top: 10px;">
+            <div class="float-left card-margin">
+                <div id="button1" class="container noselect"></div>
+            </div>
+
+            <div class="float-left card-margin">
+                <div id="button2" class="container noselect"></div>
+            </div>
+
+            <div class="float-left card-margin">
+                <div id="button3" class="container noselect"></div>
+            </div>
+
+            <div class="float-left card-margin">
+                <div id="button4" class="container noselect"></div>
+            </div>
+
+            <div class="float-left card-margin">
+                <div id="button5" class="container noselect"></div>
+            </div>
+
+            <div class="float-left card-margin">
+                <div id="button6" class="container noselect"></div>
+            </div>
+
+            <div class="float-left card-margin">
+                <div id="button7" class="container noselect"></div>
+            </div>
+
+            <div class="float-left card-margin">
+                <div id="button8" class="container noselect"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bottom-grid">
+    <div id="regions" class="bottom-grid-row"></div>
+    <div id="orgs" class="bottom-grid-row">
+        <div id="orgs_caption" style="margin-left: 40px; margin-top: 12px; margin-bottom: 40px;">
+            <div style="float: left;">ТОП 10 активности по региону</div>
+            <div id="current_region" style="float: left; margin-left: 3px;"></div>
+        </div>
+        <div id="orgs_box" class="scrollbar-control" style="height: 490px;"></div>
+    </div>
+    <div class="bottom-grid-row">
+        <div id="activities" style="display: none;">
+            <div class="float-left activity_margin">
+                <div id="activity11" class="container noselect activity-box"></div>
+            </div>
+
+            <div class="float-left activity_margin">
+                <div id="activity12" class="container noselect activity-box"></div>
+            </div>
+
+            <div class="float-left activity_margin">
+                <div id="activity13" class="container noselect activity-box"></div>
+            </div>
+
+            <div class="float-left activity_margin">
+                <div id="activity14" class="container noselect activity-box"></div>
+            </div>
+
+            <div class="float-left activity_margin">
+                <div id="activity15" class="container noselect activity-box"></div>
+            </div>
+
+            <div class="float-left activity_margin">
+                <div id="activity16" class="container noselect activity-box"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="button_template">
+    <div class="canvas">
+        <div class="tracker tr-1"></div>
+        <div class="tracker tr-2"></div>
+        <div class="tracker tr-3"></div>
+        <div class="tracker tr-4"></div>
+        <div class="tracker tr-5"></div>
+        <div class="tracker tr-6"></div>
+        <div class="tracker tr-7"></div>
+        <div class="tracker tr-8"></div>
+        <div class="tracker tr-9"></div>
+        <div id="card" class="card-block sleep" style="cursor: pointer;">
+            <div class="card-content">
+                <div class="card-glare"></div>
+                <div class="cyber-lines">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <div id="task_message" class="download-text" style="color: sandybrown; width: 100%; text-align: center; margin-top: 16px;"></div>
+                <p id="prompt" class="prompt"></p>
+                <div id="title" class="title" style="z-index: 1000; position: fixed"></div>
+                <div class="title" style="z-index: 1000; position: fixed"></div>
+                <div class="glowing-elements">
+                    <div class="glow-1"></div>
+                    <div class="glow-2"></div>
+                    <div class="glow-3"></div>
+                </div>
+                <div class="subtitle">
+                    <div id="footer" class="highlight" style="margin-top: -22px; cursor: pointer;"></div>
+                    <div id="time_footer" class="highlight footer-subtitle">
+                        <div id="running_time" style="float: left; margin-top: 16px; width: 45%; text-align: center; font-size: large; margin-left: 50px;"></div>
+                        <div id="running_arrow" style="float: left; display: none;"></div>
+                    </div>
+                </div>
+                <div class="card-particles">
+                    <span></span><span></span><span></span> <span></span><span></span><span></span>
+                </div>
+                <div class="corner-elements">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <div class="scan-line"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="regions_caption">
+    <div style="margin-left: 40px; margin-top: 8px;">ТОП 15 активности регионов</div>
+</script>
+
+<script type="text/html" id="region_template">
+    <div>
+        <div id="region_name" class="grid-row-box" style="float: left;" onclick="getOrgs(this)"></div>
+        <div id="region_quality" class="grid-row-box-value" style="float: left;" onclick="getOrgs(this)">
+            <div id="region_arrow" style="float: left; visibility: hidden; margin-top: 3px;"></div>
+            <div id="region_value"  style="float: left; margin-left: 4px; margin-top: 2px;" ></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="organization_template">
+    <div id="org_box" class="grid-row-box" style="width: 462px; height: 128px;" onclick="getOrgActivity(this)">
+        <div id="org_name" class="scrollbar-control" style="height: 80px; margin-top: 3px;"></div>
+        <div>
+            <div style="float: left; font-weight: bold; color: orange;">ИНН:</div>
+            <div id="org_inn" style="float: left; margin-left: 5px;"></div>
+            <div style="float: left; font-weight: bold; color: orange; margin-left: 10px;">Сфера:</div>
+            <div id="org_sphera" style="float: left; margin-left: 5px;"></div>
+        </div>
+        <br/>
+        <div>
+            <div style="float: left; font-weight: bold; color: orange;">Активностей:</div>
+            <div id="org_count" style="float: left; margin-left: 5px;"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="person_template">
+    <div id="person_box" class="grid-row-box" style="width: 462px; height: 118px;">
+        <div id="person_name" style="height: 80px; margin-top: 3px;"></div>
+        <div>
+            <div style="float: left; font-weight: bold; color: orange;">Email:</div>
+            <div id="email" style="float: left; margin-left: 5px;"></div>
+            <div style="float: left; font-weight: bold; color: orange; margin-left: 10px;">Должность:</div>
+            <div id="person_position" style="float: left; margin-left: 5px;"></div>
+        </div>
+        <br/>
+        <div>
+            <div style="float: left; font-weight: bold; color: orange;">Активностей:</div>
+            <div id="person_count" style="float: left; margin-left: 5px;"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="org_activity_template">
+    <div class="float-left card-margin">
+        <div id="activity" class="container noselect"></div>
+    </div>
+</script>
+
+<script>
+    $(document).ready(function () {
+        createTopPageBox("button", 1, topPageSvg);
+        createTopPageBox("button", 2, topPageSvg);
+        createTopPageBox("button", 3, topPageSvg);
+        createTopPageBox("button", 4, topPageSvg);
+        createTopPageBox("button", 5, topPageSvg);
+        createTopPageBox("button", 6, topPageSvg);
+        createTopPageBox("button", 7, topPageSvg);
+        createTopPageBox("button", 8, topPageSvg);
+
+        createTopPageBox("activity", 11, orgActivitySvg);
+        createTopPageBox("activity", 12, orgActivitySvg);
+        createTopPageBox("activity", 13, orgActivitySvg);
+        createTopPageBox("activity", 14, orgActivitySvg);
+        createTopPageBox("activity", 15, orgActivitySvg);
+        createTopPageBox("activity", 16, orgActivitySvg);
+
+        reloadData();
+
+        setInterval(reloadData, 60000);
+    });
+</script>
+
+</body>
+</html>

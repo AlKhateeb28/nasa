@@ -1,65 +1,11 @@
 <!DOCTYPE html>
 <html>
-<link href="./pptrf2019/snow.min.css" rel="stylesheet">
-<script src="./pptrf2019/Snow.js"></script>
+<!--link href="./pptrf2019/snow.min.css" rel="stylesheet">
+<script src="./pptrf2019/Snow.js"></script-->
 <script>
     const start = new Date();
 </script>
 <%
-function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
-
-function markVisit(paramAsString) {
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] URL: " + paramAsString);
-
-    params = paramAsString.split("&");
-
-    if(params.length > 0) {
-        for(param in params) {
-            paramElement = param.split("=");
-
-            if(paramElement[0] == "mode") {
-                displayType = 0;
-
-                if(curDevice.disp_type == "mobile") {
-                    displayType = 7235882882502681639;
-                } else {
-                    displayType = 7235882792364407838;
-                }
-
-                pageId = 7235904129700723090; // Unknown page
-
-                if(paramElement[1] == "home") {
-                    pageId = 7235877002894078514;
-                }
-                if(paramElement[1] == "my_doc") {
-                    pageId = 7235877183216677614;
-                }
-                if(paramElement[1] == "courses_fck") {
-                    pageId = 7235877278222015711;
-                }
-                if(paramElement[1] == "my_account") {
-                    pageId = 7235877373230380149;
-                }
-
-                webActivityDoc = tools.new_doc_by_name( "cc_web_activity", false )
-                webActivityDoc.BindToDb(DefaultDb);
-
-                webActivityDocTE = webActivityDoc.TopElem;
-
-                webActivityDocTE.person_id = OptInt(curUserID);
-                webActivityDocTE.visit_date = Date();
-                webActivityDocTE.page_id = pageId;
-                webActivityDocTE.device_id = displayType;
-                webActivityDocTE.url = paramAsString;
-
-                webActivityDoc.Save();
-            }
-        }
-    } else {
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Visited: " + curUserID + " Wromg parameters count");
-    }
-}
-
 var startDatetime = Date();
 
 // 230207
@@ -73,8 +19,6 @@ var sTracingParam = "";
 var iStart;
 bUseWebMode = bUseWebMode && (curWebMode.use_lpapi()==true);
 Server.Execute( "include/head.html" ); // need bUseWebMode in head to include WTLP runtime
-
-markVisit(Request.UrlParam);
 
 sHTMLHeader = tools_web.place_zone( "header" );
 sHTMLNavigation = tools_web.place_zone( "navigation" );
@@ -340,9 +284,22 @@ else
 <script>
     //new Snow();
 
-    const finish = new Date();
+    const duration = new Date() -start;
 
-    console.log("Loaded: " + (finish - start) + " ms");
+    console.log("Loaded: " + duration + " ms");
+
+    $.ajax({
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7253905325755555432&duration=" + duration + "&param=<%=UrlEncode(Request.UrlPath + (Request.UrlParam != '' ? ('?' + Request.UrlParam) : ''))%>",
+        async: true,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+
+        },
+        error: function(error) {
+            console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
+        }
+    });
 </script>
 
 </body>

@@ -44,7 +44,8 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
 
         dataList = ArrayDirect(XQuery("sql: " +
             " SELECT TOP 15 cs.id, " +
-            "       cs.fullname " +
+            "       cs.fullname, " +
+            "       cs.org_id " +
             " FROM [WTDB].[dbo].collaborators cs " +
             "    INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id AND UPPER(cs.code) NOT LIKE '%_MUC_%' " +
             "                AND c.data.value('(//doc_info/creation)[1]/date[1]', 'date') = CAST(GETDATE() AS DATE) " +
@@ -76,6 +77,11 @@ function assignCoursesByFlag(execute, ids, flag, step, max) {
             coursesIds = ArrayExtractKeys(tools.read_object(ids), "course_id");
 
             for(courseId in coursesIds) {
+                if(OptInt(data.org_id) == 6835869257769633247 && flag == "in_program" && courseId != 6977291737244314424) {
+                    // ЧЭМК. Било от них присьмо по еназначению толко одного курса "Введение в бережливое производство". ID: 6977291737244314424
+                    loop;
+                }
+
                 newLearningDoc = tools.activate_course_to_person(personId, courseId);
 
                 try {

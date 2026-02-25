@@ -26,7 +26,7 @@ function addPersonToEventResult(personId, eventId, defaultEventResultTypeId, isW
 
             eventResultDoc.TopElem.event_result_type_id = defaultEventResultTypeId;
             if(isWorkGroup) {
-                eventResultDoc.TopElem.custom_elems.ObtainChildByKey("col_rg").value = true;
+                eventResultDoc.TopElem.custom_elems.ObtainChildByKey("col_rg").value = "true";
             }
 
             eventResultDoc.Save();
@@ -219,7 +219,7 @@ if(LdsIsClient) {
                         collaboratorDocTE.custom_elems.ObtainChildByKey("guid_status").value = "Надо получить";
                         collaboratorDocTE.custom_elems.ObtainChildByKey("comment").value = "|||" + StrDate(Date()) + " - Создан агентом для добавление в мероприятие «" + event_doc.TopElem.name + "» в качестве участника.";
                         if(isWorkGroup) {
-                            collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                            collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = "true";
                         }
                         collaboratorDocTE.access.web_banned = true;
                         collaboratorDocTE.org_id = organizationTE.id;
@@ -273,14 +273,14 @@ if(LdsIsClient) {
                                 collaboratorDoc.TopElem.system_email = col_email;
                                 collaboratorDoc.TopElem.mobile_phone = col_phone;
                                 if (isWorkGroup) {
-                                    collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("col_rg").value = true;
+                                    collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("col_rg").value = "true";
                                 }
                                 collaboratorDoc.Save();
 
                                 saved++;
                             } else {
                                 if (isWorkGroup) {
-                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = "true";
 
                                     collaboratorDoc.Save();
                                 }
