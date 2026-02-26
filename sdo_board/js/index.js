@@ -374,6 +374,9 @@ function refreshBoardData() {
 
                 let time;
 
+				console.log("Time: " + result.time + " Locale: " + result.time.toLocaleString("ru-RU"));
+				
+				
                 if(result.type === 0) {
                     time = getNormalizedTime(result.time.toLocaleString("ru-RU"));
                 } else if(result.type === 2) {
