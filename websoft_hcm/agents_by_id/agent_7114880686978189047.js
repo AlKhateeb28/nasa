@@ -297,7 +297,7 @@ if (LdsIsServer) {
 
         addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
     }
-
+	
     saveMonitorAgents(agent, startDate);
 
     try {
