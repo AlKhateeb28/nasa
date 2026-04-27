@@ -1,4 +1,12 @@
 // 7121746117100119626
+function addLogMessage(loggerName, message) { EnableLog(loggerName, true); try { if (message == null) { message = "Empty message"; } LogEvent(loggerName, message); } catch (e) { throw new Error(e); } finally { EnableLog(loggerName, false); } }
+
+var agentId = 7121746117100119626;
+var loggerName = "report_7121746117100119626_01";
+
+addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+
 RESULT = tools_web.get_user_data("boss_panel_collaborators_cache_for_reports" + curUserID);
 
 aCollIds = ArrayExtract(RESULT.result_array, "This.id");
@@ -68,5 +76,7 @@ if (ArrayOptFirstElem(xarrResults) != undefined)
         });
     }
 }
+
+addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished collaborators");
 
 RESULT = aReturn;

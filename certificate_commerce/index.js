@@ -11,7 +11,7 @@ class IndexPage extends Object {
 
         $("#grid_box").append(Common.getTemplate("card_template"));
 
-        $("#card_find").on("keypress", function (event) {
+        $("#card_find").on("keypress", function(event) {
             if (event.which == 13) {
                 event.preventDefault();
 
@@ -25,7 +25,7 @@ class IndexPage extends Object {
     static onFind() {
         const findElement = $("#card_find");
 
-        if(findElement.val().length < 3) {
+        if (findElement.val().length < 3) {
             alert("Слишком короткая строка. Введите более 2 символов!");
         }
 
@@ -36,8 +36,8 @@ class IndexPage extends Object {
             async: true,
             type: "GET",
             dataType: "json",
-            success: function (data) {
-                if(data.errorMessage.indexOf("#") < 0) {
+            success: function(data) {
+                if (data.errorMessage.indexOf("#") < 0) {
                     IndexPage.createPersons(data);
 
                     const tableElement = $("#card_table");
@@ -121,8 +121,8 @@ class IndexPage extends Object {
 
         let count = 0;
 
-        for(let i = 0; i < persons.length; i++) {
-            if(i >= start && i <= finish) {
+        for (let i = 0;i < persons.length;i++) {
+            if (i >= start && i <= finish) {
                 count++;
             }
         }
@@ -138,7 +138,7 @@ class IndexPage extends Object {
 
         const personsLength = persons.length;
 
-        if(personsLength <= finish) {
+        if (personsLength <= finish) {
             finish = personsLength;
         }
 
@@ -148,11 +148,11 @@ class IndexPage extends Object {
     static showPageButtons(selectedIndex) {
         const personsLength = persons.length;
 
-        if(personsLength > pagingSize) {
+        if (personsLength > pagingSize) {
             const pageCount = Math.ceil(personsLength / pagingSize);
 
-            for(let i = 0; i < pageCount; i++) {
-                if(i === 6) {
+            for (let i = 0;i < pageCount;i++) {
+                if (i === 6) {
                     $("#page_box").append(Common.getTemplate("page_button_template"));
 
                     $("#page_button").attr("id", "page_button_" + i);
@@ -165,7 +165,7 @@ class IndexPage extends Object {
                     buttonElement.addClass("unselected-button");
                     buttonElement.addClass("last-page-button");
 
-                    buttonElement.on( "click", function() {
+                    buttonElement.on("click", function() {
                         $("#card_find").focus();
                     });
 
@@ -181,7 +181,7 @@ class IndexPage extends Object {
                     buttonElement.attr("data-index", i);
                     buttonElement.html(i + 1);
 
-                    if(i === selectedIndex - 1) {
+                    if (i === selectedIndex - 1) {
                         buttonElement.addClass("selected-button");
                     } else {
                         buttonElement.addClass("unselected-button");
@@ -195,7 +195,7 @@ class IndexPage extends Object {
                         buttonElement.addClass("last-page-button");
                     }
 
-                    buttonElement.on( "click", function() {
+                    buttonElement.on("click", function() {
                         IndexPage.onButtonClick(this);
                     });
                 }
@@ -255,7 +255,7 @@ class IndexPage extends Object {
 
         window.open(
             "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7134636995086104263" +
-                "&person_id=" + selectedRow.attr("data-id") + "&type=" + $("#type").val(),
+            "&person_id=" + selectedRow.attr("data-id") + "&type=" + $("#type").val(),
             "_blank"
         );
     }
@@ -266,7 +266,7 @@ class IndexPage extends Object {
 
         let order = "none";
 
-        if(sortOrder === "none") {
+        if (sortOrder === "none") {
             $(".sort_image").attr("src", "./fcc/js/images/sort_none.png");
             $(".sort_image").attr("data-sort", "none");
 
@@ -275,7 +275,7 @@ class IndexPage extends Object {
 
             order = "asc";
         } else {
-            if(sortOrder === "asc") {
+            if (sortOrder === "asc") {
                 sortElement.attr("src", "./fcc/js/images/sort_desc.png");
                 sortElement.attr("data-sort", "desc");
 

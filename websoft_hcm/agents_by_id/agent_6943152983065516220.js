@@ -32,10 +32,9 @@ if (LdsIsServer) {
 
         extraCondition = ( Param.with_muc == '0' ) ? " cs.code NOT LIKE '%_muc%' AND " : "";
 
-        sql = " SET DATEFORMAT dmy; " +
-            " DECLARE @date_from " + "datetime = '" + fromDate + "';" +
-            " DECLARE @date_to " + "datetime = '" + toDate + "';" +
-            " " +
+        sql = " SET DATEFORMAT dmy " +
+            " DECLARE @date_from " + "datetime = '" + fromDate + "'" +
+            " DECLARE @date_to " + "datetime = '" + toDate + "'" +
             " SELECT CONCAT( '''', cs.id ) AS PK," +
             "       cs.code AS col_code," +
             "       cs.fullname AS col_fullname," +
@@ -71,8 +70,6 @@ if (LdsIsServer) {
             "       c.data.value('(collaborator/custom_elems/custom_elem[name=''guid''])[1]/value[1]', 'varchar(max)') AS guid," +
             "       c.data.value('(collaborator/doc_info/creation/user_login)[1]', 'varchar(max)') AS col_created_by," +
             "       cs.modification_date AS col_modificated," +
-            "       regions.code AS region_code," +
-            "       regions.name AS region_name," +
             "       '' AS ar_id," +
             "       '' AS ar_name," +
             "       cs.is_dismiss" +
@@ -80,8 +77,7 @@ if (LdsIsServer) {
             "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id" +
             "         INNER JOIN [WTDB].[dbo].orgs ON orgs.id = cs.org_id" +
             "         INNER JOIN [WTDB].[dbo].org ON org.id = orgs.id" +
-            "         INNER JOIN [WTDB].[dbo].regions ON regions.id = orgs.region_id" +
-            " WHERE " + extraCondition + " + c.created BETWEEN @date_from AND @date_to";
+            " WHERE " + extraCondition + " c.created BETWEEN @date_from AND @date_to";
 
         dataList = ArraySelectAll( XQuery( "sql: " +
             sql));
@@ -100,7 +96,7 @@ if (LdsIsServer) {
 
         reportString.AppendStr("<html><table>");
         reportString.AppendStr("<tr>");
-        reportString.AppendStr("<td>Код</td><td>ФИО</td><td>Логин</td><td>Email</td><td>System Email</td><td>Должность</td><td>Организация</td><td>ИНН</td><td>РЦК</td><td>РОИВ</td><td>Есть партнерское соглашение</td><td>Тип поддержки</td><td>Дата создания</td><td>Кем создан</td><td>Дата модификации</td><td>Код региона</td><td>Регион</td><td>Факт.Регион</td><td>Роль доступа</td><td>Код роли доступа</td><td>ID Результ.</td><td>guid Пользователя</td><td>Когда-то был участником</td><td>Проект завершён</td><td>Уволен</td>");
+        reportString.AppendStr("<td>Код</td><td>ФИО</td><td>Логин</td><td>Email</td><td>System Email</td><td>Должность</td><td>Организация</td><td>ИНН</td><td>РЦК</td><td>РОИВ</td><td>Есть партнерское соглашение</td><td>Тип поддержки</td><td>Дата создания</td><td>Кем создан</td><td>Дата модификации</td><td>Роль доступа</td><td>Код роли доступа</td><td>ID Результ.</td><td>guid Пользователя</td><td>Когда-то был участником</td><td>Проект завершён</td><td>Уволен</td>");
         reportString.AppendStr( "</tr>");
         var count_arr = ArrayCount(dataList);
 
@@ -110,7 +106,7 @@ if (LdsIsServer) {
             factRegion = fondFactRegion == undefined ? "" : fondFactRegion.name;
 
             reportString.AppendStr("<tr>");
-            reportString.AppendStr("<td>"+data.col_code+"</td><td>"+data.col_fullname+"</td><td>"+data.col_login+"</td><td>"+data.col_email+"</td><td>"+data.col_system_email+"</td><td>"+data.position_name+"</td><td>"+data.o_name+"</td><td>"+data.o_inn+"</td><td>"+data.is_rck+"</td><td>"+data.is_roiv+"</td><td>"+data.is_partner+"</td><td>"+data.format_part+"</td><td>"+data.col_created+"</td><td>"+data.col_created_by+"</td><td>"+data.col_modificated+"</td><td>"+data.region_code+"</td><td>"+data.region_name+"</td><td>"+factRegion+"</td><td>"+data.ar_name+"</td><td>"+data.ar_id+"</td><td>"+data.PK+"</td><td>"+data.guid+"</td><td>"+data.is_past_member+"</td><td>"+data.is_project_ended+"</td><td>"+data.is_dismiss+"</td>");
+            reportString.AppendStr("<td>"+data.col_code+"</td><td>"+data.col_fullname+"</td><td>"+data.col_login+"</td><td>"+data.col_email+"</td><td>"+data.col_system_email+"</td><td>"+data.position_name+"</td><td>"+data.o_name+"</td><td>"+data.o_inn+"</td><td>"+data.is_rck+"</td><td>"+data.is_roiv+"</td><td>"+data.is_partner+"</td><td>"+data.format_part+"</td><td>"+data.col_created+"</td><td>"+data.col_created_by+"</td><td>"+data.col_modificated+"</td><td>"+data.ar_name+"</td><td>"+data.ar_id+"</td><td>"+data.PK+"</td><td>"+data.guid+"</td><td>"+data.is_past_member+"</td><td>"+data.is_project_ended+"</td><td>"+data.is_dismiss+"</td>");
             reportString.AppendStr("</tr>");
 
             processed++;

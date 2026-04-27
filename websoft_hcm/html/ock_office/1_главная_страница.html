@@ -1,0 +1,398 @@
+<%
+	// 7260309399454852754
+	function addLogMessage(loggerName, message) { EnableLog(loggerName, true); try { if (message == null) { message = "Empty message"; } LogEvent(loggerName, message); } catch (e) { throw new Error(e); } finally { EnableLog(loggerName, false); } }
+	
+	var agentId = 7260309399454852754;
+	var loggerName = "web_7260309399454852754";
+
+	try {
+		addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+    	addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+	
+		settings = {};
+		settings.event_code_prefix = "S_";
+		settings.education_method_code = "prog_obuch_ock";
+		settings.person_code_part = "_muc_";
+		settings.boss_type_id = 7260247233658818719;
+		settings.person_code_prefix = "ock_muc_";
+		settings.event_result_type_id = 7266298331481502038;
+		settings.event_type_id = "education_method";
+		settings.education_org_id = 7259999796767030466;
+		settings.person_code_part = "_muc_";
+
+		tools_web.set_user_data("ock_office", settings, 86400);
+
+		addLogMessage(loggerName, "[agent.id: " + agentId + "] Initializing is finished");
+	} catch(e) {
+		addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
+	}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Кабинет организатора ОЦК</title>
+
+<link rel="stylesheet" href="./ock_office/index.css" />
+
+<script type="text/javascript" src="./fcc/js/jquery3.js"></script>
+<script type="text/javascript" src="./fcc/js/jquery-ui.js"></script>
+<script type="text/javascript" src="./fcc/js/jquery.mask.js"></script>
+<script type="text/javascript" src="./fcc/js/jquery.modal.min.js"></script>
+<script type="text/javascript" src="./fcc/js/excel-to-json.min.js"></script>
+<script type="text/javascript" src="./fcc/js/imask.js"></script>
+<script type="text/javascript" src="./fcc/js/moment.js"></script>
+<script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+<script type="text/javascript" src="./fcc/js/calendar.js"></script>
+<script type="text/javascript" src="./fcc/js/ModalWindow.js"></script>
+<script type="text/javascript" src="./fcc/js/Paging.js"></script>
+<script type="text/javascript" src="./fcc/js/Dropdown.js"></script>
+<script type="text/javascript" src="./fcc/js/Notification.js"></script>
+<script type="text/javascript" src="./fcc/js/ConfirmPopupWindow.js"></script>
+<script type="text/javascript" src="./fcc/js/AlertPopupWindow.js"></script>
+<script type="text/javascript" src="./ock_office/svg.js"></script>
+<script type="text/javascript" src="./ock_office/index.js"></script>
+
+</head>
+<body>
+	<div>
+		<div style="width: 100%;">
+			<!-- Events calendar box -->			 
+			<div id="left_block">
+				<div id="loader" class="loader loader-view" style="visibility: hidden; margin-top: -50px; margin-left: -80px;"></div>
+				<div style="width: 100%;">
+					<div id="statuses" class="header-filter-box" style="float: left;"></div>
+					<div id="monthes" class="header-filter-box" style="float: left;"></div>
+					<div id="years" class="header-filter-box"
+						style="float: left; width: 80px;"></div>					
+					<div style="float: left;">
+						<button style="margin-top: -3px; margin-left: 15px;"
+							title="Сбросить все фильтры" onclick="resetFilters()">Сбросить</button>
+					</div>
+					<div style="float: right; margin-right: 31px; margin-top: 5px;">
+						<div style="float: left;">
+							<input id="find_input" placeholder="Смотрите подсказку..." 
+								type="text" name="text" class="input"
+								style="width: 350px; margin-top: -10px;" onchange="getEvents()" />
+						</div>
+						<div style="float: left; margin-left: 10px; margin-top: -2px;">
+							<div class="tooltip">
+								<div class="icon">i</div>
+								<div class="tooltiptext">
+									1. Введите часть названия мероприятия <br /> 2.Или используйте формат S-часть ФИО сотрудника
+									без пробелов
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="scrollbar-control" style="width: 99%; height: 555px;">
+					<table id="events_table" border="0"
+						style="width: 100%; margin-top: 10px;"></table>
+				</div>
+				<div>
+					<div style="float: left;">
+						<div style="float: left;">
+							<button class="operate-button" onclick="openEvent(0)" title="или нажмите F3">Создать</button>
+						</div>
+						<div style="float: left; margin-left: 14px;">
+							<button class="operate-button" onclick="openEvent(1)" title="или нажмите F4 или Enter">Изменить</button>
+						</div>
+						<div style="float: left; margin-left: 14px;">
+							<button class="operate-button" onclick="onDeleteEvent()" title="или нажмите F8">Удалить</button>
+						</div>
+						<div style="float: left; margin-left: 14px;"
+							title="Отчет по фильтрам">
+							<button class="operate-button" onclick="getReport(0)" title="или нажмите F9">Экспорт</button>
+						</div>
+						<div style="float: left; margin-left: 14px;"
+							title="Отчет за весь период">
+							<button class="operate-button" onclick="getReport(1)" title="или нажмите F10">Общий отчет</button>
+						</div>
+					</div>
+					<div id="pager_box" style="float: right; margin-top: 15px;">
+					</div>
+				</div>
+			</div>
+			<div id="block_box" style="display: none;"></div>
+			<!-- Event card box -->
+			<div id="right_block" style="font-size: 14px; display: none; margin-top: -20px; z-index: 1000;">				
+				<div id="event_id" style="display: none;"></div>
+					<div style="margin-left: 10px;">
+						<div>
+						<div style="float: left; margin-left: 14px;">
+							<button class="operate-button" onclick="openConfirmPopupWindow('goToEventCalendar()')" style="width: 190px;" title="или нажмите ESC">К списку мероприятий</button>
+						</div>
+						<div style="float: left; margin-left: 14px;">
+							<button id="add_new_button" class="operate-button" style="width: 150px; display: none;"
+								onclick="openConfirmPopupWindow('openEvent(0)')">Создать новое</button>
+						</div>
+						<div style="float: left; margin-left: 14px; ">
+							<button id="lp_button" class="operate-button" style="width: 150px; display: none;"
+								onclick="openConfirmPopupWindow('downloadLP()')">ЛП</button>
+						</div>
+						<div style="float: left; margin-left: 14px;">
+							<button id="save_button" class="operate-button" onclick="saveEvent()" title="или нажмите F2">Сохранить</button>
+						</div>
+						<div id="save_label" class="save-caption" style="float: left; display: none; margin-top: 6px;">
+							<div style="padding-left: 1.7rem; padding-right: 1rem;">
+								<div>Мероприятие изменено.</div>
+								<div>Не забудьте сохранить результат.</div>
+							</div>
+						</div>
+					</div>
+					<div id="blocked_event_id_box" style="padding-top: 75px; padding-bottom: 10px; visibility: hidden;">
+						<div style="float: left;">ID мероприятия:</div>
+						<div id="blocked_event_id" style="float: left; margin-left: 6px; font-weight: bold;"></div>
+					</div>
+					<div style="padding-top: 20px; padding-bottom: 10px;">Статус</div>
+					<div id="event_statuses" style="width: 200px;"></div>
+					<div id="edu_methods_caption" style="margin-top: 10px; padding-bottom: 10px;">Учебные программы</div>
+					<div id="edu_methods" style="width: 500px;"></div>					
+					<div style="margin-top: 10px; padding-bottom: 10px;">Название мероприятия</div>
+					<input id="event_name" type="text" name="text" class="input" style="width: 470px;" onchange="setEventChanged(true);"/>
+					<div style="margin-top: -6px;">
+						<div style="float: left; margin-top: 17px;">Дата начала мероприятия</div>
+						<div style="float: left; margin-top: 14px; margin-left: 40px;">
+							<input id="start_date" type="text" name="text" class="input" onchange="setEventChanged(true);"/>
+						</div>
+						<div style="float: left; margin-left: 20px;">
+							<button id="start_date_button" class="operate-button" style="width: 40px;" onclick="event.stopPropagation(); showCalendar('start_date')">
+								<div class="text">...</div>
+							</button>
+						</div>
+					</div>
+					<div style="margin-top: 55px;">
+						<div style="float: left; margin-top: 4px;">Дата завершения мероприятия</div>
+						<div style="float: left; margin-left: 5px;">
+							<input id="finish_date" type="text" name="text" class="input" onchange="setEventChanged(true); verifyFinishDate()"/>
+						</div>
+						<div style="float: left; margin-left: 20px; margin-top: -16px;">
+							<button id="finish_date_button" class="operate-button" style="width: 40px;" onclick="event.stopPropagation(); showCalendar('finish_date')">
+								<div class="text">...</div>
+							</button>
+						</div>
+					</div>
+					<div style="margin-top: 88px;">
+						<div style="float: left; margin-top: 3px;">NPS</div>
+						<div style="float: left; margin-left: 10px;">
+							<input id="nps" type="number" min="-100" step="1" max="100" name="text" class="input" style="width: 60px;" onchange="setEventChanged(true)"/>
+						</div>
+					</div>
+					<br />
+					<div style="margin-top: 10px;">
+						<div style="float: left; margin-top: 3px;">Комментарий</div>
+						<div style="float: left; margin-left: 10px;">
+							<input id="comment" type="text" name="text" class="input" style="width: 350px;" onchange="setEventChanged(true)"/>
+						</div>
+					</div>
+					<div style="padding-top: 35px; padding-bottom: 10px;">
+						Тренер
+					</div>
+					<div>
+						<div style="float: left;">
+							<table id="trainer_table" border="0" style="width: 816px"></table>
+						</div>
+						<div id="trainer_buttons" style="float: left;">
+							<div style="margin-left: 14px; margin-top: -9px;">
+								<button class="operate-button" style="width: 270px;" onclick="addTrainer()">Добавить тренера</button>
+							</div>
+							<div style="margin-left: 14px; margin-top: -9px;">
+								<button class="operate-button" style="width: 270px;" onclick="deleteTrainer()">Удалить тренера</button>
+							</div>							
+						</div>
+					</div>	
+					<div style="padding-top: 99px; padding-bottom: 10px;">
+						<div style="float: left;">
+							Сотрудники
+						</div>						
+					</div>		
+					<br>	
+					<div>
+						<div id="red_rows_caption" class="red-rows-info" style="float: left; display: none; margin-top: -2px; margin-left: 0px;">
+							Красные строки не будут добавлены в мероприятие!
+						</div>
+						<div id="gray_rows_caption" class="gray-rows-info" style="float: left; display: none; margin-top: -2px;">
+							Серые строки будут удалены при сохранении!
+						</div>
+					</div>
+					<br>					
+					<div style="height: 100%">
+						<div style="float: left;">					
+							<table id="person_table" border="0" style="width: 816px;"></table>
+						</div>
+						<div id="person_buttons" style="float: left; ">
+							<div style="margin-left: 14px; margin-top: -9px;">
+								<button class="operate-button" style="width: 270px;" onclick="addPersons()">Добавить сотрудников</button>
+							</div>							
+							<div style="margin-left: 14px; margin-top: -9px;">
+								<button class="operate-button" style="width: 270px;" onclick="deletePerson()">Удалить сотрудника</button>
+							</div>
+							<div style="margin-left: 14px; margin-top: -9px;">
+								<button id="toglle_button" class="operate-button bad-row-button" style="width: 270px;" data-type="red" onclick="togllePersonRows(this)">Показать только красные строки</button>
+							</div>
+							<div style="margin-left: 14px; margin-top: -9px;">
+								<button class="operate-button" style="width: 270px;" onclick="deleteRedRows()">Удалить красные записи</button>
+							</div>							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="calendar_element" class="calendar"></div>
+
+	<div id="modal_box"></div>
+	
+	<div id="popup_box"></div>
+	
+	<div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
+		<div class="position-center">
+			<div id="container">
+				<label id="wait_caption" class="loading-title" style="font-size: 14px;"></label>
+				<span id="loader" class="loading-circle sp1">
+					<span class="loading-circle sp2">
+						<span class="loading-circle sp3"></span>
+					</span>
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/html" id="event_header_row_template">
+    <tr class="sticky header-colors">
+        <th style="padding-top: 3px; padding-bottom: 3px; font-weight: bold; width: 460px;">
+            <div class="float-left">Название</div>           
+        </th>
+        <th style="font-weight: bold; width: 40px; text-align: center;">
+            <div class="float-left">NPS</div>
+        </th>
+        <th style="text-align: center; font-weight: bold; width: 110px;">
+            <div class="float-left">Статус</div>
+        </th>
+        <th style="text-align: center; font-weight: bold; width: 110px;">
+            <div class="float-left">Дата начала</div>
+        </th>
+        <th style="font-weight: bold; width: 130px;">
+            <div class="float-left">Дата завершения</div>
+        </th>
+		<th style="font-weight: bold; text-align: center; width: 100px;">
+            <div class="float-left">Участников</div>
+        </th>
+		<th style="font-weight: bold;">
+            <div class="float-left">Комментарий</div>
+        </th>
+    </tr>
+</script>
+
+<script type="text/html" id="event_row_template">
+    <tr id="row" class="row" onclick="selectEvent(this, event)" ondblclick="openEvent(1)">
+        <td id="name"></td>
+        <td id="nps" style="text-align: right"></td>
+        <td id="state" style="text-align: center"></td>
+        <td id="start" style="text-align: center"></td>
+        <td id="finish" style="text-align: center"></td>
+		<td id="count" style="text-align: center"></td>
+		<td id="comment"></td>
+    </tr>
+</script>
+
+	<script type="text/html" id="trainer_header_row_template">
+    <tr class="sticky header-colors">
+		<th style="font-weight: bold; text-align: center; width: 85px;">
+            <div class="float-left">ИНН</div>
+        </th>        
+        <th style="font-weight: bold; text-align: center; width: 350px;">
+            <div class="float-left">ФИО</div>
+        </th>
+		<th style="font-weight: bold; text-align: center;">
+            <div class="float-left">Должность</div>
+        </th>
+    </tr>
+</script>
+
+	<script type="text/html" id="trainer_row_template">
+    <tr id="trainer" class="trainer-row" onclick="selectTrainer(this)">
+		<td>
+            <div id="trainer_inn" class="float-left"></div>
+        </td>        
+        <td>
+            <div id="trainer_fio" class="float-left"></div>
+        </td>
+		<td>
+            <div id="trainer_position" class="float-left"></div>
+        </td>
+    </tr>
+</script>
+
+	<script type="text/html" id="person_header_row_template">
+    <tr class="sticky header-colors">
+		<th style="font-weight: bold; text-align: center; width: 85px;">
+            <div class="float-left">ИНН</div>
+        </th>        
+        <th style="font-weight: bold; text-align: center; width: 350px;">
+            <div class="float-left">ФИО</div>
+        </th>
+		<th style="font-weight: bold; text-align: center;">
+            <div class="float-left">Должность</div>
+        </th>
+    </tr>
+</script>
+
+	<script type="text/html" id="person_row_template">
+    <tr id="person_row" class="person-row" onclick="selectPerson(this)">
+		<td style="text-align: center;">
+            <div id="person_inn" class="float-left"></div>
+        </td>        
+        <td style="text-indent: 5px;">
+            <div id="person_fio" class="float-left"></div>
+        </td>
+		<td style="text-indent: 5px;">
+            <div id="person_position" class="float-left"></div>
+        </td>
+    </tr>
+</script>
+
+	<script type="text/html" id="find_trainer_header_template">
+    <tr class="sticky header-colors">
+		<th style="font-weight: bold; text-align: center; width: 250px;">
+            <div class="float-left">ФИО</div>
+        </th>
+		<th style="font-weight: bold; text-align: center; width: 85px;">
+            <div class="float-left">ИНН</div>
+        </th>                
+		<th style="font-weight: bold; text-align: center; width: 500px;">
+            <div class="float-left">Организация</div>
+        </th>
+		<th style="font-weight: bold; text-align: center; width: 250px;">
+            <div class="float-left">Должность</div>
+        </th>
+    </tr>
+</script>
+
+<script type="text/html" id="find_trainer_template">
+    <tr id="find_trainer" class="found-trainer-row" onclick="selectFoundTrainer(this)" ondblclick="addFoundTrainer()">
+		<td>
+            <div id="find_trainer_fio" class="float-left"></div>
+        </td>
+		<td>
+            <div id="find_trainer_inn" class="float-left"></div>
+        </td>                
+		<td>
+            <div id="find_trainer_org" class="float-left"></div>
+        </td>
+		<td>
+            <div id="find_trainer_position" class="float-left"></div>
+        </td>
+    </tr>
+</script>
+
+	<script>
+		$(document).ready(function() {
+			initialize();
+		});
+	</script>
+
+</body>
+</html>

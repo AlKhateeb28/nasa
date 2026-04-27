@@ -44,7 +44,7 @@ function checkCorrectFullname(sFullname) {
             if(StrCharCount(collSurname) < 2 || StrCharCount(collName) < 2) {
                 return false;
             }
-        } else {not
+        } else {
             return false;
         }
     }
@@ -299,7 +299,7 @@ try {
             collPositionDoc.Save();
             collDoc.Save();
 
-            addPersonToEvent(collDoc.DocID, eventId, 7101361738949288137);
+            addPersonToEvent(collDoc.DocID, eventId);
         } else {
             addPersonToEvent(ArrayOptFirstElem(collArr).id, eventId, 7101361738949288137);
         }

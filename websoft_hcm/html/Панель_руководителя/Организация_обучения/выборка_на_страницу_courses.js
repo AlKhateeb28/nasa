@@ -131,6 +131,7 @@ try {
         }
 
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Step: " + step + " Count: " + ArrayCount(xarrResults));
+		addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished cources");
         step++;
     }
 

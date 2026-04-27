@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script type="text/javascript" src="./fcc/js/jquery3.js"></script>
+
+</head>
+<body>
+	<div>
+		<input placeholder="Для поиска введите фамилию тренера..." type="text" name="text" class="input" style="width: 400px;" onchange="findPerson()">
+	</div>
+	<div>
+		<table id="trainers_table" border="0" style="width: 100%; margin-top: 10px;">
+		
+		</table>
+	</div>
+
+<script type="text/html" id="find_trainer_header_template">
+    <tr class="sticky header-colors">
+		<th style="font-weight: bold; text-align: center; width: 250px;">
+            <div class="float-left">ФИО</div>
+        </th>
+		<th style="font-weight: bold; text-align: center; width: 85px;">
+            <div class="float-left">ИНН</div>
+        </th>                
+		<th style="font-weight: bold; text-align: center; width: 85px;">
+            <div class="float-left">Организация</div>
+        </th>
+		<th style="font-weight: bold; text-align: center;">
+            <div class="float-left">Должность</div>
+        </th>
+    </tr>
+</script>
+	
+<script>
+
+function findPerson() {
+	
+}
+
+$(document).ready(function() {	
+	$("#trainers_table").append(getTemplate("find_trainer_header_template"));			
+});
+</script>
+
+</body>
+</html>

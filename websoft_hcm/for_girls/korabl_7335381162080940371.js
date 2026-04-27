@@ -280,7 +280,7 @@ if(LdsIsClient) {
                                 saved++;
                             } else {
                                 if (isWorkGroup) {
-                                    collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
+                                    collaboratorDoc.collaboratorDocTE.custom_elems.ObtainChildByKey("col_rg").value = true;
 
                                     collaboratorDoc.Save();
                                 }

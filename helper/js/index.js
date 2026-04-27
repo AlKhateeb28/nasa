@@ -112,7 +112,7 @@ class HelperPage extends Object {
             if (agent.type === "AGENT") {
                 let clientAgent = createAgent(agent);
 
-                if (parseInt(clientAgent.getId()) === 7437057559620972968) {
+                if (parseInt(clientAgent.getId()) === 7267716093742053137) {
                     HelperPage.showAgentInfo(clientAgent);
                 }
             } else if(agent.type === "HELPER") {
@@ -209,7 +209,7 @@ class HelperPage extends Object {
 
             HelperPage.setInactive();
 
-            $("#message").html(agent.getMessage());
+            $("#message").html(agent.getMessage());	
 
             if(agent.getState() === 1) {
                 agentStateElement.addClass("device-sleep");
@@ -233,7 +233,7 @@ class HelperPage extends Object {
 
         summary.ticks.forEach((tick, index) => {
             charData.push((tick.diff / 60).toFixed(2));
-
+			
             processedData.push(tick.processed);
 
             charCategories.push(getHoursAnMinutes(tick.startDate));

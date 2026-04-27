@@ -1,53 +1,138 @@
 // 7267496497202930632
-var data_s_ = Param.data_s;
-var data_po_ = Param.data_po;
-var type_f = Param.type_f;
-var rejim = Param.rejim;
+function addLogMessage(loggerName, message) { EnableLog(loggerName, true); try { if (message == null) { message = "Empty message"; } LogEvent(loggerName, message); } catch (e) { throw new Error(e); } finally { EnableLog(loggerName, false); } } function addLogResultMessage(loggerName, message, total, processed, saved, skipped) { EnableLog(loggerName, true); try { result = ""; if (message != null) { result = message + " "; } if (total != null) { result = result + total + " "; } if (processed != null) { result = result + processed + " "; } if (saved != null) { result = result + saved; } if (skipped != null) { result = result + skipped; } LogEvent(loggerName, result); } catch (e) { throw new Error(e); } finally { EnableLog(loggerName, false); } } function getDurationMessage(duration) { try { var durationMessage = " sec"; if (duration >= 60 && duration < 3600) { duration = duration / 60; durationMessage = " min"; } if (duration >= 3600) { duration = duration / 3600; durationMessage = " hour"; } return StrReal(duration, 1) + durationMessage; } catch (e) { throw new Error(e); } } function getWebsocketClient() { try { return new WebSocketClient("ws://192.168.0.96:3000/"); } catch (e) {} } function getAgentInstance(agentId, userId, loggerName) { agentDoc = tools.open_doc(agentId); userDoc = tools.open_doc(userId); userDocTE = userDoc.TopElem; agent = {}; agent.type = "AGENT"; agent.loggerName = loggerName; agent.id = agentId; agent.name = agentDoc.TopElem.name; agent.userId = userId; agent.userName = userDocTE.lastname + " " + userDocTE.firstname + " " + userDocTE.middlename; agent.state = 0; agent.total = "--"; agent.processed = "--"; agent.skipped = "--"; agent.saved = "--"; agent.notFound = "--"; agent.message = ""; agent.errorMessage = ""; agent.fetchTime = 0; agent.handlingTime = 0; agent.savingTime = 0; agent.refreshChart = 0; agent.msPerRow = 0; agent.minMsPerRow = 999999; agent.maxMsPerRow = 0; return agent; } function sendMessageToWebsocket(ws, agent) { try { try { ws.Send("#" + EncodeJson(agent)); agent.refreshChart = 0; } catch (e) { addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket"); ws = getWebsocketClient(); } return ws; } catch (e) { return null; } } function refreshMsPerRow(agent, startDate, total) { try { if (total > 0) { agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total); } else { agent.msPerRow = 0; } } catch (e) {} } function saveMonitorAgents(agent, startDate) { try { monitorAgent = tools.new_doc_by_name("cc_agent_monitor_event", false); monitorAgent.BindToDb(DefaultDb); monitorAgentTE = monitorAgent.TopElem; monitorAgentTE.type = agent.type; monitorAgentTE.agent_id = agent.id; monitorAgentTE.user_id = agent.userId; monitorAgentTE.state = agent.state; monitorAgentTE.total = agent.total; monitorAgentTE.processed = agent.processed; monitorAgentTE.skipped = agent.skipped; monitorAgentTE.saved = agent.saved; monitorAgentTE.not_found = agent.notFound; monitorAgentTE.logger_name = agent.loggerName; monitorAgentTE.error_message = agent.errorMessage; monitorAgentTE.start_date = startDate; monitorAgentTE.finish_date = Date(); monitorAgent.Save(); } catch (e) {} }
 
-err_r_id = 0;
-err_r_c = 0;
-err_err = '';
-er = '';
-yyyy = '';
-yyyyy = '';
+var start = Param.start;
+var finish = Param.finish;
+var resource = Param.resource;
+var mode = Param.mode;
 
-find_m = "for $elem in resources where type = '" + type_f + "' and creation_date > Date('" + data_s_ + "') and creation_date < Date('" + data_po_ + "') and person_id != '' and use_count = '0' order by $elem/id return $elem"
+var total = 0;
+var processed = 0;
+var saved = 0;
+var skipped = 0;
 
-find_res = ArraySelectAll( XQuery (find_m));
+try {
+    var agentId = 7267496497202930632;
+    var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
+    var msPerRecord = 0.001;
 
-y = 0;
-x = 0;
+    var startDate = Date();
+    var prevDate;
+    var loggerName = "agent_7267496497202930632";
+    var ws = getWebsocketClient();
+    var agent = getAgentInstance(agentId, userId, loggerName);
 
-for (_res in find_res) {
-    if ((_res.id != undefined) && (_res.id != null )) {
-        res_ = OpenDoc( UrlFromDocID(Int(_res.id)) );
-        res_n = res_.TopElem;
-        if ((res_n.person_id != undefined) && res_n.person_id != null){
-            try {
-                _col = OpenDoc( UrlFromDocID(Int(res_n.person_id)) );
+    agent.message = "Получение данных...";
+    ws = sendMessageToWebsocket(ws, agent);
+    prevDate = new Date();
 
-                res_coll = _col.TopElem;
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-                if ((res_coll.access.access_role == 'OrganizingTrainer') || (res_coll.access.access_role == 'OrganizingTrainerRCK')) {
-                    rejim == 'delete' ? DeleteDoc( UrlFromDocID( Int( _res.id ) ) ) : err_err = ( err_err + _res.id + ' ');
-                    y++;
+    dataList = ArrayDirect(XQuery("sql: " +
+        " SET DATEFORMAT dmy " +
+        " DECLARE @from datetime = '" + start + "' " +
+        " DECLARE @to datetime = '" + finish + "' " +
+        " SELECT rs.id, " +
+        " 		rs.person_id, " +
+        " 		r.data.value('(//file_url)[1]', 'varchar(max)') AS resource " +
+        " FROM [WTDB].[dbo].resources rs " +
+        " 	INNER JOIN [WTDB].[dbo].resource r ON rs.id = r.id " +
+        " WHERE UPPER(rs.type) = UPPER('" + resource + "') " +
+        " 	AND rs.creation_date BETWEEN @from AND @to " +
+        " 	AND rs.person_id != '' " +
+        " 	AND rs.use_count = '0' "));
+
+    total = ArrayCount(dataList);
+
+    agent.total = total;
+    agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+    agent.message = "Обработка данных...";
+    if (ws != null) {
+        ws = sendMessageToWebsocket(ws, agent);
+    }
+    prevDate = new Date();
+
+    for (data in dataList) {
+        resourceDoc = OpenDoc(UrlFromDocID(OptInt(data.id)));
+        resourceDocTE = resourceDoc.TopElem;
+        if (resourceDocTE.person_id != null) {
+            collaboratorDoc = OpenDoc(UrlFromDocID(OptInt(resourceDocTE.person_id)));
+
+            collaboratorDocTE = collaboratorDoc.TopElem;
+
+            if ((collaboratorDocTE.access.access_role == "OrganizingTrainer") || (collaboratorDocTE.access.access_role == "OrganizingTrainerRCK")) {
+                if (mode == "delete") {
+                    DeleteDoc(UrlFromDocID(OptInt(data.id)));
+					
+					DeleteUrl(data.resource);
                 }
-            } catch (error) {
-                err_r_c++;
-                er = _res.id + '';
-                err_err += er + '/';
+
+                saved++;
             }
+        } else {
+            skipped++;
         }
-        else {
-            err_r_c++;
+
+        processed++;
+
+        agent.processed = processed;
+        agent.saved = saved;
+        agent.skipped = skipped;
+        refreshMsPerRow(agent, startDate, processed);
+        if (ws != null) {
+            ws = sendMessageToWebsocket(ws, agent);
         }
-    }
-    else {
-        err_r_id++;
+
+        if (processed % 1000 == 0) {
+            addLogMessage(
+                loggerName,
+                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
+            );
+        }
     }
 
-    x++;
+    agent.state = 1;
+    agent.processed = processed;
+    agent.saved = saved;
+    agent.skipped = skipped;
+    agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+    refreshMsPerRow(agent, startDate, total);
+    agent.message = "Закончено";
+    if (ws != null) {
+        ws = sendMessageToWebsocket(ws, agent);
+    }
+
+    addLogResultMessage(
+        loggerName,
+        "[agent.id: " + agentId + "]",
+        total + " total, ",
+        processed + " processed",
+        saved + " saved, ",
+        skipped + " skipped"
+    );
+
+    addLogMessage(
+        loggerName,
+        "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
+    );
+
+} catch (e) {
+    agent.state = 2;
+    agent.errorMessage = e;
+    sendMessageToWebsocket(ws, agent);
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
 }
 
-alert('Всего найдено - ' + x + ' файлов ' + 'Представлено к удалению - ' + y + '  отсутствие ИД у ресурса - ' + err_r_id + '  отсутствие ИД сотрудника - ' + err_r_c);
-rejim == 'delete' ?	alert('Удалены: ' + y ): alert('С ошибками: ' + err_err);
+saveMonitorAgents(agent, startDate);
+
+try {
+    ws.Send("close");
+} catch (e) {}
+
+alert("Всего найдено - " + total + " файлов,\nПредставлено к удалению - " + saved + "\nОтсутствие ИД сотрудника - " + skipped);
+if (mode == "delete") {
+    alert("Удалены: " + saved);
+}

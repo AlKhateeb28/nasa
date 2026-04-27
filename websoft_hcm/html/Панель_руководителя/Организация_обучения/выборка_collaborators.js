@@ -1,16 +1,19 @@
 // 7121746117100119626
-function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}
+function addLogMessage(loggerName, message) { EnableLog(loggerName, true); try { if (message == null) { message = "Empty message"; } LogEvent(loggerName, message); } catch (e) { throw new Error(e); } finally { EnableLog(loggerName, false); } }
 
 var agentId = 7121746117100119626;
 var loggerName = "report_7121746117100119626";
 
 var aReturn = [];
-var i=0;
+var i = 0;
 
 try {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
 
+    if (curUserID == 7351734047845980789) {
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] AA was here!");
+    }
     //RESULT = tools_web.get_user_data("boss_panel_collaborators_cache_for_reports" + OptInt(curUserID));
 
     //dataList = ArrayExtract(RESULT.result_array, "This");
@@ -21,25 +24,25 @@ try {
         "   AND CONVERT(DATE, created_date) >= CONVERT(DATE, DATEADD(DAY,  -1 , GETDATE()))"));
 
 
-//{"data": "position_parent_name", "title": tools_web.get_web_const( "c_subd", curLngWeb ),"type": "string", "sortable": true, "colorsource": "color", "width": 200},
+    //{"data": "position_parent_name", "title": tools_web.get_web_const( "c_subd", curLngWeb ),"type": "string", "sortable": true, "colorsource": "color", "width": 200},
 
     COLUMNS = ([
-        {"data": "id", "title": "ID", "width": "50", "type": "string", "ghost": false, "hidden": true},
-        {"data": "fullname", "title": "ФИО", "type": "link", "sortable": true, "colorsource": "color", "minwidth": 250, "click": ("OPENURL=view_doc.html?mode=collaborator&doc_id=" + curDocID + "&object_id={id}")},
-        {"data": "position_name", "title": tools_web.get_web_const( "c_position", curLngWeb ),  "type": "string", "sortable": true, "colorsource": "color", "width": 200},
-        {"data": "email", "title": "Email",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
-        {"data": "org_inn", "title": "ИНН",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
-        {"data": "org_name", "title": "Название организации",  "type": "string", "sortable": true, "colorsource": "color", "width": 200},
-        {"data": "assigned_courses", "title": "Назначено",  "type": "string", "sortable": true, "colorsource": "color", "width": 100},
-        {"data": "progress_courses", "title": "В процессе",  "type": "string", "sortable": true, "colorsource": "color", "width": 100},
-        {"data": "completed_courses", "title": "Пройдено",  "type": "string", "sortable": true, "colorsource": "color", "width": 100},
-        {"data": "create_date", "title": "Дата регистрации",  "type": "string", "sortable": true, "colorsource": "color", "width": 150}
+        { "data": "id", "title": "ID", "width": "50", "type": "string", "ghost": false, "hidden": true },
+        { "data": "fullname", "title": "ФИО", "type": "link", "sortable": true, "colorsource": "color", "minwidth": 250, "click": ("OPENURL=view_doc.html?mode=collaborator&doc_id=" + curDocID + "&object_id={id}") },
+        { "data": "position_name", "title": tools_web.get_web_const("c_position", curLngWeb), "type": "string", "sortable": true, "colorsource": "color", "width": 200 },
+        { "data": "email", "title": "Email", "type": "string", "sortable": true, "colorsource": "color", "width": 150 },
+        { "data": "org_inn", "title": "ИНН", "type": "string", "sortable": true, "colorsource": "color", "width": 150 },
+        { "data": "org_name", "title": "Название организации", "type": "string", "sortable": true, "colorsource": "color", "width": 200 },
+        { "data": "assigned_courses", "title": "Назначено", "type": "string", "sortable": true, "colorsource": "color", "width": 100 },
+        { "data": "progress_courses", "title": "В процессе", "type": "string", "sortable": true, "colorsource": "color", "width": 100 },
+        { "data": "completed_courses", "title": "Пройдено", "type": "string", "sortable": true, "colorsource": "color", "width": 100 },
+        { "data": "create_date", "title": "Дата регистрации", "type": "string", "sortable": true, "colorsource": "color", "width": 150 }
     ]);
 
     step = 1;
     xarrResults = [];
 
-    for(data in dataList) {
+    for (data in dataList) {
         collList = XQuery("sql: " +
             " SELECT col.id, " +
             "    cols.fullname, " +
@@ -56,7 +59,7 @@ try {
             "    AND (cols.code IS NULL OR cols.code NOT LIKE '%muc%') " +
             " ORDER BY org_inn, fullname ");
 
-        for(coll in collList) {
+        for (coll in collList) {
             element = {};
             element.id = coll.id;
             element.fullname = coll.fullname;
@@ -90,17 +93,19 @@ try {
                 email: catRes.email.Value,
                 org_inn: catRes.org_inn.Value,
                 org_name: catRes.org_name.Value,
-                assigned_courses: (ArrayOptFirstElem(xarrPersonNewActiveLearns) != undefined ? String(ArrayCount(xarrPersonNewActiveLearns)) : '0' ),
-                progress_courses: (ArrayOptFirstElem(xarrPersonProcessActiveLearns) != undefined ? String(ArrayCount(xarrPersonProcessActiveLearns)) : '0' ),
-                completed_courses: (ArrayOptFirstElem(xarrPersonAllCompletLearns) != undefined ? String(ArrayCount(xarrPersonAllCompletLearns)) : '0' ),
-                create_date: ( catRes.create_date.HasValue && catRes.create_date != '' ? StrDate(ParseDate(catRes.create_date), false, false) : '' )
+                assigned_courses: (ArrayOptFirstElem(xarrPersonNewActiveLearns) != undefined ? String(ArrayCount(xarrPersonNewActiveLearns)) : '0'),
+                progress_courses: (ArrayOptFirstElem(xarrPersonProcessActiveLearns) != undefined ? String(ArrayCount(xarrPersonProcessActiveLearns)) : '0'),
+                completed_courses: (ArrayOptFirstElem(xarrPersonAllCompletLearns) != undefined ? String(ArrayCount(xarrPersonAllCompletLearns)) : '0'),
+                create_date: (catRes.create_date.HasValue && catRes.create_date != '' ? StrDate(ParseDate(catRes.create_date), false, false) : '')
             });
         }
     }
 
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] SELECT. AA was here!");
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] Finished collaborators");
 
     RESULT = aReturn;
 } catch (e) {
-    addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
+    alert("### boss_panel_collaborators_report: " + er);
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] boss_panel_collaborators_report ERROR: " + e);
 }
