@@ -53,8 +53,7 @@ function updateSingleFlag(flag, step, max) {
         agent.skipped = skipped;
         agent.saved = saved;
         refreshMsPerRow(agent, startDate, processed);
-        sendMessageToWebsocket(ws, agent);
-        
+        c
         if (processed % 10 == 0) {
             addLogMessage(
                 loggerName,
