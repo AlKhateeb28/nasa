@@ -30,7 +30,8 @@ try {
         {"data": "score", "title": "Балл",  "type": "integer", "sortable": true, "colorsource": "color", "width": 150},
         {"data": "status", "title": "Статус курса",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
         {"data": "coll_create_date", "title": "Дата регистрации",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
-        {"data": "number", "title": "Номер сертификата", "type": "string", "sortable": true, "colorsource": "color", "width": 150}
+        {"data": "number", "title": "Номер сертификата", "type": "string", "sortable": true, "colorsource": "color", "width": 150},
+        { "data": "category", "title": "Категория курсов", "type": "string", "sortable": true, "colorsource": "color", "width": 200 },
     ]);
 
     dataList = ArrayDirect(XQuery("sql: " +
@@ -74,10 +75,12 @@ try {
             "                WHEN 3 THEN 'Не пройден' " +
             "                WHEN 4 THEN 'Пройден' " +
             "                WHEN 5 THEN 'Просмотрен' " +
-            "            END AS status " +
+            "           END AS status, " +
+            "           cs.data.value('(//custom_elems/custom_elem[name=''category'']/value)[1]', 'varchar(max)') AS category " +
             "        FROM _view tc " +
             "            INNER JOIN [WTDB].[dbo].active_learnings als ON als.person_id = tc.id " +
             "            INNER JOIN [WTDB].[dbo].courses crs ON crs.id = als.course_id " +
+            "            INNER JOIN [WTDB].[dbo].course cs ON crs.id = cs.id " +
             "            INNER JOIN [WTDB].[dbo].active_learning al ON al.id = als.id " +
             "    UNION " +
             "        SELECT tc.*, " +
@@ -95,10 +98,12 @@ try {
             "                WHEN 3 THEN 'Не пройден' " +
             "                WHEN 4 THEN 'Пройден' " +
             "                WHEN 5 THEN 'Просмотрен' " +
-            "            END status " +
+            "           END status, " +
+            "           cs.data.value('(//custom_elems/custom_elem[name=''category'']/value)[1]', 'varchar(max)') AS category " +
             "        FROM _view tc " +
             "            INNER JOIN [WTDB].[dbo].learnings als ON als.person_id = tc.id " +
             "            INNER JOIN [WTDB].[dbo].courses crs ON crs.id = als.course_id " +
+            "            INNER JOIN [WTDB].[dbo].course cs ON crs.id = cs.id " +
             "            INNER JOIN [WTDB].[dbo].learning al ON al.id = als.id " +
             " ) " +
             " SELECT _view1.*, " +
@@ -126,6 +131,7 @@ try {
             element.score = coll.score.Value;
             element.status = coll.status.Value;
             element.number = coll.number.Value;
+            element.category = coll.category.Value;
 
             xarrResults.push(element);
         }
