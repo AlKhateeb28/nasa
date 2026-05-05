@@ -127,3 +127,6 @@ ALTER INDEX ALL ON [WTDB].[dbo].poll_results REBUILD;
 ALTER INDEX ALL ON [WTDB].[dbo].active_learnings REBUILD;
 ALTER INDEX ALL ON [WTDB].[dbo].collaborators REBUILD;
 ALTER INDEX ALL ON [WTDB].[dbo].collaborator REBUILD;
+
+-- REORGANIZE >= 5 && < 30
+-- REBUILD >= 30

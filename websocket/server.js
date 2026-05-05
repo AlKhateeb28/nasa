@@ -125,6 +125,7 @@ webSocketServer.on("connection", function(wsClient) {
 					 
                     for (let clientId in clients) {
                         if(clients[clientId].id === agentId) {
+                            console.log(getCurrentDateTime() + " | " + id + " connection is closed by AGENT");
 							delete clients[clientId];
 						}
                     }

@@ -2,7 +2,7 @@
 
 var pongDate;
 var pingTimeout = 300000;
-var helperCurrentState = 1;
+var coursesCurrentState = 1;
 var messageGettingDatetime = new Date();
 var chart;
 
@@ -24,17 +24,17 @@ const fullSVG = "<svg fill='#ffffff' width='26px' height='26px' viewBox='0 0 32 
 var webSocket = getWebSocket(window.WebSocket);
 
 webSocket.onmessage = function(event) {
-    HelperPage.setWSStateAsAlive();
+    CoursesPage.setWSStateAsAlive();
 
     receiveMessage(event.data).then(r => r);
 };
 
 async function receiveMessage(promise) {
     if(typeof promise === "string") {
-        HelperPage.showMessage(promise);
+        CoursesPage.showMessage(promise);
     } else {
         promise.text().then((value) => {
-            HelperPage.showMessage(value);
+            CoursesPage.showMessage(value);
         });
     }
 }
@@ -60,15 +60,15 @@ function datetime(datetime) {
     return datetime.toLocaleString("ru-RU").split(",")[1];
 }
 
-class HelperPage extends Object {
+class CoursesPage extends Object {
     constructor() {
         super();
     }
 
     static initialize(isSelectRow, newIds) {
-        /*HelperPage.getData();
+        /*CoursesPage.getData();
 
-        setInterval(HelperPage.getData, 15000);*/
+        setInterval(CoursesPage.getData, 15000);*/
     }
 
     static getData() {
@@ -112,17 +112,17 @@ class HelperPage extends Object {
             if (agent.type === "AGENT") {
                 let clientAgent = createAgent(agent);
 
-                if (parseInt(clientAgent.getId()) === 7437057559620972968) {
-                    HelperPage.showAgentInfo(clientAgent);
+                if (parseInt(clientAgent.getId()) === 7169007381472566729) {
+                    CoursesPage.showAgentInfo(clientAgent);
                 }
-            } else if(agent.type === "HELPER") {
+            } else if(agent.type === "COURSES") {
                 console.log(agent);
 
-                HelperPage.showSummaryData(agent);
+                CoursesPage.showSummaryData(agent);
             }
         } else {
             if (message === "pong") {
-                HelperPage.setWSStateAsAlive();
+                CoursesPage.setWSStateAsAlive();
 
                 pongDate = new Date();
             }
@@ -150,7 +150,7 @@ class HelperPage extends Object {
 
     static checkPingState() {
         if((new Date() - pongDate - 60000) > pingTimeout) {
-            HelperPage.setWSStateAsDead();
+            CoursesPage.setWSStateAsDead();
         } else {
             webSocket.send("ping");
         }
@@ -173,41 +173,41 @@ class HelperPage extends Object {
         const wsStateElement = $("#wsState");
 
         if(agent.getState() === 0) {
-            if(helperCurrentState === 1) {
+            if(coursesCurrentState === 1) {
                 messageGettingDatetime = new Date();
 
                 $("#dateTime").html(getCurrentDateTime());
 
-                helperCurrentState = 0;
+                coursesCurrentState = 0;
             }
 
-            HelperPage.setActive();
+            CoursesPage.setActive();
 
             $("#wait").css("visibility", "visible");
 
-            HelperPage.clearDevicesClasses(agentStateElement);
+            CoursesPage.clearDevicesClasses(agentStateElement);
             agentStateElement.addClass("device-run");
             agentStateElement.attr("title", "Agent is running");
 
-            HelperPage.clearDevicesClasses(wsStateElement);
+            CoursesPage.clearDevicesClasses(wsStateElement);
             wsStateElement.addClass("device-run");
             wsStateElement.attr("title", "WS is running");
 
-            $("#expected").html(HelperPage.getExpectedTime(agent));
+            $("#expected").html(CoursesPage.getExpectedTime(agent));
 
-            HelperPage.refreshAgentBox(agent);
+            CoursesPage.refreshAgentBox(agent);
         } else {
-            helperCurrentState = 1;
+            coursesCurrentState = 1;
 
             $("#wait").css("visibility", "hidden");
 
-            HelperPage.clearDevicesClasses(wsStateElement);
+            CoursesPage.clearDevicesClasses(wsStateElement);
             wsStateElement.addClass("device-sleep");
             wsStateElement.attr("title", "WS is sleeping");
 
-            HelperPage.clearDevicesClasses(agentStateElement);
+            CoursesPage.clearDevicesClasses(agentStateElement);
 
-            HelperPage.setInactive();
+            CoursesPage.setInactive();
 
             $("#message").html(agent.getMessage());	
 
@@ -240,13 +240,13 @@ class HelperPage extends Object {
         });
 
 
-        for(let i = summary.ticks.length; i < 144/* - summary.ticks.length*/; i++) {
+        for(let i = summary.ticks.length; i < 96/* - summary.ticks.length*/; i++) {
             charData.push(0);
             processedData.push(0);
             charCategories.push("⚬");
         }
 
-        chart.updateSeries(HelperPage.getCharData(charData, processedData));
+        chart.updateSeries(CoursesPage.getCharData(charData, processedData));
 
         chart.updateOptions({
             xaxis: {categories: charCategories}
@@ -291,13 +291,13 @@ class HelperPage extends Object {
 
     static refreshAgentBox(agent) {
         $("#total").html(agent.getTotal());
-        $("#processed").html(HelperPage.getValueWithPercent(agent.getProcessed(), agent.getTotal()));
-        $("#skipped").html(HelperPage.getValueWithPercent(agent.getSkipped(), agent.getTotal()));
-        $("#saved").html(HelperPage.getValueWithPercent(agent.getSaved(), agent.getTotal()));
-        $("#notFound").html(HelperPage.getValueWithPercent(agent.getNotFound(), agent.getTotal()));
+        $("#processed").html(CoursesPage.getValueWithPercent(agent.getProcessed(), agent.getTotal()));
+        $("#skipped").html(CoursesPage.getValueWithPercent(agent.getSkipped(), agent.getTotal()));
+        $("#saved").html(CoursesPage.getValueWithPercent(agent.getSaved(), agent.getTotal()));
+        $("#notFound").html(CoursesPage.getValueWithPercent(agent.getNotFound(), agent.getTotal()));
         $("#message").html(agent.getMessage());
 
-        HelperPage.refreshMsMaxPerRow(agent);
+        CoursesPage.refreshMsMaxPerRow(agent);
     }
 
     static refreshMsMaxPerRow(agent) {
@@ -321,19 +321,19 @@ class HelperPage extends Object {
     static checkWebsocketServerIsLive() {
         const wsStateElement = $("#wsState");
 
-        if(helperCurrentState === 0) {
+        if(coursesCurrentState === 0) {
             if((new Date() - messageGettingDatetime) > 30000) {
                 if((new Date() - messageGettingDatetime) > 600000) {
-                    HelperPage.clearDevicesClasses(wsStateElement);
+                    CoursesPage.clearDevicesClasses(wsStateElement);
                     wsStateElement.addClass("device-error");
                     wsStateElement.attr("title", "WS maybe not available");
                 } else {
-                    HelperPage.clearDevicesClasses(wsStateElement);
+                    CoursesPage.clearDevicesClasses(wsStateElement);
                     wsStateElement.addClass("device-wait");
                     wsStateElement.attr("title", "WS is waiting");
                 }
             } else {
-                HelperPage.clearDevicesClasses(wsStateElement);
+                CoursesPage.clearDevicesClasses(wsStateElement);
                 wsStateElement.addClass("device-run");
                 wsStateElement.attr("title", "WS is running");
             }
@@ -342,15 +342,15 @@ class HelperPage extends Object {
     }
 
     static refreshDuration() {
-        if(helperCurrentState === 0) {
+        if(coursesCurrentState === 0) {
             $("#duration").html(
-                HelperPage.calculateDurationTime(messageGettingDatetime, new Date())
+                CoursesPage.calculateDurationTime(messageGettingDatetime, new Date())
             );
         }
     }
 
     static calculateDurationTime(startDateTime, currentDateTime) {
-        return HelperPage.durationTimeToString(currentDateTime - startDateTime)
+        return CoursesPage.durationTimeToString(currentDateTime - startDateTime)
     }
 
     static durationTimeToString(duration) {
@@ -366,12 +366,11 @@ class HelperPage extends Object {
 
     static getFilledList(value) {
         return [
-            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
-            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
-            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
-            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
-            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
-            value, value, value, value, value, value, value, value, value
+            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
+            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
+            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
+            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value,
+            value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value
         ];
     }
 
@@ -380,17 +379,17 @@ class HelperPage extends Object {
             {
                 name: "Принять решение",
                 color: "#f88b85",
-                data: HelperPage.getFilledList(10)
+                data: CoursesPage.getFilledList(15)
             },
             {
                 name: "Внимание",
                 color: "#ffde93",
-                data: HelperPage.getFilledList(8)
+                data: CoursesPage.getFilledList(12)
             },
             {
                 name: "Оптимально",
                 color: "#7fff00",
-                data: HelperPage.getFilledList(5)
+                data: CoursesPage.getFilledList(5)
             },
             {
                 name: "Обработано",
@@ -407,7 +406,7 @@ class HelperPage extends Object {
 
     static getChartOption() {
         return {
-            series: HelperPage.getCharData(HelperPage.getFilledList(0), HelperPage.getFilledList(0)),
+            series: CoursesPage.getCharData(CoursesPage.getFilledList(0), CoursesPage.getFilledList(0)),
             chart: {
                 type: "area",
                 height: 550,
@@ -419,7 +418,7 @@ class HelperPage extends Object {
                 offsetX: -3,
                 fontWeight: "normal",
                 formatter: function (val) {
-                    return val === 0 || val === 5 || val === 8 || val === 10 ? "" : val;
+                    return val === 0 || val === 5 || val === 12 || val === 15 ? "" : val;
                 },
                 style: {
                     fontSize: "10px",
@@ -458,7 +457,7 @@ class HelperPage extends Object {
             },
             xaxis: {
                 position: "bottom",
-                categories: HelperPage.getFilledList("⚬"),
+                categories: CoursesPage.getFilledList("⚬"),
                 axisBorder: {show: false},
                 axisTicks: {show: false},
                 tooltip: {enabled: false},
@@ -469,7 +468,7 @@ class HelperPage extends Object {
                     style: {
                         fontSize: "9px",
                         fontFamily: "'Noto Sans', sans-serif",
-                        colors: HelperPage.getFilledList("#ffffff")
+                        colors: CoursesPage.getFilledList("#ffffff")
                     }
                 }
             },
@@ -477,13 +476,13 @@ class HelperPage extends Object {
                 {
                     stepSize: 1,
                     min: 0,
-                    max: 10,
+                    max: 15,
                     labels: {
                         show: true,
                         style: {
                             fontSize: "10px",
                             fontFamily: "'Noto Sans', sans-serif",
-                            colors: HelperPage.getFilledList("#ffffff")
+                            colors: CoursesPage.getFilledList("#ffffff")
                         }
                     }
                 }
@@ -505,12 +504,12 @@ class HelperPage extends Object {
 $(document).ready(function () {
     $("#start_datetime").html("Activated: " + getCurrentDateTime());
 
-    HelperPage.initialize();
+    CoursesPage.initialize();
 
-    chart = new ApexCharts($("#chart").get(0), HelperPage.getChartOption());
+    chart = new ApexCharts($("#chart").get(0), CoursesPage.getChartOption());
     chart.render();
 
-    setInterval(HelperPage.checkPingState, pingTimeout);
-    setInterval(HelperPage.checkWebsocketServerIsLive, 10000);
-    setInterval(HelperPage.refreshDuration, 1000);
+    setInterval(CoursesPage.checkPingState, pingTimeout);
+    setInterval(CoursesPage.checkWebsocketServerIsLive, 10000);
+    setInterval(CoursesPage.refreshDuration, 1000);
 });

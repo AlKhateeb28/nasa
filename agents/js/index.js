@@ -396,6 +396,10 @@ function goToSdoBoard() {
     window.open("https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/sdo_board/index.html", '_blank').focus();
 }
 
+function goToCoursesMonitor() {
+    window.open("http://192.168.0.96/courses/index.html", '_blank').focus();
+}
+
 $(document).ready(function () {
     fillHoursByDayPart();
 

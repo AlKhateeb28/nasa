@@ -839,6 +839,7 @@ body {
     border-color: #7798f8;
     border-image: initial;
     border-radius: 5px;
+    margin-left: 8px;
 }
 
 .grid-row-box {
