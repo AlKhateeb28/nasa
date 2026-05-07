@@ -155,6 +155,11 @@
     color: mintcream;
 }
 
+.left-block-btn:hover {
+    transform: scale(0.9);
+    opacity: 0.5;
+}
+
 .button-control:hover .text {
     transform: scale(0.9);
 }
@@ -245,6 +250,11 @@
     padding-left: 1rem !important;
     border: 1px solid mintcream !important;
     margin-top: 4px;
+}
+
+.btn:hover {
+    transform: scale(0.9);
+    opacity: 0.5;
 }
 
 .btn-pointer {
@@ -980,6 +990,11 @@
     width: 25px;
     text-align: center;
     font-weight: bold;
+}
+
+.pin-btn:hover {
+    transform: scale(0.9);
+    opacity: 0.5;
 }
 
 .unpinned-btn-mode {
