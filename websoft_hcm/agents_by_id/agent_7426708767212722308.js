@@ -22,49 +22,45 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
 try {
     dataList = ArrayDirect(XQuery("sql: " +
-        " BEGIN TRY DROP TABLE [WTDB].[dbo]._white_gray_ids; END TRY BEGIN CATCH END CATCH " +
-        " " +
-        " SELECT cs.id, cs.org_id, cs.fullname " +
-        " INTO [WTDB].[dbo]._tmp_white " +
-        " FROM [WTDB].[dbo].collaborators cs " +
-        " WHERE cs.is_dismiss = 0 " +
-        "    AND cs.login NOT LIKE '%_muc_%' " +
-        "    AND cs.org_id IS NOT NULL; " +
-        " " +
-        " SELECT cs.id, cs.org_id, cs.fullname " +
-        " INTO [WTDB].[dbo]._tmp_fcc " +
-        " FROM [WTDB].[dbo].collaborators cs " +
-        " WHERE cs.login LIKE '%load_muc%' " +
-        "    AND cs.is_dismiss = 0 " +
-        "    AND cs.org_id IS NOT NULL; " +
-        " " +
-        " SELECT cs.id, cs.org_id, cs.fullname " +
-        " INTO [WTDB].[dbo]._tmp_rck " +
-        " FROM [WTDB].[dbo].collaborators cs " +
-        " WHERE cs.login LIKE '%rck_muc%' " +
-        "    AND cs.is_dismiss = 0 " +
-        "    AND cs.org_id IS NOT NULL; " +
-        " " +
-        " SELECT cs.id, cs.org_id, cs.fullname " +
-        " INTO [WTDB].[dbo]._tmp_tren " +
-        " FROM [WTDB].[dbo].collaborators cs " +
-        " WHERE cs.login LIKE '%tren_muc_%' " +
-        "    AND cs.is_dismiss = 0 " +
-        "    AND cs.org_id IS NOT NULL; " +
-        " " +
+        " BEGIN TRY DROP TABLE [WTDB].[dbo]._white_gray_ids; END TRY BEGIN CATCH END CATCH; " +
+        " WITH _tmp_white AS( " +
+        "   SELECT cs.id, cs.org_id, cs.fullname " +
+	    "   FROM[WTDB].[dbo].collaborators cs " +
+        "   WHERE cs.is_dismiss = 0 " +
+        " 	    AND cs.login NOT LIKE '%_muc_%' " +
+        " 	    AND cs.org_id IS NOT NULL " +
+        " ), " +
+        " _tmp_fcc AS( " +
+        "   SELECT cs.id, cs.org_id, cs.fullname " +
+        "   FROM[WTDB].[dbo].collaborators cs " +
+        "   WHERE cs.login LIKE '%load_muc%' " +
+        " 	    AND cs.is_dismiss = 0 " +
+        " 	    AND cs.org_id IS NOT NULL " +
+        " ), " +
+        " _tmp_rck AS( " +
+        "   SELECT cs.id, cs.org_id, cs.fullname " +
+        "   FROM[WTDB].[dbo].collaborators cs " +
+        "   WHERE cs.login LIKE '%rck_muc%' " +
+        " 	    AND cs.is_dismiss = 0 " +
+        " 	    AND cs.org_id IS NOT NULL " +
+        " ), " +
+        " _tmp_tren AS( " +
+        "   SELECT cs.id, cs.org_id, cs.fullname " +
+        "   FROM[WTDB].[dbo].collaborators cs " +
+        "   WHERE cs.login LIKE '%tren_muc_%' " +
+        " 	    AND cs.is_dismiss = 0 " +
+        " 	    AND cs.org_id IS NOT NULL " +
+        " ) " +
         " SELECT cs.id, white.id AS white_id, fcc.id AS fcc_gray_id, rck.id AS rck_gray_id, tren.id AS tren_gray_id " +
-        " INTO [WTDB].[dbo]._white_gray_ids " +
-        " FROM [WTDB].[dbo].collaborators cs " +
-        "    LEFT JOIN [WTDB].[dbo]._tmp_white AS white ON UPPER(cs.fullname) = UPPER(white.fullname) AND cs.org_id = white.org_id " +
-        "    LEFT JOIN [WTDB].[dbo]._tmp_fcc AS fcc ON UPPER(cs.fullname) = UPPER(fcc.fullname) AND cs.org_id = fcc.org_id " +
-        "    LEFT JOIN [WTDB].[dbo]._tmp_rck AS rck ON UPPER(cs.fullname) = UPPER(rck.fullname) AND cs.org_id = rck.org_id " +
-        "    LEFT JOIN [WTDB].[dbo]._tmp_tren AS tren ON UPPER(cs.fullname) = UPPER(tren.fullname) AND cs.org_id = tren.org_id " +
+        " INTO[WTDB].[dbo]._white_gray_ids " +
+        " FROM[WTDB].[dbo].collaborators cs " +
+        "   LEFT JOIN _tmp_white AS white ON UPPER(cs.fullname) = UPPER(white.fullname) AND cs.org_id = white.org_id " +
+        "   LEFT JOIN _tmp_fcc AS fcc ON UPPER(cs.fullname) = UPPER(fcc.fullname) AND cs.org_id = fcc.org_id " +
+        "   LEFT JOIN _tmp_rck AS rck ON UPPER(cs.fullname) = UPPER(rck.fullname) AND cs.org_id = rck.org_id " +
+        "   LEFT JOIN _tmp_tren AS tren ON UPPER(cs.fullname) = UPPER(tren.fullname) AND cs.org_id = tren.org_id " +
         " WHERE cs.is_dismiss = 0 " +
-        "    AND cs.org_id IS NOT NULL; " +
-        " " +
-        "DROP TABLE " + "[WTDB].[dbo]._tmp_white; DROP TABLE [WTDB].[dbo]._tmp_fcc; DROP TABLE [WTDB].[dbo]._tmp_rck; DROP TABLE [WTDB].[dbo]._tmp_tren; " +
-        " " +
-        "SELECT * FROM " + "[WTDB].[dbo]._white_gray_ids "));
+        "   AND cs.org_id IS NOT NULL; " +
+        " SELECT * FROM[WTDB].[dbo]._white_gray_ids "));
 
     total = ArrayCount(dataList);
 

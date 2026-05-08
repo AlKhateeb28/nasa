@@ -27,7 +27,7 @@ if (LdsIsServer) {
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
         dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT * " +
+            " SELECT TOP 1 * " +
             " FROM [WTDB].[dbo].collaborators "));
 
         total = ArrayCount(dataList);
