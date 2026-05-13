@@ -10,7 +10,17 @@ function isCollaboratorExistsInDossier(collsCode) {
     return ArrayCount(dossierList) > 0;
 }
 
+function addYearCondition(year) {
+    if (year != "") {
+        return " AND YEAR(es.finish_date) >= " + OptInt(yearParam);
+    }
+
+    return "";
+}
+
 if (LdsIsServer) {
+    var yearParam = Param.from_year;
+   
     var agentId = 7176435673224669806;
     var userId = curUserID; // 7389518304440750773; // Websoft inner user || FOR SCHEDULED AGENTS
     var msPerRecord = 0.001;
@@ -24,7 +34,7 @@ if (LdsIsServer) {
     var total = 0;
     var processed = 0;
 
-    var excel = new ActiveXObject("Websoft.Office.Excel.Document");
+    var excelDoc = tools.get_object_assembly('Excel');
     var reportString = new Binary();
 
     agent.message = "Получение данных...";
@@ -124,9 +134,8 @@ if (LdsIsServer) {
             "       o.data.value('(//custom_elems/custom_elem[name=''wave'']/value)[1]', 'varchar(max)') AS wave, " +
             "       pcs.name AS typical_position_name " +
             " FROM [WTDB].[dbo].event_results AS ers " +
-            "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id " +
-            "    AND es.education_org_id IN (7100351150313827874, 7410749948253583035, 7100351480975785298) " +
-            "    AND YEAR(es.finish_date) >= 2025 " +
+            "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id " + addYearCondition(yearParam) +
+            "               AND es.education_org_id IN (7100351150313827874, 7410749948253583035, 7100351480975785298, 6148914691236517202, 6148914691236517203, 6802513472431981115, 6938000483356197646, 6938001238782589341, 7034790057599700358, 6856726259800948992, 7086784658178339954, 7410046389105987361, 7410749948253583035, 6856735269184478330, 6856735325928247512, 6856735493587543129, 6869760264243199229, 6870054939308859763) " +
             "         INNER JOIN [WTDB].[dbo].event AS e ON es.id = e.id " +
             "         INNER JOIN [WTDB].[dbo].event_result_types AS erts ON ers.event_result_type_id = erts.id " +
             "         LEFT JOIN [WTDB].[dbo].education_methods AS ems ON es.education_method_id = ems.id " +
@@ -275,8 +284,12 @@ if (LdsIsServer) {
 
         // SAVE EXCEL FILE
         reportString.AppendStr("</table></html>");
-        excel.LoadHtmlString(reportString.GetStr(), "");
-        excel.SaveAs("E:/Websoft/Reports/report_fck_2025/report_fck_all_" + ParseDate(Date()) + ".xlsx");
+        excelDoc.LoadHtmlString(reportString.GetStr(), "");
+        try {
+            excelDoc.SaveAs("E:/Websoft/Reports/report_rck_2025/report_rck_" + ParseDate(Date()) + ".xlsx");
+        } catch (e) {
+            throw new Error("Возможно файл открыт другим процессом!");
+        }
 
         agent.state = 1;
         agent.processed = processed;
