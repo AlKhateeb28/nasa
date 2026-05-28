@@ -1,4 +1,4 @@
-ALTER INDEX ALL ON [WTDB].[dbo].collaborator REBUILD;
+ALTER INDEX ALL ON [WTDB].[dbo].collaborator REBUILD; -- REORGANIZE 
 ALTER INDEX ALL ON [WTDB].[dbo].collaborators REBUILD;
 ALTER INDEX ALL ON [WTDB].[dbo].org REBUILD;
 ALTER INDEX ALL ON [WTDB].[dbo].orgs REBUILD;

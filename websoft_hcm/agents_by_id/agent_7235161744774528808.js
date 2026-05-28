@@ -359,6 +359,42 @@ function  getTrenNotPassedEduMethods(dossierAccountingIds, isAlone) {
     return result;
 }
 
+function getTrenSSNotPassedEduMethods(dossierAccountingIds) {
+    result = "";
+
+    for (collaborator in dossierAccountingIds) {
+        dataList = ArrayDirect(XQuery("sql: " +
+            " SELECT ems.id, " +
+            "       ems.name " +
+            " FROM [WTDB].[dbo].event_results ers " +
+            "       INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
+            "       INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id " +
+            "       INNER JOIN [WTDB].[dbo].education_methods ems ON es.education_method_id = ems.id AND LOWER(ems.code) LIKE '%fck_rck_tren_m6%' " +
+            "       INNER JOIN [WTDB].[dbo].education_method em ON ems.id = em.id " +
+            " WHERE ers.person_id = " + collaborator.collaborator_list_id +
+            "       AND UPPER(er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)')) != 'СЕРТИФИЦИРОВАН' " +
+            "       AND ems.id NOT IN ( " +
+            "            SELECT ems.id " +
+            "            FROM [WTDB].[dbo].event_results ers " +
+            "                INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
+            "                INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id " +
+            "                INNER JOIN [WTDB].[dbo].education_methods ems ON es.education_method_id = ems.id AND LOWER(ems.code) LIKE '%fck_rck_tren_m6%' " +
+            "                INNER JOIN [WTDB].[dbo].education_method em ON ems.id = em.id " +
+            "            WHERE ers.person_id = " + collaborator.collaborator_list_id +
+            "               AND UPPER(er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)')) = 'СЕРТИФИЦИРОВАН')"));
+
+        for (data in dataList) {
+            result += data.name + ";";
+        }
+    }
+
+    if (StrCharCount(result) > 0) {
+        result = StrCharRangePos(result, 0, StrCharCount(result) - 1);
+    }
+
+    return result;
+}
+
 function getTrenEduMethodCount(dossierAccountingIds) {
     result = "";
 
@@ -517,6 +553,72 @@ function getUiUniqueEvents(programIds) {
     };
 }
 
+// Trener SS
+function getTrenSSUniqueEvents(programIds) {
+    startDatetime = null;
+    finishDatetime = null;
+
+    count = 0;
+
+    for (program in programIds) {
+        dataList = ArrayDirect(XQuery("sql: " +
+            " SELECT es.name, " +
+            "       es.start_date, " +
+            "       es.finish_date " +
+            " FROM [WTDB].[dbo].event_results ers " +
+            "       INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id " +
+            " WHERE ers.id = " + program.rcc_tren_soc_programs_id));
+
+        for (data in dataList) {
+            count++;
+
+            if (startDatetime == null) {
+                startDatetime = data.start_date;
+            } else {
+                if (data.start_date < startDatetime) {
+                    startDatetime = data.start_date;
+                }
+            }
+
+            if (finishDatetime == null) {
+                finishDatetime = data.finish_date;
+            } else {
+                if (data.finish_date > finishDatetime) {
+                    finishDatetime = data.finish_date;
+                }
+            }
+        }
+    }
+
+    return {
+        count: count,
+        name: count,
+        start: startDatetime,
+        finish: finishDatetime
+    };
+}
+
+function getTrenSSCertUniqueEvents(dossierAccountingIds) {
+    result = 0;
+
+    for (collaborator in dossierAccountingIds) {
+        dataList = ArrayDirect(XQuery("sql: " +
+            " SELECT ems.id, " +
+            "       ems.name " +
+            " FROM [WTDB].[dbo].event_results ers " +
+            "       INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
+            "       INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id " +
+            "       INNER JOIN [WTDB].[dbo].education_methods ems ON es.education_method_id = ems.id AND LOWER(ems.code) LIKE '%fck_rck_tren_m6%' " +
+            "       INNER JOIN [WTDB].[dbo].education_method em ON ems.id = em.id " +
+            " WHERE ers.person_id = " + collaborator.collaborator_list_id +
+            "       AND UPPER(er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)')) != 'СЕРТИФИЦИРОВАН' "));
+
+        result += ArrayCount(dataList);
+    }
+
+    return result;
+}
+
 function getUiCertificateNumbers(certificatesIds) {
     result = "";
 
@@ -531,6 +633,26 @@ function getUiCertificateNumbers(certificatesIds) {
     }
 
     if(StrCharCount(result) > 0) {
+        result = StrCharRangePos(result, 0, StrCharCount(result) - 1);
+    }
+
+    return result;
+}
+
+function getTrenSSCertificateNumbers(certificatesIds) {
+    result = "";
+
+    for (certificate in certificatesIds) {
+        certificateDoc = tools.open_doc(OptInt(certificate.rcc_tren_soc_certificate_id));
+
+        if (certificateDoc != undefined) {
+            certificateDocTE = certificateDoc.TopElem;
+
+            result += certificateDocTE.serial + "-" + certificateDocTE.number + "/" + StrDate(Date(certificateDocTE.delivery_date), false, false).split(".")[2] + ";";
+        }
+    }
+
+    if (StrCharCount(result) > 0) {
         result = StrCharRangePos(result, 0, StrCharCount(result) - 1);
     }
 
@@ -630,7 +752,7 @@ function getUniqueEvents(data, dossierDocTE) {
             successRate: successRate,
             state: getState(data.assignment_date, finality1, finality2, finality3, finality4, successRate)
         };
-    } else if(OptInt(data.qualification_id) == 7291203475375342689) {
+    } else if (OptInt(data.qualification_id) == 7195881271939560446) {
         // Тренер Самостоятельно
         finality1 = getEmptyFinality();
         finality2 = getEmptyFinality();
@@ -688,6 +810,31 @@ function getUniqueEvents(data, dossierDocTE) {
             eduMethodCount: "-",
             eventResultNames: "-",
             successRate: "-",
+            state: "Завершена"
+        };
+    } else if (OptInt(data.qualification_id) == 7260686525065062239) {
+        // Тренер РЦК для соц.сферы
+        finality1 = getTrenSSUniqueEvents(dossierDocTE.rcc_tren_soc_programss);
+        finality2 = getEmptyFinality();
+        finality3 = getEmptyFinality();
+        finality4 = getEmptyFinality();
+
+        successRate = OptInt((getTrenSSCertUniqueEvents(dossierDocTE.collaborator_lists)) * 100 / 5);
+        if (successRate >= 99) {
+            successRate = 100;
+        }
+
+        return {
+            finality1: finality1,
+            finality2: finality2,
+            finality3: finality3,
+            finality4: finality4,
+            passedMethods: getTrenSSNotPassedEduMethods(dossierDocTE.collaborator_lists),
+            certificateNumbers: getTrenSSCertificateNumbers(dossierDocTE.rcc_tren_soc_certificates),
+            otherEvents: getRpOtherEvents(dossierDocTE.other_eventss),
+            eduMethodCount: "-",
+            eventResultNames: "-",
+            successRate: successRate,
             state: "Завершена"
         };
     } else {
@@ -910,7 +1057,7 @@ if (LdsIsServer) {
     var skipped = 0;
     var notFound = 0;
 
-    var excel = new ActiveXObject("Websoft.Office.Excel.Document");
+    var excelDoc = tools.get_object_assembly("Excel");
     var reportString = new Binary();
 
     addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
@@ -931,9 +1078,12 @@ if (LdsIsServer) {
 
         // SAVE EXCEL FILE
         reportString.AppendStr("</table></html>");
-        excel.LoadHtmlString(reportString.GetStr(), "");
-        //excel.SaveAs("E:/Websoft/Reports/report_not_tren_muc_com/report_not_tren_muc_com_" + ParseDate(Date()) + ".xlsx");
-        excel.SaveAs("E:/Websoft/Reports/report_col_ock_rck/rck_kval_" + ParseDate(Date()) + ".xlsx");
+        excelDoc.LoadHtmlString(reportString.GetStr(), "");        
+        try {
+            excelDoc.SaveAs("E:/Websoft/Reports/report_col_ock_rck/rck_kval_" + ParseDate(Date()) + ".xlsx");
+        } catch (e) {
+            throw new Error("Возможно файл открыт другим процессом!");
+        }
 
         agent.state = 1;
         agent.processed = processed;

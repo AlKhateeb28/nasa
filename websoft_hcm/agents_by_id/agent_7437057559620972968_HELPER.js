@@ -148,7 +148,7 @@ try {
             "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
         );
     } else {
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent is running. Waiting for it to end!");
+        addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent is running. Waiting for it to be completed!");
 
         agent.state = 1;
         agent.processed = 0;

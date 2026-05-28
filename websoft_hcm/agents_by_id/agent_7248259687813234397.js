@@ -422,6 +422,25 @@ function getAmSsState(assignmentDate, finality1, finality2, finality3, finality4
     return state;
 }
 
+function getAmBnoState(assignmentDate, finality1, finality2, finality3, finality4, finality5, successRate) {
+
+    if (assignmentDate != null && Year(assignmentDate) < 2025) {
+        return "Завершена";
+    }
+
+    state = "";
+
+    if (finality1.count == 0 && finality2.count == 0 && finality3.count == 0 && finality4.count == 0 && finality5.count == 0) {
+        state = "Не начата";
+    } else if (successRate >= 80 && finality1.count > 0 && finality2.count > 0 && finality3.count > 0 && finality4.count > 0 && finality5.count > 0) {
+        state = "Завершена";
+    } else {
+        state = "В процессе"
+    }
+
+    return state;
+}
+
 function normalizeSuccessRate(value) {
     if(value == 99) {
         return 100;
@@ -437,6 +456,7 @@ function getUniqueEvents(data, dossierDocTE) {
         finality2 = getRpUniqueEvents(data, dossierDocTE.ock_rp_programs_m2s, "ock_rp_programs_m2_id", 4);
         finality3 = getRpUniqueEvents(data, dossierDocTE.ock_rp_programs_m3s, "ock_rp_programs_m3_id", 4);
         finality4 = getEmptyFinality();
+        finality5 = getEmptyFinality();
 
         successRate = normalizeSuccessRate(OptInt((finality1.count + finality2.count + finality3.count) * 100 / 11));
 
@@ -445,6 +465,7 @@ function getUniqueEvents(data, dossierDocTE) {
             finality2: finality2,
             finality3: finality3,
             finality4: finality4,
+            finality5: finality5,
             passedMethods: getNotPassedEduMethodsByCode(dossierDocTE.collaborator_lists, "fck_ock_rp_am"),
             certificateNumbers: getAloneCertificateByType(dossierDocTE.ock_rp_certificate_id, 7129689286386417453),
             otherEvents: getRpOtherEvents(dossierDocTE.other_eventss),
@@ -459,6 +480,7 @@ function getUniqueEvents(data, dossierDocTE) {
         finality2 = getRpUniqueEvents(data, dossierDocTE.ock_am_programs_m2s, "ock_am_programs_m2_id", 4);
         finality3 = getRpUniqueEvents(data, dossierDocTE.ock_am_programs_m3s, "ock_am_programs_m3_id", 4);
         finality4 = getRpUniqueEvents(data, dossierDocTE.ock_am_programs_m4s, "ock_am_programs_m4_id", 1);
+        finality5 = getEmptyFinality();
 
         successRate = normalizeSuccessRate(OptInt((finality1.count + finality2.count + finality3.count + finality4.count) * 100 / 12));
 
@@ -467,6 +489,7 @@ function getUniqueEvents(data, dossierDocTE) {
             finality2: finality2,
             finality3: finality3,
             finality4: finality4,
+            finality5: finality5,
             passedMethods: getAmSsNotPassedEduMethods(dossierDocTE.collaborator_lists),
             certificateNumbers: getAloneCertificateByType(dossierDocTE.ock_am_certificate, 7129689433552140002),
             otherEvents: getRpOtherEvents(dossierDocTE.other_eventss),
@@ -481,6 +504,7 @@ function getUniqueEvents(data, dossierDocTE) {
         finality2 = getEmptyFinality();
         finality3 = getEmptyFinality();
         finality4 = getEmptyFinality();
+        finality5 = getEmptyFinality();
 
         successRate = normalizeSuccessRate(OptInt(finality1.count * 100 / 5));
 
@@ -489,6 +513,7 @@ function getUniqueEvents(data, dossierDocTE) {
             finality2: finality2,
             finality3: finality3,
             finality4: finality4,
+            finality5: finality5,
             passedMethods: getNotPassedEduMethodsByCode(dossierDocTE.collaborator_lists, "fck_ock_tr"),
             certificateNumbers: getCertificateNumbersByTypes(dossierDocTE.ock_tren_certificates, [7129685550282174837]),
             otherEvents: getRpOtherEvents(dossierDocTE.other_eventss),
@@ -503,14 +528,16 @@ function getUniqueEvents(data, dossierDocTE) {
         finality2 = getRpUniqueEvents(data, dossierDocTE.ock_rp_programs_m2s, "ock_rp_programs_m2_id", 3);
         finality3 = getRpUniqueEvents(data, dossierDocTE.ock_rp_programs_m3s, "ock_rp_programs_m3_id", 3);
         finality4 = getRpUniqueEvents(data, dossierDocTE.ock_rp_programs_m4s, "ock_rp_programs_m4_id", 3);
+        finality5 = getRpUniqueEvents(data, dossierDocTE.ock_rp_programs_m5s, "ock_rp_programs_m5_id", 4);
 
-        successRate = normalizeSuccessRate(OptInt((finality1.count + finality2.count + finality3.count + finality4.count) * 100 / 13));
+        successRate = normalizeSuccessRate(OptInt((finality1.count + finality2.count + finality3.count + finality4.count) * 100 / 12));
 
         return {
             finality1: finality1,
             finality2: finality2,
             finality3: finality3,
             finality4: finality4,
+            finality5: finality5,
             passedMethods: getNotPassedEduMethodsByCode(dossierDocTE.collaborator_lists, "fck_ock_bno_rp_am"),
             certificateNumbers: getCertificateNumbersByTypes(dossierDocTE.ock_tren_certificates, [7163709519902510128]),
             otherEvents: getRpOtherEvents(dossierDocTE.other_eventss),
@@ -525,29 +552,31 @@ function getUniqueEvents(data, dossierDocTE) {
         finality2 = getRpUniqueEvents(data, dossierDocTE.ock_am_programs_m2s, "ock_am_programs_m2_id", 3);
         finality3 = getRpUniqueEvents(data, dossierDocTE.ock_am_programs_m3s, "ock_am_programs_m3_id", 3);
         finality4 = getRpUniqueEvents(data, dossierDocTE.ock_am_programs_m4s, "ock_am_programs_m4_id", 3);
+        finality5 = getRpUniqueEvents(data, dossierDocTE.ock_am_programs_m5s, "ock_am_programs_m5_id", 3);
 
-        successRate = normalizeSuccessRate(OptInt((finality1.count + finality2.count + finality3.count + finality4.count) * 100 / 13));
+        successRate = normalizeSuccessRate(OptInt((finality1.count + finality2.count + finality3.count + finality4.count + finality5.count) * 100 / 13));
 
         return {
             finality1: finality1,
             finality2: finality2,
             finality3: finality3,
             finality4: finality4,
+            finality5: finality5,
             passedMethods: getNotPassedEduMethodsByCode(dossierDocTE.collaborator_lists, "fck_ock_bno_rp_am"),
             certificateNumbers: getAloneCertificateByType(dossierDocTE.ock_am_certificate, 7247965834674680403),
             otherEvents: getRpOtherEvents(dossierDocTE.other_eventss),
-            eduMethodCount: getEduMethodCountByEduMethod(dossierDocTE.collaborator_lists, 7247966448645989959),
+            eduMethodCount: getEduMethodCountByEduMethod(dossierDocTE.collaborator_lists, 7260348075183431472),
             eventResultNames: getRpEventResultNames(dossierDocTE.collaborator_lists, 7247966448645989959),
             successRate: successRate,
-            state: getAmSsState(data.assignment_date, finality1, finality2, finality3, finality4, successRate)
+            state: getAmBnoState(data.assignment_date, finality1, finality2, finality3, finality4, finality5, successRate)
         }
     } else if(OptInt(data.qualification_id) == 7204089200495237601) {
-        // ***
         // ОЦК Тренер БНО
         finality1 = getTrenUniqueEvents(data, dossierDocTE.ock_tren_programss, "Тренер ОЦК_Модуль1", 5);
         finality2 = getEmptyFinality();
         finality3 = getEmptyFinality();
         finality4 = getEmptyFinality();
+        finality5 = getEmptyFinality();
 
         successRate = normalizeSuccessRate(OptInt(finality1.count * 100 / 5));
 
@@ -556,6 +585,7 @@ function getUniqueEvents(data, dossierDocTE) {
             finality2: finality2,
             finality3: finality3,
             finality4: finality4,
+            finality5: finality5,
             passedMethods: getNotPassedEduMethodsByCode(dossierDocTE.collaborator_lists, "fck_ock_tr"),
             certificateNumbers: getCertificateNumbersByTypes(dossierDocTE.ock_tren_certificates, [7129685550282174837]),
             otherEvents: getRpOtherEvents(dossierDocTE.other_eventss),
@@ -570,6 +600,7 @@ function getUniqueEvents(data, dossierDocTE) {
             finality2:  getEmptyFinality(),
             finality3 : getEmptyFinality(),
             finality4 : getEmptyFinality(),
+            finality5: finality5,
             passedMethods: "",
             certificateNumbers: "",
             otherEvents: "",
@@ -789,7 +820,7 @@ if (LdsIsServer) {
     var skipped = 0;
     var notFound = 0;
 
-    var excel = new ActiveXObject("Websoft.Office.Excel.Document");
+    var excelDoc = tools.get_object_assembly("Excel");
     var reportString = new Binary();
 
     addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
@@ -810,9 +841,12 @@ if (LdsIsServer) {
 
         // SAVE EXCEL FILE
         reportString.AppendStr("</table></html>");
-        excel.LoadHtmlString(reportString.GetStr(), "");
-        //excel.SaveAs("E:/Websoft/Reports/report_not_tren_muc_com/report_not_tren_muc_com_" + ParseDate(Date()) + ".xlsx");
-        excel.SaveAs("E:/Websoft/Reports/report_col_ock_rck/ock_kval_" + ParseDate(Date()) + ".xlsx");
+        excelDoc.LoadHtmlString(reportString.GetStr(), "");
+        try {
+            excelDoc.SaveAs("E:/Websoft/Reports/report_col_ock_rck/ock_kval_" + ParseDate(Date()) + ".xlsx");
+        } catch (e) {
+            throw new Error("Возможно файл открыт другим процессом!");
+        }
 
         agent.state = 1;
         agent.processed = processed;

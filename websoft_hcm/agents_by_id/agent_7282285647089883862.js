@@ -66,7 +66,45 @@ function fillLectorStatus(fieldSuffix, step, max) {
                 lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "";
                 lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "4";
             } else {
-                if (data.training_date == "" && data.expert_access == "" && data.methodologist_access == "" && data.education_method_cert == "") {
+                isSetStatus = false;
+
+                if (data.training_date == "" && data.expert_access == "" && data.methodologist_access == "" && data.education_method_cert == "" && eventCountValue == 0) {
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "Без статуса";
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "-";
+                    isSetStatus = true;
+                } 
+                if (data.training_date != "" && Date(data.training_date) > Date() && data.expert_access == "" && data.methodologist_access == "" && data.education_method_cert == "") {
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "Кандидат";
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "План";
+                    isSetStatus = true;
+                } 
+                if ((data.training_date != "" && Date(data.training_date) <= Date()) && eventCountValue == 0) {
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "Ученик";
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "0";
+                    isSetStatus = true;
+                } 
+                if (data.expert_access != "" && eventCountValue < 4) {
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "Теоретик";
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "1";
+                    isSetStatus = true;
+                } 
+                if (data.expert_access != "" && data.methodologist_access != "" && (eventCountValue >= 4 && eventCountValue <= 10)) {
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "Новичок";
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "2";
+                    isSetStatus = true;
+                } 
+                if (data.expert_access != "" && data.methodologist_access != "" && eventCountValue > 10 && npsValue >= 70) {
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "Практик";
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "3";
+                    isSetStatus = true;
+                } 
+                
+                if (!isSetStatus) {
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "?";
+                    lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "";
+                }
+
+                /*if (data.training_date == "" && data.expert_access == "" && data.methodologist_access == "" && data.education_method_cert == "") {
                     lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "Без статуса";
                     lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "-";
                 } else if (data.training_date != "" && Date(data.training_date) > Date() && data.expert_access == "" && data.methodologist_access == "" && data.education_method_cert == "") {
@@ -87,7 +125,7 @@ function fillLectorStatus(fieldSuffix, step, max) {
                 } else {
                     lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_" + fieldSuffix).value = "?";
                     lectorsDoc.TopElem.custom_elems.ObtainChildByKey("lector_status_code_" + fieldSuffix).value = "";
-                }
+                }*/
             }
 
             lectorsDoc.Save();

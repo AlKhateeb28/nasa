@@ -1,0 +1,1 @@
+ALTER TABLE [WTDB].[dbo].cc_web_activitys ALTER COLUMN url_params VARCHAR(400) NULL;

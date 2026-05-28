@@ -1,6 +1,6 @@
 <%
 // 7151616261867663994
-function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
+function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(message==null){message="Empty message";}LogEvent(loggerName,message);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}};function addLogResultMessage(loggerName,message,total,processed,saved,skipped){EnableLog(loggerName, true);try{result="";if(message!=null){result=message+" ";}if(total!=null){result=result+total+" ";}if(processed!=null){result=result+processed+" ";}if(saved!=null){result=result+saved;}if(skipped!=null){result=result+skipped;}LogEvent(loggerName,result);}catch(e){throw new Error(e);}finally{EnableLog(loggerName,false);}}function getDurationMessage(duration) {try{var durationMessage=" sec";if(duration>=60&&duration<3600){duration=duration/60;durationMessage=" min";}if(duration>=3600){duration=duration/3600;durationMessage=" hour";}return StrReal(duration,1)+durationMessage;}catch(e){throw new Error(e);}}function getWebsocketClient(){try {return new WebSocketClient("ws://192.168.0.96:3000/");} catch (e) {}}function getAgentInstance(agentId, userId,  loggerName){agentDoc=tools.open_doc(agentId);userDoc=tools.open_doc(userId);userDocTE=userDoc.TopElem;agent={};agent.type="AGENT";agent.loggerName=loggerName;agent.id=agentId;agent.name=agentDoc.TopElem.name;agent.userId=userId;agent.userName=userDocTE.lastname+" "+userDocTE.firstname+" "+userDocTE.middlename;agent.state=0;agent.total="--";agent.processed="--";agent.skipped="--";agent.saved="--";agent.notFound="--";agent.message="";agent.errorMessage="";agent.fetchTime=0;agent.handlingTime=0;agent.savingTime=0;agent.refreshChart=0;agent.msPerRow=0;agent.minMsPerRow=999999;agent.maxMsPerRow=0;return agent;}function sendMessageToWebsocket(ws, agent){try {try {ws.Send("#" + EncodeJson(agent));agent.refreshChart = 0;} catch (e) {addLogMessage(agent.loggerName, "[agent.id: " + agent.id + "] Reconnect to websocket");ws = getWebsocketClient();}return ws;}catch(e){return null;}}function refreshMsPerRow(agent,startDate,total){try {if (total > 0) {agent.msPerRow = eval((DateToRawSeconds(Date()) - DateToRawSeconds(startDate)) + ".0 / " + total);} else {agent.msPerRow = 0;}}catch(e){}}function saveMonitorAgents(agent,startDate){try {monitorAgent=tools.new_doc_by_name("cc_agent_monitor_event",false);monitorAgent.BindToDb(DefaultDb);monitorAgentTE=monitorAgent.TopElem;monitorAgentTE.type=agent.type;monitorAgentTE.agent_id=agent.id;monitorAgentTE.user_id=agent.userId;monitorAgentTE.state=agent.state;monitorAgentTE.total=agent.total;monitorAgentTE.processed=agent.processed;monitorAgentTE.skipped=agent.skipped;monitorAgentTE.saved=agent.saved;monitorAgentTE.not_found=agent.notFound;monitorAgentTE.logger_name=agent.loggerName;monitorAgentTE.error_message=agent.errorMessage;monitorAgentTE.start_date=startDate;monitorAgentTE.finish_date=Date();monitorAgent.Save();} catch (e) {}}
 
 function getAvailableTypesAsString(dossierDocTE) {
     typeValue="";
@@ -64,10 +64,22 @@ function getAvailableTypesAsString(dossierDocTE) {
     return typeValue;
 }
 
-function getEventData(personId, educationMethodId, isAssessment) {
+function getEventData(personId, educationMethodIds, isAssessment) {
     result = {};
     result.eventResult = "";
     result.startDate = "";
+
+    educationMethodIdString = "";
+
+    for (id in educationMethodIds) {
+        educationMethodIdString += id + ", ";
+    }
+
+    if (StrCharCount(educationMethodIdString) > 0) {
+        educationMethodIdString = StrCharRangePos(educationMethodIdString, 0, StrCharCount(educationMethodIdString) - 2);        
+    } else {
+        return result;
+    }
 
     resultList = ArrayDirect(XQuery("sql: " +
         " SELECT ers.is_assist, " +
@@ -77,7 +89,7 @@ function getEventData(personId, educationMethodId, isAssessment) {
         "   INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
         "   INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id " +
         " WHERE ers.person_id = " + personId +
-        "   AND es.education_method_id = " + educationMethodId));
+        "   AND es.education_method_id IN (" + educationMethodIdString) + ")");
 
     if(ArrayCount(resultList) > 0) {
         if(isAssessment) {
@@ -211,26 +223,25 @@ try {
     reportString.AppendStr("<th class='header'>Включен в группу на обучение</th>");
     reportString.AppendStr("<th class='header'>ФП дата</th>");
     reportString.AppendStr("<th class='header'>ФП статус</th>");
-    reportString.AppendStr("<th class='header'>ОБП дата</th>");
-    reportString.AppendStr("<th class='header'>ОБП статус</th>");
-    reportString.AppendStr("<th class='header'>СУЭ дата</th>");
-    reportString.AppendStr("<th class='header'>СУЭ статус</th>");
+    reportString.AppendStr("<th class='header'>ОБП/ИнБП дата</th>");
+    reportString.AppendStr("<th class='header'>ОБП.ИнБП статус</th>");
+    reportString.AppendStr("<th class='header'>СУЭ/ПУ дата</th>");
+    reportString.AppendStr("<th class='header'>СУЭ/ПУ статус</th>");
+    reportString.AppendStr("<th class='header'>УИ/ОВКР дата</th>");
+    reportString.AppendStr("<th class='header'>УИ/ОВКР статус</th>");
+    reportString.AppendStr("<th class='header'>ММ1 дата</th>");
+    reportString.AppendStr("<th class='header'>ММ1 статус</th>");
+    reportString.AppendStr("<th class='header'>ДП дата</th>");
+    reportString.AppendStr("<th class='header'>ДП статус</th>");
+    reportString.AppendStr("<th class='header'>ОВПП дата</th>");
+    reportString.AppendStr("<th class='header'>ОВПП статус</th>");
     reportString.AppendStr("<th class='header'>УИ дата</th>");
     reportString.AppendStr("<th class='header'>УИ статус</th>");
-    reportString.AppendStr("<th class='header'>СС дата</th>");
-    reportString.AppendStr("<th class='header'>СС статус</th>");
-    reportString.AppendStr("<th class='header'>Карт дата</th>");
-    reportString.AppendStr("<th class='header'>Карт статус</th>");
-    reportString.AppendStr("<th class='header'>МРП дата</th>");
-    reportString.AppendStr("<th class='header'>МРП статус</th>");
-    reportString.AppendStr("<th class='header'>ТРМ_О дата</th>");
-    reportString.AppendStr("<th class='header'>ТРМ_О статус</th>");
     reportString.AppendStr("<th class='header'>ОКРО дата</th>");
     reportString.AppendStr("<th class='header'>ОКРО статус</th>");
-    reportString.AppendStr("<th class='header'>СР дата</th>");
-    reportString.AppendStr("<th class='header'>СР статус</th>");
-    reportString.AppendStr("<th class='header'>ТРМ_П дата</th>");
-    reportString.AppendStr("<th class='header'>ТРМ_П статус</th>");
+    reportString.AppendStr("<th class='header'>ДПБО дата</th>");
+    reportString.AppendStr("<th class='header'>ДПБО статус</th>");
+
     reportString.AppendStr("<th class='header'>УЗ дата</th>");
     reportString.AppendStr("<th class='header'>УЗ статус</th>");
     reportString.AppendStr("<th class='header'>ОИ_СР дата</th>");
@@ -245,6 +256,15 @@ try {
     reportString.AppendStr("<th class='header'>Тест статус</th>");
     reportString.AppendStr("<th class='header'>ОО дата</th>");
     reportString.AppendStr("<th class='header'>ОО статус</th>");
+
+
+    reportString.AppendStr("<th class='header'>СР дата</th>");
+    reportString.AppendStr("<th class='header'>СР статус</th>");
+
+    // --NEW
+    reportString.AppendStr("<th class='header'>Серт_РП_БНО дата дата</th>");
+    reportString.AppendStr("<th class='header'>Серт_РП_БНО дата статус</th>");
+    // --OLD
     reportString.AppendStr("<th class='header'>ПП_ОБП дата</th>");
     reportString.AppendStr("<th class='header'>ПП_ОБП статус</th>");
     reportString.AppendStr("<th class='header'>ПП_5С дата</th>");
@@ -253,6 +273,9 @@ try {
     reportString.AppendStr("<th class='header'>ПП_Карт статус</th>");
     reportString.AppendStr("<th class='header'>ПП_МРП дата</th>");
     reportString.AppendStr("<th class='header'>ПП_МРП статус</th>");
+    // --
+    // --NEW
+    // --OLD
     reportString.AppendStr("<th class='header'>ТТ дата</th>");
     reportString.AppendStr("<th class='header'>ТТ статус</th>");
     reportString.AppendStr("<th class='header'>Серт_Т_ОБП дата</th>");
@@ -263,10 +286,9 @@ try {
     reportString.AppendStr("<th class='header'>Серт_Т_Карт дата статус</th>");
     reportString.AppendStr("<th class='header'>Серт_Т_МРП дата дата</th>");
     reportString.AppendStr("<th class='header'>Серт_Т_МРП дата статус</th>");
+    // --
     reportString.AppendStr("<th class='header'>ТТ_РТК дата дата</th>");
-    reportString.AppendStr("<th class='header'>ТТ_РТК дата статус</th>");
-    reportString.AppendStr("<th class='header'>Серт_РП_БНО дата дата</th>");
-    reportString.AppendStr("<th class='header'>Серт_РП_БНО дата статус</th>");
+    reportString.AppendStr("<th class='header'>ТТ_РТК дата статус</th>");    
 
 
     reportString.AppendStr("</tr>");
@@ -313,95 +335,105 @@ try {
             reportString.AppendStr("<td>" + typeValue + "</td>");
             reportString.AppendStr("<td>" + isInGroup + "</td>");
             // ФП
-            personData = getEventData( data.student_id, 7139579904915384134);
+            personData = getEventData(data.student_id, [7139579904915384134, 7139584342275056417]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
-            // ОБП
-            personData = getEventData( data.student_id, 7139583716715276542);
+            // ОБП/ИнБП
+            personData = getEventData(data.student_id, [7139583716715276542, 7260326033895686135]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
-            // СУЭ
-            personData = getEventData( data.student_id, 7139583892004006841);
+            // СУЭ/ПУ
+            personData = getEventData(data.student_id, [7139583892004006841, 7260339633432155683]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
+            // УИ/ОВКР
+            personData = getEventData(data.student_id, [7139584119654044899, 7260340223731491074]);
+            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
+            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
+            // ММ1
+            personData = getEventData(data.student_id, [7260340839388028681]);
+            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
+            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
+            // ДП
+            personData = getEventData( data.student_id, [7139584611408838535]);
+            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
+            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
+            // ОВПП
+            personData = getEventData( data.student_id, [7139584912880465142]);
+            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
+            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // УИ
-            personData = getEventData( data.student_id, 7139584119654044899);
-            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
-            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
-            // СС
-            personData = getEventData( data.student_id, 7139584342275056417);
-            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
-            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
-            // Карт
-            personData = getEventData( data.student_id, 7139584611408838535);
-            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
-            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
-            // МРП
-            personData = getEventData( data.student_id, 7139584912880465142);
-            reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
-            reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
-            // ТРМ_О
-            personData = getEventData( data.student_id, 7139585150445631860);
+            personData = getEventData( data.student_id, [7139585150445631860]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // ОКРО
-            personData = getEventData( data.student_id, 7139585472164002602);
+            personData = getEventData( data.student_id, [7139585472164002602]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
-            // СР
-            personData = getEventData( data.student_id, 7139585712784635511);
+            // ДПБО
+            personData = getEventData(data.student_id, [7260342428725114921]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
+            
             // TPM_П
-            personData = getEventData( data.student_id, 7139585867699419711);
+            personData = getEventData( data.student_id, [7139585867699419711]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
             // УЗ
-            personData = getEventData( data.student_id, 7139586023043529440);
+            personData = getEventData( data.student_id, [7139586023043529440]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
             // ОИ_СР
-            personData = getEventData( data.student_id, 7139586222744035692);
+            personData = getEventData( data.student_id, [7139586222744035692]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
             // РОЭЭ
-            personData = getEventData( data.student_id, 7139587160353735460);
+            personData = getEventData( data.student_id, [7139587160353735460]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
             // КНУ
-            personData = getEventData( data.student_id, 7139587337640712479);
+            personData = getEventData( data.student_id, [7139587337640712479]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
             // РСС
-            personData = getEventData( data.student_id, 7139587483214737195);
+            personData = getEventData( data.student_id, [7139587483214737195]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // Тест
-            personData = getEventData( data.student_id, 7139587938917924601, true);
+            personData = getEventData( data.student_id, [7139587938917924601], true);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // ОО
-            personData = getEventData( data.student_id, 7139588594320465247);
+            personData = getEventData( data.student_id, [7139588594320465247]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
+
+            // СР
+            personData = getEventData(data.student_id, [7260346692047926831]);
+            reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
+            reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
+            // Серт_РП_БНО
+            certificateData = getCertificationData(data.student_id, 7143846913328314346);
+            reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateDate + "</td>");
+            reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
             // ПП_ОБП
-            personData = getEventData( data.student_id, 7139594763654621792);
+            personData = getEventData( data.student_id, [7139594763654621792]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // ПП_5С
-            personData = getEventData( data.student_id, 7139597766701841243);
+            personData = getEventData( data.student_id, [7139597766701841243]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // ПП_Карт
-            personData = getEventData( data.student_id, 7139597968774893941);
+            personData = getEventData( data.student_id, [7139597968774893941]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // ПП_МРП
-            personData = getEventData( data.student_id, 7139598255544823032);
+            personData = getEventData( data.student_id, [7139598255544823032]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // ТТ
-            personData = getEventData( data.student_id, 7139598651254144932);
+            personData = getEventData( data.student_id, [7139598651254144932]);
             reportString.AppendStr("<td class=' align-center'>" + personData.startDate + "</td>");
             reportString.AppendStr("<td class=' align-center'>" + personData.eventResult + "</td>");
             // Серт_Т_ОБП
@@ -421,13 +453,9 @@ try {
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateDate + "</td>");
             reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
             // ТТ_РТК
-            personData = getEventData( data.student_id, 7139600124291833991);
+            personData = getEventData( data.student_id, [7139600124291833991]);
             reportString.AppendStr("<td class='column_grey align-center'>" + personData.startDate + "</td>");
-            reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");
-            // Серт_РП_БНО
-            certificateData = getCertificationData( data.student_id, 7143846913328314346);
-            reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateDate + "</td>");
-            reportString.AppendStr("<td class='column_grey align-center'>" + certificateData.certificateResult + "</td>");
+            reportString.AppendStr("<td class='column_grey align-center'>" + personData.eventResult + "</td>");            
 
             reportString.AppendStr("</tr>");
         } else {

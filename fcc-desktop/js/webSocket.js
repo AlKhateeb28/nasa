@@ -14,5 +14,5 @@ function getWebSocket(windowWebSocket) {
     }
 
     //return new WebSocket("ws://10.176.16.38:3000/");
-    return new WebSocket("ws://192.168.0.96:3000/");
+    return new WebSocket(protocol + "://192.168.0.96:3000/");
 }

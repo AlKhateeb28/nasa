@@ -286,7 +286,7 @@ if (LdsIsServer) {
         reportString.AppendStr("</table></html>");
         excelDoc.LoadHtmlString(reportString.GetStr(), "");
         try {
-            excelDoc.SaveAs("E:/Websoft/Reports/report_rck_2025/report_rck_" + ParseDate(Date()) + ".xlsx");
+            excelDoc.SaveAs("E:/Websoft/Reports/report_fck_2025/report_fck_all_" + ParseDate(Date()) + ".xlsx");
         } catch (e) {
             throw new Error("Возможно файл открыт другим процессом!");
         }

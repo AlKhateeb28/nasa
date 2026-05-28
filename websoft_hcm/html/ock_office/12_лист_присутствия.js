@@ -59,7 +59,7 @@ try {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-    excelDoc = tools.get_object_assembly('Excel');
+    excelDoc = tools.get_object_assembly("Excel");
     excelDoc.Open("e:/Websoft/WebSoftServer/wt/web/fcc/report_templates/lp_template.xlsx");
     excelWorksheet = excelDoc.GetWorksheet(0);
 

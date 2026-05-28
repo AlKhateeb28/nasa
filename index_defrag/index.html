@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Defrag indexes</title>
+
+    <link rel="icon" href="./images/defrag.ico" />
+
+    <link rel="stylesheet" href="./../fcc/css/common.css" />
+    <link rel="stylesheet" href="./css/index.css" />
+
+    <script type="text/javascript" src="./../scripts/jquery.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./../fcc/js/ModalWindow.js"></script>
+    <script type="text/javascript" src="./js/index.js"></script>
+</head>
+
+<body class="body">
+
+    <!--div id="loader" class="loader loader-view" style="visibility: hidden; top: 10px;"></div-->
+    
+    <div>
+        <div id="service_box" style="float: left;">            
+            <div>
+                <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 182px;" onclick="getIndexes()">Reload indexes</button>
+            </div>
+            <div style="margin-top: 10px;">
+                <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px;"
+                    onclick="startGlobalDefrag()">Defragment selected</button>
+            </div>
+        </div>
+
+        <div id="defrag_box" style="float: left; width: 1210px;">
+            <div class="scrollbar-control" style="height: 870px;">
+                <table class="styled-table" style="width: 100%;">
+                    <thead>
+                        <tr class="sticky">
+                            <th style="width: 40px;">
+                                <div class="checkbox-cell">
+                                    <input id="header_check" type="checkbox" class="checkbox-control row-checkbox"
+                                        onchange="onHeaderCheckBoxChange(event)">
+                                </div>
+                            </th>
+                            <th class="header-cell" style="text-align: center;">Table name</th>
+                            <th class="header-cell" style="text-align: center;">Index name</th>
+                            <th class="header-cell" style="text-align: center;">Type</th>
+                            <th class="header-cell" style="text-align: center;">Field name</th>
+                            <th class="header-cell" style="text-align: center;">Fragmentation (%)</th>
+                            <th class="header-cell" style="text-align: center;">Size (MB)</th>
+                            <th class="header-cell" style="width: 100px;">State</th>
+                            <th class="header-cell" style="text-align: center;">Resp</th>
+                            <th class="header-cell" style="width: 100px;">Run time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="index_body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-div" style="background-color: #030303;">
+        <div style="float: left; font-size: 12px; color: orange;">
+            <div style="float: left; font-weight: bold;">1088</div><div style="float: left;">&nbsp;- нет такой таблицы</div>
+            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+            <div style="float: left; font-weight: bold;">1222</div><div style="float: left;">&nbsp;- объект занят</div>
+            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+            <div style="float: left; font-weight: bold;">2714</div><div style="float: left;">&nbsp;- объект уже существует</div>
+            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+            <div style="float: left; font-weight: bold;">2777</div><div style="float: left;">&nbsp;- нет такого индекса</div>
+            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+            <div style="float: left; font-weight: bold;">3701</div><div style="float: left;">&nbsp;- удаление несуществующего объекта</div>
+            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+            <div style="float: left; font-weight: bold;">-7</div><div style="float: left;">&nbsp;- процесс ничего не вернул</div>
+            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+            <div style="float: left; font-weight: bold;">-8</div><div style="float: left;">&nbsp;- не верные параметры</div>
+            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+            <div style="float: left; font-weight: bold;">-9</div><div style="float: left;">&nbsp;- системная ошибка</div>
+        </div>
+        <div style="float: right; margin-right: 20px; font-size: 12px; margin-top: -4px;">
+            <div id="selected_index_count" class="info-block" style="float: left; margin-right: 10px;" title="Selected indexes count">0</div>
+            <div style="float: left; margin-right: 10px;"> | </div>
+            <div id="total_index_count" class="info-block" style="float: left; margin-right: 10px;" title="Indexes count">0</div>
+            <div style="float: left; margin-right: 10px;"> | </div>
+            <div id="total_table_count" class="info-block" style="float: left; margin-right: 10px;" title="Tables count">0</div>
+            <div style="float: left; margin-right: 10px;"> | </div>
+            <div id="success_count" class="info-block" style="float: left; margin-right: 10px; color: whitesmoke; background-color: #1f7a45;" title="Success count">0</div>
+            <div style="float: left; margin-right: 10px;"> | </div>
+            <div id="failure_count" class="info-block" style="float: left; margin-right: 10px; color: whitesmoke; background-color: #fc0303;" title="Failure count">0</div>
+        </div>
+    </div>
+
+    <div style="float: left;">
+        <div class="statistic" style="margin-left: 24px; height: 451px; width: 450px;">
+            <table class="statistic-table" style="width: 100%;">
+                <tr style="color: orange; background-color: #030303;">
+                    <td style="width: 30px;">
+                        <div id="stat_loader" class="stat-loader stat-loader-view" style="visibility: hidden;"></div>
+                    </td>
+                    <td style="font-weight: bold; width: 150px;">                        
+                        <div style="float: left;">Run time:</div>
+                    </td>
+                    <td id="stat_run_time">00:00:00</td>
+                    <td>
+                        <button class="btn btn-pointer reload-index-stat-btn" onclick="getIndexStatisctic(true)">Reload</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Table:</td>
+                    <td id="stat_table"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Index:</td>
+                    <td id="stat_index"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Index type:</td>
+                    <td id="stat_type"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Field:</td>
+                    <td id="stat_field"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Field type:</td>
+                    <td id="stat_field_type"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold; background-color: #7fffd4;">Fragmentation (%):</td>
+                    <td>
+                        <div id="stat_frag" style="float: left;"></div>
+                        <div id="stat_frag_svg" style="margin-top: -1px;"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Size (MB):</td>
+                    <td>
+                        <div id="stat_size" style="float: left;"></div>
+                        <div id="stat_size_svg" style="margin-top: -1px;"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold; background-color: #7fffd4;">Page space used (%):</td>
+                    <td>
+                        <div id="stat_space" style="float: left;"></div>
+                        <div id="stat_space_svg" style="margin-top: -1px;"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Page count:</td>
+                    <td>
+                        <div id="stat_page_count" style="float: left;"></div>
+                        <div id="stat_page_count_svg" style="margin-top: -1px;"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="font-weight: bold;">Record count:</td>
+                    <td>
+                        <div id="stat_record_count" style="float: left;"></div>
+                        <div id="stat_record_count_svg" style="margin-top: -1px;"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="statistic scrollbar-control" style="margin-left: 24px; height: 200px; width: 450px; background-color: #e0e0e0;">
+            <div id="running_block">                
+            </div>
+        </div>
+    </div>
+
+    <div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
+        <div class="position-center">
+            <div id="container">
+                <label id="wait_caption" class="loading-title" style="font-size: 14px;"></label>
+                <span id="loader" class="loading-circle sp1">
+                    <span class="loading-circle sp2">
+                        <span class="loading-circle sp3"></span>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/html" id="row_template">
+        <tr id="row" class="row" data-success="0" data-failure="0" onclick="selectRow(this, event)">
+            <td id="checkbox" style="height: 34px;"></td>
+            <td id="table"></td>
+            <td id="index"></td>
+            <td id="type"></td>
+            <td id="field"></td>
+            <td>
+                <div id="organize_svg" style="float: left; margin-right: 10px;"></div>
+                <div id="frag" style="float: left; margin-top: 4px;"></div>                
+            </td>
+            <td id="size"></td>
+            <td>
+                <div id="processing" class="rebuild" style="display: none;"></div>
+            </td>
+            <td>
+                <div>
+                    <div id="result" style="float: left;"></div>
+                    <div id="result_code" style="float: left; margin-top: 12px; font-size: x-small;"></div>
+                </div>
+            </td>
+            <td id="run_time"></td>
+        </tr>
+    </script>
+
+    <script type="text/html" id="row_checkbox">
+        <input id="row_check" type="checkbox" class="checkbox-control row-checkbox checkbox_margin row_with_checkbox" onchange="onRowCheckBoxChange(event)">
+    </script>
+
+    <script type="text/html" id="process_template">
+        <div id="process" class="running-card">
+            <table border="0" style="width: 100%">
+                <tr>
+                    <td>
+                        <div style="float: left; font-weight: bold; margin-left: 5px; font-size: xx-small; margin-top: 2px;">Table:</div>
+                        <div id="running_table" style="float: left; margin-left: 5px;"></div>
+                        <div style="float: left; font-weight: bold; margin-left: 5px; font-size: xx-small; margin-top: 1px;">Index:</div>
+                        <div id="running_index" style="float: left; margin-left: 5px;"></div>
+                    </td>                                
+                    <td style="width: 105px;">
+                        <div class="rebuild"></div>
+                    </td>
+                </tr>
+            </table>            
+        </div>
+    </script>
+    
+    <script>
+        $(document).ready(function () {
+            initialize();
+        });
+    </script>
+</body>
+
+</html>

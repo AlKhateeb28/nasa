@@ -25,42 +25,53 @@ try {
         " BEGIN TRY DROP TABLE [WTDB].[dbo]._white_gray_ids; END TRY BEGIN CATCH END CATCH; " +
         " WITH _tmp_white AS( " +
         "   SELECT cs.id, cs.org_id, cs.fullname " +
-	    "   FROM[WTDB].[dbo].collaborators cs " +
+	    "   FROM [WTDB].[dbo].collaborators cs " +
         "   WHERE cs.is_dismiss = 0 " +
         " 	    AND cs.login NOT LIKE '%_muc_%' " +
         " 	    AND cs.org_id IS NOT NULL " +
         " ), " +
         " _tmp_fcc AS( " +
         "   SELECT cs.id, cs.org_id, cs.fullname " +
-        "   FROM[WTDB].[dbo].collaborators cs " +
+        "   FROM [WTDB].[dbo].collaborators cs " +
         "   WHERE cs.login LIKE '%load_muc%' " +
         " 	    AND cs.is_dismiss = 0 " +
         " 	    AND cs.org_id IS NOT NULL " +
         " ), " +
         " _tmp_rck AS( " +
         "   SELECT cs.id, cs.org_id, cs.fullname " +
-        "   FROM[WTDB].[dbo].collaborators cs " +
+        "   FROM [WTDB].[dbo].collaborators cs " +
         "   WHERE cs.login LIKE '%rck_muc%' " +
         " 	    AND cs.is_dismiss = 0 " +
         " 	    AND cs.org_id IS NOT NULL " +
         " ), " +
         " _tmp_tren AS( " +
         "   SELECT cs.id, cs.org_id, cs.fullname " +
-        "   FROM[WTDB].[dbo].collaborators cs " +
+        "   FROM [WTDB].[dbo].collaborators cs " +
         "   WHERE cs.login LIKE '%tren_muc_%' " +
         " 	    AND cs.is_dismiss = 0 " +
         " 	    AND cs.org_id IS NOT NULL " +
         " ) " +
-        " SELECT cs.id, white.id AS white_id, fcc.id AS fcc_gray_id, rck.id AS rck_gray_id, tren.id AS tren_gray_id " +
-        " INTO[WTDB].[dbo]._white_gray_ids " +
-        " FROM[WTDB].[dbo].collaborators cs " +
+        " SELECT IDENTITY(INT, 1, 1) AS id, " +
+        "       cs.id AS cs_id , " +
+        "       white.id AS white_id, " +
+        "       fcc.id AS fcc_gray_id, " +
+        "       rck.id AS rck_gray_id, " +
+        "       tren.id AS tren_gray_id " +
+        " INTO [WTDB].[dbo]._white_gray_ids " +
+        " FROM [WTDB].[dbo].collaborators cs " +
         "   LEFT JOIN _tmp_white AS white ON UPPER(cs.fullname) = UPPER(white.fullname) AND cs.org_id = white.org_id " +
         "   LEFT JOIN _tmp_fcc AS fcc ON UPPER(cs.fullname) = UPPER(fcc.fullname) AND cs.org_id = fcc.org_id " +
         "   LEFT JOIN _tmp_rck AS rck ON UPPER(cs.fullname) = UPPER(rck.fullname) AND cs.org_id = rck.org_id " +
         "   LEFT JOIN _tmp_tren AS tren ON UPPER(cs.fullname) = UPPER(tren.fullname) AND cs.org_id = tren.org_id " +
         " WHERE cs.is_dismiss = 0 " +
         "   AND cs.org_id IS NOT NULL; " +
-        " SELECT * FROM[WTDB].[dbo]._white_gray_ids "));
+        " ALTER TABLE [WTDB].[dbo]._white_gray_ids ADD PRIMARY KEY (id); " +
+        " CREATE NONCLUSTERED INDEX IX__white_gray_ids_cs_id ON[WTDB].[dbo]._white_gray_ids(cs_id); " +
+        " CREATE NONCLUSTERED INDEX IX__white_gray_ids_white_id ON[WTDB].[dbo]._white_gray_ids(white_id); " +
+        " CREATE NONCLUSTERED INDEX IX__white_gray_ids_fcc_gray_id ON[WTDB].[dbo]._white_gray_ids(fcc_gray_id); " +
+        " CREATE NONCLUSTERED INDEX IX__white_gray_ids_rck_gray_id ON[WTDB].[dbo]._white_gray_ids(rck_gray_id); " +
+        " CREATE NONCLUSTERED INDEX IX__white_gray_ids_tren_gray_id ON[WTDB].[dbo]._white_gray_ids(tren_gray_id); " +
+        " SELECT * FROM [WTDB].[dbo]._white_gray_ids "));
 
     total = ArrayCount(dataList);
 
