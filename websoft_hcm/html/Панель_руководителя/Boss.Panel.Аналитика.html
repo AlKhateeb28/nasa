@@ -1,0 +1,608 @@
+<!-- 7305995737669094034 -->
+<% 
+function drawInfoNumber( sTitleParam, sValueParam, sHelpTitle, sActionParam, icon_url ) { try { if( icon_url==null ||
+    icon_url==undefined ) throw 'not icon' ; } catch( ex ) { icon_url="" ; } %>
+    <StackPanel Orientation="Vertical" Class="wt-informer wt-custom-intormer wt-info-plain XAML-stack-informer">
+        <StackPanel>
+            <Label Class="wt-info-header XAML-label-informer-header-analitic XAML-custom-label-informer-header">
+                <![CDATA[<%=sTitleParam%>]]>
+            </Label>
+
+            <HTMLBox Dynamic="true">
+                <![CDATA[<svg class="analitic-tab-ico" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><title><%=sHelpTitle%></title><path d="M3.158,26.134C6.066,23.557,5,21,5,21l7,2c0,0-3.663,3.721-8.417,3.99L3.158,26.134z" /><circle cx="3.5" cy="26.5" r="0.5" /><path d="M15,3C7.82,3,2,7.925,2,14s5.82,11,13,11s13-4.925,13-11S22.18,3,15,3z M16,20h-2v-7h2V20z M15,10.5 c-0.828,0-1.5-0.672-1.5-1.5s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S15.828,10.5,15,10.5z" /></svg>]]>
+            </HTMLBox>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Class="wt-info-body wt-info-body-center-middle XAML-stack-informer-body">
+            <Label Class="wt-info-value-string-large">
+                <![CDATA[<%=sValueParam%>]]>
+            </Label>
+            <% if ( icon_url !='' ) { %>
+                <StackPanel Class="wt-info-icon" Orientation="Horizontal">
+                    <Image Source="<%=icon_url%>" />
+                </StackPanel>
+                <% } %>
+        </StackPanel>
+    </StackPanel>
+    <% } function drawRegCntInformer( sTitleParam, sValueParam, sComboVal, sHelpTitle, sActionParam, icon_url ) { try {
+        if( icon_url==null || icon_url==undefined ) throw 'not icon' ; } catch( ex ) { icon_url="" ; } %>
+        <StackPanel Orientation="Vertical" Height="484"
+            Class="wt-informer wt-custom-intormer wt-info-plain XAML-stack-informer">
+            <StackPanel>
+                <Label Class="wt-info-header XAML-label-informer-header-analitic XAML-custom-label-informer-header">
+                    <![CDATA[<%=sTitleParam%>]]>
+                </Label>
+
+                <HTMLBox Dynamic="true">
+                    <![CDATA[<svg class="analitic-tab-ico" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><title><%=sHelpTitle%></title><path d="M3.158,26.134C6.066,23.557,5,21,5,21l7,2c0,0-3.663,3.721-8.417,3.99L3.158,26.134z" /><circle cx="3.5" cy="26.5" r="0.5" /><path d="M15,3C7.82,3,2,7.925,2,14s5.82,11,13,11s13-4.925,13-11S22.18,3,15,3z M16,20h-2v-7h2V20z M15,10.5 c-0.828,0-1.5-0.672-1.5-1.5s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S15.828,10.5,15,10.5z" /></svg>]]>
+                </HTMLBox>
+
+                <Link
+                    Class="wt-info-header XAML-label-informer-header-analitic-col-list XAML-custom-label-informer-header"
+                    Click="<%=XmlAttrEncode( sActionParam )%>">Перейти к списку</Link>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                Class="wt-info-body wt-info-body-center-middle XAML-stack-informer-body">
+                <Edit Name="ReqInformerPeriodValueFromSelectOrg" Class="wt-info-value-string-large req_informer_val"
+                    Editable="0">
+                    <![CDATA[<%=sValueParam%>]]>
+                </Edit>
+                <% if ( icon_url !='' ) { %>
+                    <StackPanel Class="wt-info-icon" Orientation="Horizontal">
+                        <Image Source="<%=icon_url%>" />
+                    </StackPanel>
+                    <% } %>
+            </StackPanel>
+
+            <StackPanel Class="req_informer_period_panel">
+                <ComboBox Name="ReqInformerPeriodComboSec" SelectedItem="<%=sComboVal%>" Class="req_informer_period"
+                    Change="ACTION=UpdateRegPeriodInformerSec">
+                    <ComboBoxItem Value="day">День</ComboBoxItem>
+                    <ComboBoxItem Value="week">Неделя</ComboBoxItem>
+                    <ComboBoxItem Value="month">Месяц</ComboBoxItem>
+                    <ComboBoxItem Value="year">Текущий год</ComboBoxItem>
+                    <ComboBoxItem Value="all">Всё время</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+        <% } var sOrgCondition=OptInt(tools_web.get_user_data("boss_panel_tree_cache_select_org_" + curUserID), 0); var
+            docSelectObject=tools.open_doc(sOrgCondition); var sSelectObjectCat=docSelectObject.TopElem.Name; //
+            Подсказки. sReqCollsHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.req_colls_help" , "" , true );
+            sPercentEduRegHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.percent_edu_reg_help" , "" , true );
+            sReqCollsPeriodHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.req_colls_period_help" , "" , true );
+            sCntActiveLearnsHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.cnt_active_learns_help" , "" , true );
+            sCntPassedLearnsHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.cnt_passed_learns_help" , "" , true );
+            sStatusChartHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.status_chart_help" , "" , true );
+            sLearnChartHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.learn_chart_help" , "" , true );
+            sRegCollsLineChartHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.reg_colls_line_chart_help" , "" , true );
+            sCourseListHelp=tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_tips.course_list_help" , "" , true ); // Параметры
+            отображения. bReqCollsShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.req_colls" , true, true ));
+            bPercentEduRegShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.percent_edu_reg" , true, true ));
+            bReqCollsPeriodShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.req_colls_period" , true, true ));
+            bCntActiveLearnsShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.cnt_active_learns" , true, true ));
+            bCntPassedLearnsShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.cnt_passed_learns" , true, true ));
+            bStatusChartShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.status_chart" , true, true ));
+            bLearnChartShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.learn_chart" , true, true ));
+            bRegCollsLineChartShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.reg_colls_line_chart" , true, true ));
+            bCourseListShow=tools_web.is_true(tools_web.get_web_param(
+            curParams, "boss_panel_body_custom.org_group_analitic_tab_show.course_list" , true, true )); //
+            зарегистрированных. if(sSelectObjectCat=='org' ) { sQuery="sql:\
+        SELECT\
+            COUNT(1) cnt\
+        FROM\
+            collaborators cols\
+        WHERE\
+            org_id IN (" + sOrgCondition + ")\
+            AND code NOT LIKE '%muc_%'\
+    " ; } else { sQuery="sql:\
+        SELECT\
+            COUNT(1) cnt\
+        FROM\
+            collaborators cols\
+            JOIN group_collaborators gcs ON gcs.group_id = " + sOrgCondition + " AND gcs.collaborator_id = cols.id AND cols.code NOT LIKE '%muc_%'\
+    " ; } var iCntRegColls=ArrayOptFirstElem(XQuery(sQuery)).cnt; // с хотя бы одним пройденным курсом. sQuery="sql:\
+    SELECT\
+        value\
+    FROM\
+        statistic_datas\
+    WHERE\
+        statistic_rec_id IN (7300578913460296893, 7309243764530033255)\
+        AND object_id IN (" + sOrgCondition + ")\
+" ; var iCntEduColls=ArraySum(XQuery(sQuery), "value" ); // пройденных курсов у сотрудников. sQuery="sql:\
+    SELECT\
+        value\
+    FROM\
+        statistic_datas\
+    WHERE\
+        statistic_rec_id IN (7300634252332841783, 7309243763593011341)\
+        AND object_id IN (" + sOrgCondition + ")\
+" ; var iCntPassedLeans=ArraySum(XQuery(sQuery), "value" ); // назначенных курсов у сотрудников. sQuery="sql:\
+    SELECT\
+        value\
+    FROM\
+        statistic_datas\
+    WHERE\
+        statistic_rec_id IN (7300635987276479759, 7309243765278442771)\
+        AND object_id IN (" + sOrgCondition + ")\
+" ; var iCntActiveLearns=ArraySum(XQuery(sQuery), "value" ); var sCachePrefix="select_node" ; // Зарегистрировано за
+            период. oCacheRegRes=tools_web.get_user_data("calc_reg_coll_from_org_" + sCachePrefix + curUserID);
+            if(oCacheRegRes==null) { sRegPeriod="day" ;
+            iRegRes=tools.call_code_library_method("library_boss_panel", "GetCalcRegCollaboratorsFromOrgs" ,
+            [sOrgCondition, sRegPeriod, curUserID, sCachePrefix, sSelectObjectCat]); } else {
+            sRegPeriod=oCacheRegRes.period; iRegRes=oCacheRegRes.count; } // Зарегистрировано за линейная диаграмма.
+            oCacheRegRes=tools_web.get_user_data("calc_reg_coll_from_org_line_chart_" + sCachePrefix + curUserID);
+            if(oCacheRegRes==null) { sLineRegPeriod="all" ;
+            iLineRegRes=tools.call_code_library_method("library_boss_panel", "GetRegCollsDataForLineChart" ,
+            [sOrgCondition, sLineRegPeriod, curUserID, sCachePrefix, sSelectObjectCat]); } else {
+            sLineRegPeriod=oCacheRegRes.period; iLineRegRes=oCacheRegRes.arr; } iPercentEduReg=0; if(iCntRegColls !=0) {
+            iPercentEduReg=StrReal((100 * (iCntEduColls/iCntRegColls)), 2); } %>
+
+            <SPXMLScreen>
+                <Action Name="UpdateRegPeriodInformerSec" Source="boss_panel_update_reg_period_statistic"
+                    Success="SET=ReqInformerPeriodValueFromSelectOrg,{messageText}">
+                    <Param Name="period" Value="{ReqInformerPeriodComboSec}" />
+                    <Param Name="sOrgCond" Value="<%=sOrgCondition%>" />
+                      
+                    <Param Name="curUserID" Value="<%=curUserID%>" />
+                </Action>
+
+                <StackPanel Class="analitic_tab_info_sec">
+                    <Label>Обратите внимание! Обновление статистики происходит ежедневно в 05:00 и 17:00 по Московскому
+                        времени.</Label>
+                </StackPanel>
+
+                <Grid>
+                    <GridColumns>
+                        <GridColumn />
+                        <GridColumn />
+                    </GridColumns>
+                    <GridRow>
+                        <Grid>
+                            <GridColumns>
+                                <GridColumn />
+                                <GridColumn />
+                            </GridColumns>
+                            <GridRow>
+                                <%=(bReqCollsShow ? drawInfoNumber('Зарегистрировано, чел.', iCntRegColls,
+                                    sReqCollsHelp) : "" )%>
+                                    <%=(bPercentEduRegShow ? drawInfoNumber('% Обученных от зарегистрированных',
+                                        iPercentEduReg, sPercentEduRegHelp) : "" )%>
+                            </GridRow>
+                            <GridRow>
+                                <%=(bCntActiveLearnsShow ? drawInfoNumber('Назначенных, чел\\курс', iCntActiveLearns,
+                                    sCntActiveLearnsHelp) : "" )%>
+                                    <%=(bCntPassedLearnsShow ? drawInfoNumber('Пройденных, чел\\курс', iCntPassedLeans,
+                                        sCntPassedLearnsHelp) : "" )%>
+                            </GridRow>
+                        </Grid>
+                        <%=(bReqCollsPeriodShow ? drawRegCntInformer('Зарегистрировано за период, чел.', iRegRes,
+                            sRegPeriod,
+                            sReqCollsPeriodHelp, "SET=currentlySelectedSubTitleAnaliticColls,Зарегистрированные за период;SET=currentlySelectedSub,"
+                            + sOrgCondition + ";SET=ParentNodeObjectID," + sOrgCondition
+                            + ";SET=sliderTab,2;SET=UpdateCollaboratorsCacheAnalitic/iElemId," + sOrgCondition
+                            + ";SET=UpdateCollaboratorsCacheAnalitic/sRegPeriod,{ReqInformerPeriodComboSec};ACTION=UpdateCollaboratorsCacheAnalitic"
+                            ) : "" )%>
+                    </GridRow>
+                </Grid>
+                <StackPanel Class="pie_charts_panel">
+                    <HTMLBox Dynamic="true">
+                        <![CDATA[
+            <div class="pie-charts-container">
+<%
+                if(bStatusChartShow)
+                {
+%>
+                <div> 
+                    <div class="pie-chart-header">
+                        <div class="pie-chart-title">Информация по статусам</div>
+                        
+                        <select id="status_chart_combo" name="status_chart_combo" class="chart-combo">
+                            <option value="day">День</option>
+                            <option value="week">Неделя</option>
+                            <option value="month">Месяц</option>
+                            <option value="year">Год</option>
+                            <option selected value="all">Всё время</option>
+                        </select>
+
+                        <svg class="analitic-tab-ico analitic-tab-pie-ico" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><title><%=sStatusChartHelp%></title><path d="M3.158,26.134C6.066,23.557,5,21,5,21l7,2c0,0-3.663,3.721-8.417,3.99L3.158,26.134z" /><circle cx="3.5" cy="26.5" r="0.5" /><path d="M15,3C7.82,3,2,7.925,2,14s5.82,11,13,11s13-4.925,13-11S22.18,3,15,3z M16,20h-2v-7h2V20z M15,10.5 c-0.828,0-1.5-0.672-1.5-1.5s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S15.828,10.5,15,10.5z" /></svg>
+                    </div>
+                    <canvas id="states_info_chart_sec" width="550" height="450"></canvas>
+                </div>
+<%
+                }
+                if(bLearnChartShow)
+                {
+%>
+                <div>
+                    <div class="pie-chart-header">
+                        <div class="pie-chart-title">Завершенные/активные курсы</div>
+                       
+                        <select id="learn_chart_combo" name="learn_chart_combo" class="chart-combo">
+                            <option value="day">День</option>
+                            <option value="week">Неделя</option>
+                            <option value="month">Месяц</option>
+                            <option value="year">Год</option>
+                            <option selected value="all">Всё время</option>
+                        </select>
+
+                        <svg class="analitic-tab-ico analitic-tab-pie-ico" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><title><%=sLearnChartHelp%></title><path d="M3.158,26.134C6.066,23.557,5,21,5,21l7,2c0,0-3.663,3.721-8.417,3.99L3.158,26.134z" /><circle cx="3.5" cy="26.5" r="0.5" /><path d="M15,3C7.82,3,2,7.925,2,14s5.82,11,13,11s13-4.925,13-11S22.18,3,15,3z M16,20h-2v-7h2V20z M15,10.5 c-0.828,0-1.5-0.672-1.5-1.5s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S15.828,10.5,15,10.5z" /></svg>
+                    </div>
+                    <canvas id="learn_info_chart_sec" width="550" height="450"></canvas>
+                </div>
+<%
+                }
+%>
+            </div>
+        
+            <script>
+
+                $("#learn_chart_combo, #status_chart_combo").on("change", function () {
+                    reloadCharts()
+                });
+
+                function reloadCharts() {
+
+                    let data = new FormData();
+<%
+                if (bStatusChartShow) {
+%>
+                            let statusChartComboVal = $("#status_chart_combo").val();
+                        data.append('status_chart_combo', statusChartComboVal);
+<%
+                }
+                    if (bLearnChartShow) {
+%>
+                            let learnChartComboVal = $("#learn_chart_combo").val();
+                        data.append('learn_chart_combo', learnChartComboVal);
+<%
+                }
+%>
+                        data.append('org_cond', '<%=sOrgCondition%>');
+                    data.append('obj_type', '<%=sSelectObjectCat%>');
+
+                    sendDataByServer(data, '7305759398906783576')
+                }
+
+                function sendDataByServer(data, sTemplateId) {
+                    $.ajax({
+                        url: "/custom_web_template.html?object_id=" + sTemplateId,
+                        type: 'post',
+                        data: data,
+                        processData: false,
+                        contentType: false,
+
+                        success: buildCharts,
+                        error: function (data, textError, one) {
+                            console.info('error', data);
+                        }
+                    });
+                }
+
+                function buildCharts(data) {
+                    resData = JSON.parse(data);
+<%
+                    if (bStatusChartShow) {
+%>
+                            let dataStatesInfo = [{
+                                data: resData.status_chart.data,
+                                backgroundColor: [
+                                    '#4473C8',
+                                    '#F27E35',
+                                    '#ADADAD',
+                                    '#FFC600',
+                                    '#62A4DC',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(201, 203, 207, 0.2)'
+                                ],
+                                borderColor: "#fff"
+                            }];
+
+                        let optionsStatesInfo = {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltips: {
+                                enabled: true
+                            },
+                            responsive: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                },
+                            }
+                        };
+
+                        const statesInfoChartElem = document.getElementById('states_info_chart_sec');
+
+                        let statesInfoChartOld = Chart.getChart("states_info_chart_sec");
+                        if (statesInfoChartOld != undefined) {
+                            statesInfoChartOld.destroy();
+                        }
+
+                        let statesInfoChart = new Chart(statesInfoChartElem, {
+                            type: 'pie',
+                            data: {
+                                labels: resData.status_chart.legend,
+                                datasets: dataStatesInfo
+                            },
+                            options: optionsStatesInfo
+                        });
+
+<%
+                    }
+                    if (bLearnChartShow) {
+%>
+
+                            let dataLearnInfo = [{
+                                data: resData.learn_chart.data,
+                                backgroundColor: [
+                                    '#4473C8',
+                                    '#F27E35',
+                                    '#ADADAD',
+                                    '#FFC600',
+                                    '#62A4DC',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(201, 203, 207, 0.2)'
+                                ],
+                                borderColor: "#fff"
+                            }];
+
+                        let optionsLearnInfo = {
+                            tooltips: {
+                                enabled: true
+                            },
+                            responsive: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                },
+                            }
+                        };
+
+                        const learnInfoChartElem = document.getElementById('learn_info_chart_sec');
+
+                        let learnInfoChartOld = Chart.getChart("learn_info_chart_sec");
+                        if (learnInfoChartOld != undefined) {
+                            learnInfoChartOld.destroy();
+                        }
+
+                        let learnInfoChart = new Chart(learnInfoChartElem, {
+                            type: 'pie',
+                            data: {
+                                labels: resData.learn_chart.legend,
+                                datasets: dataLearnInfo
+                            },
+                            options: optionsLearnInfo
+                        });
+<%
+                    }
+%>
+                }
+
+                $.when(
+                    $.getScript(`/custom_web_template.html?custom_web_template_id=7300330868567009909`),
+                    $.Deferred(function (deferred) {
+                        $(deferred.resolve);
+                    })
+                ).done(function () {
+                    reloadCharts();
+                });
+            </script>
+            <style>
+                .pie-charts-container {
+                    display: flex;
+                    justify-content: center;
+                }
+        
+                .req_informer_val input{
+                    font-size: 72px;
+                    background: #4176ea !important;
+                    color: #FFFFFF;
+                    text-align: center !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    width: 340px;
+                }
+        
+                .chart-combo {
+                    border: 1px solid #c9ccd4;
+                    border-radius: 2px;
+                    background-color: #ffffff;
+                    box-shadow: inset 0 1px 3px #DDDDDD;
+                    padding: calc(8px + 2px) 16px;
+                    cursor: pointer;
+                    cursor: hand;
+                }
+        
+                .wt-custom-intormer {
+                    width: 340px;
+                    margin-bottom: 20px;
+                }
+        
+                .XAML-custom-label-informer-header {
+                    width: 340px;
+                }
+        
+                .req_informer_period {
+                    margin: 0 auto 20px auto;
+                }
+        
+                .req_informer_period_panel {
+                    border-top: 1px solid #8bb2ff;
+                    padding-top: 20px;
+                }
+        
+                .pie_charts_panel{
+                    margin-top: 75px;
+                }
+
+                .line_chart_panel, .pie_charts_panel, .datagrid_panel{
+                    margin-top: 90px;
+                }
+        
+                .pie-chart-header {
+                    border-radius: 2px;
+                    border: 1px solid #c9ccd4;
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    font-size: 21px;
+                    font-weight: 300;
+                    padding: 8px;
+                    margin: 0 10px 25px 10px;
+                }
+        
+                .line_chart_header tbody {
+                    display: flex;
+                    justify-content: space-around;
+                    font-size: 27px;
+                    font-weight: 300;
+                    padding-bottom: 25px;
+                }
+        
+                .datagrid_panel_header tbody {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    font-size: 27px;
+                    font-weight: 300;
+                }
+        
+                .datagrid_panel_header {
+                    padding-bottom: 25px;
+                }
+        
+                .analitic_tab_info_sec {
+                    border-radius: 2px;
+                    border: 1px solid #c9ccd4;
+                    padding: 20px 40px;
+                    margin-bottom: 40px;
+                    font-size: 20px;
+                    margin-top: 80px;
+                }
+
+                .analitic-tab-ico {
+                    fill: white;
+                    width: 30px;
+                    position: absolute;
+                    top: -48px;
+                    right: 10px;
+                }
+
+                .analitic-tab-pie-ico {
+                    fill: #c9ccd4;
+                    position: unset;
+                }
+
+                .analitic-tab-xaml-ico {
+                    fill: #c9ccd4;
+                    margin-left: 20px;
+                    position: unset;
+                }
+
+                .XAML-label-informer-header-analitic {
+                    padding: 8px 33px;
+                    color: #FFFFFF;
+                    font-size: 17px;
+                    font-weight: 500;
+                    border-bottom: 1px solid #8bb2ff;
+                    height: calc(32px * 2);
+                    display: table-cell;
+                    vertical-align: middle;                
+                }
+
+                .XAML-label-informer-header-analitic-col-list {
+                    color: white;
+                    position: absolute;
+                    bottom: -330px;
+                    right: 111px;
+                }
+            </style>
+        ]]>
+                    </HTMLBox>
+                </StackPanel>
+
+                <% if(bRegCollsLineChartShow) { %>
+                    <Collection Name="LineChartCollectionSec" Source="boss_panel_reg_line_chart_data">
+                        <Param Name="period" Value="{ReqLineChartPeriodComboSec}" />
+                        <Param Name="sOrgCond" Value="<%=sOrgCondition%>" />
+                          
+                        <Param Name="curUserID" Value="<%=curUserID%>" />
+                          
+                        <Param Name="cache_pefix" Value="<%=sCachePrefix%>" />
+                          
+                        <Param Name="obj_type" Value="<%=sSelectObjectCat%>" />
+                    </Collection>
+
+                    <StackPanel Class="line_chart_panel">
+                        <StackPanel Class="line_chart_header">
+                            <StackPanel>
+                                <Label>Зарегистрированные сотрудники</Label>
+                                <HTMLBox Dynamic="true">
+                                    <![CDATA[<svg class="analitic-tab-ico analitic-tab-xaml-ico" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><title><%=sRegCollsLineChartHelp%></title><path d="M3.158,26.134C6.066,23.557,5,21,5,21l7,2c0,0-3.663,3.721-8.417,3.99L3.158,26.134z" /><circle cx="3.5" cy="26.5" r="0.5" /><path d="M15,3C7.82,3,2,7.925,2,14s5.82,11,13,11s13-4.925,13-11S22.18,3,15,3z M16,20h-2v-7h2V20z M15,10.5 c-0.828,0-1.5-0.672-1.5-1.5s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S15.828,10.5,15,10.5z" /></svg>]]>
+                                </HTMLBox>
+                            </StackPanel>
+                            <ComboBox Name="ReqLineChartPeriodComboSec" SelectedItem="<%=sLineRegPeriod%>"
+                                Class="req_line_informer_period" Change="UPDATE=BossPanelRegLineChartSec">
+                                <ComboBoxItem Value="day">День</ComboBoxItem>
+                                <ComboBoxItem Value="week">Неделя</ComboBoxItem>
+                                <ComboBoxItem Value="month">Месяц</ComboBoxItem>
+                                <ComboBoxItem Value="year">Год</ComboBoxItem>
+                                <ComboBoxItem Value="all">Всё время</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <Chart Name="BossPanelRegLineChartSec" Width="1100" Height="400" DataChartID="id"
+                            DataCategory="x" DataValue="y" Source="{LineChartCollectionSec}" />
+                    </StackPanel>
+
+                    <% } if(bCourseListShow) { %>
+                        <Collection Name="DataGridAnaliticCollectionSec" Source="boss_panel_datagrid_analitic_data_sec">
+                            <Param Name="sSearch" Value="{DataGridAnaliticSearchFieldSec}" />
+                            <Param Name="sOrgCond" Value="<%=sOrgCondition%>" />
+                              
+                            <Param Name="curUserID" Value="<%=curUserID%>" />
+                            <Param Name="obj_type" Value="<%=sSelectObjectCat%>" />
+                        </Collection>
+
+                        <StackPanel Class="datagrid_panel">
+                            <StackPanel Class="datagrid_panel_header">
+                                <StackPanel>
+                                    <Label>Перечень курсов назначенных\пройденных</Label>
+                                    <HTMLBox Dynamic="true">
+                                        <![CDATA[<svg class="analitic-tab-ico analitic-tab-xaml-ico" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><title><%=sCourseListHelp%></title><path d="M3.158,26.134C6.066,23.557,5,21,5,21l7,2c0,0-3.663,3.721-8.417,3.99L3.158,26.134z" /><circle cx="3.5" cy="26.5" r="0.5" /><path d="M15,3C7.82,3,2,7.925,2,14s5.82,11,13,11s13-4.925,13-11S22.18,3,15,3z M16,20h-2v-7h2V20z M15,10.5 c-0.828,0-1.5-0.672-1.5-1.5s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S15.828,10.5,15,10.5z" /></svg>]]>
+                                    </HTMLBox>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <DataGrid Name="DataGridAnaliticSec" Source="{DataGridAnaliticCollectionSec}" Width="1174"
+                                PageSize="10" ShowHeader="true">
+                                <DataGridColumn Title="course_id" Value="course_id" Hidden="1" Width="" Type="string" />
+                                <DataGridColumn Title="Электронный курс" Value="course_name" Width="822"
+                                    Type="string" />
+                                <DataGridColumn Title="Назначенные" Value="cnt_act" Width="150" Type="link"
+                                    Click="SET=currentlySelectedSubTitleAnaliticColls,Зарегистрированные за период;SET=currentlySelectedSub,<%=sOrgCondition%>;SET=ParentNodeObjectID,<%=sOrgCondition%>;SET=sliderTab,2;SET=UpdateCollaboratorsCacheAnalitic/iElemId,<%=sOrgCondition%>;SET=UpdateCollaboratorsCacheAnalitic/sAnaliticCourseId,{course_id};SET=UpdateCollaboratorsCacheAnalitic/sAnaliticCourseType,active;ACTION=UpdateCollaboratorsCacheAnalitic" />
+                                <DataGridColumn Title="Пройденные" Value="cnt_pass" Width="150" Type="link"
+                                    Click="SET=currentlySelectedSubTitleAnaliticColls,Зарегистрированные за период;SET=currentlySelectedSub,<%=sOrgCondition%>;SET=ParentNodeObjectID,<%=sOrgCondition%>;SET=sliderTab,2;SET=UpdateCollaboratorsCacheAnalitic/iElemId,<%=sOrgCondition%>;SET=UpdateCollaboratorsCacheAnalitic/sAnaliticCourseId,{course_id};SET=UpdateCollaboratorsCacheAnalitic/sAnaliticCourseType,passed;ACTION=UpdateCollaboratorsCacheAnalitic" />
+                            </DataGrid>
+                        </StackPanel>
+                        <% } %>
+            </SPXMLScreen>

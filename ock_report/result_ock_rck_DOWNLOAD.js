@@ -222,8 +222,7 @@ try {
         "         INNER JOIN [WTDB].[dbo].education_method AS em ON ems.id = em.id " +
         "         INNER JOIN [WTDB].[dbo].collaborators AS cs ON ers.person_id = cs.id " +
         "         INNER JOIN [WTDB].[dbo].collaborator AS c ON cs.id = c.id AND c.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_occ_exist''])[1]/value[1]', 'bit') = 1 " +
-        "         INNER JOIN [WTDB].[dbo].cc_collaborator_dossiers cds ON ers.person_id = cds.collaborator_id " +
-        "         INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employees doss ON cds.dossier_id = doss.id " +
+        "         INNER JOIN [WTDB].[dbo].cc_dossier_rcc_employees doss ON ers.person_id = doss.student_id " +
         "         INNER JOIN [WTDB].[dbo].orgs cur_os ON doss.subdivision_name = cur_os.id " +
         "         INNER JOIN [WTDB].[dbo].org cur_o ON cur_os.id = cur_o.id " +
         "         LEFT JOIN [WTDB].[dbo].positions AS ps ON cs.position_id = ps.id " +

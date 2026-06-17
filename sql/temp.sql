@@ -13,15 +13,15 @@ from [WTDB].[dbo].lectors ls
     inner join [WTDB].[dbo].lector l on ls.id = l.id
 where ls.id
 
-SELECT DISTINCT --ls.id,
+SELECT ls.id,
        T.c.value('lector_id[1]','varchar(max)') AS lector_id,
        e1.id,
-       --ls.lector_fullname AS lec_fio,
+       ls.lector_fullname AS lec_fio,
        l.data.value('(lector/custom_elems/custom_elem[name=''type_trener''])[1]/value[1]', 'varchar(max)') AS trener_type
 FROM [WTDB].[dbo].events ev1
          INNER JOIN [WTDB].[dbo].event e1 ON ev1.id = e1.id
          CROSS APPLY e1.data.nodes('event/lectors/lector') T(c)
-         --INNER JOIN [WTDB].[dbo].lectors ls ON T.c.value('lector_id[1]','varchar(max)') = ls.id
+         INNER JOIN [WTDB].[dbo].lectors ls ON T.c.value('lector_id[1]','varchar(max)') = ls.id
          INNER JOIN [WTDB].[dbo].lector l ON T.c.value('lector_id[1]','varchar(max)') = l.id
 ORDER BY lector_id
 

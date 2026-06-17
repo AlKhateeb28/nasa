@@ -196,8 +196,7 @@ try {
         ws = sendMessageToWebsocket(ws, agent);
     }
     prevDate = new Date();
-
-    reportString.AppendStr("<html>");
+ers    reportString.AppendStr("<html>");
     reportString.AppendStr("<style>");
     reportString.AppendStr(".header {background-color: rgba(255, 227, 147, 0.81); width: 150px;}");
     reportString.AppendStr(".row_height {height: 25px;}");

@@ -12,171 +12,469 @@
 
     <script type="text/javascript" src="./../scripts/jquery.js"></script>
     <script type="text/javascript" src="./../fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./../fcc/js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="./../fcc/js/Notification.js"></script>
     <script type="text/javascript" src="./../fcc/js/ModalWindow.js"></script>
+    <script type="text/javascript" src="./../fcc/js/AlertPopupWindow.js"></script>
     <script type="text/javascript" src="./js/index.js"></script>
+    <script type="text/javascript" src="./js/page3.js"></script>
 </head>
 
 <body class="body">
-
     <!--div id="loader" class="loader loader-view" style="visibility: hidden; top: 10px;"></div-->
-    
-    <div>
-        <div id="service_box" style="float: left;">            
-            <div>
-                <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 182px;" onclick="getIndexes()">Reload indexes</button>
+
+    <div style="float: left; width: 20px; border-right: 1px solid black; height: 900px;">
+        <div id="tab1" class="tab selected-tab" onclick="selectTab(this, 1)">Indexes fragmentation</div>
+        <div id="tab2" class="tab" style="margin-top: 123px; width: 146px;" onclick="selectTab(this, 2)">Unused indexes
+        </div>
+        <div id="tab3" class="tab" style="width: 200px; margin-top: 177px;" onclick="selectTab(this, 3)">Indexes with
+            text types</div>
+        <div id="tab4" class="tab" style="margin-top: 247px; width: 270px;" onclick="selectTab(this, 4)">
+            <div id="go_to_table_index_svg" style="float: left; margin-top: 2px;"></div>
+            <div style="float: left;">Table Columns-Indexes List</div>
+        </div>
+    </div>
+
+    <div id="box1" class="info-box">
+        <div style="float: left; margin-left: 2px;">
+            <div id="service_box" style="float: left; width: 200px;">
+                <div>
+                    <button class="btn btn-pointer"
+                        style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;"
+                        onclick="getIndexes()">Reload indexes</button>
+                </div>
+                <div style="width: 216px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);">
+                    <table border="0" class="mode-count-table" style="width: 100%;">
+                        <tr>
+                            <td style="text-align: center;">SQL SERVER START DATETIME</td>
+                        </tr>
+                        <tr>
+                            <td id="sql_start_time"
+                                style="text-align: center; filter: drop-shadow(2px 4px 6px black); color: #483d8b;">
+                                --.--.-- 00:00:00</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">TO REORGANIZE</td>
+                        </tr>
+                        <tr>
+                            <td id="reorganize_count"
+                                style="text-align: center; color: #fa9804;  filter: drop-shadow(2px 4px 6px black);">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">TO REBUILD</td>
+                        </tr>
+                        <tr>
+                            <td id="rebuild_count"
+                                style="text-align: center; color: #f80505; filter: drop-shadow(2px 4px 6px black);">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">CAN BE DELETED</td>
+                        </tr>
+                        <tr>
+                            <td id="deleted_count"
+                                style="text-align: center; filter: drop-shadow(2px 4px 6px black); color: #483d8b;">0
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="statistic" style="margin-top: 18px; height: 72px;">
+                    <div class="stat-box">
+                        <div class="stat_calc">Relations:</div><br>
+                        <div style="margin-top: 4px;">
+                            &nbsp;&nbsp;collaborators → orgs<br>
+                            &nbsp;&nbsp;orgs → regions<br>
+                        </div>
+                        <div class="stat_calc">works</div>
+                        <div id="coll_to_reg" class="stat_calc" style="margin-left: 100px;"></div>
+                    </div>
+                </div>
+                <div class="statistic" style="height: 128px; margin-top: -2px;">
+                    <div class="stat-box">
+                        <div class="stat_calc">Relations:</div><br>
+                        <div style="margin-top: 4px;">
+                            &nbsp;&nbsp;event_resuls → event<br>
+                            &nbsp;&nbsp;event_resuls → event_result_types<br>
+                            &nbsp;&nbsp;event_resuls → collaborators<br>
+                            &nbsp;&nbsp;event → education_methods<br>
+                            &nbsp;&nbsp;collaborators → orgs<br>
+                            &nbsp;&nbsp;orgs → regions<br>
+                        </div>
+                        <div class="stat_calc">works</div>
+                        <div id="event_to_reg" class="stat_calc" style="margin-left: 100px;"></div>
+                    </div>
+                </div>
+                <div class="statistic" style="height: 102px; margin-top:-2px;">
+                    <div class="stat-box">
+                        <div class="stat_calc">Relations:</div><br>
+                        <div style="margin-top: 4px;">
+                            &nbsp;&nbsp;active_learnings → courses<br>
+                            &nbsp;&nbsp;active_learnings → education_plans<br>
+                            &nbsp;&nbsp;active_learnings → collaborators<br>
+                            &nbsp;&nbsp;collaborators → orgs<br>
+                        </div>
+                        <div class="stat_calc">works</div>
+                        <div id="active_learning_to_os" class="stat_calc" style="margin-left: 100px;"></div>
+                    </div>
+                </div>
+                <div class="statistic" style="height: 102px; margin-top: -2px;">
+                    <div class="stat-box">
+                        <div class="stat_calc">Relations:</div><br>
+                        <div style="margin-top: 4px;">
+                            &nbsp;&nbsp;learnings → courses<br>
+                            &nbsp;&nbsp;learnings → edu_plans<br>
+                            &nbsp;&nbsp;learnings → collaborators<br>
+                            &nbsp;&nbsp;collaborators → orgs<br>
+                        </div>
+                        <div class="stat_calc">works</div>
+                        <div id="learning_to_os" class="stat_calc" style="margin-left: 100px;"></div>
+                    </div>
+                </div>
+                <div class="statistic" style="height: 61px; margin-top: -2px">
+                    <div class="stat-box">
+                        <div class="stat_calc">Table:</div><br>
+                        <div style="margin-top: 4px;">
+                            &nbsp;&nbsp;trash_docs<br>
+                        </div>
+                        <div class="stat_calc">works</div>
+                        <div id="trash_docs" class="stat_calc" style="margin-left: 100px;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: -5px;">
+                    <button class="btn btn-pointer"
+                        style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;"
+                        onclick="startGlobalDefrag()">Defragmentation</button>
+                </div>
             </div>
-            <div style="margin-top: 10px;">
-                <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px;"
-                    onclick="startGlobalDefrag()">Defragment selected</button>
+
+            <div id="defrag_box" style="float: left; width: 1240px;">
+                <div class="scrollbar-control" style="height: 870px;">
+                    <table class="styled-table" style="width: 100%;">
+                        <thead>
+                            <tr class="sticky">
+                                <th style="width: 40px;"></th>
+                                <th style="text-align: center; width: 13px;""></th>
+                                <th style=" text-align: center; width: 13px;""></th>
+                                <th class="header-cell" style="text-align: center; width: 127px;">Table name</th>
+                                <th class="header-cell" style="text-align: center; width: 141px;">Index name</th>
+                                <th class="header-cell" style="text-align: center;">Type</th>
+                                <th class="header-cell" style="text-align: center;">Field name</th>
+                                <th class="header-cell" style="text-align: center;">Fragmentation (%)</th>
+                                <th class="header-cell" style="text-align: center;">Size (MB)</th>
+                                <th class="header-cell" style="width: 100px;">State</th>
+                                <th class="header-cell" style="text-align: center;">Resp</th>
+                                <th class="header-cell" style="width: 100px;">Run time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="index_body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div id="defrag_box" style="float: left; width: 1210px;">
-            <div class="scrollbar-control" style="height: 870px;">
-                <table class="styled-table" style="width: 100%;">
+        <div class="bottom-div" style="background-color: #030303;">
+            <div style="float: left; font-size: 12px; color: orange;">
+                <div style="float: left; font-weight: bold;">1088</div>
+                <div style="float: left;">&nbsp;- нет такой таблицы</div>
+                <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+                <div style="float: left; font-weight: bold;">1222</div>
+                <div style="float: left;">&nbsp;- объект занят</div>
+                <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+                <div style="float: left; font-weight: bold;">2714</div>
+                <div style="float: left;">&nbsp;- объект уже существует</div>
+                <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+                <div style="float: left; font-weight: bold;">2777</div>
+                <div style="float: left;">&nbsp;- нет такого индекса</div>
+                <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+                <div style="float: left; font-weight: bold;">3701</div>
+                <div style="float: left;">&nbsp;- удаление несуществующего объекта</div>
+                <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+                <div style="float: left; font-weight: bold;">-7</div>
+                <div style="float: left;">&nbsp;- процесс ничего не вернул</div>
+                <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+                <div style="float: left; font-weight: bold;">-8</div>
+                <div style="float: left;">&nbsp;- не верные параметры</div>
+                <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
+                <div style="float: left; font-weight: bold;">-9</div>
+                <div style="float: left;">&nbsp;- системная ошибка</div>
+            </div>
+            <div style="float: right; margin-right: 20px; font-size: 12px; margin-top: -4px;">
+                <div id="selected_index_count" class="info-block" style="float: left; margin-right: 10px;"
+                    title="Selected indexes count">0</div>
+                <div style="float: left; margin-right: 10px;"> | </div>
+                <div id="total_index_count" class="info-block" style="float: left; margin-right: 10px;"
+                    title="Indexes count">0</div>
+                <div style="float: left; margin-right: 10px;"> | </div>
+                <div id="total_table_count" class="info-block" style="float: left; margin-right: 10px;"
+                    title="Tables count">0</div>
+                <div style="float: left; margin-right: 10px;"> | </div>
+                <div id="success_count" class="info-block"
+                    style="float: left; margin-right: 10px; color: whitesmoke; background-color: #1f7a45;"
+                    title="Success count">0</div>
+                <div style="float: left; margin-right: 10px;"> | </div>
+                <div id="failure_count" class="info-block"
+                    style="float: left; margin-right: 10px; color: whitesmoke; background-color: #fc0303;"
+                    title="Failure count">0</div>
+            </div>
+        </div>
+
+        <div style="float: left;">
+            <div class="statistic" style="margin-left: 6px; height: 648px; width: 415px;">
+                <table class="statistic-table" style="width: 100%; margin-left: -1px;">
+                    <tr style="color: orange; background-color: #030303;">
+                        <td style="width: 30px;">
+                            <div id="stat_loader" class="stat-loader stat-loader-view" style="visibility: hidden;">
+                            </div>
+                        </td>
+                        <td style="font-weight: bold; width: 150px;">
+                            <div style="float: left;">Run time:</div>
+                        </td>
+                        <td id="stat_run_time">00:00:00</td>
+                        <td>
+                            <button class="btn btn-pointer reload-index-stat-btn"
+                                onclick="getIndexStatisctic(true)">Reload</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="can_delete"
+                                style="margin-left: 10px; filter: drop-shadow(2px 4px 6px black); display: none;">
+                                <svg fill="#000000" width="14px" height="14px" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg" id="delete-alt" class="icon glyph">
+                                    <path d="M17,4V5H15V4H9V5H7V4A2,2,0,0,1,9,2h6A2,2,0,0,1,17,4Z"></path>
+                                    <path
+                                        d="M20,6H4A1,1,0,0,0,4,8H5V20a2,2,0,0,0,2,2H17a2,2,0,0,0,2-2V8h1a1,1,0,0,0,0-2ZM11,17a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0Zm4,0a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0Z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </td>
+                        <td style="font-weight: bold;">Table:</td>
+                        <td id="stat_table"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">Index:</td>
+                        <td id="stat_index"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">Index type:</td>
+                        <td id="stat_type"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">Field:</td>
+                        <td id="stat_field"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">Field type:</td>
+                        <td id="stat_field_type"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="frag-graph"></td>
+                        <td style="font-weight: bold;">Fragmentation (%):</td>
+                        <td>
+                            <div id="stat_frag" style="float: left;"></div>
+                            <div id="stat_frag_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">Size (MB):</td>
+                        <td>
+                            <div id="stat_size" style="float: left;"></div>
+                            <div id="stat_size_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="space-graph"></td>
+                        <td style="font-weight: bold;">Page space used (%):</td>
+                        <td>
+                            <div id="stat_space" style="float: left;"></div>
+                            <div id="stat_space_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr style="background-color: #f3f3f3;">
+                        <td></td>
+                        <td style="font-weight: bold;">Page count:</td>
+                        <td>
+                            <div id="stat_page_count" style="float: left;"></div>
+                            <div id="stat_page_count_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">Record count:</td>
+                        <td>
+                            <div id="stat_record_count" style="float: left;"></div>
+                            <div id="stat_record_count_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">User seeks:</td>
+                        <td>
+                            <div id="stat_seeks_count" style="float: left;"></div>
+                            <div id="stat_seeks_count_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-weight: bold;">User scans:</td>
+                        <td>
+                            <div id="stat_scans_count" style="float: left;"></div>
+                            <div id="stat_scans_count_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr">
+                        <td></td>
+                        <td style="font-weight: bold;">User lookups:</td>
+                        <td>
+                            <div id="stat_lookups_count" style="float: left;"></div>
+                            <div id="stat_lookups_count_svg" style="margin-top: -1px;"></div>
+                        </td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="font-weight: bold;">Total writes:</td>
+                            <td>
+                                <div id="stat_writes_count" style="float: left;"></div>
+                                <div id="stat_wrights_count_svg" style="margin-top: -1px;"></div>
+                            </td>
+                            <td></td>
+                        </tr>
+                </table>
+            </div>
+
+            <div id="chart" class="statistic" style="margin-left: 6px; width: 415px;"></div>
+        </div>
+
+    </div>
+
+    <div id="popup_box"></div>
+
+    <div id="box2" class="info-box" style="float: left; margin-left: 2px; display: none;">
+        Box 1
+    </div>
+
+    <div id="box3" class="info-box" style="float: left; margin-left: 2px; display: none;">
+        Box 2
+    </div>
+
+    <div id="box4" class="info-box" style="float: left; margin-left: 2px; display: none;">
+        <div id="index_info_box" style="float: left; width: 300px;">
+            <div>
+                <input id="card_find" type="search" class="input-control" placeholder="" aria-controls="example"
+                    style="margin-left: 24px; margin-bottom: 10px; width: 291px; height: 30px;"
+                    onkeyup="findTableByMask()">
+            </div>
+            <div class="scrollbar-control" style="padding-right: 20px; height: 850px;">
+                <table id="table_info" class="styled-table" style="width: 100%;">
                     <thead>
                         <tr class="sticky">
-                            <th style="width: 40px;">
-                                <div class="checkbox-cell">
-                                    <input id="header_check" type="checkbox" class="checkbox-control row-checkbox"
-                                        onchange="onHeaderCheckBoxChange(event)">
-                                </div>
-                            </th>
-                            <th class="header-cell" style="text-align: center;">Table name</th>
-                            <th class="header-cell" style="text-align: center;">Index name</th>
-                            <th class="header-cell" style="text-align: center;">Type</th>
-                            <th class="header-cell" style="text-align: center;">Field name</th>
-                            <th class="header-cell" style="text-align: center;">Fragmentation (%)</th>
-                            <th class="header-cell" style="text-align: center;">Size (MB)</th>
-                            <th class="header-cell" style="width: 100px;">State</th>
-                            <th class="header-cell" style="text-align: center;">Resp</th>
-                            <th class="header-cell" style="width: 100px;">Run time</th>
+                            <th class=" header-cell" style="text-align: center;">Table name</th>
                         </tr>
                     </thead>
-                    <tbody id="index_body"></tbody>
+                    <tbody id="index_info_body"></tbody>
                 </table>
             </div>
         </div>
-    </div>
-
-    <div class="bottom-div" style="background-color: #030303;">
-        <div style="float: left; font-size: 12px; color: orange;">
-            <div style="float: left; font-weight: bold;">1088</div><div style="float: left;">&nbsp;- нет такой таблицы</div>
-            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
-            <div style="float: left; font-weight: bold;">1222</div><div style="float: left;">&nbsp;- объект занят</div>
-            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
-            <div style="float: left; font-weight: bold;">2714</div><div style="float: left;">&nbsp;- объект уже существует</div>
-            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
-            <div style="float: left; font-weight: bold;">2777</div><div style="float: left;">&nbsp;- нет такого индекса</div>
-            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
-            <div style="float: left; font-weight: bold;">3701</div><div style="float: left;">&nbsp;- удаление несуществующего объекта</div>
-            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
-            <div style="float: left; font-weight: bold;">-7</div><div style="float: left;">&nbsp;- процесс ничего не вернул</div>
-            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
-            <div style="float: left; font-weight: bold;">-8</div><div style="float: left;">&nbsp;- не верные параметры</div>
-            <div style="float: left; margin-left: 10px; margin-right: 10px;"> | </div>
-            <div style="float: left; font-weight: bold;">-9</div><div style="float: left;">&nbsp;- системная ошибка</div>
-        </div>
-        <div style="float: right; margin-right: 20px; font-size: 12px; margin-top: -4px;">
-            <div id="selected_index_count" class="info-block" style="float: left; margin-right: 10px;" title="Selected indexes count">0</div>
-            <div style="float: left; margin-right: 10px;"> | </div>
-            <div id="total_index_count" class="info-block" style="float: left; margin-right: 10px;" title="Indexes count">0</div>
-            <div style="float: left; margin-right: 10px;"> | </div>
-            <div id="total_table_count" class="info-block" style="float: left; margin-right: 10px;" title="Tables count">0</div>
-            <div style="float: left; margin-right: 10px;"> | </div>
-            <div id="success_count" class="info-block" style="float: left; margin-right: 10px; color: whitesmoke; background-color: #1f7a45;" title="Success count">0</div>
-            <div style="float: left; margin-right: 10px;"> | </div>
-            <div id="failure_count" class="info-block" style="float: left; margin-right: 10px; color: whitesmoke; background-color: #fc0303;" title="Failure count">0</div>
-        </div>
-    </div>
-
-    <div style="float: left;">
-        <div class="statistic" style="margin-left: 24px; height: 451px; width: 450px;">
-            <table class="statistic-table" style="width: 100%;">
-                <tr style="color: orange; background-color: #030303;">
-                    <td style="width: 30px;">
-                        <div id="stat_loader" class="stat-loader stat-loader-view" style="visibility: hidden;"></div>
-                    </td>
-                    <td style="font-weight: bold; width: 150px;">                        
-                        <div style="float: left;">Run time:</div>
-                    </td>
-                    <td id="stat_run_time">00:00:00</td>
-                    <td>
-                        <button class="btn btn-pointer reload-index-stat-btn" onclick="getIndexStatisctic(true)">Reload</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Table:</td>
-                    <td id="stat_table"></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Index:</td>
-                    <td id="stat_index"></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Index type:</td>
-                    <td id="stat_type"></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Field:</td>
-                    <td id="stat_field"></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Field type:</td>
-                    <td id="stat_field_type"></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold; background-color: #7fffd4;">Fragmentation (%):</td>
-                    <td>
-                        <div id="stat_frag" style="float: left;"></div>
-                        <div id="stat_frag_svg" style="margin-top: -1px;"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Size (MB):</td>
-                    <td>
-                        <div id="stat_size" style="float: left;"></div>
-                        <div id="stat_size_svg" style="margin-top: -1px;"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold; background-color: #7fffd4;">Page space used (%):</td>
-                    <td>
-                        <div id="stat_space" style="float: left;"></div>
-                        <div id="stat_space_svg" style="margin-top: -1px;"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Page count:</td>
-                    <td>
-                        <div id="stat_page_count" style="float: left;"></div>
-                        <div id="stat_page_count_svg" style="margin-top: -1px;"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="font-weight: bold;">Record count:</td>
-                    <td>
-                        <div id="stat_record_count" style="float: left;"></div>
-                        <div id="stat_record_count_svg" style="margin-top: -1px;"></div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="statistic scrollbar-control" style="margin-left: 24px; height: 200px; width: 450px; background-color: #e0e0e0;">
-            <div id="running_block">                
+        <div id="table_indexes_box" style="float: left; margin-left: 20px;">
+            <div style="float: left;">
+                <div style="float: left; width: 20px; border-right: 1px solid black; height: 900px; margin-left: 10px; margin-top: 2px">
+                    <div id="tab_ind_col1" class="tab-ind-col selected-ind-col-tab" style="width: 87px; margin-top: 88px;" onclick="selectIndexesColumsTab(this, 1)">Indexes</div>
+                    <div id="tab_ind_col2" class="tab-ind-col" style="margin-top: 70px; width: 95px;" onclick="selectIndexesColumsTab(this, 2)">Columns</div>
+                </div>
             </div>
+            <div id="indexes_info_box" class="scrollbar-control" style="float:left; width: 1510px; height: 890px;">
+                <table class="styled-table" style="width: 100%; margin-left: 3px; margin-top: 1px;">
+                    <thead>
+                        <tr class="sticky">
+                            <th class="header-cell" style="width: 30px;"></th>
+                            <th class="header-cell" style="text-align: center; width: 106px;">Index name</th>
+                            <th class="header-cell" style="text-align: center; width: 102px;">Type</th>
+                            <th class="header-cell" style="text-align: center; width: 150px;">Field name</th>
+                            <th class="header-cell" style="text-align: center;">Fragmentation (%)</th>
+                            <th class="header-cell" style="text-align: center;">Size (MB)</th>
+                            <th class="header-cell" style="width: 60px;">Page count</th>
+                            <th class="header-cell" style="text-align: center;">Type</th>
+                            <th class="header-cell" style="text-align: center;">Max length</th>
+                            <th class="header-cell" style="width: 64px;"></th>
+                            <th class="header-cell" style="width: 72px;">User seeks</th>
+                            <th class="header-cell" style="width: 72px;">User scans</th>
+                            <th class="header-cell" style="width: 100px;">User lookups</th>
+                            <th class="header-cell" style="width: 100px;">Total writes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="indexes_info_body"></tbody>
+                </table>
+            </div>
+            <div id="columns_info_box" class="scrollbar-control" style="float:left; width: 1500px; height: 890px; display: none;">
+                <div style="float: left;;">
+                    <table class="styled-table" style="width: 874px; margin-left: 3px; margin-top: 1px;">
+                        <thead>
+                            <tr class="sticky">
+                                <th class="header-cell" style="width: 30px;"></th>
+                                <th class="header-cell" style="text-align: center; width: 174px;">Column name</th>
+                                <th class="header-cell" style="text-align: center; width: 50px;">Type</th>
+                                <th class="header-cell" style="text-align: center; width: 50px;">Lenght</th>
+                                <th class="header-cell" style="text-align: center; width: 250px;">Max filled length</th>
+                                <th class="header-cell" style="text-align: center; width: 350px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="columns_info_body"></tbody>
+                    </table>
+                </div>
+                <div style="float: left; margin-left: 15px; width: 600px;">
+                    <table class="legend-table">
+                        <caption>⚙️ ALTER COLUMN — Operation Impact</caption>
+                        <thead>
+                            <tr>
+                                <th>Change Type</th>
+                                <th>Lock Duration</th>
+                                <th>Production Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="legend_fast_row">
+                                <td><strong>Increase</strong><br><span style="font-size:12px; color:#4a627a;">VARCHAR(n) → VARCHAR(m) where m &gt; n</span></td>
+                                <td><span class="icon">⚡</span> Short (seconds)</td>
+                                <td><span class="risk-low">✅ LOW</span><br><span style="font-size:11px;">Safe for peak hours</span></td>
+                            </tr>
+                            <tr id="legend_slow_row">
+                                <td><strong>Decrease</strong><br><span style="font-size:12px; color:#4a627a;">VARCHAR(n) → VARCHAR(m)
+                                        where m &lt; n</span></td>
+                                <td><span class="icon">🐢</span> Long (minutes/hours)</td>
+                                <td><span class="risk-high">⚠️ HIGH</span><br><span style="font-size:11px;">Requires Time window &
+                                        planning</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note">
+                        <strong>Note:</strong> Any `ALTER COLUMN` acquires an exclusive <strong>SCH‑M (Schema Modification)
+                            lock</strong> on the table.
+                        <br>• <strong>Increase</strong> changes metadata only → very fast, short lock.
+                        <br>• <strong>Decrease</strong> validates every row → long‑lasting lock, high impact.
+                    </div>
+                </div>
+            </div>            
         </div>
+    </div>
     </div>
 
     <div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
@@ -195,6 +493,23 @@
     <script type="text/html" id="row_template">
         <tr id="row" class="row" data-success="0" data-failure="0" onclick="selectRow(this, event)">
             <td id="checkbox" style="height: 34px;"></td>
+            <td style="width: 13px; cursor: pointer;">
+                <div id="delete_svg" style="display: none;">
+                    <svg fill="#000000" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="delete-alt"
+                        class="icon glyph">
+                        <title>Can be deleted</title>
+                        <path d="M17,4V5H15V4H9V5H7V4A2,2,0,0,1,9,2h6A2,2,0,0,1,17,4Z"></path>
+                        <path
+                            d="M20,6H4A1,1,0,0,0,4,8H5V20a2,2,0,0,0,2,2H17a2,2,0,0,0,2-2V8h1a1,1,0,0,0,0-2ZM11,17a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0Zm4,0a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0Z">
+                        </path>
+                    </svg>
+                </div>
+            </td>
+            <td>
+                <div id="go_to_index_info" style="cursor: pointer;" onclick="goToTableIndexInfo(this)">
+                    
+                </div>
+            </td>
             <td id="table"></td>
             <td id="index"></td>
             <td id="type"></td>
@@ -215,6 +530,63 @@
             </td>
             <td id="run_time"></td>
         </tr>
+    </script>
+
+    <script type="text/html" id="row_index_info_template">
+        <tr id="index_info_row" class="index-info-row" style="cursor: pointer;" onclick="selectIndexInfoRow(this)">
+            <td id="index_info_cell" class="table-cell"></td>
+        </tr>
+    </script>
+
+    <script type="text/html" id="row_indexes_info_template">
+        <tr id="info_row" class="info-row" data-success="0" data-failure="0" style="cursor: pointer;" onclick="selectInfoRow(this)">             
+                <td id="info_num"></td>   
+                <td id="info_index"></td>
+                <td id="info_type"></td>
+                <td id="info_field"></td>
+                <td id="info_frag" style="text-align: center;"></td>
+                <td id="info_size" style="text-align: center;"></td>
+                <td id="info_page_count" style="text-align: center;"></td>
+                <td id="info_column_type"></td>
+                <td id="info_max_length" style="text-align: center; font-weight: bold;"></td>
+                <td id="info_change"></td>
+                <td id="info_seeks" style="text-align: center;"></td>
+                <td id="info_scans" style="text-align: center;"></td>
+                <td id="info_lookups" style="text-align: center;"></td>
+                <td id="info_total_writes" style="text-align: center;"></td>
+            </tr>
+    </script>
+
+    <script type="text/html" id="row_columns_info_template">
+            <tr id="column_row" class="column-info-row" data-success="0" data-failure="0" style="cursor: pointer;" onclick="selectColumnInfoRow(this)">             
+                    <td id="column_num"></td>   
+                    <td id="column_name"></td>
+                    <td id="column_type"></td>
+                    <td id="column_length" class="compared-cell" style="text-align: center;"></td>
+                    <td id="column_max_fill_length" style="font-weight: bold; text-align: center;"></td>
+                    <td id="column_size_change"></td>
+                </tr>
+        </script>
+
+    <script type="text/html" id="change_field_size_template">
+        <div style="width: 100%;">
+            <div style="float: left;">
+                <div>
+                    <input id="change_size_input" type="search" class="input-control" placeholder="" aria-controls="example"
+                        style="margin-left: 24px; width: 70px; height: 24px;" onkeyup="highlightColumnLegend(this)" onfocus="selectCompared(this)" onblur="deselectCompared(this)">
+                </div>
+            </div>
+            <div style="float: left;">
+                <div id="change_field_size" style="margin-left: 10px; margin-top: 2px; cursor: pointer;" title="Change field size" onclick="changeFieldSize(this)">
+                    <svg width="20px" height="20px" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#ff8c00" fill-rule="evenodd">
+                            <path d="M6 13.02a1 1 0 0 0 1 1 1.02 1.02 0 0 0 .79-.38l.04-.06A6.177 6.177 0 0 1 11 11.15a3.663 3.663 0 0 1 1-.15v1.02a.976.976 0 0 0 .55.87 1 1 0 0 0 1.05-.09l4-3a1 1 0 0 0 0-1.6l-4-3a.99.99 0 0 0-1.05-.09.988.988 0 0 0-.55.87V7c-2.15 0-5.91 3.1-6 6.02z" />
+                            <path d="M1.4 0h11.2c.781.01 1.407.649 1.4 1.43v1.748a2.782 2.782 0 0 0-2.042.033A.955.955 0 0 0 12 3a1 1 0 0 0-1-1H3a1 1 0 1 0 0 2h7.789a2.97 2.97 0 0 0-.726 1.391A8.57 8.57 0 0 0 8.822 6H3a1 1 0 1 0 0 2h3.322a9.775 9.775 0 0 0-1.455 2H3a1 1 0 0 0 0 2h1.125a3.685 3.685 0 0 0 .053 2H3a1 1 0 0 0 0 2h8a1 1 0 0 0 1-1 .961.961 0 0 0-.043-.212 2.83 2.83 0 0 0 2.043.038v1.714A1.444 1.444 0 0 1 12.6 18H1.4A1.443 1.443 0 0 1 0 16.54V1.4A1.391 1.391 0 0 1 1.4 0z" />
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </script>
 
     <script type="text/html" id="row_checkbox">
@@ -238,10 +610,10 @@
             </table>            
         </div>
     </script>
-    
+
     <script>
         $(document).ready(function () {
-            initialize();
+            initializePage0();
         });
     </script>
 </body>
