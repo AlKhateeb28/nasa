@@ -31,19 +31,30 @@ if (LdsIsServer) {
 
     try {
         dataList = ArrayDirect(XQuery("sql: " +
-            " SELECT os.code AS inn, " +
+            " WITH _view AS ( " +
+            "   SELECT os.code AS inn, " +
             "       os.name AS os_name, " +
             "       rs.name AS reg_name, " +
             "       cs.code AS cs_code, " +
             "       cs.id, " +
-            "       cs.fullname " +
-            "FROM [WTDB].[dbo].collaborators cs " +
-            "    INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
-            "    INNER JOIN [WTDB].[dbo].org o ON os.id = o.id " +
-            "    INNER JOIN [WTDB].[dbo].regions AS rs ON o.data.value('(org/custom_elems/custom_elem[name=''report_region_id''])[1]/value[1]', 'bigint') = rs.id " +
-            "    LEFT JOIN [WTDB].[dbo].event_results ers ON cs.id = ers.person_id " +
-            "WHERE cs.code LIKE '%rck_muc_2025%' " +
-            "  AND ers.id IS NULL "));
+            "       cs.fullname, " +
+            "       LEFT( " +
+            "           SUBSTRING(cs.code, PATINDEX('%[0-9]%', cs.code), 4), " +
+            "           PATINDEX('%[^0-9]%', " +
+            "           SUBSTRING(cs.code, PATINDEX('%[0-9]%', cs.code), 4) + ' ' " +
+            "       ) -1) AS year " +
+            " FROM[WTDB].[dbo].collaborators cs " +
+            "   INNER JOIN[WTDB].[dbo].orgs os ON cs.org_id = os.id " +
+            " 	INNER JOIN[WTDB].[dbo].org o ON os.id = o.id " +
+            " 	INNER JOIN[WTDB].[dbo].regions AS rs ON o.data.value('(org/custom_elems/custom_elem[name=''report_region_id''])[1]/value[1]', 'bigint') = rs.id " +
+            " 	LEFT JOIN[WTDB].[dbo].event_results ers ON cs.id = ers.person_id " +
+            " WHERE ers.id IS NULL " +
+            " 	AND cs.code LIKE 'rck_muc%' " +
+            " ) " +
+            " SELECT * " +
+            " FROM _view " +
+            " WHERE year >= " + Param.fromYear +
+            " ORDER BY year "));
 
         total = ArrayCount(dataList);
 

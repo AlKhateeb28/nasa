@@ -469,7 +469,10 @@ function removeNotification() {
 
     notification = null;
 
+    console.log("Startd disable");
+
     $(".row_with_checkbox").each((index, checkbox) => {
+        console.log("disabled");
         $(checkbox).prop("disabled", false)
     });
 }
@@ -481,7 +484,9 @@ function validateFragProcesses() {
         startedCount++;
     });
 
-    if (startedCount === 0) {
+    console.log("startedCount: " + startedCount);
+
+    if (startedCount === 0) {1
         removeNotification();
     }
 }

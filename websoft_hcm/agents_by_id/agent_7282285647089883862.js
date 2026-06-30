@@ -175,7 +175,7 @@ try {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-    max = 18;
+    max = 24;
     
     fillLectorStatus("base", 1, max);
     fillLectorStatus("ao", 2, max);
@@ -195,6 +195,12 @@ try {
     fillLectorStatus("office", 16, max);
     fillLectorStatus("ssd", 17, max);
     fillLectorStatus("ppr", 18, max);
+    fillLectorStatus("fp", 19, max);
+    fillLectorStatus("fp_ppr", 20, max);
+    fillLectorStatus("fop", 21, max);
+    fillLectorStatus("fop_ppr", 22, max);
+    fillLectorStatus("flp", 23, max);
+    fillLectorStatus("flp_ppr", 24, max);
 
     agent.state = 1;
     agent.processed = processed;

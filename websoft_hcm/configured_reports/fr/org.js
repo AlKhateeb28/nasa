@@ -15,26 +15,29 @@ agent.message = "Получение данных...";
 ws = sendMessageToWebsocket(ws, agent);
 
 arr = ArraySelectAll( XQuery( "sql: " +
-    "SELECT orgs.id AS PK" +
-    "     , collaborators.id AS col_id" +
-    "     , collaborators.code AS col_code" +
-    "     , collaborators.fullname AS col_fio" +
-    "     , collaborators.email AS col_email" +
-    "     , boss_types.name AS col_boss_type" +
-    "     , orgs.id AS o_id" +
-    "     , orgs.name AS o_name" +
-    "     , CONCAT( '''', orgs.code ) AS o_inn" +
-    "     , org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') AS org_is_rck" +
-    "     , org.data.value('(org/custom_elems/custom_elem[name=''format_part''])[1]/value[1]', 'varchar(max)') AS org_format_part" +
-    "     , regions.name AS region_name" +
-    "     , regions.code AS region_code" +
-    "     , collaborators.is_dismiss AS col_is_dismiss" +
+    "SELECT orgs.id AS PK, " +
+    "     collaborators.id AS col_id, " +
+    "     collaborators.code AS col_code, " +
+    "     collaborators.fullname AS col_fio, " +
+    "     collaborators.email AS col_email, " +
+    "     boss_types.name AS col_boss_type, " +
+    "     orgs.id AS o_id, " +
+    "     orgs.name AS o_name, " +
+    "     CONCAT( '''', orgs.code ) AS o_inn, " +
+    "     org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') AS org_is_rck, " +
+    "     org.data.value('(org/custom_elems/custom_elem[name=''format_part''])[1]/value[1]', 'varchar(max)') AS org_format_part, " +
+    "     regions.name AS region_name, " +
+    "     regions.code AS region_code, " +
+    "     collaborators.is_dismiss AS col_is_dismiss, " +
+    "     ps.name AS pos_name, " +
+    "     org.data.value('(//custom_elems/custom_elem[name=''is_project_ended''])[1]/value[1]', 'varchar(max)') AS is_project_ended " +
     " FROM func_managers" +
     " LEFT JOIN collaborators ON collaborators.id = func_managers.person_id" +
     " LEFT JOIN boss_types ON boss_types.id = func_managers.boss_type_id" +
     " LEFT JOIN orgs ON orgs.id = func_managers.org_id" +
     " LEFT JOIN org ON org.id = orgs.id" +
-    " LEFT JOIN regions ON regions.id = org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)')" +
+    " LEFT JOIN regions ON regions.id = org.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'varchar(max)') " +
+    " LEFT JOIN [WTDB].[dbo].positions ps ON collaborators.position_id = ps.id " +
     " WHERE func_managers.catalog = 'org'"));
 
 total = ArrayCount(arr);
@@ -53,10 +56,10 @@ results = [];
 for (elem in arr) {
     try {
         organizations = ArraySelectAll(XQuery("sql: " +
-            "SELECT orgs.id AS org_id," +
+            " SELECT orgs.id AS org_id," +
             "   orgs.name AS org_name," +
-            "   org.data.value('(org/custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') AS is_rck," +
-            "   regs.name AS fact_region_name" +
+            "   org.data.value('(//custom_elems/custom_elem[name=''is_rck''])[1]/value[1]', 'varchar(max)') AS is_rck," +
+            "   regs.name AS fact_region_name " +
             " FROM [WTDB].[dbo].collaborators AS colls" +
             "   INNER JOIN [WTDB].[dbo].orgs as orgs ON orgs.id = colls.org_id" +
             "   INNER JOIN [WTDB].[dbo].org AS org ON org.id = orgs.id" +
@@ -134,6 +137,14 @@ _cc.datatype = "string";
 _cc.column_width = "20";
 _cc.column_title = "ФИО";
 _cc.column_value = "ListElem.col_fio";
+
+_cc = columns.AddChild();
+_cc.flag_formula = true;
+_cc.flag_visible = true;
+_cc.datatype = "string";
+_cc.column_width = "20";
+_cc.column_title = "Должность";
+_cc.column_value = "ListElem.pos_name";
 
 _cc = columns.AddChild();
 _cc.flag_formula = true;
@@ -230,6 +241,14 @@ _cc.datatype = "string";
 _cc.column_width = "10";
 _cc.column_title = "Уволен";
 _cc.column_value = "ListElem.col_is_dismiss";
+
+_cc = columns.AddChild();
+_cc.flag_formula = true;
+_cc.flag_visible = true;
+_cc.datatype = "string";
+_cc.column_width = "10";
+_cc.column_title = "Проект завершен";
+_cc.column_value = "ListElem.is_project_ended";
 
 saveMonitorAgents(agent, startDate);
 

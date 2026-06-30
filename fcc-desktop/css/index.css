@@ -62,6 +62,15 @@
     font-family: 'RockAndRoll', serif;
 }
 
+@font-face {
+    font-family: "Finlandica";
+    src: url("../fonts/FinlandicaText-Regular.ttf");
+}
+
+.finlandica {
+    font-family: 'Finlandica', serif;
+}
+
 /* CSS */
 .body {
     font-family: 'Noto Sans', sans-serif;

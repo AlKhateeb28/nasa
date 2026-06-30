@@ -52,6 +52,12 @@ const fullSVG = "<svg fill='#ffffff' width='26px' height='26px' viewBox='0 0 32 
     "<path d='M0 20q0 2.496 1.76 4.256t4.256 1.76h17.984q2.496 0 4.256-1.76t1.76-4.256h1.984v-8h-1.984q0-2.464-1.76-4.224t-4.256-1.76h-17.984q-2.496 0-4.256 1.76t-1.76 4.224v8zM4 20v-8q0-0.832 0.576-1.408t1.44-0.576h17.984q0.832 0 1.408 0.576t0.608 1.408v8q0 0.832-0.608 1.44t-1.408 0.576h-17.984q-0.832 0-1.44-0.576t-0.576-1.44zM6.016 20h1.984v-8h-1.984v8zM10.016 20h1.984v-8h-1.984v8zM14.016 20h1.984v-8h-1.984v8zM18.016 20h1.984v-8h-1.984v8zM22.016 20h1.984v-8h-1.984v8z'></path>" +
     "</svg>";
 
+const helperSVG = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 64.000000 64.000000" preserveAspectRatio="xMidYMid meet">
+    <g transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)" fill="#ffffff" stroke="none">
+        <path d="M333 455 c-78 -93 -91 -104 -115 -100 -19 3 -36 -3 -58 -21 -32 -27 -38 -52 -18 -72 9 -9 4 -20 -22 -47 l-34 -35 20 -27 c11 -15 32 -36 47 -47 l27 -20 35 34 c27 26 38 31 47 22 20 -20 45 -14 72 19 18 21 24 38 20 53 -5 20 11 37 100 115 l106 92 0 58 c0 31 -5 62 -12 69 -7 7 -38 12 -70 12 l-57 0 -88 -105z m157 16 c0 -19 -177 -178 -187 -168 -2 3 30 46 72 96 76 89 115 114 115 72z m-245 -202 c35 -31 60 -67 53 -75 -2 -2 -29 21 -58 51 -58 59 -54 76 5 24z m-51 -90 c-9 -10 -21 -16 -26 -13 -5 3 -2 14 8 25 9 10 21 16 26 13 5 -3 2 -14 -8 -25z"></path>
+    </g>
+</svg>`;
+
 const networkOption = {
     series: [{
         data: []
@@ -665,9 +671,15 @@ function createAgentBox(agent) {
     pinElement.attr("id",   "pin_btn_" + agent.getId());
 
     $("#agentId").attr("id",   "agentId" + agent.getId());
-    $("#agentId" + agent.getId()).html(agent.getId());
+    $("#agentId" + agent.getId()).html(agent.getId());    
     $("#agentName").attr("id",   "agentName" + agent.getId());
     $("#agentName" + agent.getId()).html( getCorrectAgentName(agent.getName()) );
+    if ("" + agent.getId() === "7437057559620972968" || "" + agent.getId() === "7437386579509580998" || "" + agent.getId() === "7299983342287187981") {
+        $("#agentName" + agent.getId()).css("color", "whitesmoke");
+        $("#agentName" + agent.getId()).css("font-weight", "600");
+    } else {
+        $("#agentName" + agent.getId()).css("color", "#mediumspringgreen");
+    }
     $("#agentCopyId").attr("id",   "agentCopyId_" + agent.getId());
     $("#agentCopyId_" + agent.getId()).attr("agentId",   agent.getId());
     $("#userCopyId").attr("id",   "userCopyId_" + agent.getId());

@@ -129,6 +129,12 @@ function addRowsByLector(worksheet, lectorDocTE) {
     addCells(worksheet, lectorDocTE, "office");
     addCells(worksheet, lectorDocTE, "ssd");
     addCells(worksheet, lectorDocTE, "ppr");
+    addCells(worksheet, lectorDocTE, "fp");
+    addCells(worksheet, lectorDocTE, "fp_ppr");
+    addCells(worksheet, lectorDocTE, "fop");
+    addCells(worksheet, lectorDocTE, "fop_ppr");
+    addCells(worksheet, lectorDocTE, "flp");
+    addCells(worksheet, lectorDocTE, "flp_ppr");
 }
 
 if (LdsIsServer) {

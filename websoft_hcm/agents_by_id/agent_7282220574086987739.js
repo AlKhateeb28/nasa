@@ -123,7 +123,7 @@ try {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-    max = 18;
+    max = 24;
 
     fillEducationMethodFields("base", 1, max);
     fillEducationMethodFields("ao", 2, max);
@@ -143,6 +143,12 @@ try {
     fillEducationMethodFields("office", 16, max);
     fillEducationMethodFields("ssd", 17, max);
     fillEducationMethodFields("ppr", 18, max);
+    fillEducationMethodFields("fp", 19, max);
+    fillEducationMethodFields("fp_ppr", 20, max);
+    fillEducationMethodFields("fop", 21, max);
+    fillEducationMethodFields("fop_ppr", 22, max);
+    fillEducationMethodFields("flp", 23, max);
+    fillEducationMethodFields("flp_ppr", 24, max);
 
     agent.state = 1;
     agent.processed = processed;

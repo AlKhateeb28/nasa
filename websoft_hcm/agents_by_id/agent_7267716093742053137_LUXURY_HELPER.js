@@ -4,7 +4,7 @@ function isAgentRunning(id) { runningAgentList = tools.spxml_unibridge.Object.pr
 
 function convertToBooleanAsString(value) {
     if (value == null) {
-        return "NULL";
+        return null;
     } else if (OptInt(value) == 0) {
         return "false";
     } else {
@@ -30,6 +30,8 @@ try {
         var saved = 0;
         var skipped = 0;
 
+        period = 15;
+
         agent.message = "Получение данных...";
         ws = sendMessageToWebsocket(ws, agent);
         prevDate = new Date();
@@ -43,7 +45,7 @@ try {
             " SELECT os.id, " +
             "   NULL AS person_id, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''in_program'']/value)[1]', 'bit') AS in_program, " +
-            "   o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'nvarchar(1)') AS is_fcc, " +
+            "   o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'bit') AS is_fcc, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') AS is_rck, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') AS is_ock, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') AS is_roiv, " +
@@ -53,7 +55,7 @@ try {
             "   o.data.value('(//custom_elems/custom_elem[name=''With_no_right'']/value)[1]', 'bit') AS with_no_right " +
             " FROM orgs os " +
             "   INNER JOIN org o ON os.id = o.id " +
-            " WHERE os.modification_date > DATEADD(MINUTE, -15, GETDATE()) "));
+            " WHERE os.modification_date > DATEADD(MINUTE, -" + period + ", GETDATE()) "));
         total = ArrayCount(dataList);
 
         agent.total = total;
@@ -69,7 +71,7 @@ try {
                 " DECLARE @Result INT; " +
                 " EXEC @Result = [WTDB].[dbo].[Helper] " +
                 " @orgID = " + data.id + ", " +
-                " @personID = NULL" +
+                " @personID = NULL," +
                 " @inProgram = '" + convertToBooleanAsString(data.in_program) + "', " +
                 " @isFck = '" + convertToBooleanAsString(data.is_fcc) + "', " +
                 " @isRck = '" + convertToBooleanAsString(data.is_rck) + "', " +
@@ -83,10 +85,10 @@ try {
 
             if (ArrayCount(helperProcedureList) > 0) {
                 if (OptInt(helperProcedureList[0].code) != 1) {
-                    throw new Exception("Возвращенный код ошибки: " + helperProcedureList[0].code);
+                    throw "Организации. Возвращенный код ошибки: " + helperProcedureList[0].code;
                 }
             } else {
-                throw new Exception("Хранимая процедура Helper ничего не вернула.");
+                throw "Организации. Хранимая процедура Helper ничего не вернула.";
             }
 
             processed++;
@@ -106,7 +108,7 @@ try {
             " SELECT os.id, " +
             "   cs.id AS person_id, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''in_program'']/value)[1]', 'bit') AS in_program, " +
-            "   o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'nvarchar(1)') AS is_fcc, " +
+            "   o.data.value('(//custom_elems/custom_elem[name=''is_fcc'']/value)[1]', 'bit') AS is_fcc, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''is_rck'']/value)[1]', 'bit') AS is_rck, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''is_ock'']/value)[1]', 'bit') AS is_ock, " +
             "   o.data.value('(//custom_elems/custom_elem[name=''is_roiv'']/value)[1]', 'bit') AS is_roiv, " +
@@ -117,7 +119,7 @@ try {
             " FROM collaborators cs " +
             "   INNER JOIN orgs os ON cs.org_id = os.id " +
             "   INNER JOIN org o ON os.id = o.id " +
-            " WHERE cs.modification_date > DATEADD(MINUTE, -15, GETDATE()) "));
+            " WHERE cs.modification_date > DATEADD(MINUTE, -" + period + ", GETDATE()) "));
 
         total = ArrayCount(dataList);
 
@@ -134,7 +136,7 @@ try {
                 " DECLARE @Result INT; " +
                 " EXEC @Result = [WTDB].[dbo].[Helper] " +
                 " @orgID = " + data.id + ", " +
-                " @personID = "+ data.person_id +
+                " @personID = " + data.person_id + ", " +
                 " @inProgram = '" + convertToBooleanAsString(data.in_program) + "', " +
                 " @isFck = '" + convertToBooleanAsString(data.is_fcc) + "', " +
                 " @isRck = '" + convertToBooleanAsString(data.is_rck) + "', " +
@@ -148,15 +150,15 @@ try {
 
             if (ArrayCount(helperProcedureList) > 0) {
                 if (OptInt(helperProcedureList[0].code) != 1) {
-                    throw new Exception("Возвращенный код ошибки: " + helperProcedureList[0].code);
+                    throw "Сотрудники. Возвращенный код ошибки: " + helperProcedureList[0].code;
                 }
             } else {
-                throw new Exception("Хранимая процедура Helper ничего не вернула.");
+                throw "Сотрудники. Хранимая процедура Helper ничего не вернула.";
             }
 
             processed++;
             saved++;
-            
+
             agent.processed = processed;
             agent.skipped = skipped;
             agent.saved = saved;
