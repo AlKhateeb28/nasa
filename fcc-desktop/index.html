@@ -76,7 +76,111 @@
             </td>
 
             <td style="width: 882px;">
-                <div id="table" class="thread-table tab-element"></div>
+                <div id="task_box" class="thread thread-inactive" style="margin-left: 13px; height: 50px; background-image: linear-gradient(to right, #5d343c 50%, #02273a) !important; border: solid 2px orange; border-radius: 9px;">
+                    <div id="helper_btn" class="run-group run-group-helper-btn run-group-inactive" style="border: solid 2px orange; margin-top: 8px;" onclick="onHelperGroupClick(this)">
+                        HELPERS
+                    </div>
+                    <div id="helper_info" style="margin-top: 26px; display: none; padding-left: 4px; padding-right: 4px;">
+                        <table class="legend-table">
+                            <thead>
+                                <tr style="background-image: linear-gradient(90deg, #5d343c 52%, #04273a) !important;">
+                                    <th style="width: 130px;">Flag</th>
+                                    <th>in program</th>
+                                    <th>is fcc</th>
+                                    <th>is rck</th>
+                                    <th>is ock</th>
+                                    <th>is roiv</th>
+                                    <th>is partner</th>
+                                    <th>is commerce</th>
+                                    <th>is project ended</th>
+                                    <th>with no right</th>
+                                    <th>with no right Fall</th>
+                                    <th>with no right Rise</th>
+                                    <th>Clear if is project ended rised</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="font-size: 11px;">
+                                    <td style="font-weight: 600; color: #f5f5f5; text-align: left;">HELPER</td>
+                                    <td id="helper_program_7437057559620972968">0</td>
+                                    <td id="helper_fcc_7437057559620972968">0</td>
+                                    <td id="helper_rck_7437057559620972968">0</td>
+                                    <td id="helper_ock_7437057559620972968">0</td>
+                                    <td id="helper_roiv_7437057559620972968">0</td>
+                                    <td id="helper_partner_7437057559620972968">0</td>
+                                    <td id="helper_commerce_7437057559620972968">0</td>
+                                    <td id="helper_ended_7437057559620972968">0</td>
+                                    <td id="helper_wnr_7437057559620972968">0</td>
+                                    <td id="helper_step1_7437057559620972968">-</td>
+                                    <td id="helper_step2_7437057559620972968">-</td>
+                                    <td id="helper_step3_7437057559620972968">-</td>
+                                </tr>
+                                <tr style="font-size: 11px;">
+                                    <td style="font-weight: 600; color: #f5f5f5; text-align: left;">HELPER RIGHTLESS</td>
+                                    <td id="helper_program_7207884401104677018">-</td>
+                                    <td id="helper_fcc_7207884401104677018">-</td>
+                                    <td id="helper_rck_7207884401104677018">-</td>
+                                    <td id="helper_ock_7207884401104677018">-</td>
+                                    <td id="helper_roiv_7207884401104677018">-</td>
+                                    <td id="helper_partner_7207884401104677018">-</td>
+                                    <td id="helper_commerce_7207884401104677018">-</td>
+                                    <td id="helper_ended_7207884401104677018">-</td>
+                                    <td id="helper_wnr_7207884401104677018">-</td>
+                                    <td id="helper_step1_7207884401104677018">0</td>
+                                    <td id="helper_step2_7207884401104677018">0</td>
+                                    <td id="helper_step3_7207884401104677018">0</td>
+                                </tr>
+                                <tr style="font-size: 11px;">
+                                    <td style="font-weight: 600; color:#f5f5f5; text-align: left;">УБЕРНАТОР 1000</td>
+                                    <td id="helper_program_7300978396789946474">0</td>
+                                    <td id="helper_fcc_7300978396789946474">0</td>
+                                    <td id="helper_rck_7300978396789946474">0</td>
+                                    <td id="helper_ock_7300978396789946474">0</td>
+                                    <td id="helper_roiv_7300978396789946474">0</td>
+                                    <td id="helper_partner_7300978396789946474">0</td>
+                                    <td id="helper_commerce_7300978396789946474">0</td>
+                                    <td id="helper_ended_7300978396789946474">0</td>
+                                    <td id="helper_wnr_7300978396789946474">0</td>
+                                    <td id="helper_step1_7300978396789946474">-</td>
+                                    <td id="helper_step2_7300978396789946474">-</td>
+                                    <td id="helper_step3_7300978396789946474">-</td>
+                                </tr>
+                                <tr style="font-size: 11px;">
+                                    <td style="font-weight: 600; color: #f5f5f5; text-align: left;">HELPER 1000</td>
+                                    <td id="helper_program_7437386579509580998">0</td>
+                                    <td id="helper_fcc_7437386579509580998">0</td>
+                                    <td id="helper_rck_7437386579509580998">0</td>
+                                    <td id="helper_ock_7437386579509580998">0</td>
+                                    <td id="helper_roiv_7437386579509580998">0</td>
+                                    <td id="helper_partner_7437386579509580998">0</td>
+                                    <td id="helper_commerce_7437386579509580998">0</td>
+                                    <td id="helper_ended_7437386579509580998">0</td>
+                                    <td id="helper_wnr_7437386579509580998">0</td>
+                                    <td id="helper_step1_7437386579509580998">-</td>
+                                    <td id="helper_step2_7437386579509580998">-</td>
+                                    <td id="helper_step3_7437386579509580998">-</td>
+                                </tr>
+                                <tr style="font-size: 11px;">
+                                    <td style="font-weight: 600; color: #f5f5f5; text-align: left;">SMART HELPER 0/1</td>
+                                    <td id="helper_program_7299983342287187981">0</td>
+                                    <td id="helper_fcc_7299983342287187981">0</td>
+                                    <td id="helper_rck_7299983342287187981">0</td>
+                                    <td id="helper_ock_7299983342287187981">0</td>
+                                    <td id="helper_roiv_7299983342287187981">0</td>
+                                    <td id="helper_partner_7299983342287187981">0</td>
+                                    <td id="helper_commerce_7299983342287187981">0</td>
+                                    <td id="helper_ended_7299983342287187981">0</td>
+                                    <td id="helper_wnr_7299983342287187981">0</td>
+                                    <td id="helper_step1_7299983342287187981">-</td>
+                                    <td id="helper_step2_7299983342287187981">-</td>
+                                    <td id="helper_step3_7299983342287187981">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="table" class="thread-table tab-element">                    
+                </div>
             </td>
 
             <td style="vertical-align: top;">
@@ -97,7 +201,9 @@
 <script type="text/x-kendo-template" id="template">
     <div id="rowId" pin="0" class="thread thread-unknown-state thread-active agent-box" onclick="haveFocus(this)">
         <div id="pin_btn" parent="" class="pin-btn unpinned-btn-mode" onclick="pinUnpinParent(this)">Pin</div>
-        <div id="owner" class="float-left-box owner"></div>
+        <div id="owner" class="float-left-box owner">
+            <div id="icon_svg" style="display: block; margin-left: 28px; margin-top: 20px; cursor: pointer;"></div>
+        </div>
         <div>
             <table>
                 <tr>

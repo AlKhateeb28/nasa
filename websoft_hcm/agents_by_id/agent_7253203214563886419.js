@@ -21,13 +21,14 @@ function getData(eventId, result) {
         "       ems.name AS edu_method_name, " +
         "       cs.fullname " +
         " FROM [WTDB].[dbo].event_results ers " +
-        "         INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
-        "    AND er.data.exist('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]') = 1 " +
-        "    AND er.data.value('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]', 'varchar(max)') IS NOT NULL " +
-        "         INNER JOIN [WTDB].[dbo].collaborators cs ON ers.person_id = cs.id " +
-        "         INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
-        "         INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id AND es.id = " + eventId + " AND es.status_id = 'close' " +
-        "         INNER JOIN [WTDB].[dbo].event_result_types erts ON ers.event_result_type_id = erts.id AND erts.id = " + config.eventResultTypeId +
+        "       INNER JOIN [WTDB].[dbo].event_result er ON ers.id = er.id " +
+        "           AND er.data.exist('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]') = 1 " +
+        "           AND er.data.value('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]', 'varchar(max)') IS NOT NULL " +
+        "       INNER JOIN [WTDB].[dbo].collaborators cs ON ers.person_id = cs.id " +
+        "       INNER JOIN [WTDB].[dbo].orgs os ON cs.org_id = os.id " +
+        "       INNER JOIN [WTDB].[dbo].events es ON ers.event_id = es.id AND es.id = " + eventId + " AND es.status_id = 'close' " +
+        "       INNER JOIN [WTDB].[dbo].event_result_types erts ON ers.event_result_type_id = erts.id AND erts.id = " + config.eventResultTypeId +
+        "       INNER JOIN [WTDB].[dbo].education_methods ems ON es.education_method_id = ems.id" +
         " WHERE UPPER(er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)')) = '" + result + "' "));
 }
 
@@ -62,7 +63,7 @@ function getNormalizedName(value) {
     return result;
 }
 
-function createCertificate(personId, certificateTypeId, serial, orgName, deliveryDate, eventId, eduMethodName) {
+function createCertificate(personId, certificateTypeId, orgName, deliveryDate, eventId, eduMethodName) {
     if(StrContains(eduMethodName, "_")) {
         eduMethodName = getNormalizedName(eduMethodName);
     }
@@ -217,7 +218,7 @@ if (!LdsIsServer) {
                                 eduMethodName = getNormalizedName(eduMethodName);
                             }
 
-                            certificateId = createCertificate(data.person_id, config.cetificateTypeId, "РП", data.org_name, data.cert_date, data.event_id, eduMethodName);
+                            certificateId = createCertificate(data.person_id, config.cetificateTypeId, data.org_name, data.cert_date, data.event_id, eduMethodName);
 
                             addCertificateIdIntoEventResult(data.id, certificateId);
 

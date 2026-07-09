@@ -112,38 +112,47 @@ try {
         step = 1;
         max = 9
         count = updateSingleFlag("in_program", "inprogram", step, max);
+        agent.inProgram = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed in_program: " + count);
 
         step++;
         count = updateSingleFlag("is_fcc", "isfcc", step, max);
+        agent.isFcc = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_fcc: " + count);
 
         step++;
         count = updateSingleFlag("is_rck", "isrck", step, max);
+        agent.isRck = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_rck: " + count);
 
         step++;
         count = updateSingleFlag("is_ock", "isock", step, max);
+        agent.isOck = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_ock: " + count);
 
         step++;
         count = updateSingleFlag("is_roiv", "isroiv", step, max);
+        agent.isRoiv = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_roiv: " + count);
 
         step++;
         count = updateSingleFlag("is_partner", "ispartner", step, max);
+        agent.isPartner = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_partner: " + count);
 
         step++;
         count = updateSingleFlag("is_a_commerce_client", "iscommerce", step, max);
+        agent.isCommerce = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_a_commerce_client: " + count);
 
         step++;
         count = updateSingleFlag("is_project_ended", "isprojectended", step, max);
+        agent.isProjectEnded = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_project_ended: " + count);
 
         step++;
         count = updateSingleFlag("With_no_right", "withnoright", step, max);
+        agent.withNoRight = count;
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed With_no_right: " + count);
 
         agent.state = 1;

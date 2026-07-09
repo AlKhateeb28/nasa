@@ -668,16 +668,20 @@ function getEmptyFinality() {
     }
 }
 
-function getState(assignmentDate, finality1, finality2, finality3, finality4, successRate) {
+function getState(assignmentDate, finality1, finality2, finality3, finality4, successRate, defaultRate) {
     if(Year(assignmentDate) < 2025) {
         return "Завершена";
+    }
+
+    if (defaultRate == undefined) {
+        defaultRate = 80;
     }
 
     state = "В процессе";
 
     if(finality1.count == 0 && finality2.count == 0 && finality3.count == 0 && finality4.count == 0) {
         state = "Не начата";
-    } else if(successRate >= 80) {
+    } else if(successRate >= defaultRate) {
         state = "Завершена";
     }
 
@@ -750,7 +754,7 @@ function getUniqueEvents(data, dossierDocTE) {
             eduMethodCount: getTrenEduMethodCount(dossierDocTE.collaborator_lists),
             eventResultNames: "-",
             successRate: successRate,
-            state: getState(data.assignment_date, finality1, finality2, finality3, finality4, successRate)
+            state: getState(data.assignment_date, finality1, finality2, finality3, finality4, successRate, 100)
         };
     } else if (OptInt(data.qualification_id) == 7195881271939560446) {
         // Тренер Самостоятельно

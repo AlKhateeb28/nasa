@@ -9,6 +9,16 @@ var pingTimeout = 300000;
 var challengerChart;
 var challengesData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+let activeGroupName = "";
+
+let helperGroupIDs = [
+    "7437057559620972968",
+    "7437386579509580998",
+    "7299983342287187981",
+    "7207884401104677018",
+    "7300978396789946474"
+];
+
 var webOverloadChart;
 var sqlOverloadChart;
 var webOverloadData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -58,17 +68,38 @@ const helperSVG = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="
     </g>
 </svg>`;
 
+const lookupSVG = `<svg fill="#ffffff" height="30px" width="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 485.104 485.104" xml:space="preserve">
+        <g>
+	        <path d="M110.028,115.171c-4.76-4.767-12.483-4.752-17.227,0c-32.314,32.33-32.314,84.898-0.016,117.197 c2.38,2.379,5.487,3.569,8.614,3.569c3.123,0,6.234-1.19,8.613-3.569c4.76-4.76,4.76-12.469,0-17.228 c-22.795-22.803-22.795-59.923,0.016-82.742C114.788,127.64,114.788,119.923,110.028,115.171z"/>
+	        <path d="M471.481,405.861L324.842,259.23c37.405-66.25,28.109-151.948-28.217-208.317C263.787,18.075,220.133,0,173.718,0 C127.287,0,83.633,18.075,50.81,50.913c-67.717,67.74-67.701,177.979,0.02,245.738c32.85,32.823,76.488,50.897,122.919,50.897 c30.489,0,59.708-7.939,85.518-22.595L405.824,471.51c18.113,18.121,47.493,18.129,65.641,0 c8.706-8.71,13.593-20.512,13.608-32.823C485.073,426.37,480.171,414.567,471.481,405.861z M85.28,262.191 c-48.729-48.756-48.729-128.079-0.016-176.828c23.62-23.627,55.029-36.634,88.453-36.634c33.407,0,64.816,13.007,88.451,36.627 c48.715,48.756,48.699,128.094-0.015,176.85c-23.62,23.612-55.014,36.612-88.406,36.612 C140.341,298.818,108.919,285.811,85.28,262.191z"/>
+        </g>
+    </svg>`;
+
+const updateSVG = `<svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" viewBox="0 0 493.935 493.936" xml:space="preserve">
+    <g>
+	    <g>
+            <path d="M276.217,186.19c16.236-49.241,4.914-105.582-34.254-144.744C201.779,1.262,143.517-9.656,93.394,8.496
+                c-4.51,1.634-5.324,5.955-1.934,9.345l87.871,87.871c3.391,3.391,4.847,9.804,3.25,14.327l-13.433,38.042
+                c-1.597,4.523-6.555,9.48-11.077,11.078l-38.061,13.445c-4.522,1.598-10.936,0.141-14.327-3.25L17.824,91.489
+                c-3.391-3.391-7.711-2.577-9.339,1.928C-9.654,143.534,1.27,201.79,41.441,241.968c39.168,39.168,95.502,50.49,144.744,34.254
+                l208.392,208.386c12.436,12.437,32.602,12.437,45.037,0l44.994-44.994c12.436-12.436,12.436-32.601,0-45.037L276.217,186.19z
+                M426.426,445.954c-12.362,0-22.381-10.019-22.381-22.381s10.019-22.381,22.381-22.381s22.381,10.019,22.381,22.381
+                S438.789,445.954,426.426,445.954z"/>
+	    </g>
+    </g>
+</svg>`;
+
 const networkOption = {
     series: [{
         data: []
     }],
     chart: {
-        animations: {enabled: false},
+        animations: { enabled: false },
         height: 90,
         type: "bar",
         offsetX: -15,
-        toolbar: {show: false},
-        zoom: {enabled: false}
+        toolbar: { show: false },
+        zoom: { enabled: false }
     },
     plotOptions: {
         bar: {
@@ -84,14 +115,14 @@ const networkOption = {
     fill: {
         //colors: ["#ffc107"],
         colors: [
-            function({ value, seriesIndex, w }) {
-                if(value === 20) {
+            function ({ value, seriesIndex, w }) {
+                if (value === 20) {
                     return "#212529";
                 }
 
-                if(value < 6) {
+                if (value < 6) {
                     return "#7CFC00";
-                } else if(value >= 6 && value < 11) {
+                } else if (value >= 6 && value < 11) {
                     return "#ffc107";
                 } else {
                     return "#FF4500";
@@ -108,29 +139,90 @@ const networkOption = {
             stops: [20, 100]
         }
     },
-    dataLabels: { enabled: false},
-    legend: {show: false},
-    tooltip: {enabled: false},
-    grid: {show: false, xaxis: {lines: {show: false}},yaxis: {lines: {show: false}}},
-    xaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false},tooltip: {enabled: false}},
-    yaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false}}
+    dataLabels: { enabled: false },
+    legend: { show: false },
+    tooltip: { enabled: false },
+    grid: { show: false, xaxis: { lines: { show: false } }, yaxis: { lines: { show: false } } },
+    xaxis: { labels: { show: false }, axisTicks: { show: false }, axisBorder: { show: false }, tooltip: { enabled: false } },
+    yaxis: { labels: { show: false }, axisTicks: { show: false }, axisBorder: { show: false } }
 };
 
 var webSocket = getWebSocket(window.WebSocket);
 
-webSocket.onmessage = function(event) {
+webSocket.onmessage = function (event) {
     setWSStateAsAlive();
 
     receiveMessage(event.data).then(r => r);
 };
 
 async function receiveMessage(promise) {
-    if(typeof promise === "string") {
+    if (typeof promise === "string") {
         showMessage(promise);
     } else {
         promise.text().then((value) => {
             showMessage(value);
         });
+    }
+}
+
+function isInGroup(agentId) {
+    if (activeGroupName === "") {
+        return true;
+    } else if (activeGroupName === "HELPER") {
+        return isInGroupIDs(helperGroupIDs, agentId);
+    }
+}
+
+function isInGroupIDs(group, agentId) {
+    let isFound = false;
+
+    for (let i = 0; i < group.length; i++) {
+        if (group[i] === agentId) {
+            isFound = true;
+        }
+    };
+
+    return isFound;
+}
+
+function putGroupMark(group) {
+    $(".agent-box").each(function (index) {
+        const agentId = $(this).attr("data-id");
+
+        if (!isInGroupIDs(group, agentId)) {
+            $(this).css("display", "none");
+        }
+    });
+}
+
+function removeGroupMark() {
+    $(".agent-box").each(function (index) {
+        $(this).css("display", "block");
+    });
+}
+
+function onHelperGroupClick(element) {
+    if (activeGroupName === "") {
+        activeGroupName = "HELPER";
+
+        $("#task_box").css("height", "222px");
+        $("#helper_info").css("display", "block");
+
+        $(element).addClass("group-btn-flash");
+        $(element).css("color", "gold");
+
+        putGroupMark(helperGroupIDs);
+    } else if (activeGroupName === "HELPER") {
+        activeGroupName = "";
+
+        $("#task_box").css("height", "50px");
+        $("#helper_info").css("display", "none");
+
+        $(element).removeClass("group-btn-flash");
+        $(element).addClass("run-group-inactive");
+        $(element).css("color", "mintcream");
+
+        removeGroupMark();
     }
 }
 
@@ -144,8 +236,8 @@ function getSummaryOption() {
             width: 310,
             //height: 380,
             type: "bar",
-            toolbar: {show: false},
-            zoom: {enabled: false}
+            toolbar: { show: false },
+            zoom: { enabled: false }
         },
         plotOptions: {
             bar: {
@@ -177,7 +269,7 @@ function getSummaryOption() {
                 top: 25
             }
         },
-        stroke: {curve: 'smooth'},
+        stroke: { curve: 'smooth' },
         fill: {
             //colors: [bottomColor],
             type: "gradient",
@@ -194,9 +286,9 @@ function getSummaryOption() {
             offsetY: -10,
             categories: ["6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
             position: "bottom",
-            axisBorder: {show: false},
-            axisTicks: {show: false},
-            tooltip: {enabled: false},
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            tooltip: { enabled: false },
             labels: {
                 show: true,
                 rotate: -70,
@@ -210,14 +302,14 @@ function getSummaryOption() {
                 }
             }
         },
-        yaxis: {axisBorder: {show: false}, axisTicks: {show: false,}, labels: {show: false}},
-        legend: {show: false},
-        tooltip: {enabled: false}
+        yaxis: { axisBorder: { show: false }, axisTicks: { show: false, }, labels: { show: false } },
+        legend: { show: false },
+        tooltip: { enabled: false }
     };
 }
 
 function showMessage(message) {
-    if(message.indexOf("#") > -1) {
+    if (message.indexOf("#") > -1) {
         message = message.substring(message.indexOf("#") + 1).replaceAll("&quot;", '"');
 
         jsonMessage = message;
@@ -234,34 +326,34 @@ function showMessage(message) {
 
             let newBoxId = clientAgent.getId();
 
-            if(agents[clientAgent.getId()] !== undefined) {
+            if (agents[clientAgent.getId()] !== undefined) {
                 agents[clientAgent.getId()].setMessageDate(new Date());
                 agents[clientAgent.getId()].setFetchTime(clientAgent.getFetchTime());
                 agents[clientAgent.getId()].setHandlingTime(clientAgent.getHandlingTime());
                 agents[clientAgent.getId()].setSavingTime(clientAgent.getSavingTime());
 
-                if(agents[clientAgent.getId()].getState() > 0) {
+                if (agents[clientAgent.getId()].getState() > 0) {
                     $("#msPerRow_" + clientAgent.getId()).html("--");
                     $("#chart_" + clientAgent.getId() + " svg").last().remove();
                 }
 
-                if(agents[clientAgent.getId()].getState() !== clientAgent.getState()) {
+                if (agents[clientAgent.getId()].getState() !== clientAgent.getState()) {
                     agents[clientAgent.getId()].setStartDateTime(new Date());
 
-                    if(clientAgent.getState() == 0) {
+                    if (clientAgent.getState() == 0) {
                         $("#dateTime_" + clientAgent.getId()).html(getCurrentDateTime());
                     }
 
                     const waitElement = $("#wait" + clientAgent.getId())
                     waitElement.css("visibility", "visible");
 
-                    if(clientAgent.getState() !== 2) {
+                    if (clientAgent.getState() !== 2) {
                         const errorBoxElement = $("#errorBox_" + clientAgent.getId());
                         errorBoxElement.css("visibility", "hidden");
                         errorBoxElement.html("");
                     }
 
-                    if(clientAgent.getState() === 0) {
+                    if (clientAgent.getState() === 0) {
                         clearDevicesClasses(agentStateElement);
                         agentStateElement.addClass("device-run");
                         agentStateElement.attr("title", "Agent is running");
@@ -285,17 +377,17 @@ function showMessage(message) {
                         //$("#expected_" + clientAgent.getId()).html("");
                     }
                 } else {
-                    $("#expected_" + clientAgent.getId()).html( getExpectedTime(clientAgent) );
+                    $("#expected_" + clientAgent.getId()).html(getExpectedTime(clientAgent));
                 }
 
                 agents[clientAgent.getId()].setState(clientAgent.getState());
 
-                refreshAgentBox(clientAgent);
+                refreshAgentBox(clientAgent, agent);
 
-                if(clientAgent.getState() > 0) {
+                if (clientAgent.getState() > 0) {
                     wsStateElement.attr("title", "WS is sleeping");
 
-                    newBoxId = changeFinishedAgentId(clientAgent, agents[clientAgent.getId()]);
+                    newBoxId = changeFinishedAgentId(clientAgent, agents[clientAgent.getId()], agent);
 
                     //saveAgent(clientAgent);
                 } else {
@@ -307,12 +399,12 @@ function showMessage(message) {
 
                 agents[clientAgent.getId()] = clientAgent;
 
-                createAgentBox(clientAgent);
+                createAgentBox(clientAgent, agent);
 
                 $("#active-count").html(parseInt($("#active-count").html()) + 1);
             }
 
-            if(clientAgent.getState() === 2) {
+            if (clientAgent.getState() === 2) {
                 // Received error message
                 $("#wait" + clientAgent.getId()).css("visibility", "hidden");
 
@@ -326,36 +418,36 @@ function showMessage(message) {
                 errorBoxElement.css("color", "mintcream");
                 errorBoxElement.html(clientAgent.getErrorMessage().replaceAll("\r\n", "<br/>"));
             }
-        } else if(agent.type === "CHALLENGE") {
+        } else if (agent.type === "CHALLENGE") {
             agent.challenges.forEach((challenge) => {
                 changeChallengesData(challenge);
             });
 
-            challengerChart.updateSeries([{data: challengesData}]);
+            challengerChart.updateSeries([{ data: challengesData }]);
 
             calculateChallenges();
-        } else if(agent.type === "MISMATCH") {
+        } else if (agent.type === "MISMATCH") {
             processMismatchMessage(agent);
-        } else if(agent.type === "NEW_COLLS_HOURS") {
+        } else if (agent.type === "NEW_COLLS_HOURS") {
             processNewCollaboratorsHour(agent);
-        } else if(agent.type === "NEW_COLLS_DAYS") {
+        } else if (agent.type === "NEW_COLLS_DAYS") {
             processNewCollaboratorsDay(agent);
-        }  else if(agent.type === "NEW_COLLS_MONTH") {
+        } else if (agent.type === "NEW_COLLS_MONTH") {
             processNewCollaboratorsMonth(agent);
         }
-    }  else {
+    } else {
         if (message === "pong") {
             setWSStateAsAlive();
 
             pongDate = new Date();
 
-            if(!isConnected) {
+            if (!isConnected) {
                 isConnected = true;
 
                 checkPingState();
                 setTimeout(checkPingState, pingTimeout);
             }
-        } else if(message.indexOf("vis-") > -1) {
+        } else if (message.indexOf("vis-") > -1) {
             showFreshVisitors(message);
         }
     }
@@ -364,7 +456,7 @@ function showMessage(message) {
 function changeChallengesData(challenge) {
     let currentDateTime;
 
-    if(challenge == null) {
+    if (challenge == null) {
         currentDateTime = new Date();
     } else {
         currentDateTime = new Date(challenge.datetime);
@@ -430,7 +522,7 @@ function setWSStateAsDead() {
 }
 
 function checkPingState() {
-    if((new Date() - pongDate - 60000) > pingTimeout) {
+    if ((new Date() - pongDate - 60000) > pingTimeout) {
         setWSStateAsDead();
     } else {
         webSocket.send("ping");
@@ -440,14 +532,14 @@ function checkPingState() {
 }
 
 function getExpectedTime(agent) {
-    if(agent.getTotal() === "--" || agent.getTotal() === "--" || agent.getMsPerRow() === 0) {
+    if (agent.getTotal() === "--" || agent.getTotal() === "--" || agent.getMsPerRow() === 0) {
         return "";
     } else {
         let expectedTime = Math.round((agent.getTotal() - agent.getProcessed()) * agent.getMsPerRow());
 
-        if(expectedTime < 60) {
+        if (expectedTime < 60) {
             return "00:00:" + expectedTime.toString().padStart(2, "0");
-        } else if(expectedTime >= 60 && expectedTime < 3600) {
+        } else if (expectedTime >= 60 && expectedTime < 3600) {
             return "00:" +
                 Math.floor(expectedTime / 60).toString().padStart(2, "0") + ":" +
                 (expectedTime % 60).toString().padStart(2, "0");
@@ -456,7 +548,7 @@ function getExpectedTime(agent) {
 
             let minSecString = "";
 
-            if(seconds < 60) {
+            if (seconds < 60) {
                 minSecString = "00:" + seconds.toString().padStart(2, "0");
             } else {
                 minSecString = Math.floor(seconds / 60).toString().padStart(2, "0") + ":" +
@@ -468,17 +560,34 @@ function getExpectedTime(agent) {
     }
 }
 
-function changeFinishedAgentId(agent, stackAgent) {
+function fillHelperInfoValue(originalAgent, formIdPreffix, flagValue) {
+    const prevValue = parseInt($("#" + formIdPreffix + originalAgent.id).text());
+    const newValue = prevValue + flagValue;
+
+    $("#" + formIdPreffix + originalAgent.id).html(newValue);
+
+    if (newValue > 0) {
+        $("#" + formIdPreffix + originalAgent.id).css("font-weight", "600");
+
+        if (prevValue === newValue) {
+            $("#" + formIdPreffix + originalAgent.id).css("color", "#f5f5f5");
+        } else {
+            $("#" + formIdPreffix + originalAgent.id).css("color", "#00ff00");
+        }
+    }
+}
+
+function changeFinishedAgentId(agent, stackAgent, originalAgent) {
     const newAgentId = agent.getId() + "-" + Math.floor(Math.random() * 100000);
 
     delete agents[agent.getId()];
 
-    $("#wait" + agent.getId()).attr("id",   "wait" + newAgentId);
-    $("#agentState" + agent.getId()).attr("id",   "agentState" +  newAgentId);
-    $("#wsState" + agent.getId()).attr("id",   "wsState" + newAgentId);
+    $("#wait" + agent.getId()).attr("id", "wait" + newAgentId);
+    $("#agentState" + agent.getId()).attr("id", "agentState" + newAgentId);
+    $("#wsState" + agent.getId()).attr("id", "wsState" + newAgentId);
 
-    for(let id in pinnedWindows) {
-        if(id === "rowId" + agent.getId()) {
+    for (let id in pinnedWindows) {
+        if (id === "rowId" + agent.getId()) {
             delete pinnedWindows[id];
 
             pinnedWindows["rowId" + newAgentId] = 0;
@@ -488,45 +597,84 @@ function changeFinishedAgentId(agent, stackAgent) {
     const rowElement = $("#rowId" + agent.getId());
     rowElement.removeClass("thread-active");
     rowElement.addClass("thread-inactive");
-    if(parseInt(rowElement.attr("pin")) === 1) {
+    if (parseInt(rowElement.attr("pin")) === 1) {
         rowElement.addClass("pinned-color");
     }
 
-    rowElement.attr("id",   "rowId" + newAgentId);
+    rowElement.attr("id", "rowId" + newAgentId);
 
     const pinElement = $("#pin_btn_" + agent.getId());
-    pinElement.attr("id",   "pin_btn_" + newAgentId);
-    pinElement.attr("parent",  newAgentId);
+    pinElement.attr("id", "pin_btn_" + newAgentId);
+    pinElement.attr("parent", newAgentId);
 
-    $("#agentId" + agent.getId()).attr("id",   "agentId" + newAgentId);
-    $("#agentName" + agent.getId()).attr("id",   "agentName" + newAgentId);
-    $("#agentCopyId_" + agent.getId()).attr("id",   "agentCopyId_" + newAgentId);
-    $("#userCopyId_" + agent.getId()).attr("id",   "userCopyId_" + newAgentId);
-    $("#userId" + agent.getId()).attr("id",   "userId" + newAgentId);
-    $("#userName" + agent.getId()).attr("id",   "userName" + newAgentId);
-    $("#total" + agent.getId()).attr("id",   "total" + newAgentId);
-    $("#processed" + agent.getId()).attr("id",   "processed" + newAgentId);
-    $("#skipped" + agent.getId()).attr("id",   "skipped" + newAgentId);
-    $("#saved" + agent.getId()).attr("id",   "saved" + newAgentId);
-    $("#notFound" + agent.getId()).attr("id",   "notFound" + newAgentId);
-    $("#message" + agent.getId()).attr("id",   "message" + newAgentId);
-    $("#duration" + agent.getId()).attr("id",   "duration" + newAgentId);
-    $("#msPerRow_" + agent.getId()).attr("id",   "msPerRow_" + newAgentId);
+    $("#agentId" + agent.getId()).attr("id", "agentId" + newAgentId);
+    $("#agentName" + agent.getId()).attr("id", "agentName" + newAgentId);
+    $("#agentCopyId_" + agent.getId()).attr("id", "agentCopyId_" + newAgentId);
+    $("#userCopyId_" + agent.getId()).attr("id", "userCopyId_" + newAgentId);
+    $("#userId" + agent.getId()).attr("id", "userId" + newAgentId);
+    $("#userName" + agent.getId()).attr("id", "userName" + newAgentId);
+    $("#total" + agent.getId()).attr("id", "total" + newAgentId);
+    $("#processed" + agent.getId()).attr("id", "processed" + newAgentId);
+    $("#skipped" + agent.getId()).attr("id", "skipped" + newAgentId);
+    $("#saved" + agent.getId()).attr("id", "saved" + newAgentId);
+    $("#notFound" + agent.getId()).attr("id", "notFound" + newAgentId);
+    $("#message" + agent.getId()).attr("id", "message" + newAgentId);
+    $("#duration" + agent.getId()).attr("id", "duration" + newAgentId);
+    $("#msPerRow_" + agent.getId()).attr("id", "msPerRow_" + newAgentId);
 
     const expectedElement = $("#expected_" + agent.getId());
     expectedElement.html("00:00:00");
-    expectedElement.attr("id",   "expected_" + newAgentId);
+    expectedElement.attr("id", "expected_" + newAgentId);
 
-    $("#errorBox_" + agent.getId()).attr("id",   "errorBox_" + newAgentId);
-    $("#optionalHeader_" + agent.getId()).attr("id",   "optionalHeader_" + newAgentId);
-    $("#optionalData_" + agent.getId()).attr("id",   "optionalData_" + newAgentId);
-    $("#name1_" + agent.getId()).attr("id",   "name1_" + newAgentId);
-    $("#value1_" + agent.getId()).attr("id",   "value1_" + newAgentId);
-    $("#name2_" + agent.getId()).attr("id",   "name2_" + newAgentId);
-    $("#value2_" + agent.getId()).attr("id",   "value2_" + newAgentId);
+    $("#errorBox_" + agent.getId()).attr("id", "errorBox_" + newAgentId);
+    $("#optionalHeader_" + agent.getId()).attr("id", "optionalHeader_" + newAgentId);
+    $("#optionalData_" + agent.getId()).attr("id", "optionalData_" + newAgentId);
+    $("#name1_" + agent.getId()).attr("id", "name1_" + newAgentId);
+    $("#value1_" + agent.getId()).attr("id", "value1_" + newAgentId);
+    $("#name2_" + agent.getId()).attr("id", "name2_" + newAgentId);
+    $("#value2_" + agent.getId()).attr("id", "value2_" + newAgentId);
 
     $("#active-count").html(parseInt($("#active-count").html()) - 1);
     $("#inactive-count").html(parseInt($("#inactive-count").html()) + 1);
+
+    if (isInGroupIDs(helperGroupIDs, "" + originalAgent.id)) {
+        if (Object.hasOwn(originalAgent, "inProgram")) {
+            fillHelperInfoValue(originalAgent, "helper_program_", originalAgent.inProgram);
+        }
+        if (Object.hasOwn(originalAgent, "isFcc")) {
+            fillHelperInfoValue(originalAgent, "helper_fcc_", originalAgent.isFcc);
+        }
+        if (Object.hasOwn(originalAgent, "isRck")) {
+            fillHelperInfoValue(originalAgent, "helper_rck_", originalAgent.isRck);
+        }
+        if (Object.hasOwn(originalAgent, "isOck")) {
+            fillHelperInfoValue(originalAgent, "helper_ock_", originalAgent.isOck);
+        }
+        if (Object.hasOwn(originalAgent, "isRoiv")) {
+            fillHelperInfoValue(originalAgent, "helper_roiv_", originalAgent.isRoiv);
+        }
+        if (Object.hasOwn(originalAgent, "isPartner")) {
+            fillHelperInfoValue(originalAgent, "helper_partner_", originalAgent.isPartner);
+        }
+        if (Object.hasOwn(originalAgent, "isCommerce")) {
+            fillHelperInfoValue(originalAgent, "helper_commerce_", originalAgent.isCommerce);
+        }
+        if (Object.hasOwn(originalAgent, "isProjectEnded")) {
+            fillHelperInfoValue(originalAgent, "helper_ended_", originalAgent.isProjectEnded);
+        }
+        if (Object.hasOwn(originalAgent, "withNoRight")) {
+            fillHelperInfoValue(originalAgent, "helper_wnr_", originalAgent.withNoRight);
+        }
+        if (Object.hasOwn(originalAgent, "step1")) {
+            fillHelperInfoValue(originalAgent, "helper_step1_", originalAgent.step1);
+        }
+        if (Object.hasOwn(originalAgent, "step2")) {
+            fillHelperInfoValue(originalAgent, "helper_step2_", originalAgent.step2);
+        }
+        if (Object.hasOwn(originalAgent, "step3")) {
+            fillHelperInfoValue(originalAgent, "helper_step3_", originalAgent.step3);
+        }
+    }
 
     refreshChart(agent, newAgentId);
 
@@ -551,16 +699,16 @@ function refreshChart(agent, newAgentId) {
             width: 300,
             height: 80,
             type: "area",
-            toolbar: {show: false},
-            zoom: {enabled: false}
+            toolbar: { show: false },
+            zoom: { enabled: false }
         },
-        dataLabels: {enabled: false},
-        stroke: {curve: 'smooth'},
-        legend: {show: false},
-        tooltip: {enabled: false},
-        grid: {show: false, xaxis: {lines: {show: false}},yaxis: {lines: {show: false}}},
-        xaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false},tooltip: {enabled: false}},
-        yaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false}}
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth' },
+        legend: { show: false },
+        tooltip: { enabled: false },
+        grid: { show: false, xaxis: { lines: { show: false } }, yaxis: { lines: { show: false } } },
+        xaxis: { labels: { show: false }, axisTicks: { show: false }, axisBorder: { show: false }, tooltip: { enabled: false } },
+        yaxis: { labels: { show: false }, axisTicks: { show: false }, axisBorder: { show: false } }
     };
 
     const chartElement = $("#chart_" + agent.getId());
@@ -572,24 +720,24 @@ function refreshChart(agent, newAgentId) {
 }
 
 function refreshOptionalData(agent) {
-    if(agent.getOptionalData() !== undefined) {
-        if(agent.getOptionalData().getName1() !== undefined) {
+    if (agent.getOptionalData() !== undefined) {
+        if (agent.getOptionalData().getName1() !== undefined) {
             const name1Element = $("#name1_" + agent.getId());
             const value1Element = $("#value1_" + agent.getId());
 
-            name1Element.css("visibility",   "visible");
-            value1Element.css("visibility",   "visible");
+            name1Element.css("visibility", "visible");
+            value1Element.css("visibility", "visible");
 
             name1Element.html(agent.getOptionalData().getName1());
             value1Element.html(agent.getOptionalData().getValue1());
         }
 
-        if(agent.getOptionalData().getName2() != undefined) {
+        if (agent.getOptionalData().getName2() != undefined) {
             const name2Element = $("#name2_" + agent.getId());
             const value2Element = $("#value2_" + agent.getId());
 
-            name2Element.css("visibility",   "visible");
-            value2Element.css("visibility",   "visible");
+            name2Element.css("visibility", "visible");
+            value2Element.css("visibility", "visible");
 
             name2Element.html(agent.getOptionalData().getName2());
             value2Element.html(agent.getOptionalData().getValue2());
@@ -598,34 +746,34 @@ function refreshOptionalData(agent) {
 }
 
 function refreshMsMaxPerRow(agent) {
-    if(agent.getMsPerRow() > 0) {
-        let msPerRow  = Math.ceil((agent.getMsPerRow() * 1000) * 100) / 100;
+    if (agent.getMsPerRow() > 0) {
+        let msPerRow = Math.ceil((agent.getMsPerRow() * 1000) * 100) / 100;
 
-        $("#msPerRow_" + agent.getId()).html( msPerRow + " ms");
+        $("#msPerRow_" + agent.getId()).html(msPerRow + " ms");
     }
 }
 
 function getValueWithPercent(value, total) {
-    if(total === "--" || total === 0 || value === "--") {
+    if (total === "--" || total === 0 || value === "--") {
         return value;
     } else {
-        const percentValue = Math.round( parseInt(value) * 100 / parseInt(total));
+        const percentValue = Math.round(parseInt(value) * 100 / parseInt(total));
 
         return value + " (" + percentValue + "%)";
     }
 }
 
 function getCorrectAgentName(name) {
-    if(name.length > 67) {
+    if (name.length > 67) {
         name = name.substring(0, 61) + " ...";
     }
 
     return name;
 }
 
-function refreshAgentBox(agent) {
+function refreshAgentBox(agent, originalAgent) {
     $("#agentId" + agent.getId()).html(agent.getId());
-    $("#agentName" + agent.getId()).html( getCorrectAgentName(agent.getName()) );
+    $("#agentName" + agent.getId()).html(getCorrectAgentName(agent.getName()));
     $("#userId" + agent.getId()).html(agent.getUserId());
     $("#userName" + agent.getId()).html(agent.getUserName());
     $("#total" + agent.getId()).html(agent.getTotal());
@@ -649,71 +797,92 @@ function calculateChallenges() {
     $("#hours-count").html(challengeCount);
 }
 
-function createAgentBox(agent) {
+function createAgentBox(agent, originalAgent) {
     refreshVisitors();
 
     changeChallengesData(null);
-    challengerChart.updateSeries([{data: challengesData}]);
+    challengerChart.updateSeries([{ data: challengesData }]);
 
     calculateChallenges();
 
     $("#table").prepend(kendo.template($("#template").html()));
 
-    $("#wait").attr("id",   "wait" + agent.getId());
-    $("#agentState").attr("id",   "agentState" + agent.getId());
-    $("#wsState").attr("id",   "wsState" + agent.getId());
+    $("#wait").attr("id", "wait" + agent.getId());
+    $("#agentState").attr("id", "agentState" + agent.getId());
+    $("#wsState").attr("id", "wsState" + agent.getId());
 
-    $("#rowId").attr("id",   "rowId" + agent.getId());
+    $("#rowId").attr("id", "rowId" + agent.getId());
+    if (!isInGroup("" + agent.getId())) {
+        $("#rowId" + agent.getId()).css("display", "none");
+    }
+    $("#rowId" + agent.getId()).attr("data-id", "" + agent.getId());
     $("#rowId" + agent.getId()).addClass("agent_" + agent.getId());
 
-    const pinElement = $("#pin_btn");
-    pinElement.attr("parent",  agent.getId());
-    pinElement.attr("id",   "pin_btn_" + agent.getId());
+    $("#icon_svg").attr("id", "icon_svg_" + agent.getId());
+    if (Object.hasOwn(originalAgent, "processed_mode")) {
+        if (originalAgent.processed_mode === "lookup") {
+            $("#icon_svg_" + agent.getId()).css("display", "block");
 
-    $("#agentId").attr("id",   "agentId" + agent.getId());
-    $("#agentId" + agent.getId()).html(agent.getId());    
-    $("#agentName").attr("id",   "agentName" + agent.getId());
-    $("#agentName" + agent.getId()).html( getCorrectAgentName(agent.getName()) );
-    if ("" + agent.getId() === "7437057559620972968" || "" + agent.getId() === "7437386579509580998" || "" + agent.getId() === "7299983342287187981") {
+            $("#icon_svg_" + agent.getId()).html(lookupSVG);
+            $("#icon_svg_" + agent.getId()).addClass("lookup-rotate");
+        } else if (originalAgent.processed_mode === "update") {
+            $("#icon_svg_" + agent.getId()).css("display", "block");
+
+            $("#icon_svg_" + agent.getId()).html(updateSVG);
+            $("#icon_svg_" + agent.getId()).addClass("update-rotate");
+        }
+    }
+
+    const pinElement = $("#pin_btn");
+    pinElement.attr("parent", agent.getId());
+    pinElement.attr("id", "pin_btn_" + agent.getId());
+
+    $("#agentId").attr("id", "agentId" + agent.getId());
+    $("#agentId" + agent.getId()).html(agent.getId());
+    $("#agentName").attr("id", "agentName" + agent.getId());
+    $("#agentName" + agent.getId()).html(getCorrectAgentName(agent.getName()));
+    if (isInGroupIDs(helperGroupIDs, "" + agent.getId())) {
+        $("#rowId" + agent.getId()).addClass("helper");
+
         $("#agentName" + agent.getId()).css("color", "whitesmoke");
         $("#agentName" + agent.getId()).css("font-weight", "600");
     } else {
         $("#agentName" + agent.getId()).css("color", "#mediumspringgreen");
     }
-    $("#agentCopyId").attr("id",   "agentCopyId_" + agent.getId());
-    $("#agentCopyId_" + agent.getId()).attr("agentId",   agent.getId());
-    $("#userCopyId").attr("id",   "userCopyId_" + agent.getId());
-    $("#userCopyId_" + agent.getId()).attr("userId",   agent.getUserId());
-    $("#userId").attr("id",   "userId" + agent.getId());
+    $("#agentCopyId").attr("id", "agentCopyId_" + agent.getId());
+    $("#agentCopyId_" + agent.getId()).attr("agentId", agent.getId());
+    $("#userCopyId").attr("id", "userCopyId_" + agent.getId());
+    $("#userCopyId_" + agent.getId()).attr("userId", agent.getUserId());
+    $("#userId").attr("id", "userId" + agent.getId());
     $("#userId" + agent.getId()).html(agent.getUserId());
-    $("#userName").attr("id",   "userName" + agent.getId());
+    $("#userName").attr("id", "userName" + agent.getId());
     $("#userName" + agent.getId()).html(agent.getUserName());
-    $("#total").attr("id",   "total" + agent.getId());
+    $("#total").attr("id", "total" + agent.getId());
     $("#total" + agent.getId()).html(agent.getTotal());
-    $("#processed").attr("id",   "processed" + agent.getId());
+    $("#processed").attr("id", "processed" + agent.getId());
     $("#processed" + agent.getId()).html(agent.getProcessed());
-    $("#skipped").attr("id",   "skipped" + agent.getId());
+    $("#skipped").attr("id", "skipped" + agent.getId());
     $("#skipped" + agent.getId()).html(agent.getSkipped());
-    $("#saved").attr("id",   "saved" + agent.getId());
+    $("#saved").attr("id", "saved" + agent.getId());
     $("#saved" + agent.getId()).html(agent.getSaved());
-    $("#notFound").attr("id",   "notFound" + agent.getId());
+    $("#notFound").attr("id", "notFound" + agent.getId());
     $("#notFound" + agent.getId()).html(agent.getNotFound());
-    $("#message").attr("id",   "message" + agent.getId());
+    $("#message").attr("id", "message" + agent.getId());
     $("#message" + agent.getId()).html(agent.getMessage());
-    $("#duration").attr("id",   "duration" + agent.getId());
+    $("#duration").attr("id", "duration" + agent.getId());
     $("#duration" + agent.getId()).html("00:00:00");
     $("#chart").attr("id", "chart_" + agent.getId());
-    $("#msPerRow").attr("id",   "msPerRow_" + agent.getId());
-    $("#dateTime").attr("id",   "dateTime_" + agent.getId());
+    $("#msPerRow").attr("id", "msPerRow_" + agent.getId());
+    $("#dateTime").attr("id", "dateTime_" + agent.getId());
     $("#dateTime_" + agent.getId()).html(getCurrentDateTime());
-    $("#expected").attr("id",   "expected_" + agent.getId());
-    $("#errorBox").attr("id",   "errorBox_" + agent.getId());
-    $("#optionalHeader").attr("id",   "optionalHeader_" + agent.getId());
-    $("#optionalData").attr("id",   "optionalData_" + agent.getId());
-    $("#name1").attr("id",   "name1_" + agent.getId());
-    $("#value1").attr("id",   "value1_" + agent.getId());
-    $("#name2").attr("id",   "name2_" + agent.getId());
-    $("#value2").attr("id",   "value2_" + agent.getId());
+    $("#expected").attr("id", "expected_" + agent.getId());
+    $("#errorBox").attr("id", "errorBox_" + agent.getId());
+    $("#optionalHeader").attr("id", "optionalHeader_" + agent.getId());
+    $("#optionalData").attr("id", "optionalData_" + agent.getId());
+    $("#name1").attr("id", "name1_" + agent.getId());
+    $("#value1").attr("id", "value1_" + agent.getId());
+    $("#name2").attr("id", "name2_" + agent.getId());
+    $("#value2").attr("id", "value2_" + agent.getId());
 
     refreshOptionalData(agent);
     refreshMsMaxPerRow(agent);
@@ -724,7 +893,7 @@ function calculateDurationTime(startDateTime, currentDateTime, total, processed)
 }
 
 function durationTimeToString(duration) {
-    const ms =  duration % 1000;
+    const ms = duration % 1000;
     duration = (duration - ms) / 1000;
     const secs = duration % 60;
     duration = (duration - secs) / 60;
@@ -754,8 +923,8 @@ function getCurrentTime() {
 }
 
 function refreshDuration() {
-    for(const id in agents) {
-        if(agents[id].getState() === 0) {
+    for (const id in agents) {
+        if (agents[id].getState() === 0) {
             $("#duration" + agents[id].getId()).html(
                 calculateDurationTime(agents[id].getStartDateTime(), new Date())
             );
@@ -771,12 +940,12 @@ function clearDevicesClasses(element) {
 }
 
 function checkWebsocketServerIsLive() {
-    for(const id in agents) {
+    for (const id in agents) {
         const wsStateElement = $("#wsState" + agents[id].getId());
 
-        if(agents[id].getState() === 0) {
-            if((new Date() - agents[id].getMessageDate()) > 30000) {
-                if((new Date() - agents[id].getMessageDate()) > 60000) {
+        if (agents[id].getState() === 0) {
+            if ((new Date() - agents[id].getMessageDate()) > 30000) {
+                if ((new Date() - agents[id].getMessageDate()) > 60000) {
                     clearDevicesClasses(wsStateElement);
                     wsStateElement.addClass("device-error");
                     wsStateElement.attr("title", "WS maybe not available");
@@ -810,7 +979,7 @@ function copyToClipboard(text) {
     try {
         var successful = document.execCommand('copy');
         var msg = successful ? 'successful' : 'unsuccessful';
-    } catch (err) {}
+    } catch (err) { }
 
     document.body.removeChild(textArea);
 
@@ -834,7 +1003,7 @@ function saveAgent(agent) {
 
     var a = document.createElement("a");
 
-    a.href = URL.createObjectURL( new Blob([jsonData], {type: "text/plain"}) );
+    a.href = URL.createObjectURL(new Blob([jsonData], { type: "text/plain" }));
     a.download = `agents_data_${getCurrentDate()}.json`;
     a.click();
 
@@ -844,7 +1013,7 @@ function saveAgent(agent) {
 function refreshManuallyVisitors() {
     $("#visitors tr").remove();
 
-    setTimeout(function() {
+    setTimeout(function () {
         refreshVisitors();
     }, 100);
 }
@@ -864,16 +1033,16 @@ function appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, index,
             width: 220,
             height: 80,
             type: "area",
-            toolbar: {show: false},
-            zoom: {enabled: false}
+            toolbar: { show: false },
+            zoom: { enabled: false }
         },
-        dataLabels: {enabled: false},
-        stroke: {curve: 'smooth'},
-        legend: {show: false},
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth' },
+        legend: { show: false },
         //tooltip: {enabled: false},
-        grid: {show: false, xaxis: {lines: {show: false}},yaxis: {lines: {show: false}}},
-        xaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false},tooltip: {enabled: false}},
-        yaxis: {labels: {show: false}, axisTicks: {show: false}, axisBorder: {show: false}},
+        grid: { show: false, xaxis: { lines: { show: false } }, yaxis: { lines: { show: false } } },
+        xaxis: { labels: { show: false }, axisTicks: { show: false }, axisBorder: { show: false }, tooltip: { enabled: false } },
+        yaxis: { labels: { show: false }, axisTicks: { show: false }, axisBorder: { show: false } },
         fill: {
             type: "gradient",
             gradient: {
@@ -890,17 +1059,17 @@ function appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, index,
 
     $("#mismatch_parent").attr("id", "mismatch_parent_" + index);
     $("#mismatch_parent_" + index).css("background-color", backgroundColor);
-    $("#mismatch_img").attr("id",   "mismatch_img_" + index);
-    $("#mismatch_percent").attr("id",   "mismatch_percent_" + index);
-    $("#mismatch_sun").attr("id",   "mismatch_sun_" + index);
-    $("#mismatch").attr("id",   "mismatch_" + index);
-    $("#mismatch_chart").attr("id",   "mismatch_chart_" + index);
-    $("#mismatch_header").attr("id",   "mismatch_header_" + index);
+    $("#mismatch_img").attr("id", "mismatch_img_" + index);
+    $("#mismatch_percent").attr("id", "mismatch_percent_" + index);
+    $("#mismatch_sun").attr("id", "mismatch_sun_" + index);
+    $("#mismatch").attr("id", "mismatch_" + index);
+    $("#mismatch_chart").attr("id", "mismatch_chart_" + index);
+    $("#mismatch_header").attr("id", "mismatch_header_" + index);
     $("#mismatch_header_" + index).html(header);
-    $("#mismatch_footer").attr("id",   "mismatch_footer_" + index);
+    $("#mismatch_footer").attr("id", "mismatch_footer_" + index);
     $("#mismatch_footer_" + index).html(footer);
-    $("#mismatch_date_footer").attr("id",   "mismatch_date_footer_" + index);
-    $("mismatch_fix_btn").attr("id",   "mismatch_fix_btn_" + index);
+    $("#mismatch_date_footer").attr("id", "mismatch_date_footer_" + index);
+    $("mismatch_fix_btn").attr("id", "mismatch_fix_btn_" + index);
     $("#mismatch_fix_btn_" + index).attr("onClick", "copyToClipboard('" + fixerId + "');");
 
     const mismatchChart = new ApexCharts($("#mismatch_chart_" + index).get(0), option);
@@ -913,9 +1082,9 @@ function appendMismatchBlock(mismatchBoxElement, mismatchTemplateElement, index,
 function appendOverloadBlock(overloadBoxElement, mismatchTemplateElement, header, index, overloadData) {
     overloadBoxElement.append(kendo.template(mismatchTemplateElement.html()));
 
-    $("#overload_header").attr("id",   "overload_header_" + index);
+    $("#overload_header").attr("id", "overload_header_" + index);
     $("#overload_header_" + index).html(header);
-    $("#overload_chart").attr("id",   "overload_chart_" + index);
+    $("#overload_chart").attr("id", "overload_chart_" + index);
 
     var options = getSummaryOption();
     options.series[0].data = overloadData;
@@ -924,7 +1093,7 @@ function appendOverloadBlock(overloadBoxElement, mismatchTemplateElement, header
     options.fill.colors = [overloadChartBottomColor];
     options.fill.gradient.gradientToColors = [overloadChartTopColor];
 
-    if(index === 0) {
+    if (index === 0) {
         webOverloadChart = new ApexCharts($("#overload_chart_" + index).get(0), options);
         webOverloadChart.render();
     } else {
@@ -1023,7 +1192,7 @@ function processMismatchMessage(agent) {
         }
     }
 
-    if(mismatchIndex > -1) {
+    if (mismatchIndex > -1) {
         const mismatchImgElement = $("#mismatch_img_" + mismatchIndex);
         const mismatchPercentElement = $("#mismatch_percent_" + mismatchIndex);
         const mismatchSunElement = $("#mismatch_sun_" + mismatchIndex);
@@ -1042,7 +1211,7 @@ function processMismatchMessage(agent) {
             mismatchElement.html(clientTask.getCount());
 
             mismatches[mismatchIndex].option.series[0].data.push(clientTask.getCount());
-            mismatches[mismatchIndex].updateSeries([{data: mismatches[mismatchIndex].option.series[0].data}]);
+            mismatches[mismatchIndex].updateSeries([{ data: mismatches[mismatchIndex].option.series[0].data }]);
 
             percentValue = clientTask.getCount() - prevCount;
 
@@ -1093,17 +1262,17 @@ function getCreatedCollaboratorsHourOption() {
             color: "#ffc107",
             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
-            {
-                name: "остальные",
-                color: "#7cfc00",
-                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            }],
+        {
+            name: "остальные",
+            color: "#7cfc00",
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }],
         chart: {
             width: 650,
             height: 380,
             type: "area",
-            toolbar: {show: false},
-            zoom: {enabled: false}
+            toolbar: { show: false },
+            zoom: { enabled: false }
         },
         dataLabels: {
             enabled: false,
@@ -1124,13 +1293,13 @@ function getCreatedCollaboratorsHourOption() {
                 top: 25
             }
         },
-        stroke: {curve: 'smooth'},
+        stroke: { curve: 'smooth' },
         xaxis: {
             categories: getHourXAxisCategories(new Date().getHours()),
             position: "bottom",
-            axisBorder: {show: false},
-            axisTicks: {show: false},
-            tooltip: {enabled: false},
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            tooltip: { enabled: false },
             labels: {
                 show: true,
                 style: {
@@ -1172,8 +1341,8 @@ function processNewCollaboratorsHour(agent) {
     });
 
     createdCollsHourChart.updateSeries([
-        {data: agent.muc},
-        {data: agent.other}
+        { data: agent.muc },
+        { data: agent.other }
     ]);
 
     $("#mucCountHour").html(addNewCollaboratorCount(agent.muc));
@@ -1185,12 +1354,12 @@ function processNewCollaboratorsHour(agent) {
 function getHourXAxisCategories(hour) {
     let hourCategories = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 
-    for(let i = 23; i >= 0; i--) {
+    for (let i = 23; i >= 0; i--) {
         hourCategories[i] = String(hour).padStart(2, "0");
 
         hour = hour - 1;
 
-        if(hour < 0) {
+        if (hour < 0) {
             hour = 23
         }
     }
@@ -1205,17 +1374,17 @@ function getCreatedCollaboratorsDayOption() {
             color: "#ffc107",
             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
-            {
-                name: "остальные",
-                color: "#7cfc00",
-                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            }],
+        {
+            name: "остальные",
+            color: "#7cfc00",
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }],
         chart: {
             width: 650,
             height: 380,
             type: "area",
-            toolbar: {show: false},
-            zoom: {enabled: false}
+            toolbar: { show: false },
+            zoom: { enabled: false }
         },
         dataLabels: {
             enabled: false,
@@ -1238,13 +1407,13 @@ function getCreatedCollaboratorsDayOption() {
                 bottom: 36
             }
         },
-        stroke: {curve: 'smooth'},
+        stroke: { curve: 'smooth' },
         xaxis: {
             categories: getDayXAxisCategories(),
             position: "bottom",
-            axisBorder: {show: false},
-            axisTicks: {show: false},
-            tooltip: {enabled: false},
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            tooltip: { enabled: false },
             labels: {
                 show: true,
                 style: {
@@ -1283,8 +1452,8 @@ function processNewCollaboratorsDay(agent) {
     });
 
     createdCollsDayChart.updateSeries([
-        {data: agent.muc},
-        {data: agent.other}
+        { data: agent.muc },
+        { data: agent.other }
     ]);
 
     $("#mucCountDay").html(addNewCollaboratorCount(agent.muc));
@@ -1296,7 +1465,7 @@ function processNewCollaboratorsDay(agent) {
 function getDayXAxisCategories() {
     let dayCategories = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 
-    for(let i = 0; i < 28; i++) {
+    for (let i = 0; i < 28; i++) {
         dayCategories[27 - i] = moment().subtract(i, "days").format("DD");
     }
 
@@ -1307,8 +1476,8 @@ function getDayXAxisLabelColors() {
     let dayColors = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 
 
-    for(let i = 0; i < 28; i++) {
-        if(moment().subtract(i, "days").day() === 0 || moment().subtract(i, "days").day() === 6) {
+    for (let i = 0; i < 28; i++) {
+        if (moment().subtract(i, "days").day() === 0 || moment().subtract(i, "days").day() === 6) {
             dayColors[27 - i] = "#FC0202";
         } else {
             dayColors[27 - i] = "blanchedalmond";
@@ -1325,17 +1494,17 @@ function getCreatedCollaboratorsMonthOption() {
             color: "#ffc107",
             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
-            {
-                name: "остальные",
-                color: "#7cfc00",
-                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            }],
+        {
+            name: "остальные",
+            color: "#7cfc00",
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }],
         chart: {
             width: 650,
             height: 380,
             type: "area",
-            toolbar: {show: false},
-            zoom: {enabled: false}
+            toolbar: { show: false },
+            zoom: { enabled: false }
         },
         dataLabels: {
             enabled: false,
@@ -1359,13 +1528,13 @@ function getCreatedCollaboratorsMonthOption() {
                 right: 25
             }
         },
-        stroke: {curve: 'smooth'},
+        stroke: { curve: 'smooth' },
         xaxis: {
             categories: getMonthXAxisCategories(),
             position: "bottom",
-            axisBorder: {show: false},
-            axisTicks: {show: false},
-            tooltip: {enabled: false},
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            tooltip: { enabled: false },
             labels: {
                 show: true,
                 style: {
@@ -1406,8 +1575,8 @@ function processNewCollaboratorsMonth(agent) {
     });
 
     createdCollsMonthChart.updateSeries([
-        {data: agent.muc},
-        {data: agent.other}
+        { data: agent.muc },
+        { data: agent.other }
     ]);
 
     $("#mucCountMonth").html(addNewCollaboratorCount(agent.muc));
@@ -1419,7 +1588,7 @@ function processNewCollaboratorsMonth(agent) {
 function getMonthXAxisCategories() {
     let monthCategories = ["", "", "", "", "", "", "", "", "", "", "", ""]
 
-    for(let i = 0; i < 12; i++) {
+    for (let i = 0; i < 12; i++) {
         monthCategories[11 - i] = getMonthName(moment().subtract(i, "months"));
     }
 
@@ -1427,29 +1596,29 @@ function getMonthXAxisCategories() {
 }
 //----------------------------------------------------------------------------------------------------------------------
 function getMonthName(datetime) {
-    if(datetime.format("MM") === "01") {
+    if (datetime.format("MM") === "01") {
         return "Янв " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "02") {
+    } else if (datetime.format("MM") === "02") {
         return "Фев " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "03") {
+    } else if (datetime.format("MM") === "03") {
         return "Мар " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "04") {
+    } else if (datetime.format("MM") === "04") {
         return "Апр " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "05") {
+    } else if (datetime.format("MM") === "05") {
         return "Май " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "06") {
+    } else if (datetime.format("MM") === "06") {
         return "Июн " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "07") {
+    } else if (datetime.format("MM") === "07") {
         return "Июл " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "08") {
+    } else if (datetime.format("MM") === "08") {
         return "Авг " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "09") {
+    } else if (datetime.format("MM") === "09") {
         return "Сен " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "10") {
+    } else if (datetime.format("MM") === "10") {
         return "Окт " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "11") {
+    } else if (datetime.format("MM") === "11") {
         return "Ноя " + datetime.format("YYYY");
-    } else if(datetime.format("MM") === "12") {
+    } else if (datetime.format("MM") === "12") {
         return "Дек " + datetime.format("YYYY");
     } else {
         return "Неизвестный";
@@ -1479,7 +1648,7 @@ function appendNetworkWatcher() {
 }
 
 function pingServers() {
-    ping(0,"192.168.0.96", 80);
+    ping(0, "192.168.0.96", 80);
     ping(1, "192.168.0.97", 1433);
 }
 
@@ -1490,9 +1659,9 @@ function updateMinMaxColor(element) {
     element.removeClass("network-orange-color");
     element.removeClass("network-red-color");
 
-    if(weight < 670) {
+    if (weight < 670) {
         element.addClass("network-green-color");
-    } else if(weight >= 670 && weight < 1000) {
+    } else if (weight >= 670 && weight < 1000) {
         element.addClass("network-orange-color");
     } else {
         element.addClass("network-red-color");
@@ -1500,12 +1669,12 @@ function updateMinMaxColor(element) {
 }
 
 function updateMinMax(minElement, maxElement, milliseconds) {
-    if(milliseconds < parseInt(minElement.attr("weight"))) {
+    if (milliseconds < parseInt(minElement.attr("weight"))) {
         minElement.attr("weight", milliseconds);
         minElement.html(milliseconds + " ms");
     }
 
-    if(milliseconds > parseInt(maxElement.attr("weight"))) {
+    if (milliseconds > parseInt(maxElement.attr("weight"))) {
         maxElement.attr("weight", milliseconds);
         maxElement.html(milliseconds + " ms");
     }
@@ -1515,19 +1684,19 @@ function updateMinMax(minElement, maxElement, milliseconds) {
 }
 
 function checkOverloadValue(index, pingPointer) {
-    if(pingPointer >= 11) {
-        if(overloadData[index] <= 5) {
+    if (pingPointer >= 11) {
+        if (overloadData[index] <= 5) {
             overloadData[index] = overloadData[index] + 1;
         }
 
-        if(overloadCount[index] < 6) {
+        if (overloadCount[index] < 6) {
             overloadCount[index] = overloadCount[index] + 1;
         }
     } else {
-        if(overloadData[index] > 0) {
+        if (overloadData[index] > 0) {
             overloadData[index] = overloadData[index] - 1;
 
-            if(overloadData[index] === 0 && overloadCount[index] > 5) {
+            if (overloadData[index] === 0 && overloadCount[index] > 5) {
                 overloadCount[index] = 0;
 
                 // ADD TO OVERLOAD
@@ -1535,16 +1704,16 @@ function checkOverloadValue(index, pingPointer) {
                 const currentTime = currentDateTime.toLocaleString("ru-RU").split(", ")[1];
                 const currentHour = currentTime.split(":")[0];
 
-                if(index === 0) {
+                if (index === 0) {
                     webOverloadData[currentHour - 6] = webOverloadData[currentHour - 6] + 1;
-                    webOverloadChart.updateSeries([{data: webOverloadData}]);
+                    webOverloadChart.updateSeries([{ data: webOverloadData }]);
                 } else {
                     sqlOverloadData[currentHour - 6] = sqlOverloadData[currentHour - 6] + 1;
-                    sqlOverloadChart.updateSeries([{data: sqlOverloadData}]);
+                    sqlOverloadChart.updateSeries([{ data: sqlOverloadData }]);
                 }
             }
 
-            if(overloadData[index] === 0) {
+            if (overloadData[index] === 0) {
                 overloadCount[index] = 0;
             }
         }
@@ -1557,7 +1726,7 @@ function ping(id, host, port) {
 
     let http = new XMLHttpRequest();
 
-    http.open("GET", "http://" + host + ":" + port,  true);
+    http.open("GET", "http://" + host + ":" + port, true);
 
     http.onreadystatechange = function () {
         if (http.readyState === 4) {
@@ -1567,13 +1736,13 @@ function ping(id, host, port) {
 
             let pingPointer = Math.round(milliseconds / 100);
 
-            if(pingPointer <= 2) {
+            if (pingPointer <= 2) {
                 pingPointer = 2;
-            } else if(pingPointer > 16) {
+            } else if (pingPointer > 16) {
                 pingPointer = 16;
             }
 
-            if(id === 0) {
+            if (id === 0) {
                 updateMinMax($("#web_min"), $("#web_max"), milliseconds);
 
                 webData.shift();
@@ -1581,10 +1750,10 @@ function ping(id, host, port) {
                 webData.pop();
                 webData.unshift(20);
 
-                webChart.updateSeries([{data: webData}]);
+                webChart.updateSeries([{ data: webData }]);
 
                 checkOverloadValue(0, pingPointer);
-            } else if(id === 1) {
+            } else if (id === 1) {
                 updateMinMax($("#sql_min"), $("#sql_max"), milliseconds);
 
                 sqlData.shift();
@@ -1592,7 +1761,7 @@ function ping(id, host, port) {
                 sqlData.pop();
                 sqlData.unshift(20);
 
-                sqlChart.updateSeries([{data: sqlData}]);
+                sqlChart.updateSeries([{ data: sqlData }]);
 
                 checkOverloadValue(1, pingPointer);
             }
@@ -1602,7 +1771,7 @@ function ping(id, host, port) {
 
     try {
         http.send(null);
-    } catch (exception) {}
+    } catch (exception) { }
 }
 
 function openFullNetworkPage() {
@@ -1610,7 +1779,7 @@ function openFullNetworkPage() {
 }
 
 function showCreatedCollsBy(type) {
-    if(type === "HOURS") {
+    if (type === "HOURS") {
         $("#colls_day").removeClass("created-colls-active");
         $("#colls_month").removeClass("created-colls-active");
         $("#colls_hour").addClass("created-colls-active");
@@ -1629,7 +1798,7 @@ function showCreatedCollsBy(type) {
         $("#otherCountHour").css("display", "block");
         $("#createdCollsHourChart").css("display", "block");
         $("#hour_datetime").css("display", "block");
-    } else if(type === "DAYS") {
+    } else if (type === "DAYS") {
         $("#colls_hour").removeClass("created-colls-active");
         $("#colls_month").removeClass("created-colls-active");
         $("#colls_day").addClass("created-colls-active");
@@ -1648,7 +1817,7 @@ function showCreatedCollsBy(type) {
         $("#otherCountDay").css("display", "block");
         $("#createdCollsDayChart").css("display", "block");
         $("#day_datetime").css("display", "block");
-    } else if(type === "MONTH") {
+    } else if (type === "MONTH") {
         $("#colls_hour").removeClass("created-colls-active");
         $("#colls_day").removeClass("created-colls-active");
         $("#colls_month").addClass("created-colls-active");
@@ -1674,7 +1843,7 @@ function pinUnpinParent(element) {
     const pinButtonElement = $("#" + element.getAttribute("id"));
     const parentElement = $("#rowId" + element.getAttribute("parent"));
 
-    if(pinButtonElement.html().toUpperCase() === "PIN") {
+    if (pinButtonElement.html().toUpperCase() === "PIN") {
         for (let id in pinnedWindows) {
             $("#" + id).css("z-index", parseInt($("#" + id).css("z-index")) - 1);
         }
@@ -1688,7 +1857,7 @@ function pinUnpinParent(element) {
         parentElement.attr("pin", 1);
         parentElement.draggable();
 
-        if(!parentElement.hasClass("thread-active")) {
+        if (!parentElement.hasClass("thread-active")) {
             parentElement.addClass("pinned-color");
         }
     } else {
@@ -1699,7 +1868,7 @@ function pinUnpinParent(element) {
         parentElement.css("cursor", "default");
         parentElement.attr("pin", 0);
 
-        if(parentElement.hasClass("thread-inactive")) {
+        if (parentElement.hasClass("thread-inactive")) {
             parentElement.removeClass("pinned-color");
         }
 
@@ -1710,7 +1879,7 @@ function pinUnpinParent(element) {
 function haveFocus(element) {
     const focusedElement = $("#" + element.getAttribute("id"));
 
-    if(parseInt(focusedElement.attr("pin")) === 1) {
+    if (parseInt(focusedElement.attr("pin")) === 1) {
         for (let id in pinnedWindows) {
             $("#" + id).css("z-index", parseInt($("#" + id).css("z-index")) - 1);
         }

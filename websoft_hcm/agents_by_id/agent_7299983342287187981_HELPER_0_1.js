@@ -14,111 +14,224 @@ var ws = getWebsocketClient();
 var agent = getAgentInstance(agentId, userId, loggerName);
 
 flags = [
-    "in_program",
-    "is_fcc",
-    "is_rck",
-    "is_ock",
-    "is_roiv",
-    "is_partner",
-    "is_a_commerce_client",
-    "is_project_ended",
-    "With_no_right"
+    {
+        property: "in_program",
+        parentFlag: "inProgram"
+    },
+    {
+        property: "is_fcc",
+        parentFlag: "isFcc"
+    },
+    {
+        property: "is_rck",
+        parentFlag: "isRck"
+    },
+    {
+        property: "is_ock",
+        parentFlag: "isOck"
+    },
+    {
+        property: "is_roiv",
+        parentFlag: "isRoiv"
+    },
+    {
+        property: "is_partner",
+        parentFlag: "isPartner"
+    },
+    {
+        property: "is_a_commerce_client",
+        parentFlag: "isCommerce"
+    },
+    {
+        property: "is_project_ended",
+        parentFlag: "isProjectEnded"
+    },
+    {
+        property: "With_no_right",
+        parentFlag: "withNoRight"
+    }
 ];
 
 try {
     if (!isAgentRunning(agentId)) {
-        var total = 0;
-        var processed = 0;
-        var saved = 0;
-        var skipped = 0;
+        if (!isAgentRunning(7300978396789946474)) { // Запущен ли УБЕРНАТОР
+            prevPeriod = "";
 
-        agent.message = "Получение данных...";
-        ws = sendMessageToWebsocket(ws, agent);
-        prevDate = new Date();
+            agentDoc = tools.open_doc(agentId);
+            agentDocTE = agentDoc.TopElem;
 
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+            for (wvar in agentDocTE.wvars) {
+                if (wvar.name == "processed_mode") {
+                    if (wvar.value == "update" && agentDocTE.trigger_type != "never") {
+                        prevPeriod = agentDocTE.period;
 
-        step = 1;
+                        agentDocTE.period = "300";
 
-        for (flag in flags) {
-            agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-            agent.message = "Шаг " + step + " из " + ArrayCount(flags) + " Обработка данных " + flag + ". 0 в false...";
-            if (ws != null) {
-                ws = sendMessageToWebsocket(ws, agent);
-            }
-            prevDate = new Date();
-
-            execList = ArrayDirect(XQuery("sql: " +
-                " UPDATE [WTDB].[dbo].collaborator " +
-                "   SET data.modify(' " +
-                "       replace value of " +
-                "           (//custom_elem[name=''" + flag + "'']/value/text())[1] " +
-                "       with ''false'' ') " +
-                " WHERE data.exist('//custom_elem[name=''" + flag + "'']/value[. = ''0'']') = 1; " + 
-                " SELECT @@ROWCOUNT AS count"));
-
-            if (ArrayCount(execList) > 0) {
-                processed += execList[0].count;
+                        agentDoc.Save();
+                    }
+                }
             }
 
-            agent.processed = processed;
-            agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-            agent.message = "Шаг " + step + " из " + ArrayCount(flags) + " Обработка данных " + flag + ". 1 в true...";
-            if (ws != null) {
-                ws = sendMessageToWebsocket(ws, agent);
+            var total = ArrayCount(flags);
+            var processed = 0;
+            var saved = 0;
+            var skipped = 0;
+
+            if (Param.processed_mode == "lookup") {
+                agent.processed_mode = "lookup";
+            } else {
+                agent.processed_mode = "update";
             }
-            prevDate = new Date();
 
-            execList = ArrayDirect(XQuery("sql: " +
-                " UPDATE [WTDB].[dbo].collaborator " +
-                "   SET data.modify(' " +
-                "       replace value of " +
-                "           (//custom_elem[name=''in_program'']/value/text())[1] " +
-                "       with ''true'' ') " +
-                " WHERE data.exist('//custom_elem[name=''in_program'']/value[. = ''1'']') = 1; " +
-                " SELECT @@ROWCOUNT AS count"));
-
-            if (ArrayCount(execList) > 0) {
-                processed += execList[0].count;
-            }
-            
-            step++;
-
-            agent.processed = processed;
-            agent.skipped = skipped;
-            agent.saved = saved;
-            refreshMsPerRow(agent, startDate, processed);
-            if (ws != null) {
-                ws = sendMessageToWebsocket(ws, agent);
-            }            
-        }
-
-        agent.state = 1;
-        agent.processed = processed;
-        agent.saved = saved;
-        agent.skipped = skipped;
-        agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        refreshMsPerRow(agent, startDate, total);
-        agent.message = "Закончено";
-        if (ws != null) {
+            agent.message = "Получение данных...";
             ws = sendMessageToWebsocket(ws, agent);
+            prevDate = new Date();
+
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+
+            step = 1;
+
+            for (flag in flags) {
+                agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+                agent.message = "Шаг " + step + " из " + ArrayCount(flags) + " Обработка данных " + flag.property + ". 0 в false...";
+                if (ws != null) {
+                    ws = sendMessageToWebsocket(ws, agent);
+                }
+                prevDate = new Date();
+
+                sql = "";
+                flagCount = 0;
+
+                if (Param.processed_mode == "lookup") {
+                    sql = " WITH _view AS ( " +
+                        "     SELECT cs.id " +
+                        "     FROM [WTDB].[dbo].collaborators cs " +
+                        "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
+                        "     WHERE c.data.exist('//custom_elem[name=''" + flag.property + "'']/value[. = ''0'']') = 1 " +
+                        " ) " +
+                        " SELECT COUNT(id) AS count " +
+                        " FROM _view ";
+                } else {
+                    sql = " UPDATE [WTDB].[dbo].collaborator " +
+                        "   SET data.modify(' " +
+                        "       replace value of " +
+                        "           (//custom_elem[name=''" + flag.property + "'']/value/text())[1] " +
+                        "       with ''false'' ') " +
+                        " WHERE data.exist('//custom_elem[name=''" + flag.property + "'']/value[. = ''0'']') = 1; " +
+                        " SELECT @@ROWCOUNT AS count";
+                }
+
+                execList = ArrayDirect(XQuery("sql: " +
+                    sql));
+
+                if (ArrayCount(execList) > 0) {
+                    processed += execList[0].count;
+                    flagCount += execList[0].count;
+                }
+
+                agent.processed = processed;
+                agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+                agent.message = "Шаг " + step + " из " + ArrayCount(flags) + " Обработка данных " + flag.property + ". 1 в true...";
+                if (ws != null) {
+                    ws = sendMessageToWebsocket(ws, agent);
+                }
+                prevDate = new Date();
+
+                if (Param.processed_mode == "lookup") {
+                    sql = " WITH _view AS ( " +
+                        "     SELECT cs.id " +
+                        "     FROM [WTDB].[dbo].collaborators cs " +
+                        "         INNER JOIN [WTDB].[dbo].collaborator c ON cs.id = c.id " +
+                        "     WHERE c.data.exist('//custom_elem[name=''" + flag.property + "'']/value[. = ''1'']') = 1 " +
+                        " ) " +
+                        " SELECT COUNT(id) AS count " +
+                        " FROM _view ";
+                } else {
+                    sql = " UPDATE [WTDB].[dbo].collaborator " +
+                        "   SET data.modify(' " +
+                        "       replace value of " +
+                        "           (//custom_elem[name=''" + flag.property + "'']/value/text())[1] " +
+                        "       with ''true'' ') " +
+                        " WHERE data.exist('//custom_elem[name=''" + flag.property + "'']/value[. = ''1'']') = 1; " +
+                        " SELECT @@ROWCOUNT AS count"
+                }
+
+                execList = ArrayDirect(XQuery("sql: " +
+                    sql));
+
+                if (ArrayCount(execList) > 0) {
+                    processed += execList[0].count;
+                    flagCount += execList[0].count;
+                }
+
+                eval("agent." + flag.parentFlag + " = " + flagCount);
+
+                step++;
+
+                agent.processed = processed;
+                agent.skipped = skipped;
+                agent.saved = saved;
+                refreshMsPerRow(agent, startDate, processed);
+                if (ws != null) {
+                    ws = sendMessageToWebsocket(ws, agent);
+                }
+            }
+
+            agentDoc = tools.open_doc(agentId);
+            agentDocTE = agentDoc.TopElem;
+
+            for (wvar in agentDocTE.wvars) {
+                if (wvar.name == "processed_mode") {
+                    if (agentDocTE.trigger_type != "never" && processed > 0 && wvar.value == "lookup") {
+                        wvar.value = "update";
+
+                        agentDoc.Save();
+                    } else if (wvar.value == "update") {
+                        agentDocTE.period = prevPeriod;
+
+                        wvar.value = "lookup";
+
+                        agentDoc.Save();
+                    }
+                }
+            }
+
+            agent.state = 1;
+            agent.processed = processed;
+            agent.saved = saved;
+            agent.skipped = skipped;
+            agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+            refreshMsPerRow(agent, startDate, total);
+            agent.message = "Закончено";
+            if (ws != null) {
+                ws = sendMessageToWebsocket(ws, agent);
+            }
+
+            addLogResultMessage(
+                loggerName,
+                "[agent.id: " + agentId + "]",
+                total + " total, ",
+                processed + " processed",
+                saved + " saved, ",
+                skipped + " skipped"
+            );
+
+            addLogMessage(
+                loggerName,
+                "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
+            );
+        } else {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] УБЕРНАТОР agent is running. Waiting for the next time running!");
+
+            agent.state = 1;
+            agent.processed = 0;
+            agent.saved = 0;
+            agent.skipped = 0;
+            agent.message = "Закончено. Работает УБЕРНАТОР. Ждем следующего запуска!";
+            sendMessageToWebsocket(ws, agent);
         }
-
-        addLogResultMessage(
-            loggerName,
-            "[agent.id: " + agentId + "]",
-            total + " total, ",
-            processed + " processed",
-            saved + " saved, ",
-            skipped + " skipped"
-        );
-
-        addLogMessage(
-            loggerName,
-            "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
-        );
     } else {
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent is running. Waiting for it to be completed!");
 

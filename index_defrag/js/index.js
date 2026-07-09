@@ -27,6 +27,8 @@ let selectedTabIndex = 1;
 let reorganizeButtonStatus = 0; // 0 - Отжата, 1 - Нажата
 let rebuildButtonStatus = 0; // 0 - Отжата, 1 - Нажата
 
+let clickedElement = null;
+
 function getChartOption() {
     return {
         series: [
@@ -238,7 +240,17 @@ function estimateQueryTime(frag, weights, baseTime) {
     return baseTime * totalSlowdown;
 }
 
-function getIndexes() {
+function getIndexes(element) {
+    clickedElement = element;
+
+    if (clickedElement !== undefined) {                
+        $(clickedElement).addClass("btn-flash");
+        
+        sleep(1000).then((r) => {
+            $(clickedElement).removeClass("btn-flash")
+        });
+    }
+
     $("#coll_to_reg").empty();
     $("#event_to_reg").empty();
     $("#active_learning_to_os").empty();
@@ -420,13 +432,13 @@ function onRowCheckBoxChange(event) {
 
         const tableName = checkboxElement.attr("data-name");
 
-        checkUncheckByTable(tableName, true);
+        //checkUncheckByTable(tableName, true);
 
-        $(".row_with_checkbox").each((index, checkbox) => {
+        /*$(".row_with_checkbox").each((index, checkbox) => {
             if (!$(checkbox).prop("checked")) {
                 $(checkbox).prop("disabled", true)
             }
-        });
+        });*/
     } else {
         $("#" + event.currentTarget.id).removeClass("selected");
 
@@ -434,11 +446,11 @@ function onRowCheckBoxChange(event) {
 
         const tableName = checkboxElement.attr("data-name");
 
-        checkUncheckByTable(tableName, false);
+        //checkUncheckByTable(tableName, false);
 
-        $(".row_with_checkbox").each((index, checkbox) => {
+        /*$(".row_with_checkbox").each((index, checkbox) => {
             $(checkbox).prop("disabled", false)
-        });
+        });*/
     }
 
     setSelectedCheckboxCount();
@@ -471,10 +483,9 @@ function removeNotification() {
 
     console.log("Startd disable");
 
-    $(".row_with_checkbox").each((index, checkbox) => {
-        console.log("disabled");
+    /*$(".row_with_checkbox").each((index, checkbox) => {
         $(checkbox).prop("disabled", false)
-    });
+    });*/
 }
 
 function validateFragProcesses() {
@@ -491,7 +502,17 @@ function validateFragProcesses() {
     }
 }
 
-function startGlobalDefrag() {
+function startGlobalDefrag(element) {
+    clickedElement = element;
+
+    if (clickedElement !== undefined) {
+        $(clickedElement).addClass("btn-flash");
+
+        sleep(1000).then((r) => {
+            $(clickedElement).removeClass("btn-flash")
+        });
+    }
+
     isGlobalDefragStarted = true;
 
     timerId = setInterval(startSingleDefrag, 2000);

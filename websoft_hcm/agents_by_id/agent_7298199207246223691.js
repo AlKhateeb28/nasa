@@ -48,7 +48,7 @@ if (!LdsIsServer) {
 
                 for (data in dataList) {
                     collaboratorDoc = tools.open_doc(OptInt(data.id));
-                    if (collaboratorDoc !=undefined) {
+                    if (collaboratorDoc != undefined) {
                         collaboratorDoc.TopElem.custom_elems.ObtainChildByKey("processed").value = "true";
                         collaboratorDoc.Save();
                     }

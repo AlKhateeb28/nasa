@@ -41,7 +41,7 @@
                 <div>
                     <button class="btn btn-pointer"
                         style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;"
-                        onclick="getIndexes()">Reload indexes</button>
+                        onclick="getIndexes(this)">Reload indexes</button>
                 </div>
                 <div style="width: 216px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);">
                     <table border="0" class="mode-count-table" style="width: 100%;">
@@ -79,7 +79,7 @@
                         </tr>
                     </table>
                 </div>
-                <div class="statistic" style="margin-top: 18px; height: 72px;">
+                <div class="statistic" style="margin-top: 4px; height: 72px;">
                     <div class="stat-box">
                         <div class="stat_calc">Relations:</div><br>
                         <div style="margin-top: 4px;">
@@ -90,7 +90,7 @@
                         <div id="coll_to_reg" class="stat_calc" style="margin-left: 100px;"></div>
                     </div>
                 </div>
-                <div class="statistic" style="height: 128px; margin-top: -2px;">
+                <div class="statistic" style="height: 128px; margin-top: -6px;">
                     <div class="stat-box">
                         <div class="stat_calc">Relations:</div><br>
                         <div style="margin-top: 4px;">
@@ -105,7 +105,7 @@
                         <div id="event_to_reg" class="stat_calc" style="margin-left: 100px;"></div>
                     </div>
                 </div>
-                <div class="statistic" style="height: 102px; margin-top:-2px;">
+                <div class="statistic" style="height: 102px; margin-top:-6px;">
                     <div class="stat-box">
                         <div class="stat_calc">Relations:</div><br>
                         <div style="margin-top: 4px;">
@@ -131,7 +131,7 @@
                         <div id="learning_to_os" class="stat_calc" style="margin-left: 100px;"></div>
                     </div>
                 </div>
-                <div class="statistic" style="height: 61px; margin-top: -2px">
+                <div class="statistic" style="height: 61px; margin-top: -6px">
                     <div class="stat-box">
                         <div class="stat_calc">Table:</div><br>
                         <div style="margin-top: 4px;">
@@ -141,10 +141,14 @@
                         <div id="trash_docs" class="stat_calc" style="margin-left: 100px;"></div>
                     </div>
                 </div>
-                <div style="margin-top: -5px;">
+                <div style="margin-top: -6px;">
                     <button class="btn btn-pointer"
                         style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;"
-                        onclick="startGlobalDefrag()">Defragmentation</button>
+                        onclick="startGlobalDefrag(this)">Defragmentation</button>
+                </div>
+                <div style="margin-top: 1px;">
+                    <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;"
+                        onclick="">Start Lucene Agent</button>
                 </div>
             </div>
 

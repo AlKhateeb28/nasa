@@ -58,7 +58,7 @@ function updateSingleFlag(flag, parentFlag, step, max) {
                 execList = ArrayDirect(XQuery("sql: " +
                     " UPDATE collaborators SET " + parentFlag + " = " + data.org_flag_value + " WHERE id = " + data.cs_id + "; " +
                     " SELECT 1;"));
-                
+
                 if (ArrayCount(execList) == 0) {
                     isSkipped = true;
                 }
@@ -112,67 +112,87 @@ addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
 try {
     if (!isAgentRunning(agentId)) {
-        step = 1;
-        max = 9
-        count = updateSingleFlag("in_program", "inprogram", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed in_program: " + count);
+        if (!isAgentRunning(7299983342287187981)) { // Запущен ли SMART HELPER 0/1
+            step = 1;
+            max = 9
+            count = updateSingleFlag("in_program", "inprogram", step, max);
+            agent.inProgram = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed in_program: " + count);
 
-        step++;
-        count = updateSingleFlag("is_fcc", "isfcc", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_fcc: " + count);
+            step++;
+            count = updateSingleFlag("is_fcc", "isfcc", step, max);
+            agent.isFcc = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_fcc: " + count);
 
-        step++;
-        count = updateSingleFlag("is_rck", "isrck", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_rck: " + count);
+            step++;
+            count = updateSingleFlag("is_rck", "isrck", step, max);
+            agent.isRck = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_rck: " + count);
 
-        step++;
-        count = updateSingleFlag("is_ock", "isock", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_ock: " + count);
+            step++;
+            count = updateSingleFlag("is_ock", "isock", step, max);
+            agent.isOck = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_ock: " + count);
 
-        step++;
-        count = updateSingleFlag("is_roiv", "isroiv", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_roiv: " + count);
+            step++;
+            count = updateSingleFlag("is_roiv", "isroiv", step, max);
+            agent.isRoiv = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_roiv: " + count);
 
-        step++;
-        count = updateSingleFlag("is_partner", "ispartner", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_partner: " + count);
+            step++;
+            count = updateSingleFlag("is_partner", "ispartner", step, max);
+            agent.isPartner = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_partner: " + count);
 
-        step++;
-        count = updateSingleFlag("is_a_commerce_client", "iscommerce", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_a_commerce_client: " + count);
+            step++;
+            count = updateSingleFlag("is_a_commerce_client", "iscommerce", step, max);
+            agent.isCommerce = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_a_commerce_client: " + count);
 
-        step++;
-        count = updateSingleFlag("is_project_ended", "isprojectended", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_project_ended: " + count);
+            step++;
+            count = updateSingleFlag("is_project_ended", "isprojectended", step, max);
+            agent.isProjectEnded = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed is_project_ended: " + count);
 
-        step++;
-        count = updateSingleFlag("With_no_right", "withnoright", step, max);
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed With_no_right: " + count);
+            step++;
+            count = updateSingleFlag("With_no_right", "withnoright", step, max);
+            agent.withNoRight = count;
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processed With_no_right: " + count);
 
-        agent.state = 1;
-        agent.processed = processed;
-        agent.saved = saved;
-        agent.skipped = skipped;
-        agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-        refreshMsPerRow(agent, startDate, total);
-        agent.message = "Закончено";
-        if (ws != null) {
-            ws = sendMessageToWebsocket(ws, agent);
+            agent.state = 1;
+            agent.processed = processed;
+            agent.saved = saved;
+            agent.skipped = skipped;
+            agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+            refreshMsPerRow(agent, startDate, total);
+            agent.message = "Закончено";
+            if (ws != null) {
+                ws = sendMessageToWebsocket(ws, agent);
+            }
+
+            addLogResultMessage(
+                loggerName,
+                "[agent.id: " + agentId + "]",
+                total + " total, ",
+                processed + " processed",
+                saved + " saved, ",
+                skipped + " skipped"
+            );
+
+            addLogMessage(
+                loggerName,
+                "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
+            );
+        } else {
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] SMART HELPER 0/1 agent is running. Waiting for the next time running!");
+
+            agent.state = 1;
+            agent.processed = 0;
+            agent.saved = 0;
+            agent.skipped = 0;
+            agent.message = "Закончено. Работает SMART HELPER 1/0. Ждем следующего запуска!";
+            sendMessageToWebsocket(ws, agent);
         }
-
-        addLogResultMessage(
-            loggerName,
-            "[agent.id: " + agentId + "]",
-            total + " total, ",
-            processed + " processed",
-            saved + " saved, ",
-            skipped + " skipped"
-        );
-
-        addLogMessage(
-            loggerName,
-            "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
-        );
     } else {
         addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent is running. Waiting for it to be completed!");
 
