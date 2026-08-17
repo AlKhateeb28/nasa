@@ -72,6 +72,29 @@ try {
         result.state0Data[state0Element.week - 1].count = state0Element.cnt;
     }
 
+    // STATE1 (В процессе)
+    state1List = ArrayDirect(XQuery("sql: " +
+        " SET DATEFIRST 1; " +
+        " SELECT DATEPART(week, als.start_learning_date) AS week, " +
+        "       COUNT(als.id) AS cnt " +
+        " FROM [WTDB].[dbo].active_learnings als " +
+        "       INNER JOIN [WTDB].[dbo].courses crs ON als.course_id = crs.id AND crs.code LIKE '%FCK-%' " +
+        " WHERE als.state_id = 1 " +
+        "       AND YEAR(als.start_learning_date) = " + year +
+        " GROUP BY DATEPART(week, als.start_learning_date) " +
+        " ORDER BY week "));
+
+    result.state1Data = [];
+
+    for (state1Element in state1List) {
+        element = {};
+
+        element.week = state1Element.week;
+        element.count = state1Element.cnt;
+
+        result.state1Data.push(element);
+    }
+    
     // STATE4 (Пройдено) по дню года
     result.state4ByDayData = [];
     state4ByDayList = ArrayDirect(XQuery("sql: " +

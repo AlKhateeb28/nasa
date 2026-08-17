@@ -37,40 +37,49 @@ if (LdsIsServer) {
 
     try {
         dataList = ArrayDirect(XQuery("sql: " +
-            " WITH _lectors AS ( " +
-            "    SELECT events.id, lectors.lector_fullname AS lector_fio " +
-            "    FROM [WTDB].[dbo].events " +
-            "             INNER JOIN [WTDB].[dbo].event e ON events.id = e.id " +
-            "             CROSS APPLY e.data.nodes('event/lectors/lector') T(c) " +
-            "             INNER JOIN [WTDB].[dbo].lectors " +
-            "                        ON T.c.value('lector_id[1]','varchar(max)') = lectors.id " +
-            " ), " +
-            " _temp_lectors AS ( " +
-            "    SELECT id, " +
-            "        lector_fio = STUFF( " +
-            "            (SELECT '|' + lector_fio " +
-            "                FROM _lectors tmp " +
-            "                WHERE tmp.id = ls.id " +
-            "                FOR XML PATH ('')), 1, 1, '') " +
-            "                FROM _lectors ls " +
-            "                GROUP BY ls.id " +
-            " ), " +
-            " _preparations AS ( " +
-            "    SELECT es.id, T.c.value('person_fullname[1]', 'varchar(max)') AS pre_fio " +
-            "    FROM [WTDB].[dbo].events es " +
-            "             LEFT JOIN [WTDB].[dbo].event e ON es.id = e.id " +
-            "             CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c) " +
-            " ), " +
-            " _temp_preparations AS ( " +
-            "    SELECT id, preparation_fio = STUFF ( " +
-            "    (SELECT '|' + pre_fio " +
-            "        FROM _preparations tmp " +
-            "        WHERE tmp.id = ps.id " +
-            "        FOR XML PATH ('') " +
-            "    ), 1, 1, '') " +
-            "    FROM _preparations ps " +
-            "    GROUP BY id " +
-            " ) " +
+            " IF OBJECT_ID('tempdb..#lectors') IS NOT NULL " +
+            "       DROP TABLE #lectors; " +
+            "  " +
+            " IF OBJECT_ID('tempdb..#lec1') IS NOT NULL " +
+            "       DROP TABLE #lec1; " +
+            "  " +
+            " IF OBJECT_ID('tempdb..#preparations') IS NOT NULL " +
+            "       DROP TABLE #preparations; " +
+            " IF OBJECT_ID('tempdb..#prep1') IS NOT NULL " +
+            "	    DROP TABLE #prep1; " +
+            "  " +
+            " SELECT es.id, T.c.value('person_fullname[1]', 'varchar(max)') AS lector_fio " +
+            " INTO #lec1 " +
+            " FROM[WTDB].[dbo].events es " +
+            "       LEFT JOIN[WTDB].[dbo].event e ON es.id = e.id " +
+            "       CROSS APPLY e.data.nodes('event/tutors/tutor') T(c) " +
+            "  " +
+            " SELECT id, lector_fio = STUFF((" +
+            "       SELECT '|' + lector_fio " +
+            "       FROM #lec1 tmp " +
+            "       WHERE tmp.id = ls.id " +
+            "           FOR XML PATH('') " +
+            "           ), 1, 1, '') " +
+            " INTO #lectors" +
+            " FROM #lec1 ls " +
+            " GROUP BY id; " +
+            " " +
+            " SELECT es.id, T.c.value('person_fullname[1]', 'varchar(max)') AS pre_fio " +
+            "       INTO #prep1" +
+            " FROM[WTDB].[dbo].events AS es " +
+            "       LEFT JOIN[WTDB].[dbo].event AS e ON es.id = e.id " +
+            "       CROSS APPLY e.data.nodes('event/even_preparations/even_preparation') T(c) " +
+            "  " +
+            " SELECT id, preparation_fio = STUFF((" +
+            "       SELECT '|' + pre_fio " +
+            "       FROM #prep1 tmp " +
+            "       WHERE tmp.id = ps.id " +
+            "               FOR XML PATH('') " +
+            "               ), 1, 1, '') " +
+            " INTO #preparations " +
+            " FROM #prep1 ps " +
+            "       GROUP BY id; " +
+            "  " +
             " SELECT rs.name AS region_name, " +
             "       f_rs.name AS fact_region_name, " +
             "       os.code AS inn, " +
@@ -108,7 +117,7 @@ if (LdsIsServer) {
             "       tls.lector_fio, " +
             "       e.data.value('(//custom_elems/custom_elem[name=''nps'']/value)[1]', 'varchar(max)') AS nps, " +
             "       cests.name AS status_name, " +
-            "       tps.preparation_fio, " +
+            "       tps.preparation_fio, " +            
             "       CASE " +
             "           WHEN ers.is_assist = 'false' THEN 0 " +
             "           ELSE row_number() over(partition BY cs.code, '_', cs.fullname ORDER BY cs.fullname, os.name, ers.not_participate, es.finish_date) " +
@@ -136,11 +145,22 @@ if (LdsIsServer) {
             "         INNER JOIN [WTDB].[dbo].org AS o ON os.id = o.id " +
             "         INNER JOIN [WTDB].[dbo].regions AS rs ON os.region_id = rs.id " +
             "         INNER JOIN [WTDB].[dbo].regions AS f_rs ON o.data.value('(org/custom_elems/custom_elem[name=''fact_region_id''])[1]/value[1]', 'bigint') = f_rs.id " +
-            "         LEFT JOIN _temp_lectors AS tls ON e.id = tls.id " +
-            "         LEFT JOIN _temp_preparations AS tps ON e.id = tps.id " +
+            "         LEFT JOIN #lectors AS tls ON e.id = tls.id " +
+            "         LEFT JOIN #preparations AS tps ON e.id = tps.id " +
             "         INNER JOIN [WTDB].[dbo].[common.event_status_types] AS cests ON es.status_id = cests.id " +
             " WHERE ers.event_result_type_id IN (7101358388861564662, 7410750501543094820) " +
-            " ORDER BY cs.fullname, os.name, es.finish_date "));
+            " ORDER BY cs.fullname, os.name, es.finish_date " +
+            "  " +
+            " IF OBJECT_ID('tempdb..#preparations') IS NOT NULL " +
+            "       DROP TABLE #preparations; " +
+            " IF OBJECT_ID('tempdb..#prep1') IS NOT NULL " +
+            "	    DROP TABLE #prep1; " +
+            "  " +
+            " IF OBJECT_ID('tempdb..#lectors') IS NOT NULL " +
+            "       DROP TABLE #lectors; " +
+            "  " +
+            " IF OBJECT_ID('tempdb..#lec1') IS NOT NULL " +
+            "       DROP TABLE #lec1; "));
 
         total = ArrayCount(dataList);
 

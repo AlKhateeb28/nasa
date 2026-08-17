@@ -90,14 +90,14 @@ try {
 
             tools.create_notification("new_person_without_right", OptInt(data.id), "");
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] Sent Notification to " + data.fullname + " ( " + data.id + " ) ");
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] RIGHTLESS. Sent Notification to " + data.fullname + " ( " + data.id + " ) ");
         } else if(data.is_fck == 1 || data.in_program == 1 || data.is_rck == 1 || data.is_ock == 1 || data.is_roiv == 1 || data.is_partner == 1) {
             // SENT 7164039417268780825 NOTIFICATION
             setRegistrationReminderDate(data.id);
 
             tools.create_notification("new_person_has_special_flags", OptInt(data.id), "");
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] Sent Notification to " + data.fullname + " ( " + data.id + " ) ");
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] HAS SPECIAL FLAGS. Sent Notification to " + data.fullname + " ( " + data.id + " ) ");
         }
 
         colobaratorList.AppendStr("<div>" + data.fullname + " Email: " + data.email + " (" + data.id + ") </div>");
@@ -116,7 +116,7 @@ try {
     if(Param.send_notification_to_admin != '' && OptInt(Param.send_notification_to_admin) == 1 && isScheduledDay(Date())) {
         notificationMessage += colobaratorList.GetStr();
 
-        //tools.create_notification("find_new_persons", 7351734047845980789, notificationMessage); // AA
+        tools.create_notification("find_new_persons", 7351734047845980789, notificationMessage); // AA
         tools.create_notification("find_new_persons", 6743923349751162819, notificationMessage); // FK
     }
 

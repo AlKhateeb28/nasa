@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-SCREEN TITLE="##ms_tools.get_const('wlcwah2eod')##" SOURCE="custom_templates" MAXIMIZED_="1" INIT-ACTION="
+		custom_templates.AssignElem( OpenDoc( custom_templates.Doc.Url ).TopElem );
+" BEFORE-SAVE-ACTION="
+		for ( _child in custom_templates )
+		{
+			if ( _child.IsTemp || ( ! _child.ChildExists( 'fields' ) &amp;&amp; ! _child.ChildExists( 'items' ) ) )
+				continue;
+
+			if ( _child.ChildExists( 'fields' ) )
+			{
+				for ( _field in _child.fields )
+					if ( ! _child.sheets.ChildByKeyExists( _field.sheet_id ) )
+						_field.sheet_id.Clear();
+			}
+			else
+			{
+				for ( _item in _child.items )
+				{
+					try
+					{
+						_key_obj = _item.PrimaryKey.ForeignElem;
+					}
+					catch ( ll )
+					{
+						_item.Delete();
+						_item = null;
+					}
+
+					if ( _item != null )
+						for ( _field in _item.fields )
+							if ( ! _item.sheets.ChildByKeyExists( _field.sheet_id ) )
+								_field.sheet_id.Clear();
+				}
+			}
+		}
+" SAVE-ACTION="
+		FetchDoc( Doc.Url ).TopElem.AssignElem( Doc.TopElem );
+		ms_tools.obtain_shared_list_elem( 'custom_templates', null, TopElem );
+" WINDOW-ICON-URL_="ico/settings.ico" RESIZE="1">
+
+
+    <USE FORM="//wtv/ms_general.xms"/>
+
+
+
+    <UNIT NAME="custom_template_item_base" SAMPLE="1">
+        <PANEL SUNKEN="1" STD-MARGINS="0" HEIGHT="100%">
+            <PANEL VERT-SCROLL="0" STD-MARGINS="1">
+                <LINE WIDTH="100%">
+                    <IF EXPR="TopElem.view.disp_selected">
+                        <LINE HORIZ-SPACING="4vpx">
+                            <PrimaryImageButton IMAGE-URL="//wtv/svg/add.svg" ACTION="
+								for ( _field in Ps.fields )
+								{
+									_child = TopElem.view.fields.ObtainChildByKey( _field.PrimaryKey )
+									_child.AssignElem( _field );
+									_child.sheet_id.Clear();
+								}
+						" WIDTH="button" HEIGHT="edit" TIP-TEXT="##ms_tools.get_const('cmcxm29m3a')##"/>
+                            <PrimaryImageButton IMAGE-URL="//wtv/svg/del.svg" ACTION="
+								TopElem.view.fields.Clear();
+						" WIDTH="button" HEIGHT="edit" TIP-TEXT="##ms_tools.get_const('c_deselect_all')##"/>
+                            <PrimaryImageButton IMAGE-URL="//wtv/svg/paste.svg" ACTION="
+								for ( _field in TopElem.view.fields )
+								{
+									_child = Ps.fields.AddChild();
+									_child.AssignElem( _field );
+									_child.name = Ps.unique_field_name();
+								}
+								TopElem.Doc.SetChanged( true );
+						" WIDTH="button" HEIGHT="edit" TIP-TEXT="##ms_tools.get_const('s9103kywt5')##"/>
+                        </LINE>
+                    </IF>
+
+                    <LABEL TITLE-EXPR="Ps.title" BOLD="1" ALIGN="center"/>
+
+                    <BUTTON TITLE="##ms_tools.get_const('6i8jvzhqxi')##" IMAGE-URL="//wtv/svg/add.svg" ACTION="
+						newField = Ps.fields.AddChild();
+						newField.name = Ps.unique_field_name();
+						TopElem.Doc.SetChanged( true );
+				" ALIGN="right"/>
+                    <BUTTON TITLE="##ms_tools.get_const('7vw26hwjit')##" IMAGE-URL="//wtv/svg/add.svg" ACTION="
+						Ps.sheets.AddChild();
+						TopElem.Doc.SetChanged( true );
+				" ALIGN="right"/>
+                </LINE>
+            </PANEL>
+            <SPLIT FIXED="1" BK-COLOR-EXPR="AppUi.themeColors.separator"/>
+
+            <PANEL HEIGHT="100%" VERT-SCROLL="1" STD-MARGINS="1">
+                <LOOP EXPR="Ps.sheets" VAR="_sheet">
+                    <PANEL STD-MARGINS="1" WIDTH="100%" VERT-SPACING="8vpx" BK-COLOR-EXPR="AppUi.themeColors.panel_bg_color">
+                        <LINE WIDTH="100%">
+                            <EditLabel SOURCE="_sheet.title" TITLE="##ms_tools.get_const('zjpizu3vzd')##"/>
+                            <TitleLabel TITLE=" " ALIGN="right">
+                                <ITEM TYPE="elem_control_button_base" SOURCE="_sheet"/>
+                            </TitleLabel>
+                        </LINE>
+
+                        <IF EXPR="curUser = tools.get_cur_user(), ( curUser == null || curUser.access.access_role == 'admin' )">
+                            <LABEL TITLE="##ms_tools.get_const('82wh1p2mgg')##"/>
+                            <LINE>
+                                <TitleLabel TITLE="##ms_tools.get_const('r46tchsfl7')##" WIDTH="316vpx">
+                                    <COMBO SOURCE="_sheet.user_access_role" ELEM="ListElem.name"/>
+                                </TitleLabel>
+                                <ITEM TYPE="ms_object_selector" SOURCE="_sheet.user_group_id" catalogExpr="'group'" titleExpr="ms_tools.get_const('9h6lvxl1oq')" WIDTH="316vpx"/>
+                            </LINE>
+                        </IF>
+                    </PANEL>
+                </LOOP>
+                <IF EXPR="Ps.sheets.ChildNum != 0">
+                    <SPLIT FIXED="1" BK-COLOR-EXPR="AppUi.themeColors.separator"/>
+                </IF>
+
+                <LOOP EXPR="TopElem.view.sheet_id.HasValue ? ArraySelectByKey( Ps.fields, TopElem.view.sheet_id, 'sheet_id' ) : Ps.fields" VAR="_field">
+                    <PANEL WIDTH="100%" BK-COLOR-EXPR="AppUi.themeColors.panel_bg_color">
+                        <LINE CHILD-VERT-ALIGN="top" WIDTH="100%">
+                            <IF EXPR="TopElem.view.disp_selected">
+                                <CHECK SOURCE="TopElem.view.fields.ChildByKeyExists( _field.PrimaryKey )" SET-VALUE-ACTION="
+									if ( NewValue )
+									{
+										_child = TopElem.view.fields.ObtainChildByKey( _field.PrimaryKey )
+										_child.AssignElem( _field );
+										_child.sheet_id.Clear();
+									}
+									else
+									{
+										TopElem.view.fields.DeleteChilds( 'PrimaryKey==' + CodeLiteral( _field.PrimaryKey ) );
+									}
+							" WIDTH="20vpx"/>
+                            </IF>
+
+                            <PANEL FULL-WIDTH="1">
+                                <LINE WIDTH="100%">
+                                    <TitleLabel TITLE="##ms_tools.get_const('z0icjx5c2y')##" WIDTH="150vpx">
+                                        <EDIT SOURCE="_field.name" SET-VALUE-ACTION="
+											if ( ! tools.check_field_name( NewValue, true ) )
+												return Screen.MsgBox( ms_tools.get_const('6qvhln3flt'), ms_tools.get_const('c_error'), 'error', 'ok' );
+
+											_field.name = NewValue;
+											Ps.Doc.SetChanged( true );
+									"/>
+                                    </TitleLabel>
+                                    <EditLabel SOURCE="_field.title" TITLE="##ms_tools.get_const('c_name')##" FULL-WIDTH="1"/>
+                                </LINE>
+
+                                <LINE MULTILINE="1">
+                                    <TitleLabel TITLE="##ms_tools.get_const('2up7f5ujim')##" WIDTH="316vpx">
+                                        <COMBO SOURCE="_field.type" ELEM="ListElem.name"/>
+                                    </TitleLabel>
+                                    <TitleLabel TITLE="##ms_tools.get_const('zjpizu3vzd')##" WIDTH="316vpx">
+                                        <COMBO SOURCE="_field.sheet_id" ELEM="ListElem.title"/>
+                                    </TitleLabel>
+                                    <TitleLabel TITLE=" " WIDTH="180vpx">
+                                        <CHECK SOURCE="_field.disp_web" TITLE="##ms_tools.get_const('sy6pf7rizg')##"/>
+                                    </TitleLabel>
+                                    <TitleLabel TITLE=" " WIDTH="316vpx">
+                                        <CHECK SOURCE="_field.is_required" TITLE="##ms_tools.get_const('42ohtra2tg')##"/>
+                                    </TitleLabel>
+                                </LINE>
+                                <IF EXPR="_field.type == 'combo' || _field.type == 'list'">
+                                    <ITEM TYPE="ms_list_edit_base" SOURCE="_field.entries" heightExpr="'auto'" WIDTH="100%"/>
+                                </IF>
+                                <IF EXPR="_field.type == 'foreign_elem'">
+                                    <LINE MULTILINE="1">
+                                        <ITEM TYPE="ms_select_object_type_base" SOURCE="_field.catalog" WIDTH="316vpx"/>
+                                        <EditLabel SOURCE="_field.xquery_qual" TITLE="##ms_tools.get_const('8qcgfm4wxh')##" WIDTH="482vpx"/>
+                                    </LINE>
+                                </IF>
+
+                                <LINE MULTILINE="1">
+                                    <LINK TITLE="##ms_tools.get_const('radaktirovatst') + '...'##" ACTION="
+										ItemListElem = _field;
+										docDlg = OpenDoc( 'x-local://wtv/wtv_dlg_edit_list_item.xml' );
+										docDlg.TopElem.fill_fields_from_source( ItemListElem, 'width;height;class;max_chars' );
+
+										Screen.ModalDlg( docDlg );
+
+										docDlg.TopElem.fill_source_from_fields( ItemListElem );
+										Screen.Update();
+										TopElem.Doc.SetChanged( true );
+								"/>
+                                    <IF EXPR="_field.width.HasValue">
+                                        <LINE HORIZ-SPACING="4vpx">
+                                            <LABEL TITLE="##ms_tools.get_const('l2wp2bi6xp') + ':'##"/>
+                                            <LABEL TITLE-EXPR="_field.width" ALLOW-COPY="1"/>
+                                        </LINE>
+                                    </IF>
+                                    <IF EXPR="_field.height.HasValue">
+                                        <LINE HORIZ-SPACING="4vpx">
+                                            <LABEL TITLE="##ms_tools.get_const('veb_mat_h') + ':'##"/>
+                                            <LABEL TITLE-EXPR="_field.height" ALLOW-COPY="1"/>
+                                        </LINE>
+                                    </IF>
+                                    <IF EXPR="_field.class.HasValue">
+                                        <LINE HORIZ-SPACING="4vpx">
+                                            <LABEL TITLE="##ms_tools.get_const('vizualnyyklass') + ':'##"/>
+                                            <LABEL TITLE-EXPR="_field.class" ALLOW-COPY="1"/>
+                                        </LINE>
+                                    </IF>
+                                    <IF EXPR="_field.max_chars.HasValue">
+                                        <LINE HORIZ-SPACING="4vpx">
+                                            <LABEL TITLE="##ms_tools.get_const('kolichestvosimv') + ':'##"/>
+                                            <LABEL TITLE-EXPR="_field.max_chars" ALLOW-COPY="1"/>
+                                        </LINE>
+                                    </IF>
+                                </LINE>
+
+                                <LINE MULTILINE="1">
+                                    <EditLabel SOURCE="_field.condition_eval" TITLE="##ms_tools.get_const('uslovievernosti')##" WIDTH="482vpx"/>
+                                    <EditLabel SOURCE="_field.comment" TITLE="##ms_tools.get_const('c_comment')##" WIDTH="482vpx"/>
+                                </LINE>
+                                <LINE MULTILINE="1">
+                                    <EditLabel SOURCE="_field.default_value_eval" TITLE="##'Формула дефолтного значения поля (переменная GEnv = { curUser, curObject })'##" WIDTH="482vpx"/>
+                                </LINE>
+
+                                <PANEL VERT-SPACING="4vpx">
+                                    <IF EXPR="common.exchange_object_types.ChildByKeyExists( _field.BaseMultipleElem.Parent.Parent.Name )">
+                                        <LINK TITLE="##ms_tools.get_const('u2tcjb03dd') + '...'##" ACTION="
+											dlgDoc = OpenDoc( 'x-local://wtv/wtv_dlg_edit_filter_conditions.xml' );
+											dlgDoc.TopElem.use_scheme = false;
+											dlgDoc.TopElem.script_type = 'javascript';
+											dlgDoc.TopElem.is_catalog = false;
+											dlgDoc.TopElem.conditions.AssignElem( _field.view.conditions );
+
+											fldParent = _field.BaseMultipleElem.Parent.Parent;
+											if ( fldParent.Name == 'item' &amp;&amp; fldParent.Parent.Name == 'items' )
+											{
+												fldParent = ArrayOptFind( TopElem, 'This.Name != \'view\' &amp;&amp; ! This.ChildExists(\'fields\') &amp;&amp; ! This.ChildExists(\'items\') &amp;&amp; This.template_field == \'' + fldParent.Parent.Parent.Name + '\'' );
+												if ( fldParent == undefined )
+												{
+													fldParent = ArrayOptFind( TopElem, 'This.ChildExists(\'template_field\') &amp;&amp; This.template_field == \'' + _field.BaseMultipleElem.Parent.Parent.Parent.Parent.Name + '\'' );
+												}
+											}
+											if ( fldParent != undefined )
+											{
+												dlgDoc.TopElem.catalog_name = fldParent.Name;
+											}
+											if ( Ps.ChildExists( 'id' ) )
+												dlgDoc.TopElem.custom_templates_object_id = Ps.id;
+
+											Screen.ModalDlg( dlgDoc );
+
+											_field.view.conditions.AssignElem( dlgDoc.TopElem.conditions );
+											TopElem.Doc.SetChanged( true );
+									"/>
+                                    </IF>
+                                    <IF EXPR="ArrayCount( _field.view.conditions ) != 0">
+                                        <ITEM TYPE="filter_conditions_base" SOURCE="_field.view" HEIGHT="3gr"/>
+                                    </IF>
+                                </PANEL>
+                            </PANEL>
+
+                            <TitleLabel TITLE=" " ALIGN="right">
+                                <ITEM TYPE="elem_control_button_base" SOURCE="_field"/>
+                            </TitleLabel>
+                        </LINE>
+                    </PANEL>
+                </LOOP>
+            </PANEL>
+        </PANEL>
+    </UNIT>
+
+
+
+
+    <ITEM TYPE="std_doc_menu"/>
+    <ITEM TYPE="ms_std_doc_toolbar" arrButtons="[
+	{ 'title': ms_tools.get_const('zw2g8occhh'), 'checked': TopElem.view.disp_selected, 'cmd': 'DoDisp' }
+]"/>
+
+
+    <LINE STD-MARGINS="0">
+
+        <PANEL WIDTH="40zr" HEIGHT="100%" STD-MARGINS="0">
+            <PANEL SUNKEN="1" HEIGHT-EXPR="TopElem.view.disp_selected ? '-5zr' : '100%'">
+                <EDIT SOURCE="TopElem.view.search_text"/>
+                <TREE SUNKEN="0" NO-IMAGES="1" SWITCH-TYPE="selector" TARGET="main_selector"/>
+            </PANEL>
+            <IF EXPR="TopElem.view.disp_selected">
+                <PANEL HEIGHT="100%" SUNKEN="1">
+                    <LABEL TITLE-EXPR="ms_tools.get_const('yl5v3lb7yq')+ ': ' + ArrayCount( TopElem.view.fields )"/>
+                </PANEL>
+            </IF>
+        </PANEL>
+
+
+        <SELECTOR NAME="main_selector">
+            <PANEL>
+
+
+                <LOOP EXPR="
+		sConditions = 'Name != \'view\' &amp;&amp; ( ChildExists(\'fields\') || ChildExists(\'items\') )';
+		if ( TopElem.view.search_text.HasValue )
+			sConditions += ' &amp;&amp; StrContains( title, ' + CodeLiteral( TopElem.view.search_text ) + ', true )';
+		return ArraySort(ArraySelect( TopElem, sConditions ),'This.title','+');
+" VAR="_custom_template">
+                    <PAGE TITLE-EXPR="_custom_template.title" SOURCE="_custom_template" IMAGE-URL-EXPR="'ico/' + _custom_template.Name + '.ico'">
+                        <IF EXPR="Ps.ChildExists( 'items' )">
+                            <PANEL SUNKEN="1" STD-MARGINS="1" HEIGHT-EXPR="Ps.ChildExists( 'fields' ) ? ( 3 + ( ArrayCount( Ps.items ) * 2 ) ) + 'gr' : '100%'" VERT-SCROLL="1">
+                                <BUTTON TITLE="##ms_tools.get_const('2rwbpowcip') + '...'##" IMAGE-URL="//wtv/svg/add.svg" ACTION="
+						dlgDoc = OpenDoc( '//wtv/ms_dlg_object_select.xml' );
+						dlg = dlgDoc.TopElem;
+						dlg.catalog_name = Ps.Name;
+						dlg.can_be_empty = false;
+
+						Screen.ModalDlg( dlgDoc );
+
+						Ps.items.ObtainChildByKey( dlg.object_id );
+
+						FetchDoc( TopElem.Doc.Url ).TopElem.AssignElem( TopElem );
+						TopElem.Doc.SetChanged( true );
+				" WIDTH="26zr"/>
+                                <BR/>
+
+                                <LOOP EXPR="Ps.items" VAR="_template">
+                                    <LINE WIDTH="100%">
+                                        <ButtonImage IMAGE-URL="//wtv/svg/del.svg" ACTION="_template.Delete(); Ps.Doc.SetChanged( true )" TIP-TEXT="##ms_tools.get_const('sav6wzfuys')##" WIDTH="button" HEIGHT="edit"/>
+                                        <PAGE TITLE-EXPR="_template.title" SOURCE="_template" IMAGE-URL-EXPR="'ico/' + _custom_template.Name + '.ico'">
+                                            <INHERIT TYPE="custom_template_item_base"/>
+                                        </PAGE>
+                                    </LINE>
+                                </LOOP>
+                            </PANEL>
+                            <IF EXPR="Ps.ChildExists( 'fields' )">
+                                <DELIM/>
+                            </IF>
+                        </IF>
+                        <IF EXPR="Ps.ChildExists( 'fields' )">
+                            <INHERIT TYPE="custom_template_item_base"/>
+                        </IF>
+                    </PAGE>
+                </LOOP>
+
+
+            </PANEL>
+        </SELECTOR>
+
+    </LINE>
+
+
+    <COMMAND-HANDLER CMD="DoDisp" ACTION="
+	TopElem.view.disp_selected = ! TopElem.view.disp_selected;
+"/>
+
+</SPXML-SCREEN>

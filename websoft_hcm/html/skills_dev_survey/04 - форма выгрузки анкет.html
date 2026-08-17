@@ -1,0 +1,261 @@
+<!-- 7315502830807655063 -->
+<% dataList=ArrayDirect(XQuery("sql: " +
+        " SELECT id, " +
+        " name " +
+        " FROM [WTDB].[dbo].education_programs " +
+        " WHERE code LIKE 'dpo_%' " +
+        " ORDER BY name "));
+%>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=" UTF-8">
+    <title>Выгрузка анкет-подтверждений</title>
+
+    <link rel="stylesheet" href="./skills_dev_survey/index.css" />
+
+    <script type="text/javascript" src="./fcc/js/jquery3.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery.mask.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="./fcc/js/imask.js"></script>
+    <script type="text/javascript" src="./fcc/js/moment.js"></script>
+    <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./fcc/js/calendar.js"></script>
+    <script type="text/javascript" src="./fcc/js/ModalWindow.js"></script>
+    <script type="text/javascript" src="./fcc/js/Dropdown.js"></script>
+    <script type="text/javascript" src="./fcc/js/Notification.js"></script>
+    <script type="text/javascript" src="./fcc/js/AlertPopupWindow.js"></script>
+    <script type="text/javascript" src="./skills_dev_survey/report.js"></script>
+
+    </head>
+
+    <body>
+        <div style="display: none;">
+            <% for (data in dataList) { %>
+                <div class="edu-program" data-id="<%=data.id%>">
+                    <%=data.name%>
+                </div>
+                <% } %>
+        </div>
+
+        <div style="width: 100%; text-align: center; font-weight: 600; font-size: large; color: #6d6dfb; margin-top: 20px;">
+            <div id="education_program_dropdown" class="dropdown-box" style="width: 600px; font-weight: 600; margin-top: 5px; padding-left: 0px;"></div>
+        </div>
+        
+        <!-- LEFT -->
+        <div class="grid">
+            <div style="width: 100%; margin-bottom: 12px;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">
+                                <input id="month_header" type="checkbox" class="checkbox-control" checked="true" data-month="0" onchange="onMonthChange(event)">
+                            </th>
+                            <th class=" header-cell" style="text-align: center; width: 127px;">Месяц</th>
+                            <th style="width: 50px;"></th>
+                            <th class="header-cell" style="text-align: center; width: 141px;">Год</th>                    
+                        </tr>
+                    </thead>
+                    <tbody>                    
+                        <tr>
+                            <td>
+                                <input id="month_1" type="checkbox" class="checkbox-control month_row_checkbox" data-month="1" data-first="1" data-last="31" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Январь</div>
+                            </td>
+                            <td>
+                                <input id="year_1" type="checkbox" class="checkbox-control year_row_checkbox" data-year="2026" onchange="onYearChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>2026</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_2" type="checkbox" class="checkbox-control month_row_checkbox" data-month="2" data-first="1" data-last="00" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Февраль</div>
+                            </td>
+                            <td>
+                                <input id="year_2" type="checkbox" class="checkbox-control year_row_checkbox" data-year="2027" onchange="onYearChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>2027</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_3" type="checkbox" class="checkbox-control month_row_checkbox" data-month="3" data-first="1" data-last="31" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Март</div>
+                            </td>
+                            <td>
+                                <input id="year_3" type="checkbox" class="checkbox-control year_row_checkbox" data-year="2028" onchange="onYearChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>2028</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_4" type="checkbox" class="checkbox-control month_row_checkbox" data-month="4" data-first="1" data-last="30" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Апрель</div>
+                            </td>
+                            <td>
+                                <input id="year_4" type="checkbox" class="checkbox-control year_row_checkbox" data-year="2029" onchange="onYearChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>2029</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_5" type="checkbox" class="checkbox-control month_row_checkbox" data-month="5" data-first="1" data-last="31" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Май</div>
+                            </td>
+                            <td>
+                                <input id="year_4" type="checkbox" class="checkbox-control year_row_checkbox" data-year="2030" onchange="onYearChange(event)">
+                            </td>
+                            <td>2030</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_6" type="checkbox" class="checkbox-control month_row_checkbox" data-month="6" data-first="1" data-last="30" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Июнь</div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_7" type="checkbox" class="checkbox-control month_row_checkbox" data-month="7" data-first="1" data-last="31" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Июль</div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_8" type="checkbox" class="checkbox-control month_row_checkbox" data-month="8" data-first="1" data-last="31" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Август</div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_9" type="checkbox" class="checkbox-control month_row_checkbox" data-month="9" data-first="1" data-last="30" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Сентябрь</div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_10" type="checkbox" class="checkbox-control month_row_checkbox" data-month="10" data-first="1" data-last="31" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Октябрь</div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_11" type="checkbox" class="checkbox-control month_row_checkbox" data-month="11" data-first="1" data-last="30" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Ноябрь</div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="month_12" type="checkbox" class="checkbox-control month_row_checkbox" data-month="12" data-first="1" data-last="31" checked="true" onchange="onMonthChange(event)">
+                            </td>
+                            <td style="cursor: pointer;">
+                                <div>Декабрь</div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- RIGHT -->
+            <div>
+                <div style="width: 100%; margin-left: 50px;">
+                    <div style="width: 100%; height: 24px;">
+                        <div style="float: left;">
+                            <input id="start" type="text" name="text" class="input" onchange="">
+                        </div>
+                        <div style="float: left; margin-left: 20px; margin-top: -16px;">
+                            <button id="start_date_button" class="operate-button" style="width: 40px;" onclick="event.stopPropagation(); showCalendar('start')">
+                                <div class="text">...</div>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 24px; margin-top: 20px;">
+                        <div style="float: left;">
+                            <input id="finish" type="text" name="text" class="input" onchange="">
+                        </div>
+                        <div style="float: left; margin-left: 20px; margin-top: -16px;">
+                            <button id="finish_date_button" class="operate-button" style="width: 40px;" onclick="event.stopPropagation(); showCalendar('finish')">
+                                <div class="text">...</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div id="save_btn" class="run-group run-group-helper-btn run-group-inactive" style="margin-left: 16px;" onclick="onReport(this)">
+                            Выгрузить
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+
+        <div id="calendar_element" class="calendar"></div>
+
+        <div id="popup_box"></div>
+
+        <div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
+            <div class="position-center">
+                <div id="container">
+                    <label id="wait_caption" class="loading-title" style="font-size: 14px;"></label>
+                    <span id="loader" class="loading-circle sp1">
+                        <span class="loading-circle sp2">
+                            <span class="loading-circle sp3"></span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                initialize();
+            });
+        </script>
+
+    </body>
+
+    </html>

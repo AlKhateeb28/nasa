@@ -104,6 +104,56 @@ function getSlavePeople(oDominationInfoPARAM, catSubAnchorPARAM, bCompelParticip
     return XQuery("for $elem in collaborators where MatchSome($elem/id, (" + ArrayMerge(_aResultPeople, "This", ",") + ")) return $elem/Fields('id'," + sXQFileldList + ")")
 }
 
+function processResultElem(catElem) {
+    var sFld, vTemp, oE = new Object;
+    iAFCount = 0;
+    oE.id = catElem.id.Value;
+    oE.fullname = catElem.fullname.Value;
+    for (sFld in aExportFields)
+        switch (sFld) {
+            case "email":
+                oE.SetProperty(sFld, catElem.Child(sFld));
+                break;
+            case "org_name":
+            case "position_name":
+            case "position_parent_name":
+                oE.SetProperty(sFld, tools_web.get_cur_lng_name(catElem.Child(sFld).Value, curLng.short_id));
+                break;
+            case "birth_date":
+                if (catElem.birth_date.HasValue) {
+                    vTemp = Year(CurDate) - Year(catElem.birth_date);
+                    if (Month(CurDate) * 100 + Day(CurDate) < Month(catElem.birth_date) * 100 + Day(catElem.birth_date))
+                        vTemp = vTemp - 1;
+
+                    vTemp = StrInt(vTemp);
+                    oE.SetProperty("aux_title_" + iAFCount, "const=vrb_age");
+                    oE.SetProperty("aux_value_" + iAFCount, catElem.Child(sFld));
+                } else {
+                    oE.SetProperty("aux_title_" + iAFCount, "-");
+                }
+
+                iAFCount++;
+                break;
+            case "hire_date":
+            case "position_date":
+                if (catElem.Child(sFld).HasValue) {
+                    vTemp = ({ "ya": (['let_1', 'god', 'goda']), "v": catElem.Child(sFld).Value });
+                    vTemp.rP = ((0.083 * Month(CurDate) + Year(CurDate)) - (0.083 * Month(vTemp.v) + Year(vTemp.v)));
+                    vTemp.iP = Int(vTemp.rP);
+                    vTemp.iPM = Int((vTemp.rP - vTemp.iP) / 0.083);
+
+                    oE.SetProperty("aux_title_" + iAFCount, "const=" + (sFld == "hire_date" ? "vkompanii" : "nadolzhnosti"));
+                    oE.SetProperty("aux_value_" + iAFCount, ((vTemp.iP == 0 ? "" : vTemp.iP + " " + StrNonTitleCase(tools_web.get_web_const(vTemp.ya[IntModType(vTemp.iP)], curLngWeb)) + " ") + vTemp.iPM + " " + StrNonTitleCase(tools_web.get_web_const("mes", curLngWeb))) + " " + StrNonTitleCase(tools_web.get_web_const("t1y74xh7qn", curLngWeb)) + " " + StrDate(vTemp.v, false));
+                } else
+                    oE.SetProperty("aux_title_" + iAFCount, "-");
+
+                iAFCount++;
+                break;
+        }
+
+    return oE;
+}
+
 var agentId = 7121749858204988969;
 var loggerName = "action_7121749858204988969";
 
@@ -120,6 +170,9 @@ try {
     addLogMessage(loggerName, "[agent.id: " + agentId + "] Started.");
 
     //if (aCacheData == null || !aCacheData.HasProperty("result_array")) {
+
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] User: " + curUserID + " Count: " + ArrayCount(dataList));
+
     if(ArrayCount(dataList) == 0) {
         iElemId = OptInt(iElemId);
 
@@ -162,56 +215,6 @@ try {
 
         for (oxarrMyFuncDominationPack in xarrMyFuncDominationPack) {
             arrAllFuncMan.push(OptInt(oxarrMyFuncDominationPack.object_id));
-        }
-
-        function processResultElem(catElem) {
-            var sFld, vTemp, oE = new Object;
-            iAFCount = 0;
-            oE.id = catElem.id.Value;
-            oE.fullname = catElem.fullname.Value;
-            for (sFld in aExportFields)
-                switch (sFld) {
-                    case "email":
-                        oE.SetProperty(sFld, catElem.Child(sFld));
-                        break;
-                    case "org_name":
-                    case "position_name":
-                    case "position_parent_name":
-                        oE.SetProperty(sFld, tools_web.get_cur_lng_name(catElem.Child(sFld).Value, curLng.short_id));
-                        break;
-                    case "birth_date":
-                        if (catElem.birth_date.HasValue) {
-                            vTemp = Year(CurDate) - Year(catElem.birth_date);
-                            if (Month(CurDate) * 100 + Day(CurDate) < Month(catElem.birth_date) * 100 + Day(catElem.birth_date))
-                                vTemp = vTemp - 1;
-
-                            vTemp = StrInt(vTemp);
-                            oE.SetProperty("aux_title_" + iAFCount, "const=vrb_age");
-                            oE.SetProperty("aux_value_" + iAFCount, catElem.Child(sFld));
-                        } else {
-                            oE.SetProperty("aux_title_" + iAFCount, "-");
-                        }
-
-                        iAFCount++;
-                        break;
-                    case "hire_date":
-                    case "position_date":
-                        if (catElem.Child(sFld).HasValue) {
-                            vTemp = ({"ya": (['let_1', 'god', 'goda']), "v": catElem.Child(sFld).Value});
-                            vTemp.rP = ((0.083 * Month(CurDate) + Year(CurDate)) - (0.083 * Month(vTemp.v) + Year(vTemp.v)));
-                            vTemp.iP = Int(vTemp.rP);
-                            vTemp.iPM = Int((vTemp.rP - vTemp.iP) / 0.083);
-
-                            oE.SetProperty("aux_title_" + iAFCount, "const=" + (sFld == "hire_date" ? "vkompanii" : "nadolzhnosti"));
-                            oE.SetProperty("aux_value_" + iAFCount, ((vTemp.iP == 0 ? "" : vTemp.iP + " " + StrNonTitleCase(tools_web.get_web_const(vTemp.ya[IntModType(vTemp.iP)], curLngWeb)) + " ") + vTemp.iPM + " " + StrNonTitleCase(tools_web.get_web_const("mes", curLngWeb))) + " " + StrNonTitleCase(tools_web.get_web_const("t1y74xh7qn", curLngWeb)) + " " + StrDate(vTemp.v, false));
-                        } else
-                            oE.SetProperty("aux_title_" + iAFCount, "-");
-
-                        iAFCount++;
-                        break;
-                }
-
-            return oE;
         }
 
         if (iElemId != undefined) {

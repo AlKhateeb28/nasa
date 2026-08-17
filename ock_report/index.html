@@ -1132,28 +1132,32 @@
 
 <div class="float-left">
     <div id="ock_report">
-        <div class="float-left" style="top: 50%; left: 15%; transform: translate(-50%, -50%); position: absolute;">
+        <div class="float-left" style="top: 50%; left: 13%; transform: translate(-50%, -50%); position: absolute;">
             <div id="ock_button" class="container noselect" onclick="IndexPage.onDownloadOCK(this, 'ock')"></div>
         </div>
 
-        <div class="float-left" style="top: 50%; left: 29%; transform: translate(-50%, -50%); position: absolute;">
+        <div class="float-left" style="top: 50%; left: 25%; transform: translate(-50%, -50%); position: absolute;">
             <div id="ock_bno_button" class="container noselect" onclick="IndexPage.onDownloadOCKBNO(this, 'ock_bno')"></div>
         </div>
 
-        <div class="float-left" style="top: 50%; left: 43%; transform: translate(-50%, -50%); position: absolute;">
+        <div class="float-left" style="top: 50%; left: 37%; transform: translate(-50%, -50%); position: absolute;">
             <div id="rck_button" class="container noselect" onclick="IndexPage.onDownloadRCK(this, 'rck')"></div>
         </div>
 
-        <div class="float-left" style="top: 50%; left: 57%; transform: translate(-50%, -50%); position: absolute;">
+        <div class="float-left" style="top: 50%; left: 49%; transform: translate(-50%, -50%); position: absolute;">
             <div id="ock_rck_button" class="container noselect" onclick="IndexPage.onDownloadDossierRckOck(this, 'ock_rck')"></div>
         </div>
 
-        <div class="float-left" style="top: 50%; left: 71%; transform: translate(-50%, -50%); position: absolute;">
+        <div class="float-left" style="top: 50%; left: 61%; transform: translate(-50%, -50%); position: absolute;">
             <div id="ock_rck_ss_button" class="container noselect" onclick="IndexPage.onDownloadDossierRckOckSS(this, 'ock_rck_ss')"></div>
         </div>
 
-        <div class="float-left" style="top: 50%; left: 85%; transform: translate(-50%, -50%); position: absolute;">
+        <div class="float-left" style="top: 50%; left: 73%; transform: translate(-50%, -50%); position: absolute;">
             <div id="result_ock_rck_button" class="container noselect" onclick="IndexPage.onDownloadResultRckOck(this, 'result_ock_rck')"></div>
+        </div>
+
+        <div class="float-left" style="top: 50%; left: 85%; transform: translate(-50%, -50%); position: absolute;">
+            <div id="result_ock_rck_button_without_dossier" class="container noselect" onclick="IndexPage.onDownloadResultRckOckWithoutDossier(this, 'result_ock_rck_without_dossier')"></div>
         </div>
     </div>
 </div>
@@ -1295,6 +1299,21 @@
         $("#running_time_result_ock_rck").html("~ ? мин");
         $("#svg").attr("id", "svg_result_ock_rck");
         IndexPage.getRunningTime("7250788197909477159", "_result_ock_rck");
+
+        $("#result_ock_rck_button_without_dossier").append(getTemplate("button_template"));
+        $("#prompt").attr("id", "prompt_result_ock_rck_without_dossier");
+        $("#prompt_result_ock_rck_without_dossier").html("Выгрузка по результатам мероприятий РЦК/ОЦК (без досье)");
+        $("#title").attr("id", "title_result_ock_rck_without_dossier");
+        $("#title_result_ock_rck_without_dossier").html("<div>" + batterySVG + "</div><div style='margin-left: 50px; margin-top: -25px;'>" + fullSVG + "</div>");
+        $("#footer").attr("id", "footer_result_ock_rck_without_dossier");
+        $("#footer_result_ock_rck_without_dossier").html(grass1SVG);
+        $("#card").attr("id", "card_result_ock_rck_without_dossier");        
+        $("#task_message").attr("id", "task_message_result_ock_rck_without_dossier");
+        $("#time_footer").attr("id", "time_footer_result_ock_rck_without_dossier");
+        $("#running_time").attr("id", "running_time_result_ock_rck_without_dossier");
+        $("#running_time_result_ock_rck_without_dossier").html("~ ? мин");
+        $("#svg").attr("id", "svg_result_ock_rck_without_dossier");
+        IndexPage.getRunningTime("7312691335872272387", "_result_ock_rck_without_dossier");
     });
 </script>
 

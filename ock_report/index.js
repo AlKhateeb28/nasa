@@ -324,6 +324,50 @@ class IndexPage extends Object {
         });
     }
 
+    static onDownloadResultRckOckWithoutDossier(element, taskPrefix) {
+        if (isTaskRunning(taskPrefix)) {
+            return;
+        }
+
+        setIsRunning(taskPrefix, true);
+
+        IndexPage.awake(element, taskPrefix);
+
+        $("#task_message_" + taskPrefix).html("Формируется...");
+
+        const messageElement = $("#message");
+
+        $.ajax({
+            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7312691335872272387",
+            async: true,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if (data.errorMessage.indexOf("#") < 0) {
+                    IndexPage.afterReport(taskPrefix, "report_col_ock_rck/rck_ock_result_event_without_dossier_" + getCurrentDate() + ".xlsx");
+
+                    IndexPage.getRunningTime("7312691335872272387", "_result_ock_rck_without_dossier");
+                } else {
+                    messageElement.css("color", "hotpink");
+                    messageElement.html("Ошибка! Подробности в логе 'web_7312691335872272387'");
+
+                    console.log("Error: " + data.errorMessage.indexOf("#"));
+                }
+
+                IndexPage.sleep(element, taskPrefix);
+
+                setIsRunning(taskPrefix, false);
+            },
+            error: function (error) {
+                IndexPage.sleep(element, taskPrefix);
+
+                IndexPage.onError(7312691335872272387);
+
+                setIsRunning(taskPrefix, false);
+            }
+        });
+    }
+
     static hideMessageBox() {
         $("#message").css("visibility", "hidden");
     }

@@ -55,7 +55,7 @@ function getChartOption() {
         ],
         chart: {
             type: "area",//"line",
-            width: 440,
+            width: 400,
             height: 170,
             toolbar: { show: false },
             zoom: { enabled: false },
@@ -92,6 +92,7 @@ function getChartOption() {
         },
         legend: {
             show: true,
+            fontSize: "10px",
             labels: {
                 colors: "#000000"
             }
@@ -733,7 +734,7 @@ function selectRow(element, event) {
 
     $(element).addClass("selected-row");
 
-    const selectedRowIndex = $(element).attr("data-index");
+    selectedRowIndex = $(element).attr("data-index");
 
     if ($("#type_" + selectedRowIndex).html() === "HEAP") {
         clearStatisticElements();

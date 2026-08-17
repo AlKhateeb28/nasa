@@ -6,223 +6,232 @@
     var agentId = 6971503495410184031;
     var loggerName = "agent_6971503495410184031";
 
-    function from_str_to_date( _sDate, _bWithTime ) {
-    try {
-    if ( _bWithTime ) {
-    return OptDate( _sDate )
-    } else {
-    return OptDate( StrDate( OptDate( _sDate ), false, false ) )
+    function from_str_to_date(_sDate, _bWithTime) {
+        try {
+            if (_bWithTime) {
+                return OptDate(_sDate);
+            } else {
+                return OptDate(StrDate(OptDate(_sDate), false, false));
+            }
+        } catch(err) { return '' }
     }
-    } catch( err ) { return '' }
-    }
-    object_id = curUrlQuery.GetOptProperty( "object_id" )
-    teCol = tools.open_doc( object_id ).TopElem
-    cert_object_data_type_id = 6966499755925068211 // Сертификация инструкторов по БП
 
-    //sXQ = "for $elem in object_datas where $elem/object_data_type_id=" + cert_object_data_type_id + " and $elem/object_id=" + object_id + " and $elem/sec_object_id=" + curUserID + " return $elem"
-    sXQ = "for $elem in object_datas where $elem/object_data_type_id=" + cert_object_data_type_id + " and $elem/object_id=" + object_id + " return $elem"
-    foundObjectData = ArrayOptFirstElem( XQuery( sXQ ) )
-    if ( foundObjectData == undefined ) {
-    checkbox1_value = ""
-    MyCombo1_value = "Не выбрано"
-    MyCombo2_value = "Не выбрано"
-    MyCombo3_value = "Не выбрано"
-    MyCombo4_value = "Не выбрано"
-    MyCombo5_value = "Не выбрано"
-    MyCombo6_value = "Не выбрано"
-    MyDateAccess_value = ""
-    MyDate1_value = ""
-    MyDate2_value = ""
-    MyDate3_value = ""
-    MyDate4_value = ""
-    MyDate5_value = ""
-    MyDate6_value = ""
-    Edit1_value = ""
-    Edit2_value = ""
-    Edit3_value = ""
-    Edit4_value = ""
-    Edit5_value = ""
-    Edit6_value = ""
-    MyCombo_task1_value = "Не выбрано"
-    MyCombo_task2_value = "Не выбрано"
-    MyCombo_task3_value = "Не выбрано"
-    Edit_task1_value = ""
-    Edit_task2_value = ""
-    Edit_task3_value = ""
-    } else {
-    te = tools.open_doc( foundObjectData.id ).TopElem
-    checkbox1_value = te.custom_elems.ObtainChildByKey( "flag" ).value
-    MyCombo1_value = te.custom_elems.ObtainChildByKey( "result_1" ).value
-    MyCombo2_value = te.custom_elems.ObtainChildByKey( "result_2" ).value
-    MyCombo3_value = te.custom_elems.ObtainChildByKey( "result_3" ).value
-    MyCombo4_value = te.custom_elems.ObtainChildByKey( "result_4" ).value
-    MyCombo5_value = te.custom_elems.ObtainChildByKey( "result_5" ).value
-    MyCombo6_value = te.custom_elems.ObtainChildByKey( "result_6" ).value
-    MyDateAccess_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_access" ).value, false )
-    MyDate1_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_1" ).value, false )
+        object_id = curUrlQuery.GetOptProperty("object_id");
+        teCol = tools.open_doc(object_id).TopElem;
+        cert_object_data_type_id = 6966499755925068211; // Сертификация инструкторов по БП
 
-    test_value = 'TEST';
+        //sXQ = "for $elem in object_datas where $elem/object_data_type_id=" + cert_object_data_type_id + " and $elem/object_id=" + object_id + " and $elem/sec_object_id=" + curUserID + " return $elem";
+        sXQ = "for $elem in object_datas where $elem/object_data_type_id=" + cert_object_data_type_id + " and $elem/object_id=" + object_id + " return $elem";
+        foundObjectData = ArrayOptFirstElem(XQuery(sXQ));
 
-    MyDate2_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_2" ).value, false )
-    MyDate3_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_3" ).value, false )
-    MyDate4_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_4" ).value, false )
-    MyDate5_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_5" ).value, false )
-    MyDate6_value = from_str_to_date( te.custom_elems.ObtainChildByKey( "date_6" ).value, false )
-    Edit1_value = te.custom_elems.ObtainChildByKey( "comment_1" ).value
-    Edit2_value = te.custom_elems.ObtainChildByKey( "comment_2" ).value
-    Edit3_value = te.custom_elems.ObtainChildByKey( "comment_3" ).value
-    Edit4_value = te.custom_elems.ObtainChildByKey( "comment_4" ).value
-    Edit5_value = te.custom_elems.ObtainChildByKey( "comment_5" ).value
-    Edit6_value = te.custom_elems.ObtainChildByKey( "comment_6" ).value
-    MyCombo_task1_value = te.custom_elems.ObtainChildByKey( "task_1" ).value
-    MyCombo_task2_value = te.custom_elems.ObtainChildByKey( "task_2" ).value
-    MyCombo_task3_value = te.custom_elems.ObtainChildByKey( "task_3" ).value
-    Edit_task1_value = te.custom_elems.ObtainChildByKey( "task_comm_1" ).value
-    Edit_task2_value = te.custom_elems.ObtainChildByKey( "task_comm_2" ).value
-    Edit_task3_value = te.custom_elems.ObtainChildByKey( "task_comm_3" ).value
-    }
-    MyCombo1_Enabled = MyCombo1_value == "Сертифицировать" ? "false" : "true"
-    MyCombo2_Enabled = MyCombo2_value == "Сертифицировать" ? "false" : "true"
-    MyCombo3_Enabled = MyCombo3_value == "Сертифицировать" ? "false" : "true"
-    MyCombo4_Enabled = MyCombo4_value == "Сертифицировать" ? "false" : "true"
-    MyCombo5_Enabled = MyCombo5_value == "Сертифицировать" ? "false" : "true"
-    MyCombo6_Enabled = MyCombo6_value == "Сертифицировать" ? "false" : "true"
-    MyDate1_Enabled = MyCombo1_value == "Сертифицировать" ? "false" : "true"
-    MyDate2_Enabled = MyCombo2_value == "Сертифицировать" ? "false" : "true"
-    MyDate3_Enabled = MyCombo3_value == "Сертифицировать" ? "false" : "true"
-    MyDate4_Enabled = MyCombo4_value == "Сертифицировать" ? "false" : "true"
-    MyDate5_Enabled = MyCombo5_value == "Сертифицировать" ? "false" : "true"
-    MyDate6_Enabled = MyCombo6_value == "Сертифицировать" ? "false" : "true"
-    MyDateAccess_Enabled = !checkbox1_value
-    // Пройдено ЭК из 8
-    courses_ids_arr = "7258899558722533245,6671106418291659865,6838854269792109574,6727253502766890095,6852554380951299709,6836087635825603553,6743177975518886480,6743176161780188235"
-    arr = ArraySelectAll( XQuery( "sql:
-    WITH Table_1 AS (
-    SELECT
-    id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
-    FROM active_learnings
-    WHERE
-    active_learnings.person_id = " + object_id + "
-    AND active_learnings.course_id IN (" + courses_ids_arr + ")
-    UNION
-    SELECT
-    id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
-    FROM learnings
-    WHERE
-    learnings.person_id = " + object_id + "
-    AND learnings.course_id IN (" + courses_ids_arr + ")
-    )
-    SELECT
-    Table_1.id AS id
-    , Table_1.course_id AS course_id
-    , Table_1.course_name AS course_name
-    , Table_1.score AS score
-    , Table_1.start_usage_date AS start_usage_date
-    , Table_1.last_usage_date AS last_usage_date
-    , Table_1.start_learning_date AS start_learning_date
-    , [common.learning_states].name AS state_name
-    FROM Table_1
-    LEFT JOIN [common.learning_states]
-    ON [common.learning_states].id = Table_1.state_id
-    ORDER BY
-    Table_1.course_name DESC
-    , Table_1.score DESC
-    , Table_1.start_usage_date DESC
-    " ) )
-    final_array = ArraySelectDistinct( arr, "This.course_id" )
-    num = 0
-    for ( elem in final_array ) {
-    if ( elem.state_name == "Пройден" || elem.state_name == "Завершен" ) num++
-    }
-    // Пройдено ЭК из 8
+        if (foundObjectData == undefined) {
+            checkbox1_value = "";
 
-    // Изучено видеозаписей семинаров из 5
-    //videocourses_ids_arr = "6965774666385153326,6966161248012621159,6966165131940952893,6966162084849146109,6966211279387184178"
-    videocourses_ids_arr = ArrayMerge( XQuery( "for $elem in courses where MatchSome($elem/role_id,(7033858916945914689, 7119772605665928276, 7119772656544257020)) return $elem" ), "id", "," )
-    // 7033858916945914689 Видеозаписи семинаров, 7119772605665928276 Методические разборы программ, 7119772656544257020 Тренинг тренеров
-    videocourses_arr = ArraySelectAll( XQuery( "sql:
-    WITH Table_1 AS (
-    SELECT
-    id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
-    FROM active_learnings
-    WHERE
-    active_learnings.person_id = " + object_id + "
-    AND active_learnings.course_id IN (" + videocourses_ids_arr + ")
-    UNION
-    SELECT
-    id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
-    FROM learnings
-    WHERE
-    learnings.person_id = " + object_id + "
-    AND learnings.course_id IN (" + videocourses_ids_arr + ")
-    )
-    SELECT
-    Table_1.id AS id
-    , Table_1.course_id AS course_id
-    , Table_1.course_name AS course_name
-    , Table_1.score AS score
-    , Table_1.start_usage_date AS start_usage_date
-    , Table_1.last_usage_date AS last_usage_date
-    , Table_1.start_learning_date AS start_learning_date
-    , [common.learning_states].name AS state_name
-    FROM Table_1
-    LEFT JOIN [common.learning_states]
-    ON [common.learning_states].id = Table_1.state_id
-    ORDER BY
-    Table_1.course_name DESC
-    , Table_1.score DESC
-    , Table_1.start_usage_date DESC
-    " ) )
-    final_videocourses_arr = ArraySelectDistinct( videocourses_arr, "This.course_name" )
-    videocourses_num = 0
-    qwe = ""
-    for ( elem in final_videocourses_arr ) {
-    //qwe += elem.course_name + ";" + elem.state_name + ";"
-    if ( elem.state_name == "Пройден" || elem.state_name == "Завершен" ) videocourses_num++
-    }
-    //videocourses_num = qwe
-    // Изучено видеозаписей семинаров из 5
+            MyCombo1_value = "Не выбрано";
+            MyCombo2_value = "Не выбрано";
+            MyCombo3_value = "Не выбрано";
+            MyCombo4_value = "Не выбрано";
+            MyCombo5_value = "Не выбрано";
+            MyCombo6_value = "Не выбрано";
+            
+            MyDateAccess_value = "";
+            
+            MyDate1_value = "";
+            MyDate2_value = "";
+            MyDate3_value = "";
+            MyDate4_value = "";
+            MyDate5_value = "";
+            MyDate6_value = "";
+            
+            Edit1_value = "";
+            Edit2_value = "";
+            Edit3_value = "";
+            Edit4_value = "";
+            Edit5_value = "";
+            Edit6_value = "";
+            
+            MyCombo_task1_value = "Не выбрано";
+            MyCombo_task2_value = "Не выбрано";
+            MyCombo_task3_value = "Не выбрано";
+            
+            Edit_task1_value = "";
+            Edit_task2_value = "";
+            Edit_task3_value = "";
+        } else {
+            te = tools.open_doc(foundObjectData.id).TopElem;
 
-    // Посещено вебинаров из 6
-    col_email = ArrayOptFirstElem( XQuery( "for $elem in collaborators where $elem/id=" + object_id + " return $elem" ) ).email
-    found_muc_col = ArrayOptFirstElem( XQuery( "sql:
-    SELECT
-    collaborators.*
-    FROM collaborators
-    LEFT JOIN collaborator
-    ON collaborator.id = collaborators.id
-    WHERE collaborators.code LIKE 'load_muc%'
-    AND collaborator.data.value('(collaborator/system_email)[1]', 'varchar(max)') = '" + col_email + "'
-    " ) )
-    if ( found_muc_col != undefined ) {
-    em_codes = "'fck_pr_038', 'fck_pr_039', 'fck_pr_014', 'fck_pr_002', 'fck_pr_013', 'fck_pr_006'"
-    webinars_arr = ArraySelectAll( XQuery( "sql:
-    SELECT
-    education_methods.name AS em_name,
-    CASE
-    WHEN event.data.value('(event/custom_elems/custom_elem[name=''wave_group_id''])[1]/value[last()]', 'varchar(max)') IS NOT NULL THEN '+'
-    ELSE '-'
-    END AS is_assist
-    FROM event_results
-    LEFT JOIN events
-    ON events.id = event_results.event_id
-    LEFT JOIN event
-    ON event.id = events.id
-    LEFT JOIN education_methods
-    ON education_methods.id = events.education_method_id
-    WHERE 1=1
-    AND event_results.person_id = " + found_muc_col.id + "
-    AND events.type_id = 'education_method'
-    AND education_methods.code IN (" + em_codes + ")
-    ORDER BY education_methods.name
-    " ) )
+            checkbox1_value = te.custom_elems.ObtainChildByKey("flag").value;
+            
+            MyCombo1_value = te.custom_elems.ObtainChildByKey("result_1").value;
+            MyCombo2_value = te.custom_elems.ObtainChildByKey("result_2").value;
+            MyCombo3_value = te.custom_elems.ObtainChildByKey("result_3").value;
+            MyCombo4_value = te.custom_elems.ObtainChildByKey("result_4").value;
+            MyCombo5_value = te.custom_elems.ObtainChildByKey("result_5").value;
+            MyCombo6_value = te.custom_elems.ObtainChildByKey("result_6").value;
+            
+            MyDateAccess_value = from_str_to_date(te.custom_elems.ObtainChildByKey("date_access").value, false);
+            
+            MyDate1_value = from_str_to_date(te.custom_elems.ObtainChildByKey("date_1").value, false);
+
+            test_value = 'TEST';
+
+            MyDate2_value = from_str_to_date(te.custom_elems.ObtainChildByKey("date_2").value, false);
+            MyDate3_value = from_str_to_date(te.custom_elems.ObtainChildByKey("date_3").value, false);
+            MyDate4_value = from_str_to_date(te.custom_elems.ObtainChildByKey("date_4").value, false);
+            MyDate5_value = from_str_to_date(te.custom_elems.ObtainChildByKey("date_5").value, false);
+            MyDate6_value = from_str_to_date(te.custom_elems.ObtainChildByKey("date_6").value, false);
+            
+            Edit1_value = te.custom_elems.ObtainChildByKey("comment_1").value;
+            Edit2_value = te.custom_elems.ObtainChildByKey("comment_2").value;
+            Edit3_value = te.custom_elems.ObtainChildByKey("comment_3").value;
+            Edit4_value = te.custom_elems.ObtainChildByKey("comment_4").value;
+            Edit5_value = te.custom_elems.ObtainChildByKey("comment_5").value;
+            Edit6_value = te.custom_elems.ObtainChildByKey("comment_6").value;
+            
+            MyCombo_task1_value = te.custom_elems.ObtainChildByKey("task_1").value;
+            MyCombo_task2_value = te.custom_elems.ObtainChildByKey("task_2").value;
+            MyCombo_task3_value = te.custom_elems.ObtainChildByKey("task_3").value;
+            
+            Edit_task1_value = te.custom_elems.ObtainChildByKey("task_comm_1").value;
+            Edit_task2_value = te.custom_elems.ObtainChildByKey("task_comm_2").value;
+            Edit_task3_value = te.custom_elems.ObtainChildByKey("task_comm_3").value;
+        }
+
+        MyCombo1_Enabled = MyCombo1_value == "Сертифицировать" ? "false" : "true";
+        MyCombo2_Enabled = MyCombo2_value == "Сертифицировать" ? "false" : "true";
+        MyCombo3_Enabled = MyCombo3_value == "Сертифицировать" ? "false" : "true";
+        MyCombo4_Enabled = MyCombo4_value == "Сертифицировать" ? "false" : "true";
+        MyCombo5_Enabled = MyCombo5_value == "Сертифицировать" ? "false" : "true";
+        MyCombo6_Enabled = MyCombo6_value == "Сертифицировать" ? "false" : "true";
+        
+        MyDate1_Enabled = MyCombo1_value == "Сертифицировать" ? "false" : "true";
+        MyDate2_Enabled = MyCombo2_value == "Сертифицировать" ? "false" : "true";
+        MyDate3_Enabled = MyCombo3_value == "Сертифицировать" ? "false" : "true";
+        MyDate4_Enabled = MyCombo4_value == "Сертифицировать" ? "false" : "true";
+        MyDate5_Enabled = MyCombo5_value == "Сертифицировать" ? "false" : "true";
+        MyDate6_Enabled = MyCombo6_value == "Сертифицировать" ? "false" : "true";
+        
+        MyDateAccess_Enabled = !checkbox1_value;
+
+        // Пройдено ЭК из 8
+        courses_ids_arr = "7258899558722533245,6671106418291659865,6838854269792109574,6727253502766890095,6852554380951299709,6836087635825603553,6743177975518886480,6743176161780188235";
+
+        arr = ArraySelectAll(XQuery("sql:
+            WITH Table_1 AS (
+                    SELECT id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
+                    FROM active_learnings
+                    WHERE active_learnings.person_id = " + object_id + "
+                        AND active_learnings.course_id IN (" + courses_ids_arr + ")
+                UNION
+                    SELECT id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
+                    FROM learnings
+                    WHERE learnings.person_id = " + object_id + "
+                        AND learnings.course_id IN (" + courses_ids_arr + ")
+            )
+            SELECT Table_1.id AS id, 
+                Table_1.course_id AS course_id,
+                Table_1.course_name AS course_name,
+                Table_1.score AS score,
+                Table_1.start_usage_date AS start_usage_date,
+                Table_1.last_usage_date AS last_usage_date,
+                Table_1.start_learning_date AS start_learning_date,
+                [common.learning_states].name AS state_name
+            FROM Table_1
+                LEFT JOIN [common.learning_states] ON [common.learning_states].id = Table_1.state_id
+            ORDER BY Table_1.course_name DESC, Table_1.score DESC, Table_1.start_usage_date DESC
+        "));
+
+        final_array = ArraySelectDistinct(arr, "This.course_id");
+
+        num = 0;
+        for (elem in final_array) {
+            if (elem.state_name == "Пройден" || elem.state_name == "Завершен") {
+                num++
+            }
+        }
+
+        // Пройдено ЭК из 8
+
+        // Изучено видеозаписей семинаров из 5
+        //videocourses_ids_arr = "6965774666385153326,6966161248012621159,6966165131940952893,6966162084849146109,6966211279387184178";
+        videocourses_ids_arr = ArrayMerge(XQuery("for $elem in courses where MatchSome($elem/role_id,(7033858916945914689, 7119772605665928276, 7119772656544257020)) return $elem"), "id", ",");
+        // 7033858916945914689 Видеозаписи семинаров, 7119772605665928276 Методические разборы программ, 7119772656544257020 Тренинг тренеров
+        videocourses_arr = ArraySelectAll(XQuery("sql:
+            WITH Table_1 AS (
+                    SELECT id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
+                    FROM active_learnings
+                    WHERE active_learnings.person_id = " + object_id + "
+                        AND active_learnings.course_id IN (" + videocourses_ids_arr + ")
+                UNION
+                    SELECT id, course_id, course_name, start_usage_date, last_usage_date, start_learning_date, score, state_id
+                    FROM learnings
+                    WHERE learnings.person_id = " + object_id + "
+                        AND learnings.course_id IN (" + videocourses_ids_arr + ")
+            )
+            SELECT Table_1.id AS id,
+                Table_1.course_id AS course_id,
+                Table_1.course_name AS course_name,
+                Table_1.score AS score,
+                Table_1.start_usage_date AS start_usage_date,
+                Table_1.last_usage_date AS last_usage_date,
+                Table_1.start_learning_date AS start_learning_date,
+                [common.learning_states].name AS state_name
+            FROM Table_1
+                LEFT JOIN [common.learning_states] ON [common.learning_states].id = Table_1.state_id
+            ORDER BY Table_1.course_name DESC, Table_1.score DESC, Table_1.start_usage_date DESC
+        "));
+
+        final_videocourses_arr = ArraySelectDistinct(videocourses_arr, "This.course_name");
+        videocourses_num = 0;
+        qwe = "";
+
+        for (elem in final_videocourses_arr) {
+            //qwe += elem.course_name + ";" + elem.state_name + ";"
+            if (elem.state_name == "Пройден" || elem.state_name == "Завершен") {
+                videocourses_num++;
+            }
+        }
+
+        //videocourses_num = qwe
+        // Изучено видеозаписей семинаров из 5
+
+        // Посещено вебинаров из 6
+        col_email = ArrayOptFirstElem(XQuery("for $elem in collaborators where $elem/id=" + object_id + " return $elem")).email;
+
+        found_muc_col = ArrayOptFirstElem(XQuery("sql:
+            SELECT collaborators.*
+            FROM collaborators
+                LEFT JOIN collaborator ON collaborator.id = collaborators.id
+            WHERE collaborators.code LIKE 'load_muc%'
+                AND collaborator.data.value('(collaborator/system_email)[1]', 'varchar(max)') = '" + col_email + "'
+        "));
+
+        if (found_muc_col != undefined) {
+            em_codes = "'fck_pr_038', 'fck_pr_039', 'fck_pr_014', 'fck_pr_002', 'fck_pr_013', 'fck_pr_006'"
+        
+            webinars_arr = ArraySelectAll(XQuery("sql:
+                SELECT education_methods.name AS em_name,
+                        CASE
+                            WHEN event.data.value('(event/custom_elems/custom_elem[name=''wave_group_id''])[1]/value[last()]', 'varchar(max)') IS NOT NULL THEN '+'
+                            ELSE '-'
+                        END AS is_assist
+                FROM event_results
+                LEFT JOIN events ON events.id = event_results.event_id
+                LEFT JOIN eventON event.id = events.id
+                LEFT JOIN education_methods ON education_methods.id = events.education_method_id
+                WHERE 1=1
+                    AND event_results.person_id = " + found_muc_col.id + "
+                    AND events.type_id = 'education_method'
+                    AND education_methods.code IN (" + em_codes + ")
+                ORDER BY education_methods.name
+    "));
     webinars_num = 0
     qwe = ""
-    for ( elem in webinars_arr ) {
-    //qwe += elem.course_name + ";" + elem.state_name + ";"
-    if ( elem.is_assist == "+" ) webinars_num++
-    }
-    }
+            for (elem in webinars_arr) {
+                //qwe += elem.course_name + ";" + elem.state_name + ";"
+    if (elem.is_assist == "+") webinars_num++
+                }
+            }
 
     //webinars_num = qwe
     // Посещено вебинаров из 6
@@ -256,11 +265,11 @@
         <Param Name="Edit_task1" Value="{Edit_task1}"/>
         <Param Name="Edit_task2" Value="{Edit_task2}"/>
         <Param Name="Edit_task3" Value="{Edit_task3}"/>
-    </Action>
+    </Action>    
 
     <Action Name="MyActionName2" Success="" Failure="">
         <%
-        coll_doc = tools.open_doc( object_id )
+        coll_doc = tools.open_doc(object_id)
         //coll_doc.TopElem.tags.ObtainChildByKey('88888').require_acknowledgement = true
         coll_doc.TopElem.tags.ObtainChildByKey('88888').tag_name = '22/09/2023'
         //coll_doc.TopElem.tags[0].Delete();
@@ -299,12 +308,12 @@
         <Param Name="sSearchWord" Value="{!CatalogListSearchWER}"/>
         <Param Name="curObjectID" Value="<%=object_id%>"/>
     </Action>
-
+  
     <Grid Width="900" Class="wrapper" >
         <GridColumns>
             <GridColumn Width="900"/>
         </GridColumns>
-
+    
         <GridRow>
             <Grid Width="900" Class="grid_labels_class" >
                 <GridColumns>
@@ -313,11 +322,11 @@
                 </GridColumns>
                 <GridRow>
                     <Label Class="label_class1"><%=teCol.fullname%></Label>
-                    <Label Class=""> ИНН <%=teCol.custom_elems.ObtainChildByKey( "uf_inn" ).value%>,  <%=teCol.org_name%></Label>
+                    <Label Class=""> ИНН <%=teCol.custom_elems.ObtainChildByKey("uf_inn").value%>,  <%=teCol.org_name%></Label>
                 </GridRow>
             </Grid>
         </GridRow>
-
+    
         <GridRow>
             <TabControl Name="Tab1" ActiveTab="0">
                 <TabItem Title="Выполнение заданий">
@@ -405,7 +414,7 @@
                             <Edit Name="Edit_task3" Width="600" Height="40" ><%=Edit_task3_value%></Edit>
                         </GridRow>
                     </Grid>
-
+    
                     <Grid Width="900" Class="grid_button_class">
                         <GridColumns>
                             <GridColumn Width="900"/>
@@ -415,8 +424,8 @@
                         </GridRow>
                     </Grid>
                 </TabItem>
-
-
+    
+    
                 <TabItem Title="Прохождение курсов">
                     <%
                     /*curView = {
@@ -434,7 +443,7 @@
                     "buttons": [
                     {
                     "name": "export_action_name",
-                    "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+                    "title": tools_web.get_web_const("sgsvrm6x6u", curLngWeb),
                     "click": ("ACTION=export_action_name")
                     }
                     ],
@@ -446,7 +455,7 @@
                     ])
                     }
                     }
-                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
+                    Response.Write(EvalCodePageUrl(global_settings.web_path + "view_catalog_list.xaml"))
 
                     curView = {
                     "title" : "Статистика прохождения курсов программы",
@@ -463,7 +472,7 @@
                     "buttons": [
                     {
                     "name": "export_action_name_2",
-                    "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+                    "title": tools_web.get_web_const("sgsvrm6x6u", curLngWeb),
                     "click": ("ACTION=export_action_name_2")
                     }
                     ],
@@ -475,12 +484,12 @@
                     ])
                     }
                     }
-                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )*/
+                    Response.Write(EvalCodePageUrl(global_settings.web_path + "view_catalog_list.xaml"))*/
 
                     Response.Write(EvalCodePageUrl(global_settings.web_path + "ibp_cabinet/ibp_courses_tab.html"));
                     %>
                 </TabItem>
-
+    
                 <TabItem Title="Метод. разборы">
                     <%
                     /*curView = {
@@ -502,7 +511,7 @@
                             },
                             {
                                 "name": "export_action_name_3",
-                                "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
+                                "title": tools_web.get_web_const("sgsvrm6x6u", curLngWeb),
                                 "click": ("ACTION=export_action_name_3")
                             }
                         ],
@@ -516,51 +525,51 @@
                         }
                     }
 
-                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )*/
+                    Response.Write(EvalCodePageUrl(global_settings.web_path + "view_catalog_list.xaml"))*/
 
                     Response.Write(EvalCodePageUrl(global_settings.web_path + "ibp_cabinet/ibp_methods_tab.html"));
                     %>
                 </TabItem>
                 <!--
-                <TabItem Title="Вебинары">
-<%
-    /*
-                if ( found_muc_col != undefined ) {
-                    curView = {
-                        "title" : "Результаты посещения вебинаров. Посещено: " + webinars_num + " из 6",
-                        "id": "WER",
-                        "disp_selectors": false,
-                        "disp_search": true,
-                        "disp_filter": false,
-                        "disp_paging": true,
-                        "paging_size": 10,
-                        "catalog_name": "learnings",
-                        "xquery_qual": "",
-                        "disp_type": "data_grid",
-                        "height": null,
-                        "buttons": [
-                            {
-                                "name": "export_action_name_4",
-                                "title": tools_web.get_web_const( "sgsvrm6x6u", curLngWeb ),
-                                "click": ("ACTION=export_action_name_4")
+                    <TabItem Title="Вебинары">
+    <%
+        /*
+                    if (found_muc_col != undefined) {
+                        curView = {
+                            "title" : "Результаты посещения вебинаров. Посещено: " + webinars_num + " из 6",
+                            "id": "WER",
+                            "disp_selectors": false,
+                            "disp_search": true,
+                            "disp_filter": false,
+                            "disp_paging": true,
+                            "paging_size": 10,
+                            "catalog_name": "learnings",
+                            "xquery_qual": "",
+                            "disp_type": "data_grid",
+                            "height": null,
+                            "buttons": [
+                                {
+                                    "name": "export_action_name_4",
+                                    "title": tools_web.get_web_const("sgsvrm6x6u", curLngWeb),
+                                    "click": ("ACTION=export_action_name_4")
+                                }
+                            ],
+                            "collection": {
+                                "name": "col_webinars_cert_ibp",
+                                "params": ([
+                                    {"name": "sSearchWord", "value": "{!CatalogListSearchWER}"},
+                                    {"name": "em_codes", "value": em_codes},
+                                    {"name": "curObjectID", "value": object_id}
+                                ])
                             }
-                        ],
-                        "collection": {
-                            "name": "col_webinars_cert_ibp",
-                            "params": ([
-                                {"name": "sSearchWord", "value": "{!CatalogListSearchWER}"},
-                                {"name": "em_codes", "value": em_codes},
-                                {"name": "curObjectID", "value": object_id}
-                            ])
                         }
+                        Response.Write(EvalCodePageUrl(global_settings.web_path + "view_catalog_list.xaml"))
                     }
-                    Response.Write( EvalCodePageUrl( global_settings.web_path + "view_catalog_list.xaml" ) )
-                }
-    */
-%>
-                </TabItem>
-                -->
-
+        */
+    %>
+                    </TabItem>
+                    -->
+    
                 <TabItem Title="Сертификация">
                     <Grid Width="900" Class="grid_class" >
                         <GridColumns>
@@ -577,7 +586,7 @@
                         </GridRow>
                         <GridRow><Label></Label></GridRow>
                     </Grid>
-
+    
                     <Grid Width="900" Class="grid_labels_class" >
                         <GridColumns>
                             <GridColumn Width="900"/>
@@ -617,7 +626,7 @@
                             <EditBox Name="Edit1" Width="580"><%=Edit1_value%></EditBox>
                         </GridRow>
                     </Grid>
-
+    
                     <Grid Width="900" Class="grid_labels_class" >
                         <GridColumns>
                             <GridColumn Width="900"/>
@@ -657,7 +666,7 @@
                             <EditBox Name="Edit2" Width="580"><%=Edit2_value%></EditBox>
                         </GridRow>
                     </Grid>
-
+    
                     <Grid Width="900" Class="grid_labels_class" >
                         <GridColumns>
                             <GridColumn Width="900"/>
@@ -697,7 +706,7 @@
                             <EditBox Name="Edit3" Width="580"><%=Edit3_value%></EditBox>
                         </GridRow>
                     </Grid>
-
+    
                     <Grid Width="900" Class="grid_labels_class" >
                         <GridColumns>
                             <GridColumn Width="900"/>
@@ -737,7 +746,7 @@
                             <EditBox Name="Edit4" Width="580"><%=Edit4_value%></EditBox>
                         </GridRow>
                     </Grid>
-
+    
                     <Grid Width="900" Class="grid_labels_class" >
                         <GridColumns>
                             <GridColumn Width="900"/>
@@ -777,7 +786,7 @@
                             <EditBox Name="Edit5" Width="580"><%=Edit5_value%></EditBox>
                         </GridRow>
                     </Grid>
-
+    
                     <Grid Width="900" Class="grid_labels_class" >
                         <GridColumns>
                             <GridColumn Width="900"/>
@@ -817,9 +826,9 @@
                             <EditBox Name="Edit6" Width="580" Height="" ><%=Edit6_value%></EditBox>
                         </GridRow>
                     </Grid>
-
-
-
+    
+    
+    
                     <Grid Width="900" Class="grid_button_class">
                         <GridColumns>
                             <GridColumn Width="900"/>

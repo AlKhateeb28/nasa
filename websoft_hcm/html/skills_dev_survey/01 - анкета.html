@@ -1,0 +1,218 @@
+<!-- 7307361177594175819 -->
+<%
+    dataList = ArrayDirect(XQuery("sql: " +
+        " SELECT id, " +
+        "       name " +
+        " FROM [WTDB].[dbo].education_programs " +
+        " WHERE code LIKE 'dpo_%' " +
+        " ORDER BY name "));
+
+    surveyList = ArrayDirect(XQuery("sql: " +
+        " SELECT TOP 5 cpp.id, " +
+        "       eps.name, " +
+        "       FORMAT(cpp.cr_date, 'dd-MM-yyyy HH:mm:ss') AS created_date " +
+        " FROM [WTDB].[dbo].cc_person_profiles cpp " +
+        "     INNER JOIN [WTDB].[dbo].education_programs eps ON cpp.education_program_id = eps.id " +
+        " WHERE cpp.person_id = " + curUserID + 
+        " ORDER BY cr_date DESC "));
+%>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Кабинет организатора ОЦК</title>
+
+    <link rel="stylesheet" href="./skills_dev_survey/index.css" />
+
+    <script type="text/javascript" src="./fcc/js/jquery3.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery.mask.js"></script>
+    <script type="text/javascript" src="./fcc/js/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="./fcc/js/imask.js"></script>
+    <script type="text/javascript" src="./fcc/js/moment.js"></script>
+    <script type="text/javascript" src="./fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./fcc/js/calendar.js"></script>
+    <script type="text/javascript" src="./fcc/js/ModalWindow.js"></script>
+    <script type="text/javascript" src="./fcc/js/Dropdown.js"></script>
+    <script type="text/javascript" src="./fcc/js/Notification.js"></script>
+    <script type="text/javascript" src="./fcc/js/AlertPopupWindow.js"></script>
+    <script type="text/javascript" src="./skills_dev_survey/index.js"></script>
+
+</head>
+
+<body>
+    <div style="display: none;">
+        <% for (data in dataList) { 
+        %>
+            <div class="edu-program" data-id="<%=data.id%>"><%=data.name%></div>
+        <%
+           }
+        %>
+    </div>
+
+    <div style="display: none;">
+        <%  step = 1;
+            
+            for (survey in surveyList) { %>
+            <div class="survey" data-id="<%=survey.id%>" data-step="<%=step%>" data-name="<%=survey.name%>" data-cr-date="<%=survey.created_date%>"></div>
+        <% 
+                step++;
+            } 
+        %>
+    </div>
+
+    <div style="width: 100%; text-align: center; font-weight: 600; font-size: large; color: #6d6dfb; margin-top: -30px;">
+        Анкета-подтверждение данных для выдачи удостоверения о повышении квалификации
+    </div>
+    <div style="width: 100%; margin-top: 10px; margin-bottom: 10px;">
+        Перед печатью удостоверения нам необходимо проверить корректность Ваших данных и уточнить способ получения Вами
+        документа. Заполните, пожалуйста, анкету-подтверждение ниже.
+    </div>
+    <div class="grid">
+        <div style="height: 575px;">
+            <div class="survey-row group-header">Раздел 1. Основная информация об обучении</div>
+            <div id="education_program_box" class="survey-row">
+                <span>1. Укажите Вашу образовательную программу в Академии производительности ФЦК </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div id="education_program_dropdown" class="dropdown-box" style="width: 100%; font-weight: 600; margin-top: 5px; padding-left: 0px;"></div>
+            <div class="survey-row">
+                <span>2. Дата начала обучения в формате День.Месяц.Год </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div class="survey-row" style="height: 24px;">
+                <div style="float: left;">
+                    <input id="start_date" type="text" name="text" class="input" onchange="" />
+                </div>
+                <div style="float: left; margin-left: 20px; margin-top: -16px;">
+                    <button id="start_date_button" class="operate-button" style="width: 40px;" onclick="event.stopPropagation(); showCalendar('start_date')">
+                        <div class="text">...</div>
+                    </button>
+                </div>
+            </div>
+            <div class="survey-row  group-header">Раздел 2. Личные данные слушателя</div>
+            <div class="survey-row">3. Укажите адрес Вашей электронной почты</div>
+            <div class="survey-row" style="color: #808080; font-weight: 300;">Почта должна совпадать с указанной при регистрации на обучение.</div>
+            <div class="survey-row">
+                <input id="email" type="text" name="text" class="input" onchange="" />
+            </div>
+            <div class="survey-row">
+                <span>4. Укажите Ваше ФИО на русском языке </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div class="survey-row" style="color: #808080; font-weight: 300;">В соответствии с паспортными данными. Если в паспорте присутствует отчество, его указание обязательно.</div>
+            <div class="survey-row">
+                <input id="fio" type="text" name="text" class="input" style="width: 95%;" onchange="" />
+            </div>
+            <div class="survey-row">5. Меняли ли Вы ФИО в период обучения?</div>
+            <div class="survey-row" style="width: 100px;">
+                <div id="is_change_fio" class="dropdown-box" style="width: 100%; margin-top: 5px; padding-left: 0px;"></div>
+            </div>
+            <div id="education_level_box" class="survey-row">
+                <span>6. Выберите уровень Вашего образования </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div class="survey-row" style="width: 400px; margin-bottom: 10px;">
+                <div id="education_level" class="dropdown-box" style="width: 100%; margin-top: 5px; padding-left: 0px;"></div>
+            </div>
+        </div>
+        <div style="height: 575px;">
+            <div id="sex_box" class="survey-row left-box">
+                <span>7. Укажите Ваш пол </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div id="sex_dropdown" class="dropdown-box left-box" style="width: 400px; font-weight: 600; margin-top: 5px; padding-left: 0px;"></div>
+            <div class="survey-row left-box">8. Укажите свои паспортные данные</div>
+            <div class="survey-row left-box">
+                <input id="passport" type="text" name="text" class="input" style="width: 100%;" onchange="" />
+            </div>
+            <div class="survey-row left-box">
+                <span>9. Укажите номер СНИЛС </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div class="survey-row left-box">
+                <input id="snils" type="text" name="text" class="input" style="width: 110px;" onchange="" />
+            </div>
+            <div class="survey-row left-box">
+                <span>10. Укажите дату Вашего рождения в формате День.Месяц.Год </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div class="survey-row left-box" style="height: 24px;">
+                <div style="float: left;">
+                    <input id="birth_date" type="text" name="text" class="input" onchange="" />
+                </div>
+                <div style="float: left; margin-left: 20px; margin-top: -16px;">
+                    <button id="birth_date_button" class="operate-button" style="width: 40px;"
+                        onclick="event.stopPropagation(); showCalendar('birth_date')">
+                        <div class="text">...</div>
+                    </button>
+                </div>
+            </div>
+            <div class="survey-row left-box  group-header">Раздел 3. Доставка и подтверждение</div>
+            <div class="survey-row left-box">11. Выберите способ получения документов</div>
+            <div class="survey-row left-box" style="width: 300px; margin-bottom: 10px;">
+                <div id="reciept_method" class="dropdown-box" style="width: 100%; margin-top: 5px; padding-left: 0px;"></div>
+            </div>
+            <div id="confirm_box" class="survey-row left-box">
+                <span>12. Подтверждение данных </span>
+                <span style="color: #ff0000;"> *</span>
+            </div>
+            <div class="survey-row left-box" style="margin-bottom: 10px;">
+                <label class="checkbox-ios">
+                    <input id="confirmed" type="checkbox" style="margin-top: 5px; margin-left: 10px;" />
+                    <span class="checkbox-ios-switch"></span>
+                </label>
+            </div>
+            <div id="can_get_documents_box" class="survey-row left-box">
+                <span>13. Подтверждаю, что смогу получить документы указанным способом в течение 2-х месяцев после заполнения данной анкеты </span>
+                <span style="color: #ff0000;">*</span>
+            </div>
+            <div class="survey-row left-box" style="width: 100%; margin-bottom: 10px;">
+                <div id="can_get_documents" class="dropdown-box" style="width: 100%; margin-top: 5px; padding-left: 0px;"></div>
+            </div>
+            <div class="survey-row left-box" style="color: #808080; font-weight: 300;">
+                <span style="color: #ff0000;">*</span>
+                <span> - поля обязательные для заполнения</span>
+            </div>
+            <div class="survey-row left-box" style="width: 100%; padding-left: 20rem;">
+                <div id="save_btn" class="run-group run-group-helper-btn run-group-inactive" onclick="onSave(this)">
+                    Отправить
+                </div>
+            </div>
+            <div class="survey-row left-box" style="width: 100%; visibility: hidden;">
+                <div id="survey_btn_1" class="run-group run-group-helper-btn disable-survey-btn" style="float: left; padding-right: 1px; padding-left: 1px;" data-id="" onclick="loadSurvey(this)">1</div>
+                <div id="survey_btn_2" class="run-group run-group-helper-btn disable-survey-btn" style="float: left; padding-right: 1px; padding-left: 1px;" data-id="" onclick="loadSurvey(this)">2</div>
+                <div id="survey_btn_3" class="run-group run-group-helper-btn disable-survey-btn" style="float: left; padding-right: 1px; padding-left: 1px;" data-id="" onclick="loadSurvey(this)">3</div>
+                <div id="survey_btn_4" class="run-group run-group-helper-btn disable-survey-btn" style="float: left; padding-right: 1px; padding-left: 1px;" data-id="" onclick="loadSurvey(this)">4</div>
+                <div id="survey_btn_5" class="run-group run-group-helper-btn disable-survey-btn" style="float: left; padding-right: 1px; padding-left: 1px;" data-id="" onclick="loadSurvey(this)">5</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar_element" class="calendar"></div>
+
+    <div id="popup_box"></div>
+
+    <div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
+        <div class="position-center">
+            <div id="container">
+                <label id="wait_caption" class="loading-title" style="font-size: 14px;"></label>
+                <span id="loader" class="loading-circle sp1">
+                    <span class="loading-circle sp2">
+                        <span class="loading-circle sp3"></span>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            initialize();
+        });
+    </script>
+
+</body>
+
+</html>

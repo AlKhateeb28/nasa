@@ -212,7 +212,8 @@ try {
         "       doss.dismiss_date, " +
         "       doss.id AS doss_id, " +
         "       er.data.value('(//custom_elems/custom_elem[name=''sert_result'']/value)[1]', 'varchar(max)') AS cert_result, " +
-        "       cs.id AS cs_id" +
+        "       cs.id AS cs_id, " +
+        "       c.data.value('(collaborator/custom_elems/custom_elem[name=''is_dossier_occ_exist''])[1]/value[1]', 'varchar(max)') AS is_dossier_exist " +
         " FROM [WTDB].[dbo].event_results AS ers " +
         "         INNER JOIN [WTDB].[dbo].event_result AS er ON ers.id = er.id " +
         "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id " +
@@ -236,7 +237,7 @@ try {
         "         LEFT JOIN [WTDB].[dbo].professional_areas pas ON cur_o.data.value('(//custom_elems/custom_elem[name=''professional_area'']/value)[1]', 'bigint') = pas.id " +
         " ORDER BY cs.fullname, os.name, es.finish_date "
     ));
-
+    
     total = ArrayCount(dataList);
 
     agent.total = total;
@@ -293,6 +294,7 @@ try {
     reportString.AppendStr("<td class='header'>Дата увольнения</td>");
     reportString.AppendStr("<td class='header'>ID результата мероприятия</td>");
     reportString.AppendStr("<td class='header'>Дата создания результата мероприятия</td>");
+    reportString.AppendStr("<td class='header'>Есть досье</td>");
 
     reportString.AppendStr("</tr>");
 
@@ -346,7 +348,7 @@ try {
             "<td>" + StrDate(data.dismiss_date, false, false) + "</td>" +
             "<td>'" + data.event_result_id + "</td>" +
             "<td>" + StrDate(data.event_start_date, true, false) + "</td>" +
-
+            "<td>" + (data.is_dossier_exist == "true" ? "Да" : "Нет") + "</td>" +
             "</tr>");
 
         processed++;

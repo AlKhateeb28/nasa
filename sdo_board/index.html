@@ -26,7 +26,7 @@
     <div id="grid_box">
         <div id="top_block" style="min-height: 580px; margin-top: 5px;">
             <div id="top_left_block" class="float-left" style="min-width: 30%; min-height: 580px;">
-                <div class="box" style="height: 180px; width: 538px;">
+                <div class="box" style="height: 210px; width: 538px;">
                     <div style="font-size: x-large; text-indent: 10px;">Антипрокрастинация цели</div>
                     <div style="margin-left: 172px;">
                         <div style="margin-left: 10px; margin-top: 20px; display: grid; grid-template-columns: 5rem 11rem 3rem;">
@@ -46,6 +46,18 @@
                         <div style="margin-left: 10px; display: grid; grid-template-columns: 5rem 11rem 6rem;">
                             <div class="float-left course-label">выполнено</div>
                             <div id="courses_done" class="float-left course-value-info course-left-color">0%</div>
+                        </div>
+                        <div style="margin-left: 10px; display: grid; grid-template-columns: 5rem 11rem 6rem;">
+                            <div class="float-left course-label" style="margin-left: -69px;">гадание на подливе</div>
+                            <div class="float-left course-value-info course-left-color">
+                                <input id="divine_input" type="text" name="text" class="input" style="width: 70px; height: 18px;"/>
+                            </div>
+                            <div style="margin-top: 8px;">
+                                <div id="divine_week" class="increase-count expected-values" style="width: 75px;"
+                                    title="Ожидаемая неделя/год выполнения плана"></div>
+                                <div id="divine_start" class="increase-count expected-values" style="width: 75px; margin-top: 3px;"
+                                    title="Ожидаемая дата выполнения плана"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,6 +99,12 @@
                         </div>
                         <div class="float-left" style="font-size: x-large; margin-left: 60px;">Назначенные и пройденные курсы</div>
                         <div id="refreshed_datetime" class="float-left" style="font-size: x-small; color: burlywood; margin-top: 16px; margin-left: 6px;"></div>
+                        <div>
+                            <span id="count_box_0" class="expected-passed-count" style="background-color: #ff9719; display: inline-table; width: 40px; margin-top: 8px;"></span>
+                            <span id="count_box_1" class="expected-passed-count" style="background-color: #ff198c; display: inline-table; width: 40px;"></span>
+                            <span id="count_box_4" class="expected-passed-count" style="background-color: #89fc19; display: inline-table; width: 40px;"></span>
+                            <span id="count_box_deleted" class="expected-passed-count" style="background-color: #cd5c5c; display: inline-table; width: 40px;"></span>
+                        </div>
                     </div>
                     <div id="courses_chart"></div>
                 </div>

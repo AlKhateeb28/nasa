@@ -3,7 +3,7 @@ function addLogMessage(loggerName,message){EnableLog(loggerName,true);try{if(mes
 
 var config = {};
 config.eventResultTypeId = 7129058525837224752;
-config.eduMethodId = 7247966448645989959;
+config.eduMethodId = 7260348075183431472;
 config.cetificateTypeId = 7247965834674680403;
 config.serial = "РП";
 config.createdCertificationNotiCode = "cert_tr_rck_rp_print_13";
@@ -187,7 +187,7 @@ if (!LdsIsServer) {
             duties = [];
 
             for(id in ids) {
-                eventDoc = tools.open_doc(id);
+                eventDoc = tools.open_doc(OptInt(id));
 
                 if (eventDoc != undefined) {
                     eventDocTE = eventDoc.TopElem;

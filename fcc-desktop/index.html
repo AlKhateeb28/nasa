@@ -62,9 +62,10 @@
                             <br/>
                         </div>
                     </div>
-                    <table id="visitors" class="visitors-block" style="overflow-y: clip;">
-
-                    </table>
+                    <div class="scrollbar-control">
+                        <table id="visitors" class="visitors-block" style="overflow-y: clip;">
+                        </table>
+                    </div>
                 </div>
 
                 <div class="statistic ws_statistic" style="color: orange; height: 365px;">
@@ -76,9 +77,14 @@
             </td>
 
             <td style="width: 882px;">
-                <div id="task_box" class="thread thread-inactive" style="margin-left: 13px; height: 50px; background-image: linear-gradient(to right, #5d343c 50%, #02273a) !important; border: solid 2px orange; border-radius: 9px;">
-                    <div id="helper_btn" class="run-group run-group-helper-btn run-group-inactive" style="border: solid 2px orange; margin-top: 8px;" onclick="onHelperGroupClick(this)">
-                        HELPERS
+                <div id="task_box" class="thread thread-inactive" style="margin-left: 4px; height: 50px; background-image: linear-gradient(to right, #5d343c 50%, #02273a) !important; border: solid 2px orange; border-radius: 9px;">
+                    <div>
+                        <div id="helper_btn" class="run-group run-group-helper-btn run-group-inactive" style="border: solid 2px orange; margin-top: 8px;" onclick="onHelperGroupClick(this)">
+                            HELPERS
+                        </div>
+                        <!-- div id="courses_btn" class="run-group run-group-helper-btn run-group-inactive" style="float: left; border: solid 2px orange; margin-top: 8px;" onclick="onHelperGroupClick(this)">
+                            COURSES
+                        </div-->
                     </div>
                     <div id="helper_info" style="margin-top: 26px; display: none; padding-left: 4px; padding-right: 4px;">
                         <table class="legend-table">
@@ -175,6 +181,48 @@
                                     <td id="helper_step2_7299983342287187981">-</td>
                                     <td id="helper_step3_7299983342287187981">-</td>
                                 </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <div id="agent_block0" class="next-agent-box">
+                                <div id="agent_svg0" style="float: left; margin-top: 1px;"></div>
+                                <div id="agent0" class="next-agent-name"></div>
+                                <div id="time0" class="next-agent-time"></div>
+                            </div>
+                            <div id="agent_block1" class="next-agent-box">
+                                <div id="agent_svg1" style="float: left; margin-top: 1px;"></div>
+                                <div id="agent1" class="next-agent-name"></div>
+                                <div id="time1" class="next-agent-time"></div>
+                            </div>
+                            <div id="agent_block2" class="next-agent-box">
+                                <div id="agent_svg2" style="float: left; margin-top: 1px;"></div>
+                                <div id="agent2" class="next-agent-name"></div>
+                                <div id="time2" class="next-agent-time"></div>
+                            </div>
+                            <div id="agent_block3" class="next-agent-box">
+                                <div id="agent_svg3" style="float: left; margin-top: 1px;"></div>
+                                <div id="agent3" class="next-agent-name"></div>
+                                <div id="time3" class="next-agent-time"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="course_info" style="margin-top: 26px; display: none; padding-left: 4px; padding-right: 4px;">
+                        <table class="legend-table">
+                            <thead>
+                                <tr style="background-image: linear-gradient(90deg, #5d343c 52%, #04273a) !important;">
+                                    <th style="width: 130px;">Flag</th>
+                                    <th>in program</th>
+                                    <th>is fcc</th>
+                                    <th>is rck</th>
+                                    <th>is ock</th>
+                                    <th>is roiv</th>
+                                    <th>is partner</th>                                    
+                                    <th>with no right</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                            
                             </tbody>
                         </table>
                     </div>

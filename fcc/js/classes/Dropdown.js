@@ -166,7 +166,7 @@ class Dropdown {
         return groupId;
     }
 
-    addOption(destinationId, label, value, select) {
+    addOption(destinationId, label, value, select, disabled) {
         if (destinationId === undefined) {
             destinationId = this.dropdownId;
         }
@@ -180,10 +180,14 @@ class Dropdown {
         const optionElement = $("#" + optionId);
         optionElement.html(label);
         optionElement.val(value);
-
+		
         if (select !== undefined && select != null && select === true) {
-            optionElement.attr("selected", "true");
+            optionElement.prop("selected", true);
         }
+
+		if (disabled !== undefined && disabled != null && disabled === true) {
+			optionElement.prop("disabled", true);
+		}
 
 		this.options.push(optionId);
 
@@ -212,6 +216,24 @@ class Dropdown {
 
         return result;
     }
+
+	selectOption(value) {
+		$("#" + this.dropdownId + " option").each(function () {
+			$(this).prop("selected", false);
+
+			if ($(this).val() === value) {
+				$(this).prop("selected", true);
+			}
+		});
+	}
+
+	enable() {
+		$("#" + this.dropdownId + " option").prop("disabled", false);
+	}
+
+	disable() {
+		$("#" + this.dropdownId + " option").prop("disabled", true);
+	}
 
     setFirstOptionAsSelected() {
         $("#" + this.dropdownId + " option:first").prop("selected", true);

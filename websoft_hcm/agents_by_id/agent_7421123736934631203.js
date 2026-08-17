@@ -212,7 +212,11 @@ if (LdsIsServer) {
                 element.colls_org_inn = orgDocTE.code;
 
                 if(orgDocTE.custom_elems.ObtainChildByKey("fact_region_id").value == "") {
-                    element.colls_region = orgDocTE.region_id.ForeignElem.name
+                    if (orgDocTE.region_id == "") {
+                        element.colls_region = "ACHTUNG";
+                    } else {
+                        element.colls_region = orgDocTE.region_id.ForeignElem.name
+                    }                    
                 } else {
                     regionDoc = tools.open_doc(orgDocTE.custom_elems.ObtainChildByKey("fact_region_id").value);
 
@@ -223,8 +227,12 @@ if (LdsIsServer) {
                     }
                 }
 
-                if(orgDocTE.custom_elems.ObtainChildByKey("report_region_id").value == "") {
-                    element.colls_org_report_region_name = orgDocTE.region_id.ForeignElem.name;
+                if(orgDocTE.custom_elems.ObtainChildByKey("report_region_id").value == "") {                    
+                    if (orgDocTE.region_id == "") {
+                        element.colls_org_report_region_name = "ACHTUNG";
+                    } else {
+                        element.colls_org_report_region_name = orgDocTE.region_id.ForeignElem.name;
+                    }
                 } else {
                     regionDoc = tools.open_doc(orgDocTE.custom_elems.ObtainChildByKey("report_region_id").value);
 
@@ -248,7 +256,11 @@ if (LdsIsServer) {
             if(orgDoc != undefined) {
                 orgDocTE = orgDoc.TopElem;
 
-                element.tren_region = orgDocTE.region_id.ForeignElem.name;
+                if (orgDocTE.region_id == "") {
+                    element.tren_region = "ACHTUNG";
+                } else {
+                    element.tren_region = orgDocTE.region_id.ForeignElem.name;
+                }
             } else {
                 element.tren_region = "Не найден";
             }

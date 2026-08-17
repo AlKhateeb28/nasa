@@ -19,6 +19,12 @@ let helperGroupIDs = [
     "7300978396789946474"
 ];
 
+let courseGroupIDs = [
+    "7169007381472566729",
+    "7168940904002975753",
+    "7168598185951097742"
+];
+
 var webOverloadChart;
 var sqlOverloadChart;
 var webOverloadData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -89,6 +95,11 @@ const updateSVG = `<svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://w
     </g>
 </svg>`;
 
+const leftSVG = `
+<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.25 9.02615L9.50135 8.9811C9.50045 8.9961 9.5 9.01113 9.5 9.02615H10.25ZM9.71578 8.10177L9.38104 8.77293L9.38104 8.77293L9.71578 8.10177ZM8.656 8.23115L8.16963 7.66024C8.16481 7.66434 8.16005 7.6685 8.15534 7.67273L8.656 8.23115ZM5.35 11.1952L4.84934 10.6367L4.84814 10.6378L5.35 11.1952ZM5 11.9902L5.75008 11.9964L5.74997 11.9839L5 11.9902ZM5.35 12.7852L4.84813 13.3425L4.84943 13.3437L5.35 12.7852ZM8.656 15.7482L8.15543 16.3067C8.16011 16.3109 8.16484 16.315 8.16963 16.3191L8.656 15.7482ZM9.71578 15.8775L9.38104 15.2064V15.2064L9.71578 15.8775ZM10.25 14.9532H9.5C9.5 14.9682 9.50045 14.9832 9.50135 14.9982L10.25 14.9532ZM10.25 11.2402C9.83579 11.2402 9.5 11.5759 9.5 11.9902C9.5 12.4044 9.83579 12.7402 10.25 12.7402V11.2402ZM19 12.7402C19.4142 12.7402 19.75 12.4044 19.75 11.9902C19.75 11.5759 19.4142 11.2402 19 11.2402V12.7402ZM11 11.9902V9.02615H9.5V11.9902L11 11.9902ZM10.9986 9.0712C11.04 8.38373 10.6668 7.738 10.0505 7.43061L9.38104 8.77293C9.45925 8.81193 9.5066 8.89387 9.50135 8.9811L10.9986 9.0712ZM10.0505 7.43061C9.4342 7.12323 8.69388 7.21361 8.16963 7.66024L9.14237 8.80206C9.2089 8.74539 9.30284 8.73392 9.38104 8.77293L10.0505 7.43061ZM8.15534 7.67273L4.84934 10.6367L5.85066 11.7536L9.15666 8.78958L8.15534 7.67273ZM4.84814 10.6378C4.46349 10.9842 4.24573 11.4788 4.25003 11.9964L5.74997 11.9839C5.74924 11.8958 5.78634 11.8115 5.85186 11.7525L4.84814 10.6378ZM4.25003 11.9839C4.24573 12.5015 4.46349 12.9961 4.84814 13.3425L5.85186 12.2278C5.78634 12.1688 5.74924 12.0845 5.74997 11.9964L4.25003 11.9839ZM4.84943 13.3437L8.15543 16.3067L9.15656 15.1896L5.85056 12.2266L4.84943 13.3437ZM8.16963 16.3191C8.69389 16.7657 9.4342 16.8561 10.0505 16.5487L9.38104 15.2064C9.30284 15.2454 9.2089 15.2339 9.14237 15.1772L8.16963 16.3191ZM10.0505 16.5487C10.6668 16.2413 11.04 15.5956 10.9986 14.9081L9.50135 14.9982C9.5066 15.0854 9.45925 15.1674 9.38104 15.2064L10.0505 16.5487ZM11 14.9532V11.9902L9.5 11.9902V14.9532L11 14.9532ZM10.25 12.7402H19V11.2402H10.25V12.7402Z" fill="#f5f5f5"/>
+</svg>`;
+
 const networkOption = {
     series: [{
         data: []
@@ -147,6 +158,23 @@ const networkOption = {
     yaxis: { labels: { show: false }, axisTicks: { show: false }, axisBorder: { show: false } }
 };
 
+let helperRunAgents = [
+    { start: 57, finish: 1, name: "HELPER" },               // 0
+    { start: 2, finish: 6, name: "HELPER RIGHTLESS" },      // 1
+    { start: 7, finish: 11, name: "HELPER" },               // 2
+    { start: 8, finish: 16, name: "HELPER RIGHTLESS" },     // 3
+    { start: 17, finish: 21, name: "HELPER" },              // 4
+    { start: 22, finish: 23, name: "SMART HELPER 0/1" },    // 5
+    { start: 24, finish: 26, name: "HELPER RIGHTLESS" },    // 6
+    { start: 27, finish: 31, name: "HELPER" },              // 7
+    { start: 32, finish: 36, name: "HELPER RIGHTLESS" },    // 8
+    { start: 37, finish: 41, name: "HELPER" },              // 9
+    { start: 42, finish: 46, name: "HELPER RIGHTLESS" },    // 10
+    { start: 47, finish: 51, name: "HELPER" },              // 11
+    { start: 52, finish: 53, name: "УБЕРНАТОР" },           // 12
+    { start: 54, finish: 56, name: "HELPER RIGHTLESS" },    // 13
+];
+
 var webSocket = getWebSocket(window.WebSocket);
 
 webSocket.onmessage = function (event) {
@@ -163,6 +191,99 @@ async function receiveMessage(promise) {
             showMessage(value);
         });
     }
+}
+
+function getFirst(minutes) {
+    let result = {};
+    result.name = "";
+    result.index = -1;
+
+    let step = 0;
+
+    helperRunAgents.every(item => {
+        if (minutes <= 1) {
+            result.name = helperRunAgents[0].name;
+            result.remained = helperRunAgents[0].finish - minutes;
+            result.finish = helperRunAgents[0].finish;
+            result.index = 0;
+
+            return false;
+        } else if (minutes >= 57) {
+            result.name = helperRunAgents[0].name;
+            result.remained = 60 - minutes + helperRunAgents[0].finish;
+            result.finish = helperRunAgents[0].finish;
+            result.index = 0;
+
+            return false;
+        } else if (minutes >= 54 && minutes <= 56) {
+            result.name = helperRunAgents[13].name;
+            result.remained = helperRunAgents[13].finish - minutes;
+            result.finish = helperRunAgents[13].finish;
+            result.index = -1;
+
+            return false;
+        } else if (minutes >= item.start && minutes <= item.finish) {
+            result.name = item.name;
+            result.remained = item.finish - minutes;
+            result.finish = item.finish;
+            result.index = step;
+
+            return false;
+        }
+
+        step++;
+
+        return true;
+    });
+
+    return result;
+}
+
+function getNext(agent) {
+    let result = {};
+
+    if (agent.index + 1 === 0) {
+        result.name = helperRunAgents[0].name;
+        result.remained = (60 - agent.finish + helperRunAgents[0].finish + agent.remained);
+        result.finish = helperRunAgents[0].finish;
+        result.index = 0;
+    } else if (agent.index + 1 === 13) {
+        result.name = helperRunAgents[13].name;
+        result.remained = (helperRunAgents[13].finish - agent.finish + agent.remained);
+        result.finish = helperRunAgents[13].finish;
+        result.index = -1;
+    } else {
+        result.name = helperRunAgents[agent.index + 1].name;
+        result.remained = (helperRunAgents[agent.index + 1].finish - agent.finish + agent.remained);
+        result.finish = helperRunAgents[agent.index + 1].finish;
+        result.index = agent.index + 1;
+    }
+
+    return result;
+}
+
+function getNextRunningAgents() {
+    const minutes = getCurrentTime().split(":")[1];
+
+    let agent = getFirst(minutes);
+    $("#agent0").html(agent.name);
+    if (agent.remained === 0) {
+        $("#time0").html("Running");
+    } else {
+        $("#time0").html(agent.remained + " min");
+    }
+
+    agent = getNext(agent);
+    $("#agent1").html(agent.name);
+    $("#time1").html(agent.remained + " min");
+
+    agent = getNext(agent);
+    $("#agent2").html(agent.name);
+    $("#time2").html(agent.remained + " min");
+
+    agent = getNext(agent);
+    $("#agent3").html(agent.name);
+    $("#time3").html(agent.remained + " min");
 }
 
 function isInGroup(agentId) {
@@ -205,13 +326,18 @@ function onHelperGroupClick(element) {
     if (activeGroupName === "") {
         activeGroupName = "HELPER";
 
-        $("#task_box").css("height", "222px");
+        $("#task_box").css("height", "251px");
         $("#helper_info").css("display", "block");
 
         $(element).addClass("group-btn-flash");
         $(element).css("color", "gold");
 
         putGroupMark(helperGroupIDs);
+
+        $("#agent_block0").css("display", "block");
+        $("#agent_block1").css("display", "block");
+        $("#agent_block2").css("display", "block");
+        $("#agent_block3").css("display", "block");
     } else if (activeGroupName === "HELPER") {
         activeGroupName = "";
 
@@ -223,6 +349,46 @@ function onHelperGroupClick(element) {
         $(element).css("color", "mintcream");
 
         removeGroupMark();
+
+        $("#agent_block0").css("display", "none");
+        $("#agent_block1").css("display", "none");
+        $("#agent_block2").css("display", "none");
+        $("#agent_block3").css("display", "none");
+    }
+}
+
+function onCoursesGroupClick(element) {
+    if (activeGroupName === "") {
+        activeGroupName = "COURSE";
+
+        $("#task_box").css("height", "251px");
+        $("#course_info").css("display", "block");
+
+        $(element).addClass("group-btn-flash");
+        $(element).css("color", "gold");
+
+        putGroupMark(courseGroupIDs);
+
+        $("#agent_block0").css("display", "none");
+        $("#agent_block1").css("display", "none");
+        $("#agent_block2").css("display", "none");
+        $("#agent_block3").css("display", "none");
+    } else if (activeGroupName === "COURSE") {
+        activeGroupName = "";
+
+        $("#task_box").css("height", "50px");
+        $("#course_info").css("display", "none");
+
+        $(element).removeClass("group-btn-flash");
+        $(element).addClass("run-group-inactive");
+        $(element).css("color", "mintcream");
+
+        removeGroupMark();
+
+        $("#agent_block0").css("display", "none");
+        $("#agent_block1").css("display", "none");
+        $("#agent_block2").css("display", "none");
+        $("#agent_block3").css("display", "none");
     }
 }
 
@@ -1952,11 +2118,19 @@ $(document).ready(function () {
     setInterval(pingServers, 1000);
     setInterval(refreshVisitors, 30000);
     setInterval(checkWebsocketServerIsLive, 10000);
-
+    
     const dialog = document.querySelector("dialog");
     const closeButton = document.querySelector("dialog button");
 
     closeButton.addEventListener("click", () => {
         dialog.close();
     });
+
+    $("#agent_svg0").html(leftSVG);
+    $("#agent_svg1").html(leftSVG);
+    $("#agent_svg2").html(leftSVG);
+    $("#agent_svg3").html(leftSVG);
+
+    getNextRunningAgents();
+    setInterval(getNextRunningAgents, 15000);
 });

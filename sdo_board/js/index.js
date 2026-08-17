@@ -49,12 +49,17 @@ function getCoursesChartOption() {
     return {
         series: [
             {
-                name: "Назначено",
+                name: "Баласт",
                 color: "#ff9719",
                 data: getFilledList(0)
             },
             {
-                name: "Пройдено",
+                name: "Кандидаты для подлива",
+                color: "#ff198c",
+                data: getFilledList(0)
+            },
+            {
+                name: "Не наши клиенты",
                 color: "#89fc19",
                 data: getFilledList(0)
             },
@@ -68,12 +73,12 @@ function getCoursesChartOption() {
             type: "line",//"line",
             width: 1300,
             height: 550,
-            toolbar: {show: false},
-            zoom: {enabled: false},
+            toolbar: { show: false },
+            zoom: { enabled: false },
             fontFamily: "Rubic, sans-serif",
             events: {
-                click: function(event, chartContext, opts) {
-                    if(opts.dataPointIndex + 1 === 0) {
+                click: function (event, chartContext, opts) {
+                    if (opts.dataPointIndex + 1 === 0) {
                         return;
                     }
 
@@ -102,15 +107,15 @@ function getCoursesChartOption() {
         },
         grid: {
             show: false,
-            xaxis: {lines: {show: false}},
-            yaxis: {lines: {show: false}}
+            xaxis: { lines: { show: false } },
+            yaxis: { lines: { show: false } }
         },
         xaxis: {
             position: "bottom",
             categories: weekList,
-            axisBorder: {show: true},
-            axisTicks: {show: true},
-            tooltip: {enabled: false},
+            axisBorder: { show: true },
+            axisTicks: { show: true },
+            tooltip: { enabled: false },
             labels: {
                 show: true,
                 style: {
@@ -121,10 +126,10 @@ function getCoursesChartOption() {
             }
         },
         yaxis: {
-            axisTicks: {show: false},
-            axisBorder: {show: false},
-            labels: {show: false},
-            lines: {show: false}
+            axisTicks: { show: false },
+            axisBorder: { show: false },
+            labels: { show: false },
+            lines: { show: false }
         },
         legend: {
             show: true,
@@ -149,19 +154,19 @@ function getCoursesOfWeekList(list) {
     return clearedWeekData;
 }
 
-function getWeekXAxisColors(currentWeekNumber, expectedWeekNumber, stateData){
+function getWeekXAxisColors(currentWeekNumber, expectedWeekNumber, stateData) {
     function getWeekColorByWeekCount(weekNumber, stateData) {
         prevCount = 0;
-        for(let i = 0; i < prevReportData.length; i++) {
-            if(weekNumber === parseInt(prevReportData[i].week)) {
+        for (let i = 0; i < prevReportData.length; i++) {
+            if (weekNumber === parseInt(prevReportData[i].week)) {
                 prevCount = prevReportData[i].count;
                 break;
             }
         }
 
         stateDataCount = 0;
-        for(let i = 0; i < stateData.length; i++) {
-            if(weekNumber === parseInt(stateData[i].week)) {
+        for (let i = 0; i < stateData.length; i++) {
+            if (weekNumber === parseInt(stateData[i].week)) {
                 stateDataCount = stateData[i].count;
                 break;
             }
@@ -180,27 +185,27 @@ function getWeekXAxisColors(currentWeekNumber, expectedWeekNumber, stateData){
 
         const counts = getWeekColorByWeekCount(weekNumber, stateData);
 
-        if(weekNumber === expectedWeekNumber) {
-            if(counts.prevWeekCount === counts.currentWeekCount) {
+        if (weekNumber === expectedWeekNumber) {
+            if (counts.prevWeekCount === counts.currentWeekCount) {
                 colors.push("#a1b8fc");
-            } else if(counts.prevWeekCount < counts.currentWeekCount) {
+            } else if (counts.prevWeekCount < counts.currentWeekCount) {
                 colors.push("#adff2f");
             } else {
                 colors.push("#cd5c5c");
             }
         } else {
-            if(weekNumber === currentWeekNumber) {
-                if(counts.prevWeekCount === counts.currentWeekCount) {
+            if (weekNumber === currentWeekNumber) {
+                if (counts.prevWeekCount === counts.currentWeekCount) {
                     colors.push("#ffc107");
-                } else if(counts.prevWeekCount < counts.currentWeekCount) {
+                } else if (counts.prevWeekCount < counts.currentWeekCount) {
                     colors.push("#adff2f");
                 } else {
                     colors.push("#cd5c5c");
                 }
             } else {
-                if(counts.prevWeekCount === counts.currentWeekCount) {
+                if (counts.prevWeekCount === counts.currentWeekCount) {
                     colors.push("#f5f5f5ff");
-                } else if(counts.prevWeekCount < counts.currentWeekCount) {
+                } else if (counts.prevWeekCount < counts.currentWeekCount) {
                     colors.push("#adff2f");
                 } else {
                     colors.push("#cd5c5c");
@@ -284,7 +289,7 @@ function refreshBoardData() {
         type: "GET",
         dataType: "json",
         success: function (data) {
-            if(data.errorMessage.indexOf("#") < 0) {
+            if (data.errorMessage.indexOf("#") < 0) {
                 const prevCompletedValue = completedCount;
 
                 completedCount = parseInt(data.completedCount);
@@ -294,9 +299,9 @@ function refreshBoardData() {
                 leftValue = completedCount - coursesPlan;
                 let leftPrefix = "";
 
-                if(leftValue === 0) {
+                if (leftValue === 0) {
                     courseLeftElement.css("color", "var(--color-whitesmoke)");
-                } else if(leftValue > 0) {
+                } else if (leftValue > 0) {
                     leftPrefix = "+";
                     courseLeftElement.css("color", "var(--color-course-plus)");
                 } else {
@@ -308,7 +313,7 @@ function refreshBoardData() {
                 const doneCount = completedCount * 100 / coursesPlan;
                 $("#courses_done").html(doneCount.toFixed(2).toLocaleString() + "%");
 
-                if(isInitialized) {
+                if (isInitialized) {
                     const increaseCountElement = $("#increase_count");
 
                     const increasedValue = completedCount - prevCompletedValue;
@@ -322,24 +327,46 @@ function refreshBoardData() {
                     }
                 }
 
+                // DIVINE WEEK
+                if ($("#divine_input").val() !== "" && parseInt($("#divine_input").val()) > 0) {
+                    weekData = divineExpectedWeekNumber(data, currentDateTime);
+
+                    let leaveWeek = 0;
+
+                    if (parseInt(weekData.currentYear) === parseInt(weekData.expectedYear)) {
+                        leaveWeek = weekData.expectedWeek - weekData.currentWeek;
+                    } else {
+                        leaveWeek = 53 - weekData.currentWeek + weekData.expectedWeek;
+                    }
+
+                    if (leaveWeek > 0) {
+                        leaveWeek = "+" + leaveWeek;
+                    }
+
+                    $("#divine_week").html(weekData.expectedWeek + " / " + weekData.expectedYear + " (" + leaveWeek + ")");
+                    $("#divine_start").html(weekData.expected);
+                } else {
+                    $("#divine_week").empty();
+                    $("#divine_start").empty();
+                }
+
+                // CALCULATE WEEK
                 weekData = calculateExpectedWeekNumber(data, currentDateTime);
 
-                // MOMENT. GET WEEK WHEN IT STARTS FROM MONDAY
-                let leaveWeek= 0;
+                let leaveWeek = 0;
 
-                if(parseInt(weekData.currentYear) === parseInt(weekData.expectedYear)) {
+                if (parseInt(weekData.currentYear) === parseInt(weekData.expectedYear)) {
                     leaveWeek = weekData.expectedWeek - weekData.currentWeek;
                 } else {
                     leaveWeek = 53 - weekData.currentWeek + weekData.expectedWeek;
                 }
 
-                if(leaveWeek > 0) {
+                if (leaveWeek > 0) {
                     leaveWeek = "+" + leaveWeek;
                 }
 
                 $("#expected_week").html(weekData.expectedWeek + " / " + weekData.expectedYear + " (" + leaveWeek + ")");
-                $("#expected_start").html(weekData.expected);
-                //$("#expected_finish").html(weekDays.endStr);
+                $("#expected_start").html(weekData.expected);                   
 
                 coursesChart.updateOptions({
                     xaxis: {
@@ -361,10 +388,16 @@ function refreshBoardData() {
                 });
 
                 coursesChart.updateSeries([
-                    {data: getCoursesOfWeekList(data.state0Data)},
-                    {data: getCoursesOfWeekList(data.state4Data)},
-                    {data: getCoursesOfWeekList(data.stateDelDupData)},
+                    { data: getCoursesOfWeekList(data.state0Data) },
+                    { data: getCoursesOfWeekList(data.state1Data) },
+                    { data: getCoursesOfWeekList(data.state4Data) },
+                    { data: getCoursesOfWeekList(data.stateDelDupData) },
                 ]);
+
+                $("#count_box_0").html(getCoursesCount(data.state0Data).toLocaleString("ru-RU"));
+                $("#count_box_1").html(getCoursesCount(data.state1Data).toLocaleString("ru-RU"));
+                $("#count_box_4").html(getCoursesCount(data.state4Data).toLocaleString("ru-RU"));
+                $("#count_box_deleted").html(getCoursesCount(data.stateDelDupData).toLocaleString("ru-RU"));
 
                 //$(".apexcharts-series").addClass("courses_shadow");
 
@@ -374,20 +407,17 @@ function refreshBoardData() {
 
                 let time;
 
-				console.log("Time: " + result.time + " Locale: " + result.time.toLocaleString("ru-RU"));
-				
-				
-                if(result.type === 0) {
+                if (result.type === 0) {
                     time = getNormalizedTime(result.time.toLocaleString("ru-RU"));
-                } else if(result.type === 2) {
+                } else if (result.type === 2) {
                     time = "--:--"
                 } else {
-                    time  = getNormalizedDateTime(result.time.toLocaleString("ru-RU"));
+                    time = getNormalizedDateTime(result.time.toLocaleString("ru-RU"));
                 }
 
-                if(prevExpectedMilliseconds === result.ms) {
+                if (prevExpectedMilliseconds === result.ms) {
                     expectedTimeElement.css("color", "var(--color-course-passed)");
-                } else if(result.ms < prevExpectedMilliseconds) {
+                } else if (result.ms < prevExpectedMilliseconds) {
                     expectedTimeElement.css("color", "var(--color-course-plus)");
                 } else {
                     expectedTimeElement.css("color", "var(--color-course-minus)");
@@ -400,9 +430,9 @@ function refreshBoardData() {
                 const todayLeaveElement = $("#courses_today_leave");
                 let todayLeavePrefix = "";
 
-                if(data.todayCount === data.yesterdayCount) {
+                if (data.todayCount === data.yesterdayCount) {
                     todayCountElement.css("color", "var(--color-course-plus)");
-                } else if(data.todayCount > data.yesterdayCount) {
+                } else if (data.todayCount > data.yesterdayCount) {
                     todayCountElement.css("color", "var(--color-course-plus)");
                     todayLeavePrefix = "+";
                 } else {
@@ -421,7 +451,7 @@ function refreshBoardData() {
 
                 $("#chart_wait").css("display", "none");
 
-                $("#refreshed_datetime").html("обновлено: " + getCurrentDateTime());
+                $("#refreshed_datetime").html("обновлено: " + getCurrentDateTime());                
             } else {
                 isInitialized = true;
 
@@ -431,10 +461,20 @@ function refreshBoardData() {
                     "<div style='font-size: x-small; margin-top: 10px; color: silver;'>Описание: " + data.substring(1) + "</div>");
             }
         },
-        error: function() {
+        error: function () {
             showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
         }
     });
+}
+
+function getCoursesCount(list) {
+    let count = 0;
+
+    list.forEach(item => {
+        count += item.count;
+    });
+
+    return count;
 }
 
 function getFlagValue(value, weekTotal) {
@@ -443,10 +483,10 @@ function getFlagValue(value, weekTotal) {
 
 function refreshValueAndBottomElements(elementId, flag, total, value) {
     const rckElement = $("#" + elementId + "_value_" + flag);
-    if(total === 0) {
+    if (total === 0) {
         rckElement.html("0%");
     } else {
-        rckElement.html( getFlagValue(value, total) + "%");
+        rckElement.html(getFlagValue(value, total) + "%");
     }
     $("#" + elementId + "_bottom_" + flag).html(value.toLocaleString());
 }
@@ -454,14 +494,14 @@ function refreshValueAndBottomElements(elementId, flag, total, value) {
 function refreshCurrentAssignedFlagsData(week) {
     $("#owner_wait").css("display", "block");
 
-    if(week === undefined) {
+    if (week === undefined) {
         week = getCurrentWeekNumber();
     }
 
     const ownerWeekElement = $("#owner_week");
     ownerWeekElement.html("--");
     ownerWeekElement.css("color", "whitesmoke");
-    
+
     $("#courses_assign_value_rck").html("--");
     $("#courses_assign_value_ock").html("--");
     $("#courses_assign_value_fck").html("--");
@@ -493,16 +533,16 @@ function refreshCurrentAssignedFlagsData(week) {
     $("#courses_pass_bottom_with_no_right").html("--");
 
     $.ajax({
-        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7226648571481683640&year=" + getCurrentYearNumber() + "&week="+ week,
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7226648571481683640&year=" + getCurrentYearNumber() + "&week=" + week,
         async: true,
         type: "GET",
         dataType: "json",
         success: function (data) {
-            if(data.errorMessage.indexOf("#") < 0) {
+            if (data.errorMessage.indexOf("#") < 0) {
                 const ownerWeekElement = $("#owner_week");
                 ownerWeekElement.html(week);
 
-                if(parseInt(week) === parseInt(getCurrentWeekNumber())) {
+                if (parseInt(week) === parseInt(getCurrentWeekNumber())) {
                     ownerWeekElement.css("color", "#ffc107");
                 } else {
                     ownerWeekElement.css("color", "var(--color-course-passed)");
@@ -531,7 +571,7 @@ function refreshCurrentAssignedFlagsData(week) {
 
             $("#owner_wait").css("display", "none");
         },
-        error: function() {
+        error: function () {
             $("#owner_wait").css("display", "none");
 
             showNotification("Пожалуйста, авторизируйтесь на сайте <a href='https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/' target='_blank'>сдо.производительность.рф</a>");
@@ -539,7 +579,7 @@ function refreshCurrentAssignedFlagsData(week) {
     });
 }
 
-function showNotification(message){
+function showNotification(message) {
     notifyElement = document.createElement("div");
 
     notifyElement.id = "stickyNotification";
@@ -567,9 +607,9 @@ function showNotification(message){
         notifyElement.style.bottom = btmPos + "px";
     });
 
-    setTimeout(function() {
+    setTimeout(function () {
         document.body.removeChild(notifyElement);
-    }, 30000 );
+    }, 30000);
 }
 
 function calculateExpectedWeekNumber(data, currentDateAsString) {
@@ -584,7 +624,7 @@ function calculateExpectedWeekNumber(data, currentDateAsString) {
     leaveDays.time = "";
 
     test = [];
-    let element = {count: 206079};
+    let element = { count: 206079 };
     test.push(element);
 
     let leave = 0;
@@ -593,7 +633,7 @@ function calculateExpectedWeekNumber(data, currentDateAsString) {
     //data.state4ByDayData.forEach((element, index) => {
     let isFinishProcess = false;
 
-    for(let i = 0; i < data.state4ByDayData.length; i++) {
+    for (let i = 0; i < data.state4ByDayData.length; i++) {
         passed += data.state4ByDayData[i].count;
 
         leave = (leaveCount - passed) / planCount;
@@ -606,7 +646,57 @@ function calculateExpectedWeekNumber(data, currentDateAsString) {
             expected = moment(currentDateAsString, "DD.MM.YYYY").add(Math.floor(leave), 'days').format("DD.MM.YYYY");
         }
 
-        if(isFinishProcess) {
+        if (isFinishProcess) {
+            break;
+        }
+    }
+
+    return {
+        currentWeek: getWeek(currentDateAsString),
+        currentYear: currentDateAsString.split(" ")[0].split(".")[2],
+        expected: expected,
+        expectedWeek: moment(expected, "DD.MM.YYYY").isoWeekday(1).startOf('week').week(),
+        expectedYear: expected.split(".")[2],
+        passed: passed,
+        leave: leave
+    };
+}
+
+function divineExpectedWeekNumber(data, currentDateAsString) {
+    const prevYearCount = parseInt(data.prevYearCount);
+    const leaveCount = coursesPlan - prevYearCount - parseInt($("#divine_input").val());
+    const planCount = Math.ceil(leaveCount / 365);
+
+    let passed = 0;
+
+    let leaveDays = {};
+    leaveDays.days = 0;
+    leaveDays.time = "";
+
+    test = [];
+    let element = { count: 206079 };
+    test.push(element);
+
+    let leave = 0;
+    let expected = "31.12." + getCurrentYearNumber() + " 23:59:59";
+
+    //data.state4ByDayData.forEach((element, index) => {
+    let isFinishProcess = false;
+
+    for (let i = 0; i < data.state4ByDayData.length; i++) {
+        passed += data.state4ByDayData[i].count;
+
+        leave = (leaveCount - passed) / planCount;
+
+        if (moment(currentDateAsString, "DD.MM.YYYY").format("DD.MM.YYYY") === moment(expected, "DD.MM.YYYY").format("DD.MM.YYYY")) {
+            expected = data.state4ByDayData[i].day + "." + data.state4ByDayData[i].month + "." + data.state4ByDayData[i].year;
+
+            isFinishProcess = true;
+        } else {
+            expected = moment(currentDateAsString, "DD.MM.YYYY").add(Math.floor(leave), 'days').format("DD.MM.YYYY");
+        }
+
+        if (isFinishProcess) {
             break;
         }
     }
