@@ -48,7 +48,6 @@
 //
 //
 
-
 bIsLog = true; // вести логирование выполнения агента
 sLogMethod = "ext"; // метод вывода в лог - ext = вывод в отдельный текстовый журнал, system = вывод в основной журнал системы, report = вывод в события базы, excel = вывод в файл формата Excel
 sLogMethodExt = "doubles"; // префикс файла журнала (для sLogMethod = "ext")
@@ -125,7 +124,11 @@ function close_log() {
     } else if (sLogMethod == "report") {
         docReport.TopElem.completed = !bError;
         docReport.TopElem.report_text = sLogStr + "\n" + Date() + '  Процесс завершен.';
+
+        wLog("------- 15", null, null, null, null, null);
         docReport.Save();
+        wLog("------- 15-saved", null, null, null, null, null);
+
     } else if (sLogMethod == "excel") {
         sLogStr = sLogStr + "
             <TR><TD><B>" + Date() + "-   ПРОЦЕСС ИМПОРТА ЗАВЕРШЕН</B></TD></TR>
@@ -166,11 +169,12 @@ function wLog(id, errstr, obj, key, doubles, delete_id) {
     if (!bIsLog) {
         return false;
     }
-    _text = "ID:" + id + "; ";
+    _text = "ID: " + id + "; ";
     if (errstr != "" && bLogError) {
         write_log_text(_text + "ОШИБКА: " + errstr);
         return true;
-    } if (obj == null && bLogNotFound) {
+    } 
+    if (obj == null && bLogNotFound) {
         write_log_text(_text + "НЕ НАЙДЕНО ПО ЗАПРОСУ: " + key);
         return true;
     }
@@ -215,14 +219,22 @@ function Delete_positions( a ) {
             if ( _delete_positions == "delete" ) {
                 PersonDoc.TopElem.position_id.Clear (  );
                 PersonDoc.TopElem.position_name.Clear (  );
+
+                wLog("------- 1", null, null, null, null, null);
                 PersonDoc.Save (  );
+                wLog("------- 1-saved", null, null, null, null, null);
+
                 DeleteDoc ( UrlFromDocID ( _position.PrimaryKey ) );
                 wLog(a, "", "position", xq, null, _position.PrimaryKey);
             } else if ( _delete_positions == "clear" ||  _delete_positions == "keep") {
                 if (_delete_persons == false) {
                     PersonDoc.TopElem.position_id.Clear (  );
                     PersonDoc.TopElem.position_name.Clear (  );
+
+                    wLog("------- 2", null, null, null, null, null);
                     PersonDoc.Save (  );
+                    wLog("------- 2-saved", null, null, null, null, null);
+
                     wLog(a, "", PersonDoc.TopElem, xq, null, null)
                 }
                 if ( _delete_positions == "keep" ) {
@@ -236,7 +248,10 @@ function Delete_positions( a ) {
                     PositionDoc.TopElem.basic_collaborator_id.Clear ( );
                     wLog(a, "", PositionDoc.TopElem, xq, null, null)
                 }
+
+                wLog("------- 3", null, null, null, null, null);
                 PositionDoc.Save (  );
+                wLog("------- 3-saved", null, null, null, null, null);
             }
         }
     } catch ( dp_error ) {
@@ -250,7 +265,11 @@ function InfoChanging ( _test_or_course , m_person_id, xq) {
         docObject.TopElem.person_id = m_person_id;
         //alert(tools.common_filling( 'collaborator', docObject.TopElem, m_person_id));
         if (tools.common_filling( 'collaborator', docObject.TopElem, m_person_id)) {
+
+            wLog("------- 4", null, null, null, null, null);
             docObject.Save();
+            wLog("------- 4-saved", null, null, null, null, null);
+
             wLog(_test_or_course.id, "", docObject.TopElem, xq, null, null)
         } else {
             wLog(_test_or_course.id, "tools.common_fillin_failed", docObject.TopElem, xq, null, null)
@@ -305,14 +324,22 @@ function Copy_Person_Values ( _m_doc_te, _d_id  ) {
         for ( _m_arr_replace_fields in _arr_replace_fields ) {
             _arr_m_arr_replace_fields = _m_arr_replace_fields.split(".");
             SetDotValue( _d_doc_te, _arr_m_arr_replace_fields, GetDotValue( _m_doc_te, _arr_m_arr_replace_fields ) );
+
+            wLog("------- 5", null, null, null, null, null);
             _m_doc.Save();
+            wLog("------- 5-saved", null, null, null, null);
+
         }
     }
     if ( _clear_fields != "" ) {
         for ( _m_arr_clear_fields in _arr_clear_fields ) {
             _arr_m_arr_clear_fields = _m_arr_clear_fields.split(".");
             SetDotValue( _d_doc_te, _arr_m_arr_replace_fields, "" );
+
+            wLog("------- 6", null, null, null, null, null);
             _d_doc.Save();
+            wLog("------- 6-saved", null, null, null, null, null);
+
         }
     }
 
@@ -529,7 +556,11 @@ try {
                                         elemPrepar.person_fullname = teMainPerson.fullname;
                                     }
                                 }
+
+                                wLog("------- 7", null, null, null, null, null);
                                 docEvent.Save();
+                                wLog("------- 7-saved", null, null, null, null, null);
+
                                 wLog(_main_person_id, "", docEvent.TopElem, strXQuery1, null, null);
                             }
                         }
@@ -555,7 +586,11 @@ try {
                                     elemPers.person_id = _main_person_id;
                                     elemPers.person_name = teMainPerson.fullname;
                                     elemPers.position_name = (teMainPerson.position_name != null? teMainPerson.position_name : '');
+
+                                    wLog("------- 8", null, null, null, null, null);
                                     docAssessm.Save();
+                                    wLog("------- 8-saved", null, null, null, null, null);
+
                                     wLog(_main_person_id, "", docAssessm.TopElem, strXQuery1, null, null);
                                 }
                             }
@@ -571,7 +606,11 @@ try {
                                 docPa = OpenDoc(UrlFromDocID(catPa.id));
                                 docPa.TopElem.person_id = _main_person_id;
                                 tools_ass.assessment_person_filling(docPa.TopElem.person_id, _main_person_id);
+
+                                wLog("------- 9", null, null, null, null, null);
                                 docPa.Save();
+                                wLog("------- 9-saved", null, null, null, null, null);
+
                                 wLog(_main_person_id, "", docPa.TopElem, strXQuery1, null, null);
                             }
                         }
@@ -586,7 +625,11 @@ try {
                                 docPas = OpenDoc(UrlFromDocID(catExpPa.id));
                                 docPas.TopElem.expert_person_id = _main_person_id;
                                 tools_ass.assessment_person_filling(docPas.TopElem.expert_person_id, _main_person_id);
+
+                                wLog("------- 10", null, null, null, null, null);
                                 docPas.Save();
+                                wLog("------- 10-saved", null, null, null, null, null);
+
                                 wLog(_main_person_id, "", docPas.TopElem, strXQuery1, null, null);
                             }
                         }
@@ -626,7 +669,11 @@ try {
                                 }
                                 if (is_change)
                                 {
+
+                                    wLog("------- 11", null, null, null, null, null);                                    
                                     docReq.Save();
+                                    wLog("------- 11-saved", null, null, null, null, null);
+
                                     wLog(_main_person_id, "", docReq.TopElem, strXQuery1, null, null);
                                 }
                             }
@@ -678,7 +725,11 @@ try {
                                 addHistory.comment = elemHist.comment;
                             }
                             Copy_Person_Values ( teMainPerson, _dbl.id );
+
+                            wLog("------- 12", null, null, null, null, null);
                             docMainPerson.Save();
+                            wLog("------- 12-saved", null, null, null, null, null);
+
                             wLog(_main_person_id, "", docMainPerson.TopElem, strXQuery1, null, null);
                         }
 // ------------------------------------------------------------------------------------
@@ -700,7 +751,11 @@ try {
                                 {
 //									alert("Будет удален сотрудник с id=" + _dbl.id + " из карточки дубля");
                                     arrCollaborat.DeleteChildByKey(_dbl.id);
+
+                                    wLog("------- 13", null, null, null, null, null);
                                     docGroup.Save();
+                                    wLog("------- 13-saved", null, null, null, null, null);
+
                                     wLog(_main_person_id, "", teGroup, _xq, null, null);
                                     newElemCollab = arrCollaborat.GetOptChildByKey(_main_person_id);
                                     if (newElemCollab != undefined)
@@ -711,7 +766,11 @@ try {
                                     {
                                         addCollab = arrCollaborat.AddChild();
                                         addCollab.collaborator_id = _main_person_id;
+
+                                        wLog("------- 14", null, null, null, null, null);
                                         docGroup.Save();
+                                        wLog("------- 14-saved", null, null, null, null, null);
+
                                         wLog(_main_person_id, "", teGroup, _xq, null, null);
                                     }
                                 }
@@ -723,9 +782,7 @@ try {
             } // end if (ArrayCount(ArrayDoubles)>1)
         }// end for (_col in ArrayAllPersons)
     }// end if (ArrayCount(ArrayAllPersons)>0)
-}
-catch ( eprst )
-{
+} catch ( eprst ) {
     wLog("", eprst, null, null, null, null)
 }
 

@@ -17,6 +17,8 @@ var isInitialized = false;
 var prevExpectedMilliseconds = 0;
 var prevExpectedDate = new Date();
 
+let yearDropdown = null;
+
 function getCurrentDateTime() {
     const currentDate = new Date();
 
@@ -279,12 +281,16 @@ function getNormalizedTime(timeAsString) {
 }
 
 function refreshBoardData() {
+    $("#divine_input").focus();
+    
     $("#chart_wait").css("display", "block");
 
     const currentDateTime = getCurrentDateTime();
-
+    
+    const year = yearDropdown.getSelectedOptionValues().value;
+    
     $.ajax({
-        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7208564163180227555&date=" + currentDateTime,
+        url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7208564163180227555&year=" + year,
         async: true,
         type: "GET",
         dataType: "json",
@@ -451,7 +457,7 @@ function refreshBoardData() {
 
                 $("#chart_wait").css("display", "none");
 
-                $("#refreshed_datetime").html("обновлено: " + getCurrentDateTime());                
+                $("#refreshed_datetime").html("обновлено: " + getCurrentDateTime());
             } else {
                 isInitialized = true;
 
@@ -732,6 +738,20 @@ function appendOwnerChild(parentId, id, name) {
 }
 
 function initialize() {
+    const currentYear = new Date().getFullYear();
+
+    yearDropdown = new Dropdown("yearDropdown", "years", "refreshBoardData()");
+
+    for (let i = 2018; i <= 2030; i++) {
+        let selected = false;
+
+        if (i === currentYear) {
+            selected = true;
+        }
+
+        yearDropdown.addOption(yearDropdown.getDropdownId(), i, i, selected);
+    }
+    
     $("#courses_expected_time").html(getNormalizedTime(new Date().toLocaleString("ru-RU")));
 
     coursesChart = new ApexCharts($("#courses_chart").get(0), getCoursesChartOption());

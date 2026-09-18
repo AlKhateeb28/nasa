@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MIF Books</title>
+
+    <link rel="icon" href="./images/books.ico" />
+
+    <link rel="stylesheet" href="./../fcc/css/common.css" />
+    <link rel="stylesheet" href="./css/books.css" />
+
+    <script type="text/javascript" src="./../scripts/jquery.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jquery.mask.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="./../fcc/js/excel-to-json.min.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jsonReviver.js"></script>        
+    <script type="text/javascript" src="./../fcc/js/Notification.js"></script>
+    <script type="text/javascript" src="./../fcc/js/AlertPopupWindow.js"></script>
+    <script type="text/javascript" src="./js/mif.js"></script>    
+</head>
+
+<body class="body">
+    <div id="grid" class="grid">
+        <div></div>
+        <div>
+            <div class="scrollbar-control" style="height: 853px;">
+                <table class="styled-table" style="width: 100%;">
+                    <thead>
+                        <tr class="sticky">
+                            <th class="header-cell" style="text-align: center; width: 50px;">#</th>
+                            <th class="header-cell" style="text-align: center;">Autor</th>
+                            <th class="header-cell" style="text-align: center;">Book name</th>
+                            <th class="header-cell" style="text-align: center; width: 100px;"></th>
+                            <th class="header-cell" style="text-align: center; width: 50px;">Will delete</th>
+                            <th class="header-cell" style="text-align: center; width: 50px;">Deleted</th>
+                        </tr>
+                    </thead>
+                    <tbody id="style_table_body"></tbody>
+                </table>
+            </div>
+            <div class="bottom-div">
+                <div style="float:left;">
+                    <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;" onclick="addBooksForDelete(this)">Load books</button>
+                </div>
+                <div style="float:left;">
+                    <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;" onclick="start(this)">Start</button>
+                </div>
+                <div style="float:left;">
+                    <button class="btn btn-pointer" style="margin-left: 5px; font-family: 'Finlandica'; font-size: 15px; width: 208px;" onclick="stop(this)">Stop</button>
+                </div>
+                <div style="float: right; margin-right: 10px;">
+                    <div class="info-caption-block">WD:</div>
+                    <div id="wd_box" class="info-block" title="Will be deleted">0</div>
+                    <div class="info-caption-block">WND:</div>
+                    <div id="wnd_box" class="info-block" title="Will not be deleted">0</div>
+                    <div class="info-caption-block">D:</div>
+                    <div id="d_box" class="info-block" title="Deleted">0</div>
+                    <div class="info-caption-block">ND:</div>
+                    <div id="nd_box" class="info-block" title="Not deleted">0</div>
+                </div>
+            </div>
+        </div>
+        <div></div>
+    </div>
+
+    <div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
+        <div class="position-center">
+            <div id="container">
+                <label id="wait_caption" class="loading-title" style="font-size: 14px;"></label>
+                <span id="loader" class="loading-circle sp1">
+                    <span class="loading-circle sp2">
+                        <span class="loading-circle sp3"></span>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/html" id="row_template">
+        <tr id="row" class="row" style="cursor: pointer;" onclick="showBook(this)">
+            <td id="sn"></td>
+            <td id="author"></td>
+            <td id="name"></td>
+            <td>
+                <div id="progress" class="bar-stripe" style="display: none;"></div>
+            </td>
+            <td>
+                <div id="will_delete" style="margin-left: 15px;"></div>
+            </td>
+            <td>
+                <div id="deleted" style="margin-left: 15px; font-size: large; font-weight: 600;"></div>
+            </td>
+        </tr>
+    </script>
+
+    <script>
+        initialize();
+    </script>
+</body>
+
+</html>

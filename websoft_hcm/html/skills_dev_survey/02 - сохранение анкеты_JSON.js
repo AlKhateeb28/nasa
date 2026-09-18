@@ -24,6 +24,7 @@ try {
         " SELECT id " +
         " FROM [WTDB].[dbo].cc_person_profiles " +
         " WHERE education_program_id = " + surveyObject.educationProgramId +
+        "       AND person_id = " + curUserID + 
         " ORDER BY cr_date DESC "));
 
     if (ArrayCount(surveyList) == 0) {

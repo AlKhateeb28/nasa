@@ -1,0 +1,710 @@
+<head>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://owlcarousel2.github.io/OwlCarousel2/assets/css/docs.theme.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.theme.default.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript"
+        src="https://owlcarousel2.github.io/OwlCarousel2/assets/vendors/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/owl.carousel.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="book_shelves/libs/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="book_shelves/libs/docs.theme.min.css">
+    <link rel="stylesheet" type="text/css" href="book_shelves/libs/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css" href="book_shelves/libs/owl.theme.default.min.css">
+
+    <script type="text/javascript" src="book_shelves/libs/bootstrap.min.js"></script>
+    <script type="text/javascript" src="book_shelves/libs/owl.carousel.min.js"></script>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        .row .row {
+            margin: 0;
+        }
+
+        .limit {
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .block-book-week {
+            background-color: <%=tools_web.get_web_param(curParams, "sColorBgd", 0, true)%>;
+        }
+
+        .desc-book-week {
+            color: #fff;
+            font-size: 1.1rem;
+            line-height: 1.4rem;
+            font-style: italic;
+            max-height: 180px;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            height: 64px;
+            background-color: #FFFFFF;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            border-bottom: 1px solid #ebebec;
+            z-index: 999;
+            box-sizing: content-box;
+        }
+
+        .header .block-user-info {
+            width: 13em;
+        }
+
+        .header .block-user-info .wrapper {
+            padding: 0;
+        }
+
+        .header .header-content .header-top .block-user-info .user-cabinet {
+            padding: 8px 16px 8px 24px;
+        }
+
+        .header .header-content .header-top .block-user-info .user-cabinet table {
+            display: table;
+            border-collapse: separate;
+            border-spacing: 2px;
+            border-color: grey;
+            border: none;
+            margin: 0;
+        }
+
+        .header .header-content .header-top .block-user-info .user-cabinet table td {
+            padding: 0;
+        }
+
+        .header .header-content .header-top .block-search #search_form table {
+            -webkit-border-horizontal-spacing: 0px;
+            -webkit-border-vertical-spacing: 0px;
+            border-top-width: 0px;
+            border-right-width: 0px;
+            border-bottom-width: 0px;
+            border-left-width: 0px;
+            margin: 0;
+            display: table;
+            border-collapse: collapse;
+            border-spacing: 2px;
+            border-color: grey;
+        }
+
+        .header .header-content .header-top .block-search icon {
+            color: #969eb2;
+            font-size: 1.2em;
+        }
+
+        .header .header-content .header-top .block-search #search_form table .search-container {
+            padding: 0;
+            margin: 0;
+        }
+
+        .header .header-content .header-top .block-search #search_form table .search-container .search-input {
+            height: 64px;
+            padding: 0 16px;
+            border: 0;
+            box-shadow: none;
+            font-size: 15px;
+            color: #969eb2;
+            width: 120px;
+            background-color: #ffffff;
+            display: inline-block;
+            margin: 0;
+        }
+
+        /*********************** КНОПКИ ************************/
+
+        /* КНОПКА "Прочитать" */
+        .btn.outline {
+            width: 8rem;
+            height: 2.3rem;
+            text-align: center;
+            font-size: 0.8em;
+            padding: 0;
+            background: none;
+            border: 2px solid #fff;
+            color: #fff;
+            outline: none;
+        }
+
+        .btn-primary.outline:not(:disabled):not(.disabled).active,
+        .btn-primary.outline:not(:disabled):not(.disabled):active,
+        .show>.btn-primary.outline.dropdown-toggle {
+            border-color: #4D637D;
+            color: #4D637D;
+            background: #fff;
+            ;
+
+        }
+
+        /* КНОПКА "Поиск" */
+        .btn.btn-search {
+            background: #4D637D;
+            ;
+            color: #fff;
+            border-color: #4D637D;
+        }
+
+        .btn-primary.btn-search:not(:disabled):not(.disabled).active,
+        .btn-primary.btn-search:not(:disabled):not(.disabled):active,
+        .show>.btn-primary.btn-search.dropdown-toggle {
+            background: none;
+            color: #4D637D;
+            border-color: #4D637D;
+        }
+
+        /* КНОПКА "Посмотреть все" */
+        .btn.view-more {
+            height: 3rem;
+            text-align: center;
+            font-size: 1rem;
+            background: #4D637D;
+            border: 2px solid #fff;
+            color: #fff;
+            border-radius: 5px;
+
+        }
+
+        .btn-primary.view-more:not(:disabled):not(.disabled).active,
+        .btn-primary.view-more:not(:disabled):not(.disabled):active,
+        .show>.btn-primary.view-more.dropdown-toggle {
+            background: none;
+            color: #4D637D;
+            border-color: #4D637D;
+        }
+
+        /*********************** ПОИСК ************************/
+
+        .search-sec {
+            padding: 2rem;
+        }
+
+        .search-slt {
+            display: block;
+            width: 100%;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #55595c;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            height: calc(3rem + 2px) !important;
+            border-radius: 0;
+        }
+
+        .wrn-btn {
+            width: 100%;
+            font-size: 16px;
+            font-weight: 400;
+            text-transform: capitalize;
+            height: calc(3rem + 2px) !important;
+            border-radius: 0;
+        }
+
+        .block-book-search input,
+        .block-book-search select {
+            margin: 0;
+            outline: 0;
+            box-shadow: none;
+        }
+
+        /*********************** ПОЛКИ ***********************/
+
+        .block-book-shelves .title-book-shelves {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        #block-rcmnd-books {
+            margin-top: 5em;
+        }
+
+        .block-book-shelves .book-img,
+        .block-rcmnd-books .book-img {
+            height: 15rem;
+            width: 10rem;
+            border-radius: 5px;
+            float: left;
+        }
+
+
+        /*********************** КАРУСЕЛЬ ***********************/
+        .owl-stage-outer .owl-stage .owl-item {
+            width: 19em;
+            /* margin-right: 10px; */
+        }
+
+        .owl-carousel .owl-item img {
+            width: 10em;
+            float: left;
+            height: 15rem;
+            border-radius: 5px;
+        }
+
+        .owl-theme .owl-nav {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            top: 0;
+            z-index: -1;
+        }
+
+        .owl-nav button[role="presentation"] {
+            position: absolute;
+            width: 2rem;
+            height: 6rem;
+            outline: 0;
+
+        }
+
+        .owl-theme .owl-nav [class*=owl-]:hover {
+            background: none;
+        }
+
+        .owl-theme .owl-nav [class*=owl-] span {
+            display: none;
+        }
+
+        .row.owl-carousel {
+            position: relative;
+        }
+
+        .owl-carousel .owl-nav button.owl-next,
+        .owl-carousel .owl-nav button.owl-prev {
+            background: url(/download_file.html?file_id=6682670998979302863);
+            background-repeat: no-repeat;
+            background-size: 1.5rem;
+            background-position-y: center;
+            height: 100%;
+            margin: 0 5px 0 5px;
+            display: none;
+        }
+
+        .owl-carousel .owl-nav button.owl-next:hover,
+        .owl-carousel .owl-nav button.owl-prev:hover {
+            background: url("/download_file.html?file_id=6682670998979302863");
+        }
+
+        .owl-carousel .owl-nav button.owl-prev {
+            left: 1rem;
+        }
+
+        .owl-carousel .owl-nav button.owl-next {
+            transform: rotate(180deg);
+            right: 1rem;
+        }
+
+        .owl-carousel .owl-dots.disabled,
+        .owl-carousel .owl-nav.disabled {
+            display: block;
+        }
+
+        /*********************** ПЛАШКИ С КНИГАМИ НА ПОЛКЕ ***********************/
+        .d-block {
+            cursor: pointer;
+        }
+
+        .social_badges {
+            overflow: hidden;
+            margin: 0;
+            width: 5.5em;
+            float: right;
+            margin-right: 1px;
+        }
+
+        .social_badges>div {
+            width: 100%;
+            display: block;
+            float: left;
+            height: 2rem;
+            line-height: 2rem;
+            font-size: 1em;
+            font-weight: bold;
+            color: #4d637d;
+            margin-top: 0.5em;
+        }
+
+        .social_badges img.img-like,
+        .social_badges img.img-comment,
+        .social_badges img.img-view {
+            float: left;
+            width: 1.5rem;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            font-size: 1.5rem;
+            text-align: center;
+            color: #4d637d;
+            margin-top: 4px;
+        }
+
+        .social_badges .amnt-likes,
+        .social_badges .amnt-comments,
+        .social_badges .amnt-views {
+            margin-left: 0.4em;
+        }
+
+        .block-book-week .img-mark-bk-wk {
+            position: absolute;
+            width: 4em;
+            border-radius: 50%;
+            top: 14em;
+        }
+
+
+        .social_badges .amnt-likes,
+        .social_badges .amnt-comments,
+        .social_badges .amnt-views {
+            margin-left: 0.4em;
+        }
+
+        /*********************** PROGRESSBAR ***********************/
+        .w_load_body_parent {
+            position: relative;
+        }
+
+        .w_load_body {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(233, 233, 232, 0.2);
+        }
+
+        .w_load_body .w_load_content {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 160px;
+            background: #fff;
+            border-radius: 5px;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .w_load_body .w_load_content span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .w_load_body .w_load_content_text {
+            overflow: hidden;
+            max-width: 120px;
+            height: 30px;
+            line-height: 30px;
+            margin-left: 5px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .w_load_icon {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background: url('book_shelves/w_load.gif') no-repeat;
+        }
+    </style>
+</head>
+
+<div class="container pt-3 h-100" id="main_content">
+
+    <div class="row h-30 block-book-week" id="block-book-week"></div>
+
+    <div class='row h-30 mt-5 mb-5 block-book-search'>
+        <div class='col p-0'>
+            <form class='row' onsubmit='return false' id='formSearch' method='post' novalidate>
+                <div class='col-lg-3 col-md-12 col-sm-12 p-0 mb-3 mb-lg-0'>
+                    <select class='form-control search-slt shadow-none' id='block-book-search-tema'>
+                        <option value=''> Тематика полки </option>
+                    </select>
+                </div>
+                <div class='col-lg-7 col-md-12 col-sm-12 p-0 mb-3 mb-lg-0'>
+                    <input type='text' class='form-control search-slt shadow-none' id='block-book-text-search'
+                        placeholder='Введите ключевое слово для поиска'>
+                </div>
+                <div class='col-lg-2 col-md-12 col-sm-12 p-0 mb-3 mb-lg-0'>
+                    <input type='submit' class='btn btn-primary btn-search wrn-btn shadow-none' id='btnSearch'
+                        value='Поиск'>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class='row h-40 block-book-shelves' id='block-result-search'></div>
+
+    <div class='row h-40 block-book-shelves' id='main-content'></div>
+
+    <!--  <div class="row h-30 block-book-week">
+        <div class="col-md-6 h-100 d-flex align-items-center justify-content-center">
+            <div class="row limit">
+                <img class="img-responsive" src="#" alt="книга недели">
+            </div>
+        </div>
+        <div class="col-md-6 h-100 align-self-center">
+            <p class="text-left mt-3 desc-book-week">
+                Автор книги подробно описывает, что настало время иного подхода к лидерству, кодгда подчиненные и лидер меняются ролями.
+            </p>
+            <div class="col text-right mb-3">
+                <button type="button" class="btn btn-primary outline shadow-none">Прочитать</button>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- <div class='row h-30 mt-5 mb-5 block-book-search'>
+        <div class='col p-0'>
+            <form class='row' onsubmit='return false' id='formSearch' method='post' novalidate='novalidate'>
+                <div class='col-lg-2 col-md-12 col-sm-12 p-0 mb-3 mb-lg-0'>
+                    <select class='form-control search-slt shadow-none' id='select-tema'>
+                    <option value='0'> Тематика полки </option> " + getShelves(true) + " </select>
+                </div>
+                <div class='col-lg-2 col-md-12 col-sm-12 p-0 mb-3 mb-lg-0'>
+                    <select class='form-control search-slt shadow-none' id='select-name-book'> 
+                    <option value='0'> Название </option> " + getMaterials() + " </select>
+                </div>
+                <div class='col-lg-6 col-md-12 col-sm-12 p-0 mb-3 mb-lg-0'>
+                    <input type='text' class='form-control search-slt shadow-none' placeholder='Введите ключевое слово для поиска'>
+                </div>
+                <div class='col-lg-2 col-md-12 col-sm-12 p-0 mb-3 mb-lg-0'>
+                    <button type='button' class='btn btn-primary btn-search wrn-btn shadow-none' id='btnSearch'>Поиск</button>
+                </div>
+            </form>
+        </div>
+    </div> -->
+
+    <!-- <div class="row h-40 block-book-shelves">
+
+        <div class="col-12 p-0">
+            <div class="row mb-2 no-gutters align-items-center">
+                <div class="col-sm-12 col-lg-6"> <p class="title-book-shelves text-center m-0">Бережливое производство</p> </div>
+                <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-center">
+                    <button type="button" class="btn btn-primary shadow-none btn-block mb-3 mb-lg-0 view-more">Посмотреть все</button>
+                </div>
+            </div>
+            <div class="row w-100 owl-one owl-carousel owl-theme owl-loaded owl-drag">
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=1" alt="slide 1"> </div>
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=2" alt="slide 2"> </div>
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=3" alt="slide 3"> </div>
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=4" alt="slide 4"> </div>
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=5" alt="slide 5"> </div>
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=6" alt="slide 6"> </div>
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=7" alt="slide 7"> </div>
+                <div class="item"> <img class="img-fluid mx-auto d-block book-img" src="http://placehold.it/350x180?text=8" alt="slide 8"> </div>
+            </div>
+        </div>
+
+    </div> -->
+
+</div>
+
+<script>
+
+    /* ************************************** PROGRESS PLAGIN ****************************************** */
+
+    (function (w, f) { f(jQuery) }
+        (window, function ($) {
+            if (!$) {
+                throw new Error('jquery is must be imported')
+            }
+            function Wload(options) {
+                this.defaultOpt = {
+                    text: '',
+                    time: '',
+                    el: ''
+                }
+                this.opt = $.extend({}, this.defaultOpt, options)
+            }
+            Wload.prototype.hide = function (obj) {
+                if (obj.time) {
+                    var _this = this
+                    setTimeout(function () {
+                        $(_this.opt.el).find('.w_load_body').remove()
+                        $(_this.opt.el).removeClass('w_load_body_parent')
+                    }, obj.time)
+                } else {
+                    $(this.opt.el).find('.w_load_body').remove()
+                    $(this.opt.el).removeClass('w_load_body_parent')
+                }
+            }
+            Wload.prototype.bindEvent = function () { }
+            Wload.prototype.creatDom = function () {
+                var dom = $(this.opt.el)
+                var div = $('<div class="w_load_body"></div>')
+                div.append('<div class="w_load_content"><span class="w_load_icon"></span><span class="w_load_content_text">' + this.opt.text || '' + '</span></div>')
+                dom.addClass('w_load_body_parent').append(div)
+                var con = dom.find('.w_load_content')
+                con.css({
+                    'margin-left': -con.outerWidth() / 2,
+                    'margin-top': -con.outerHeight() / 2
+                })
+            }
+            $.fn.Wload = function (options, other) {
+                var dom = $(this)
+                var opt = options
+                if (typeof opt == 'object') {
+                    opt = opt.el ? opt : $.extend({}, opt, { el: dom })
+                } else {
+                    if (typeof other == 'object') {
+                        opt = $.extend({}, { el: dom }, other)
+                    } else {
+                        opt = { el: dom }
+                    }
+                }
+
+                var W = new Wload(opt)
+                if (options == 'hide') {
+                    W['hide'](other)
+                    return
+                }
+                W.creatDom()
+            }
+        }))
+
+    objParams = {
+        loop: true,
+        margin: 0,
+        nav: true,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 5000,
+        autoplayHoverPause: true,
+        responsive: { 0: { items: 1 }, 600: { items: 2 }, 1000: { items: 4 } }
+    }
+
+    $(document).ready(function () {
+
+        /* ************************************** BLOCK BOOK WEEK ****************************************** */
+
+        var iBookWeek = "<%=tools_web.get_web_param(curParams, 'iBookWeek', '0', true)%>",
+            sModeFindBooks = "<%=tools_web.get_web_param(curParams, 'sModeFindBooks', '0', true)%>";
+
+        (function rcvBlockBookWeek() {
+
+            $.ajax({
+                type: "POST",
+                url: "book_shelves/rmt_actn_main_page_library_FCK.html",
+                data: "id_book_week=" + iBookWeek + "&name_block=block-book-week" + "&code_page_lbr_mtrl=" + "<%=tools_web.get_web_param(curParams, 'iTmpltLibraryMaterial', 0, true)%>" + "&id_mark_img=" + "<%=tools_web.get_web_param(curParams, 'iMarkImg', 0, true)%>",
+                dataType: "text",
+                error: function () {
+                    alert('Ошибка загрузки страницы');
+                },
+                success: function (data) {
+                    $('#block-book-week').append(data);
+                }
+            });
+
+        })();
+
+
+        /* ************************************** BLOCK SEARCH ****************************************** */
+
+        var iChoiceTema = "",
+            iChoiceName = "",
+            sTextSearch = "";
+
+        (function rcvBlockSearchTema() {
+
+            $.ajax({
+                type: "POST",
+                url: "book_shelves/rmt_actn_main_page_library_FCK.html",
+                data: "id_choice_tema=" + iChoiceTema + "&code_page_lbr_mtrl=" + "<%=tools_web.get_web_param(curParams, 'iTmpltLibraryMaterial', 0, true)%>" + "&name_block=block-book-search-tema",
+                dataType: "text",
+                error: function () {
+                    alert('Ошибка загрузки страницы');
+                },
+                success: function (data) {
+                    //$('#block-book-search-tema').empty();
+                    $('#block-book-search-tema').append(data);
+                }
+            });
+
+        })();
+
+        $("#block-book-search-tema").change(function () {
+            iChoiceTema = $(this).children("option:selected").val();
+            //console.log('iChoiceTema: ' + iChoiceTema)
+        });
+
+        /* ************************************** BLOCK RESULT SEARCH ****************************************** */
+
+        function sendDate() {
+
+            $('body').Wload({
+                text: ' Загрузка'
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "book_shelves/rmt_actn_main_page_library_FCK.html",
+                data: "id_choice_tema=" + iChoiceTema + "&mode_find_books=" + sModeFindBooks + "&cur_user=" + <%=curUserID%> + "&id_choice_name=" + iChoiceName + "&text_search=" + sTextSearch + "&name_block=block-result-search" + "&code_page_shelve=" + "<%=tools_web.get_web_param(curParams, 'iTmpltShelvePage', 0, true)%>" + "&code_page_lbr_mtrl=" + "<%=tools_web.get_web_param(curParams, 'iTmpltLibraryMaterial', 0, true)%>",
+                dataType: "text",
+                error: function () {
+                    alert('ERROR');
+                },
+                success: function (data) {
+                    $('body').Wload('hide', {});
+                    $('#block-result-search').empty();
+                    $('#block-result-search').append(data);
+                    $('.owl-one').owlCarousel(objParams);
+                }
+            }); 
+
+        }
+
+    function submitSearch(event) {
+        event.preventDefault();
+        sTextSearch = $('#block-book-text-search').val().toLowerCase();
+        sendDate();
+    }
+
+    $('#formSearch').on('submit', submitSearch);
+
+
+    /* ************************************** MAIN BLOCK ****************************************** */
+
+    (function getMainContent() {
+
+        $('body').Wload({
+            text: ' Загрузка'
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "book_shelves/rmt_actn_main_page_library_FCK.html",
+            data: "name_block=main-content" + "&cur_user=" + <%=curUserID%> + "&code_page_shelve=" + "<%=tools_web.get_web_param(curParams, 'iTmpltShelvePage', 0, true)%>" + "&code_page_lbr_mtrl=" + "<%=tools_web.get_web_param(curParams, 'iTmpltLibraryMaterial', 0, true)%>",
+            dataType: "text",
+            error: function () {
+                alert('ERROR');
+            },
+            success: function (data) {
+                $('body').Wload('hide', {});
+                $('#main-content').empty();
+                $('#main-content').append(data);
+            }
+            }); 
+
+        }) ();
+
+    });
+
+</script>

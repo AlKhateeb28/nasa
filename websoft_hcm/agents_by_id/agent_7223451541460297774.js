@@ -60,6 +60,8 @@ function createCertificate(personId, certificateTypeId, serial, orgName, deliver
         eduMethodName = getNormalizedName(eduMethodName);
     }
 
+    addLogMessage(loggerName, "[agent.id: " + agentId + "] PersonID: " + personId + " CertTypeID: " + certificateTypeId);
+
     certificateDoc = tools.create_certificate_to_person(OptInt(personId), OptInt(certificateTypeId));
 
     certificateDoc.TopElem.serial = serial;

@@ -49,9 +49,7 @@ var result = {};
 result.errorMessage = "";
 
 try {
-    date = Request.Query.GetOptProperty("date", "01.01.2026 00:00:00");
-    year = date.split(" ")[0];
-    year = year.split(".")[2];
+    year = Request.Query.GetOptProperty("year", "2026");    
 
     // STATE0 (Назначено)
     result.state0Data = [];
@@ -100,7 +98,7 @@ try {
     state4ByDayList = ArrayDirect(XQuery("sql: " +
         " SET DATEFORMAT dmy;" +
         " DECLARE @from datetime = '01.01." + year + " 00:00:00' " +
-        " DECLARE @to datetime = '" + date + "' " +
+        " DECLARE @to datetime = '31.12." + year + " 23:59:59' " +
         " SET DATEFIRST 1; " +
         " SELECT DATEPART(day, ls.last_usage_date) AS day, " +
         "       DATEPART(month, ls.last_usage_date) AS month, " +

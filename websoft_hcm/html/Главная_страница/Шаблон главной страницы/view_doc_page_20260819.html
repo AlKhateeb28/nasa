@@ -1,50 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <!--link href="./pptrf2019/snow.min.css" rel="stylesheet">
 <script src="./pptrf2019/Snow.js"></script-->
 <script>
     const start = new Date();
-
-    function getCurrentDate() {
-        const currentDate = new Date();
-
-        return currentDate.toLocaleString("ru-RU").split(",")[0];
-    }
-
-    function showNotificationWindow() {
-        $("#wait").css("display", "block");
-    }
-
-    function closeNotificationWindow() {
-        $("#wait").css("display", "none");
-    }
-
-    function showNotification() {
-        showNotificationWindow();
-    }
-
-    function sendMessage(action) {
-        const subject = encodeURIComponent("Управление доступом к электронным курсам");
-
-        $.ajax({
-            url: "https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/custom_web_template.html?object_id=7320432274098350978&type=1&action=" + action,
-            async: true,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-
-            },
-            error: function (error) {
-                console.log("State: " + error.readyState + " Response: " + error.response + " ResponseText: " + error.responseText + " Status: " + error.status);
-            }
-        });
-
-        if (action == "send") {
-            document.location.href = "mailto:academyfck@pptrf.ru?subject=" + subject;
-        }
-
-        closeNotificationWindow();
-    }
 </script>
 <%
 var startDatetime = Date();
@@ -160,192 +119,9 @@ sPageContentClass = "wt-lp-page-content";
 
 Request.Session.SetProperty("displayMode", displayMode);*/
 %>
-<style>
-    .noti-block {
-        width: 240px; 
-        height: 30px; 
-        background-color: #ffa500; 
-        position: absolute; 
-        left: 377px; 
-        cursor: pointer; 
-        z-index: 1000;
-        border: 1px solid #fdc865;        
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
-        margin-top: 2px;
-    }
 
-    .bell {
-        display: inline-block;
-        animation: bellShake 1s ease-in-out infinite;
-    }
-
-    @keyframes bellShake {
-        0% { transform: rotate(0deg); }
-        10% { transform: rotate(15deg); }
-        20% { transform: rotate(-15deg); }
-        30% { transform: rotate(10deg); }
-        40% { transform: rotate(-10deg); }
-        50% { transform: rotate(5deg); }
-        60% { transform: rotate(-5deg); }
-        70% { transform: rotate(0deg); }
-        100% { transform: rotate(0deg); }
-    }
-
-    .noti-text {
-        animation: textPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes textPulse {
-        0% { opacity: 1; }
-        30% { opacity: 0.7; }
-        50% { opacity: 0.2; }
-        70% { opacity: 0.7; }
-        100% { opacity: 1; }
-    }    
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 2000;
-        padding-top: 100px;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.7);
-    }
-
-    .position-center {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        position: absolute;
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: 10fr 8fr;
-        grid-template-rows: auto;
-    }
-
-    .grid-cell {
-        margin-top: 50px;
-    }
-
-    .noti-button {
-        border: none;
-        background: #ea486d;
-        color: #FFFFFF;
-        font-size: 16px;
-        border-radius: 8px;
-        padding: 16px 24px;
-        font-family: Montserrat, sans-serif;
-        font-weight: 600;
-        display: inline-block;
-        cursor: pointer;
-        width: 200px;
-        text-align: center;
-    }
-    
-    .info-header {
-        margin-left: 50px;
-        font-weight: 600;
-        font-size: 30px;
-    }
-
-    .info-row {
-        margin-left: 50px;
-        font-size: 16px;
-    }
-
-    .noti-block-anime {
-        animation: gradientShift 5s ease-in-out infinite;
-    }
-
-    @keyframes gradientShift {
-        0% { background-color: #ffa500; }
-        10% { background-color: #ffb84d; }
-        20% { background-color: #ffcc80; }
-        30% { background-color: #ffe0b3; }
-        40% { background-color: #fff0e6; }
-        50% { background-color: #ffffff; }
-        60% { background-color: #fff0e6; }
-        70% { background-color: #ffe0b3; }
-        80% { background-color: #ffcc80; }
-        90% { background-color: #ffb84d; }
-        100% { background-color: #ffa500; }
-    }
-</style>
 <body id="wt-body" class="mode-<%=curMode%> <%=sWebModeContainerClass%>" onload="OnLoad()" onresize="OnResize()" <%=sWebModeBodyStyle%>>
-<%
-    dataList = ArrayDirect(XQuery("sql: " +
-        " SELECT cs.id " +
-        " FROM group_collaborators gcs " +
-        "    INNER JOIN collaborators cs ON gcs.collaborator_id = cs.id AND cs.id = 0 " +
-        " WHERE gcs.group_id = 7320151219068984266 "));
 
-    if(ArrayCount(dataList) == 1) {        
-%>    
-<div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
-    <div class="position-center">
-        <div id="container" style="width: 950px; height: 500px; background-color: #f5f5f5; border-radius: 20px;">
-            <div style="width: 100%;">
-                <div style="float: right; margin-top: 20px; margin-right: 20px; cursor:pointer;" onclick="sendMessage('close')">
-                    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z"
-                            stroke="#1C274C" stroke-width="1.5" />
-                        <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
-                    </svg>
-                </div>
-            </div>
-            <div class="grid">
-                <div class="grid-cell">
-                    <div style="width: 100%;">
-                        <div class="info-header">Скоро закроется доступ</div>
-                        <div class="info-header">к курсам Академии</div>
-                        <div class="info-header">производительности</div>
-                        <div class="info-header">для Вашей компании</div>
-                    </div>
-                    <div style="width: 100%; margin-top: 20px;">
-                        <div class="info-row">С 1 сентября 2026 г. онлайн-курсы Академии</div>
-                        <div class="info-row">производительности ФЦК будут недоступны</div>
-                        <div class="info-row">для всех компаний, которые не продлят обучение.</div>
-                        <div class="info-row">Сохраните доступ на выгодных условиях</div>
-                    </div>
-                    <div style="width: 100%; margin-left: 50px; margin-top: 32px;">
-                        <div class="noti-button" onclick="sendMessage('send')">Продлить доступ</div>
-                    </div>
-                </div>
-                <div class="grid-cell">
-                    <div>
-                        <img style="width: 500px; height: 430px;" src="https://xn--d1auh.xn--b1aedfedwqbdfbnzkf0oe.xn--p1ai/fcc/images/dis_e_courses.png"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="noti-block noti-block-anime" onclick="showNotification()">
-    <div style="border-right: 1px solid #fdc865; width: 30px; height: 29px; float: left;">
-        <div>
-            <svg class="bell" width="30px" height="30px" viewBox="0 0 24 24" fill="#000000" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M13.7143 17.25C13.7143 18.2165 12.9468 19 12 19C11.0532 19 10.2857 18.2165 10.2857 17.25M12 5V5C9.51472 5 7.5 7.01472 7.5 9.5V10.8079C7.5 11.5944 7.34024 12.3728 7.0304 13.0957L6.59739 14.1061C6.31459 14.7659 6.79862 15.5 7.51654 15.5H16.4835C17.2014 15.5 17.6854 14.7659 17.4026 14.1061L16.9696 13.0957C16.6598 12.3728 16.5 11.5944 16.5 10.8079V9.5C16.5 7.01472 14.4853 5 12 5V5ZM12 5V4"
-                    stroke="#464455" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        </div>
-    </div>
-    <div class="noti-text" style="margin-top: 6px; margin-left: 10px; font-size: 12px; float: left; font-weight: 600;">
-        Скоро закроется доступ к курсам
-    </div>
-</div>
-<%
-    }
-%>
 <script>
     function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -478,7 +254,7 @@ else
                 <div class="cube cube8"></div>
                 <div class="cube cube9"></div>
             </div>
-            <div class="wt-lp-page-loading-text" wt-role="page-load-text">ЗНГРУЗКН...</div>
+            <div class="wt-lp-page-loading-text" wt-role="page-load-text">ЗАГРУЗКА...</div>
         </div>
     </div>
 </div>

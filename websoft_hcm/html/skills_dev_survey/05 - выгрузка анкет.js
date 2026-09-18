@@ -70,7 +70,6 @@ try {
     reportString.AppendStr("<td class='header'>Сособ получения документов</td>");
     reportString.AppendStr("<td class='header'>Подтверждение о получении документов</td>");
     reportString.AppendStr("<td class='header'>Дата создания анкеты</td>");
-    reportString.AppendStr("<td class='header'>Активна</td>");
     reportString.AppendStr("<td class='header'>ID анкеты</td>");
     reportString.AppendStr("<td class='header'>ID сотрудника</td>");
     reportString.AppendStr("<td class='header'>ID организации</td>");
@@ -95,7 +94,6 @@ try {
             "<td>" + survey.reciept_method + "</td>" +
             "<td>" + survey.can_get_documents + "</td>" +
             "<td>" + (survey.cr_date == "" ? "" : StrDate(survey.cr_date, false, false)) + "</td>" +
-            "<td>" + survey.active + "</td>" +
             "<td>'" + survey.id + "</td>" +
             "<td>'" + survey.cs_id + "</td>" +
             "<td>'" + survey.os_id + "</td>" +

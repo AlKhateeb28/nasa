@@ -297,7 +297,7 @@ var sUpdateCollaboratorAnaliticSuccessAction = "UPDATE=CatalogListDataGridcollab
 
                         <Button Name="GTree_ListButton" Class="XAML-button XAML-button-list XAML-button-view icon-tree2" Toggle="1" ToggleGroup="GTree_selector" Pressed="<%=(sTreeType != "chart")%>" Click="HIDE=BossPanelChart;HIDE=MainAnalicTab;SHOW=BossPanelTree;UPDATE=BossPanelTree"></Button>
                         <Button Name="GTree_ChartButton" Class="XAML-button XAML-button-view icon-th-large" Toggle="1" ToggleGroup="GTree_selector" Pressed="<%=(sTreeType == "chart")%>" Click="HIDE=BossPanelTree;HIDE=MainAnalicTab;SHOW=BossPanelChart;UPDATE=BossPanelChart"></Button>
-                        <Button Name="AnalicToggleButton" Class="XAML-button XAML-button-list XAML-button-view icon-stats-dots" Toggle="1" ToggleGroup="GTree_selector" Pressed="<%=(sTreeType == "chart")%>" Click="HIDE=BossPanelChart;HIDE=BossPanelTree;SHOW=MainAnalicTab;"></Button>
+                        <!--Button Name="AnalicToggleButton" Class="XAML-button XAML-button-list XAML-button-view icon-stats-dots" Toggle="1" ToggleGroup="GTree_selector" Pressed="<%=(sTreeType == "chart")%>" Click="HIDE=BossPanelChart;HIDE=BossPanelTree;SHOW=MainAnalicTab;"></Button-->
 
                         <StackPanel Orientation="Horizontal" Class="XAML-panel-search">
                             <StackPanel Name="SearchStackPanel1" Hidden="<%=!bThinMode%>" Orientation="Horizontal">

@@ -20917,7 +20917,7 @@
 	"/>
 
 
-	<!---------------------------------- Работа с ресурсами ---------------------------------->
+	<!- Работа с ресурсами ->
 	<file_source_get_upload_file_url ALLOW-CALL-FROM-CLIENT="1" PROPERTY="1" PARAM="iFileSourceIdParam" PARAM="sFileNameParam" EXPR="
 		teFileSource = tools.get_file_sources( iFileSourceIdParam );
 		var sResult, oCodeLib;
@@ -21044,7 +21044,7 @@
 			return getFileUrl(g_sUid, teFileSource);
 		}
 	"/>
-	<!------------------------------------ Конец работы с ресурсами ---------------------------------->
+	<!- Конец работы с ресурсами ->
 	<call_webinar_system_method ALLOW-CALL-FROM-CLIENT="1" PROPERTY="1" PARAM="iWebinarSystemIdParam" PARAM="sMethodNameParam" PARAM="oParams" EXPR="
 
 		var docEventParam = null;
