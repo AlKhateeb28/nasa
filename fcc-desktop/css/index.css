@@ -104,13 +104,7 @@
     font-size: smaller;
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
     float: left;
-    margin: 0 15px 10px -27px;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    margin: 0 15px 10px -27px;    
 }
 
 .statistic {
@@ -1135,7 +1129,7 @@
     border-collapse: collapse;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    font-size: 8px;
+    font-size: 7px;
     color: rgb(255, 184, 53);
     background-color: #2b2b2b;
 }
@@ -1151,6 +1145,7 @@
     padding: 4px 4px;
     text-align: center;
     color: #deb887;
+    vertical-align: sub;
 }
 
 .legend-table td {
@@ -1247,4 +1242,18 @@
     overflow-x: hidden;
     height: 235px;
     scrollbar-width: thin;
+}
+
+.flag-count-cell {
+    cursor: context-menu;
+}
+
+.up-down-box {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    height: 18px;
+    background-image: linear-gradient(to right, #5d343c 50%, #02273a) !important;
+    border: solid 2px orange;
+    border-radius: 9px;
 }

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Certificates management</title>
+
+    <link rel="icon" href="./images/favicon.ico" />
+
+    <link rel="stylesheet" href="./../fcc/css/common.css" />
+    <link rel="stylesheet" href="./css/verify.css" />
+
+    <script type="text/javascript" src="./../scripts/jquery.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./../fcc/js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="./../fcc/js/moment.js"></script>
+    <script type="text/javascript" src="./../fcc/js/ModalWindow.js"></script>
+    <script type="text/javascript" src="./js/verify.js"></script>
+</head>
+
+<body class="body">
+    <div class="ticket-canvas">
+        <div class="ticket-wrapper" style="margin-top: 154px;">
+            <div class="ticket">
+                <div class="t-main" style="height: 370px; cursor: context-menu;">
+                    <div class="t-content">
+                        <div class="t-header">
+                            <div class="t-logo">
+                                <svg width="48px" height="48px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <defs>
+                                        <polygon id="layers-a" points="17.014 3 8.892 7.983 .77 3.314 4.143 .351 8.892 3 13.823 .351" />
+                                        <path id="layers-c"
+                                            d="M1.46887113,8 L1.00772212,7.73648628 C-0.335907374,6.968698 -0.335907374,5.031302 1.00772212,4.26351372 L8.00772212,0.263513716 C8.62258746,-0.0878379053 9.37741254,-0.0878379053 9.99227788,0.263513716 L16.9922779,4.26351372 C18.3359074,5.031302 18.3359074,6.968698 16.9922779,7.73648628 L16.5311289,8 L16.9922779,8.26351372 C18.3359074,9.031302 18.3359074,10.968698 16.9922779,11.7364863 L16.5311289,12 L16.9922779,12.2635137 C18.3359074,13.031302 18.3359074,14.968698 16.9922779,15.7364863 L9.99227788,19.7364863 C9.37741254,20.0878379 8.62258746,20.0878379 8.00772212,19.7364863 L1.00772212,15.7364863 C-0.335907374,14.968698 -0.335907374,13.031302 1.00772212,12.2635137 L1.46887113,12 L1.00772212,11.7364863 C-0.335907374,10.968698 -0.335907374,9.031302 1.00772212,8.26351372 L1.46887113,8 Z M14.5155644,9.15175111 L9.99227788,11.7364863 C9.37741254,12.0878379 8.62258746,12.0878379 8.00772212,11.7364863 L3.48443556,9.15175111 L2,10 L9,14 L16,10 L14.5155644,9.15175111 Z M3.48443556,13.1517511 L2,14 L9,18 L16,14 L14.5155644,13.1517511 L9.99227788,15.7364863 C9.37741254,16.0878379 8.62258746,16.0878379 8.00772212,15.7364863 L3.48443556,13.1517511 Z M9,2 L2,6 L9,10 L16,6 L9,2 Z" />
+                                    </defs>
+                                    <g fill="none" fill-rule="evenodd" transform="translate(3 2)">
+                                        <g transform="translate(0 7)">
+                                            <mask id="layers-b" fill="#ffffff">
+                                                <use xlink:href="#layers-a" />
+                                            </mask>
+                                            <use fill="#D8D8D8" xlink:href="#layers-a" />
+                                            <g fill="#FFA0A0" mask="url(#layers-b)">
+                                                <rect width="24" height="24" transform="translate(-3 -9)" />
+                                            </g>
+                                        </g>
+                                        <mask id="layers-d" fill="#ffffff">
+                                            <use xlink:href="#layers-c" />
+                                        </mask>
+                                        <use fill="#000000" fill-rule="nonzero" xlink:href="#layers-c" />
+                                        <g fill="#7600FF" mask="url(#layers-d)">
+                                            <rect width="24" height="24" transform="translate(-3 -2)" />
+                                        </g>
+                                    </g>
+                                </svg>
+                                ПОИСК СЕРТИФИКАТА
+                            </div>                            
+                        </div>
+                        <div>
+                            <div style="float: left;">
+                                <input id="find" placeholder="Введите номер сертификата..." type="text" name="text" class="input" style="width: 225px; margin-bottom: 20px; font-family: 'Finlandica'" onchange="find()">
+                            </div>
+                            <div class="t-hover" style="float: left; cursor: pointer; margin-top: -2px; margin-left: 4px;" title="Найти" onclick="find()">
+                                <svg fill="#f8f8ff" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="border: 1px solid var(--t-bg); border-radius: 5px;">
+                                    <path
+                                        d="M10.035,18.069a7.981,7.981,0,0,0,3.938-1.035l3.332,3.332a2.164,2.164,0,0,0,3.061-3.061l-3.332-3.332A8.032,8.032,0,0,0,4.354,4.354a8.034,
+                                        8.034,0,0,0,5.681,13.715ZM5.768,5.768A6.033,6.033,0,1,1,4,10.035,5.989,5.989,0,0,1,5.768,5.768Z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="number" class="t-title"></div>
+                        <div class="t-subtitle">АКАДЕМИЯ ПРОИЗВОДИТЕЛЬНОСТИ</div>
+                        <div class="t-details">
+                            <div class="t-detail-item">
+                                <span class="t-label">ФИО</span><span id="fio" class="t-value" style="text-indent: 7px;"></span>
+                            </div>
+                            
+                            <div class="t-detail-item">
+                                <span class="t-label">Выдан</span>
+                                <span id="delivery" class="t-value" style="width: 70px; text-indent: 7px;"></span>
+                            </div>
+                            <div class="t-detail-item">
+                                <span class="t-label">Истекает</span>
+                                <span id="expires" class="t-value" style="width: 76px; text-indent: 7px;"></span>                                
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 1.5em; margin-top: 20px;">
+                            <div id="status" class="t-detail-item status green-status" style="visibility: hidden"></div>
+                            <div id="withdrawn" class="t-detail-item status red-status" style="visibility: hidden">Отозван</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 1.5em; margin-top: 20px;">
+                            <div id="message" class="red-status" style="visibility: hidden; text-align: center;">Сертификат не найден</div>
+                        </div>
+                    </div>
+                    <div class="t-perforation"
+                        style="position:absolute; bottom:0; left:0; width:100%; transform:translateY(50%);">
+                        <div class="t-perf-line"></div>
+                    </div>
+                </div>
+                <div class="t-stub">
+                    <div class="t-barcode-container">
+                        <div class="t-barcode"></div>
+                        <div class="t-barcode-id" style="color: #a9a7a7;">AE-2026-9X04-AA-DEV</div>
+                    </div>
+                    <div class="t-admit">     
+                        <div id="prev" class="t-hover" style="float: left; margin-top: 10px; cursor: pointer; visibility: hidden;" onclick="goPrev()">
+                            <svg fill="#f8f8ff" width="20px" height="20px" viewBox="-8.5 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <title></title>
+                                <path d="M7.094 15.938l7.688 7.688-3.719 3.563-11.063-11.063 11.313-11.344 3.531 3.5z"></path>
+                            </svg>
+                        </div>
+                        <div id="total" class="t-admit-num" style="float: left; cursor: context-menu;" title="Найдено 0 сертификатов">0</div>
+                        <div id="next" class="t-hover" style="float: left; margin-top: 10px; cursor: pointer; visibility: hidden;" onclick="goNext()">
+                            <svg fill="#f8f8ff" width="20px" height="20px" viewBox="-8.5 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <title>right</title>
+                                <path d="M7.75 16.063l-7.688-7.688 3.719-3.594 11.063 11.094-11.344 11.313-3.5-3.469z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="wait" class="modal" style="display: none; z-index: 2000; background-color: rgba(255, 255, 255, 0.7);">
+        <div class="position-center">
+            <div id="container">
+                <label id="wait_caption" class="loading-title" style="font-size: 14px;"></label>
+                <span id="loader" class="loading-circle sp1">
+                    <span class="loading-circle sp2">
+                        <span class="loading-circle sp3"></span>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            initialize();
+        });
+    </script>
+</body>
+
+</html>

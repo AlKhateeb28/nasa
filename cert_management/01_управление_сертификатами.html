@@ -1,0 +1,85 @@
+<!-- 7334574804872653062 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Certificates management</title>
+
+    <link rel="icon" href="./cert_management/images/favicon.ico" />
+
+    <link rel="stylesheet" href="./../fcc/css/common.css" />
+    <link rel="stylesheet" href="./cert_management/css/index.css" />
+
+    <script type="text/javascript" src="./../scripts/jquery.js"></script>
+    <script type="text/javascript" src="./../fcc/js/jsonReviver.js"></script>
+    <script type="text/javascript" src="./../fcc/js/apexcharts.min.js"></script>
+    <script type="text/javascript" src="./../fcc/js/Notification.js"></script>
+    <script type="text/javascript" src="./../fcc/js/ModalWindow.js"></script>
+    <script type="text/javascript" src="./../fcc/js/AlertPopupWindow.js"></script>
+    <script type="text/javascript" src="./cert_management/js/index.js"></script>
+</head>
+
+<body class="body">
+    <!--div id="loader" class="loader loader-view" style="visibility: hidden; top: 10px;"></div-->      
+
+    <%
+        paramSID = Request.Query.GetOptProperty("cid", null);
+    %>
+    <div id="cid" style="visibility: hidden;"><%=paramSID%></div>
+    
+    <div id="certificates_box" style="width: 1240px;">
+        <div class="scrollbar-control" style="height: 680px;">
+            <table class="styled-table" style="width: 100%;">
+                <thead>
+                    <tr class="sticky" style="font-size: 10px;">                        
+                        <th class="header-cell" style="text-align: center;">#</th>
+                        <th class="header-cell" style="text-align: center;">ФИО</th>
+                        <th class="header-cell" style="text-align: center;">Регион</th>
+                        <th class="header-cell" style="text-align: center;">ИНН</th>
+                        <th class="header-cell" style="text-align: center;">Организация</th>
+                        <th class="header-cell" style="text-align: center;">Направление подготовки</th>
+                        <th class="header-cell" style="text-align: center;">Дата выдачи</th>
+                        <th class="header-cell" style="text-align: center;">Дата окончания</th>
+                        <th class="header-cell" style="text-align: center;">Статус</th>
+                        <th class="header-cell" style="text-align: center;">Последняя ресертификация</th>
+                        <th class="header-cell" style="text-align: center;">Результат ресертификации</th>
+                    </tr>
+                </thead>
+                <tbody id="table_body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="popup_box"></div>
+
+    <div class="note">
+        <div style="float: left; font-size: large; margin-left: 90px; margin-top: 29px;">серия</div>
+        <div id="serial_name" style="float: left; margin-left: 30px; font-size: xxx-large; font-weight: 400; text-shadow: 0 0 10px #8d8b8b, 0 0 20px #ffffff;"></div>
+    </div>
+
+    <script type="text/html" id="row_template">
+        <tr id="row" class="row" onclick="selectRow(this)">
+            <td>РП-0000921407/2025</td>
+            <td>Азаров Андрей Валерьевич</td>
+            <td>г. Москва</td>
+            <td>7724426759</td>
+            <td>АВТОНОМНАЯ НЕКОММЕРЧЕСКАЯ ОРГАНИЗАЦИЯ "ФЕДЕРАЛЬНЫЙ ЦЕНТР КОМПЕТЕНЦИЙ В СФЕРЕ ПРОИЗВОДИТЕЛЬНОСТИ ТРУДА"</td>
+            <td>Подготовка инструкторов по БП</td>
+            <td>02.06.2025</td>
+            <td>02.06.2027</td>
+            <td>В пролете</td>
+            <td>01.06.2026</td>
+            <td>Пройдено</td>
+        </tr>
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            initialize();
+        });
+    </script>
+</body>
+
+</html>

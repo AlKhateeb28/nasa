@@ -326,7 +326,7 @@ function onHelperGroupClick(element) {
     if (activeGroupName === "") {
         activeGroupName = "HELPER";
 
-        $("#task_box").css("height", "251px");
+        $("#task_box").css("height", "240px");
         $("#helper_info").css("display", "block");
 
         $(element).addClass("group-btn-flash");
@@ -334,7 +334,7 @@ function onHelperGroupClick(element) {
 
         putGroupMark(helperGroupIDs);
 
-        $("#agent_block0").css("display", "block");
+        $("#agent_block0").ss("display", "block");
         $("#agent_block1").css("display", "block");
         $("#agent_block2").css("display", "block");
         $("#agent_block3").css("display", "block");
@@ -726,11 +726,16 @@ function getExpectedTime(agent) {
     }
 }
 
-function fillHelperInfoValue(originalAgent, formIdPreffix, flagValue) {
+function fillHelperInfoValue(originalAgent, formIdPreffix, flagValue, flagUpValue, flagDownValue) {
     const prevValue = parseInt($("#" + formIdPreffix + originalAgent.id).text());
     const newValue = prevValue + flagValue;
 
     $("#" + formIdPreffix + originalAgent.id).html(newValue);
+    
+    if (flagUpValue !== undefined && flagDownValue !== undefined) {
+        $("#" + formIdPreffix + originalAgent.id).attr("data-up", flagUpValue);
+        $("#" + formIdPreffix + originalAgent.id).attr("data-down", flagDownValue);
+    }
 
     if (newValue > 0) {
         $("#" + formIdPreffix + originalAgent.id).css("font-weight", "600");
@@ -839,6 +844,9 @@ function changeFinishedAgentId(agent, stackAgent, originalAgent) {
         }
         if (Object.hasOwn(originalAgent, "step3")) {
             fillHelperInfoValue(originalAgent, "helper_step3_", originalAgent.step3);
+        }
+        if (Object.hasOwn(originalAgent, "step4")) {
+            fillHelperInfoValue(originalAgent, "helper_step4_", originalAgent.step4);
         }
     }
 
@@ -1931,7 +1939,6 @@ function ping(id, host, port) {
 
                 checkOverloadValue(1, pingPointer);
             }
-
         }
     };
 

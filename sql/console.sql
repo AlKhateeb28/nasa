@@ -73,3 +73,5 @@ WHERE ls.start_learning_date > ls.last_usage_date
 
 
 UPDATE [WTDB].[dbo].learnings SET start_learning_date = GETDATE() WHERE start_learning_date > last_usage_date AND person_id = 7302407891063862257
+
+delete from [WTDB].[dbo].cc_web_activity

@@ -50,7 +50,7 @@ class AlertPopupWindow {
 					</div>
 					<div id="alert_popup_buttons_${this.id}">
 						<div>
-							<button id="alert_popup_btn" style="margin-left: 12rem;" onclick="${this.instanceVariableName}.onOk()">Ok</button>
+							<button id="alert_popup_btn" style="margin-left: 45%; margin-right: 50%;" onclick="${this.instanceVariableName}.onOk()">Ok</button>
 						</div>
 					</div>					
 			   </div>

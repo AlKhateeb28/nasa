@@ -27,6 +27,7 @@ try {
         {"data": "enrolled", "title": "Тип активации",  "type": "string", "sortable": true, "colorsource": "color", "width": 200},
         {"data": "start_learning_date", "title": "Дата начала",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
         {"data": "last_usage_date", "title": "Дата завершения",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
+        {"data": "diff", "title": "Время прохождения", "type": "string", "sortable": true, "colorsource": "color", "width": 150 },
         {"data": "score", "title": "Балл",  "type": "integer", "sortable": true, "colorsource": "color", "width": 150},
         {"data": "status", "title": "Статус курса",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
         {"data": "coll_create_date", "title": "Дата регистрации",  "type": "string", "sortable": true, "colorsource": "color", "width": 150},
@@ -44,6 +45,84 @@ try {
 
     for (data in dataList) {
         collList = XQuery("sql: " +
+            " IF (OBJECT_ID('tempdb..#view1') IS NOT NULL) DROP TABLE #view1; " +
+            " IF(OBJECT_ID('tempdb..#view2') IS NOT NULL) DROP TABLE #view2; " +
+            " " + 
+            " SELECT cols.id, " +
+            "   cols.fullname, " +
+            "   cols.email, " +
+            "   ogs.name AS org_name, " +
+            "   ogs.code AS org_inn, " +
+            "   og.data.value('(//custom_elems/custom_elem[name=''region_code'']/value)[1]', 'varchar(5)') AS org_region, " +
+            "   FORMAT(CONVERT(datetime2, col.data.value('(collaborator/doc_info/creation/date)[1]', 'date'), 104), 'dd.MM.yyyy') AS coll_create_date " +
+            " INTO #view1 " +
+            " FROM[WTDB].[dbo].collaborators cols " +
+            "   INNER JOIN[WTDB].[dbo].collaborator col ON col.id = cols.id " +
+            "   INNER JOIN[WTDB].[dbo].orgs ogs ON ogs.id = cols.org_id " +
+            "   INNER JOIN[WTDB].[dbo].org og ON og.id = ogs.id " +
+            " WHERE cols.id IN(" + data.ids + ") " +
+            "   AND(cols.code IS NULL OR NOT cols.code LIKE '%muc%'); " +
+            " " +
+            " SELECT tc.*, " +
+            "   crs.code AS course_code, " +
+            "   crs.name AS course_name, " +
+            "   FORMAT(als.start_usage_date, 'dd.MM.yy HH:mm') AS start_usage_date, " +
+            "   IIF(al.data.value('(//is_self_enrolled)[1]', 'bit') = 1, 'Самостоятельно', 'Назначен') AS enrolled, " +
+            "   FORMAT(als.start_learning_date, 'dd.MM.yy HH:mm') AS start_learning_date, " +
+            "   FORMAT(als.last_usage_date, 'dd.MM.yy HH:mm') AS last_usage_date, " +
+            "   als.score, " +
+            "   CASE als.state_id " +
+            "       WHEN 0 THEN 'Назначен' " +
+            "       WHEN 1 THEN 'В процессе' " +
+            "       WHEN 2 THEN 'Завершен' " +
+            "       WHEN 3 THEN 'Не пройден' " +
+            "       WHEN 4 THEN 'Пройден' " +
+            "       WHEN 5 THEN 'Просмотрен' " +
+            "   END AS status, " +
+            "   cs.data.value('(//custom_elems/custom_elem[name=''category'']/value)[1]', 'varchar(max)') AS category " +
+            " INTO #view2 " +
+            " FROM #view1 tc " +
+            "   INNER JOIN[WTDB].[dbo].active_learnings als ON als.person_id = tc.id " +
+            "   INNER JOIN[WTDB].[dbo].courses crs ON crs.id = als.course_id " +
+            "   INNER JOIN[WTDB].[dbo].course cs ON crs.id = cs.id " +
+            "   INNER JOIN[WTDB].[dbo].active_learning al ON al.id = als.id " +
+            " UNION " +
+            " SELECT tc.*, " +
+            "   crs.code course_code, " +
+            "   crs.name course_name, " +
+            "   FORMAT(als.start_usage_date, 'dd.MM.yy HH:mm') start_usage_date, " +
+            "   IIF(al.data.value('(//is_self_enrolled)[1]', 'bit') = 1, 'Самостоятельно', 'Назначен') enrolled, " +
+            "   FORMAT(als.start_learning_date, 'dd.MM.yy HH:mm') start_learning_date, " +
+            "   FORMAT(als.last_usage_date, 'dd.MM.yy HH:mm') last_usage_date, " +
+            "   als.score, " +
+            "   CASE als.state_id " +
+            "       WHEN 0 THEN 'Назначен' " +
+            "       WHEN 1 THEN 'В процессе' " +
+            "       WHEN 2 THEN 'Завершен' " +
+            "       WHEN 3 THEN 'Не пройден' " +
+            "       WHEN 4 THEN 'Пройден' " +
+            "       WHEN 5 THEN 'Просмотрен' " +
+            "   END status, " +
+            "   cs.data.value('(//custom_elems/custom_elem[name=''category'']/value)[1]', 'varchar(max)') AS category " +
+            " FROM #view1 tc " +
+            "   INNER JOIN[WTDB].[dbo].learnings als ON als.person_id = tc.id " +
+            "   INNER JOIN[WTDB].[dbo].courses crs ON crs.id = als.course_id " +
+            "   INNER JOIN[WTDB].[dbo].course cs ON crs.id = cs.id " +
+            "   INNER JOIN[WTDB].[dbo].learning al ON al.id = als.id; " +
+            " " +
+            " SELECT _v.*, " +
+            "   IIF(cs.id IS NULL, null, CONCAT(cs.serial, '-', cs.number, '/', YEAR(cs.delivery_date))) AS number, " +
+            "   DATEDIFF(minute, _v.start_learning_date, _v.last_usage_date) AS diff " +
+            " FROM #view2 _v " +
+            "   LEFT JOIN[WTDB].[dbo].certificates cs ON _v.last_usage_date = FORMAT(cs.delivery_date, 'dd.MM.yy HH:mm') " +
+            "       AND cs.type_id = 7015457522352069961 " +
+            "   AND cs.person_id IN(" + data.ids + "); " +
+            " " +
+            " IF(OBJECT_ID('tempdb..#view2') IS NOT NULL) DROP TABLE #view2; " +
+            " IF(OBJECT_ID('tempdb..#view1') IS NOT NULL) DROP TABLE #view1; ");
+
+        // IF THERE ARE NO QUETIONS, YOUCAN DELETE IT.  CHANGED: 07.10.2026 14^02
+        /*collList = XQuery("sql: " +
             " WITH _view AS ( " +
             "    SELECT cols.id, " +
             "        cols.fullname, " +
@@ -111,7 +190,7 @@ try {
             " FROM _view1 " +
             "    LEFT JOIN [WTDB].[dbo].certificates cs ON _view1.last_usage_date =  FORMAT(cs.delivery_date, 'dd.MM.yy HH:mm') " +
             "        AND cs.type_id = 7015457522352069961 " +
-            "        AND cs.person_id IN (" + data.ids + ") ");
+            "        AND cs.person_id IN (" + data.ids + ") ");*/
 
         for (coll in collList) {
             element = {};
@@ -128,6 +207,7 @@ try {
             element.enrolled = coll.enrolled.Value;
             element.start_learning_date = coll.start_learning_date.Value;
             element.last_usage_date = coll.last_usage_date.Value;
+            element.diff = coll.diff.Value;
             element.score = coll.score.Value;
             element.status = coll.status.Value;
             element.number = coll.number.Value;

@@ -6,6 +6,7 @@ function getData(eventId, result) {
         " SELECT ers.id, " +
         "       es.id AS event_id, " +
         "       ers.person_id AS person_id, " +
+        "       os.id AS org_id,  " +
         "       os.name AS org_name, " +
         "       es.name AS event_name, " +
         "       er.data.value('(//custom_elems/custom_elem[name=''sert_date'']/value)[1]', 'varchar(max)') AS cert_date, " +
@@ -34,7 +35,13 @@ function getCertificateCount(personId, certificateTypeId) {
     return ArrayCount(certificationList);
 }
 
-function createCertificate(personId, certificateTypeId, serial, orgName, deliveryDate, notiCode, eventId) {
+function getExpireDate() {
+    processedDate = StrDate(Date(), false, false).split(".");
+    
+    return Date(processedDate[0] + "." + processedDate[1] + "." + (OptInt(processedDate[2]) + 2));
+}
+
+function createCertificate(personId, certificateTypeId, serial, orgId, orgName, deliveryDate, notiCode, eventId) {
     program = "Руководитель проекта";
 
     certificateDoc = tools.create_certificate_to_person(OptInt(personId), OptInt(certificateTypeId));
@@ -46,6 +53,10 @@ function createCertificate(personId, certificateTypeId, serial, orgName, deliver
     certificateDoc.TopElem.custom_elems.ObtainChildByKey("org_name").value = orgName;
     certificateDoc.TopElem.event_id = eventId;
 
+    /*certificateDoc.TopElem.expire_date = getExpireDate();
+    certificateDoc.TopElem.custom_elems.ObtainChildByKey("initial_col").value = personId;
+    certificateDoc.TopElem.custom_elems.ObtainChildByKey("initial_org").value = orgId;*/
+    
     certificateDoc.Save();
 
     if (OptInt(notiCode) == 13) {
@@ -188,7 +199,7 @@ if (!LdsIsServer) {
                         if (data.is_rck_alone == "РЦК самостоятельно") {
                             if (getCertificateCount(data.person_id, 7164453663916057169) == 0) {
                                 // CREATE CERTIFICATE
-                                certificateId = createCertificate(data.person_id, 7164453663916057169, "РП", data.org_name, data.cert_date, 14, data.event_id);
+                                certificateId = createCertificate(data.person_id, 7164453663916057169, "РП", data.org_id, data.org_name, data.cert_date, 14, data.event_id);
 
                                 addCertificateIdIntoEventResult(data.id, certificateId);
 
@@ -204,7 +215,7 @@ if (!LdsIsServer) {
                         } else if (data.is_rck_alone == "ФЦК") {
                             if (getCertificateCount(data.person_id, 7164453267946338582) == 0) {
                                 // CREATE CERTIFICATE
-                                certificateId = createCertificate(data.person_id, 7164453267946338582, "РП", data.org_name, data.cert_date, 13, data.event_id);
+                                certificateId = createCertificate(data.person_id, 7164453267946338582, "РП", data.org_id, data.org_name, data.cert_date, 13, data.event_id);
 
                                 addCertificateIdIntoEventResult(data.id, certificateId);
 

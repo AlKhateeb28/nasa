@@ -58,142 +58,142 @@ if (toYear == "") {
 }
 
 if (LdsIsServer) {
-    try {
-        if (!isAgentRunning(agentId)) {
-            var total = 0;
-            var processed = 0;
-            var skipped = 0;
-            var saved = 0;
+        try {
+            if (!isAgentRunning(agentId)) {
+                var total = 0;
+                var processed = 0;
+                var skipped = 0;
+                var saved = 0;
 
-            agent.message = "Получение данных...";
-            ws = sendMessageToWebsocket(ws, agent);
-            prevDate = new Date();
+                agent.message = "Получение данных...";
+                ws = sendMessageToWebsocket(ws, agent);
+                prevDate = new Date();
 
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] -------------------");
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] Started");
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] Processing...");
 
-            for (month = 1; month <= Month(Date()); month++) {
-                dataList = ArrayDirect(XQuery("sql: " +
+                for (month = 1; month <= Month(Date()); month++) {
+                    dataList = ArrayDirect(XQuery("sql: " +
                     " SELECT TOP " + monthCount + " ls.id, " +
-                    "   ls.person_id, " +
-                    "   ls.course_id, " +
-                    "   ls.creation_date, " +
-                    "   ls.modification_date, " +
-                    "   ls.start_usage_date, " +
-                    "   ls.start_learning_date, " +
-                    "   ls.last_usage_date, " +
-                    "   l.data.value('(//parts/part/start_usage_date)[1]', 'datetime') AS part_start_usage_date, " +
-                    "   l.data.value('(//parts/part/last_usage_date)[1]', 'datetime') AS part_last_usage_date, " +
-                    "   l.data.value('(//doc_info/creation/date)[1]', 'datetime') AS creation, " +
-                    "   l.data.value('(//doc_info/modification/date)[1]', 'datetime') AS modification, " +
-                    "   cs.max_score " +
+                        "   ls.person_id, " +
+                        "   ls.course_id, " +
+                        "   ls.creation_date, " +
+                        "   ls.modification_date, " +
+                        "   ls.start_usage_date, " +
+                        "   ls.start_learning_date, " +
+                        "   ls.last_usage_date, " +
+                        "   l.data.value('(//parts/part/start_usage_date)[1]', 'datetime') AS part_start_usage_date, " +
+                        "   l.data.value('(//parts/part/last_usage_date)[1]', 'datetime') AS part_last_usage_date, " +
+                        "   l.data.value('(//doc_info/creation/date)[1]', 'datetime') AS creation, " +
+                        "   l.data.value('(//doc_info/modification/date)[1]', 'datetime') AS modification, " +
+                        "   cs.max_score " +
                     " FROM [WTDB].[dbo].active_learnings AS ls " +
                     "   INNER JOIN [WTDB].[dbo].active_learning AS l ON ls.id = l.id " +
                     "   INNER JOIN [WTDB].[dbo].courses AS cs ON ls.course_id = cs.id AND cs.code LIKE '%FCK-%' " +
                     " WHERE ls.state_id = 1 " +
-                    "   AND YEAR(ls.start_usage_date) = " + fromYear +
+                        "   AND YEAR(ls.start_usage_date) = " + fromYear +
                     "   AND MONTH(ls.start_usage_date) = " + month +
                     "   AND DATEPART(week, ls.start_usage_date) < DATEPART(week, GETDATE()) "));
 
-                total += ArrayCount(dataList);
+                    total += ArrayCount(dataList);
 
-                agent.total = total;
-                agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-                agent.message = "Обработка данных...";
-                if (ws != null) {
-                    ws = sendMessageToWebsocket(ws, agent);
-                }
-                prevDate = new Date();
+                    agent.total = total;
+                    agent.fetchTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+                    agent.message = "Обработка данных...";
+                    if (ws != null) {
+                        ws = sendMessageToWebsocket(ws, agent);
+                    }
+                    prevDate = new Date();
 
-                for (data in dataList) {
+                    for (data in dataList) {
                     learningId = tools.active_learning_finish(OptInt(data.id));
 
                     learningDoc = tools.open_doc(OptInt(learningId));
 
-                    if (learningDoc != null) {
-                        learningDocTE = learningDoc.TopElem;
+                        if (learningDoc != null) {
+                            learningDocTE = learningDoc.TopElem;
 
-                        learningDocTE.state_id = 4;  
-                        learningDocTE.last_usage_date = modifyYearOfDate(Date());
-                        
-                        learningDoc.Save();
+                            learningDocTE.state_id = 4;
+                            learningDocTE.last_usage_date = modifyYearOfDate(Date());
 
-                        saved++;
+                            learningDoc.Save();
 
-                        dataList = ArrayDirect(XQuery("sql: " +
-                            " UPDATE [WTDB].[dbo].learnings " +
-                            "       SET gravy = 1 " +
-                            "           creation_date = CAST('" + modifyYearOfDate(Date()) + "' AS DATETIME), " +
-                            "           modification_date = CAST('" + modifyYearOfDate(Date()) + "' AS DATETIME) " +
-                            " WHERE id = " + learningId));
+                            saved++;
 
-                        //certificateId = createCertificate(data.person_id, data.course_id, learningId, modifyYearOfDate(data.creation));                        
-                        //addLogMessage(loggerName, "[agent.id: " + agentId + "] Certificate.ID: " + certificateId);
-                    } else {
-                        skipped++;
-                    }
+                            dataList = ArrayDirect(XQuery("sql: " +
+                                " UPDATE [WTDB].[dbo].learnings " +
+                                "       SET gravy = 1 " +
+                                "           creation_date = CAST('" + modifyYearOfDate(Date()) + "' AS DATETIME), " +
+                                "           modification_date = CAST('" + modifyYearOfDate(Date()) + "' AS DATETIME) " +
+                                " WHERE id = " + learningId));
 
-                    processed++;
+                            //certificateId = createCertificate(data.person_id, data.course_id, learningId, modifyYearOfDate(data.creation));                        
+                            //addLogMessage(loggerName, "[agent.id: " + agentId + "] Certificate.ID: " + certificateId);
+                        } else {
+                            skipped++;
+                        }
 
-                    agent.processed = processed;
-                    agent.saved = saved;
-                    agent.skipped = skipped;
-                    agent.message = "Месяц: " + month + " Обработка данных...";
-                    refreshMsPerRow(agent, startDate, processed);
-                    if (ws != null) {
-                        ws = sendMessageToWebsocket(ws, agent);
-                    }
+                        processed++;
 
-                    if (processed % 1000 == 0) {
-                        addLogMessage(
-                            loggerName,
-                            "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
-                        );
+                        agent.processed = processed;
+                        agent.saved = saved;
+                        agent.skipped = skipped;
+                        agent.message = "Месяц: " + month + " Обработка данных...";
+                        refreshMsPerRow(agent, startDate, processed);
+                        if (ws != null) {
+                            ws = sendMessageToWebsocket(ws, agent);
+                        }
+
+                        if (processed % 1000 == 0) {
+                            addLogMessage(
+                                loggerName,
+                                "[agent.id: " + agentId + "] Remaining time: " + getDurationMessage((total - processed) * msPerRecord)
+                            );
+                        }
                     }
                 }
+
+                agent.state = 1;
+                agent.processed = processed;
+                agent.saved = saved;
+                agent.skipped = skipped;
+                agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
+                refreshMsPerRow(agent, startDate, total);
+                agent.message = "Закончено";
+                if (ws != null) {
+                    ws = sendMessageToWebsocket(ws, agent);
+                }
+
+                addLogResultMessage(
+                    loggerName,
+                    "[agent.id: " + agentId + "]",
+                    total + " total, ",
+                    processed + " processed",
+                    saved + " saved, ",
+                    skipped + " skipped"
+                );
+
+                addLogMessage(
+                    loggerName,
+                    "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
+                );
+            } else {
+                addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent is running. Waiting for it to be completed!");
+
+                agent.state = 1;
+                agent.processed = 0;
+                agent.saved = 0;
+                agent.message = "Закончено. Работает предыдущий экземпляр агента!";
+                sendMessageToWebsocket(ws, agent);
             }
-
-            agent.state = 1;
-            agent.processed = processed;
-            agent.saved = saved;
-            agent.skipped = skipped;
-            agent.handlingTime = DateToRawSeconds(Date()) - DateToRawSeconds(prevDate);
-            refreshMsPerRow(agent, startDate, total);
-            agent.message = "Закончено";
-            if (ws != null) {
-                ws = sendMessageToWebsocket(ws, agent);
-            }
-
-            addLogResultMessage(
-                loggerName,
-                "[agent.id: " + agentId + "]",
-                total + " total, ",
-                processed + " processed",
-                saved + " saved, ",
-                skipped + " skipped"
-            );
-
-            addLogMessage(
-                loggerName,
-                "[agent.id: " + agentId + "] Duration: " + getDurationMessage(DateToRawSeconds(Date()) - DateToRawSeconds(startDate))
-            );
-        } else {
-            addLogMessage(loggerName, "[agent.id: " + agentId + "] Agent is running. Waiting for it to be completed!");
-
-            agent.state = 1;
-            agent.processed = 0;
-            agent.saved = 0;
-            agent.message = "Закончено. Работает предыдущий экземпляр агента!";
+        } catch (e) {
+            agent.state = 2;
+            agent.errorMessage = e;
             sendMessageToWebsocket(ws, agent);
-        }
-    } catch (e) {
-        agent.state = 2;
-        agent.errorMessage = e;
-        sendMessageToWebsocket(ws, agent);
 
-        addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
-    }
+            addLogMessage(loggerName, "[agent.id: " + agentId + "] ERROR: " + e);
+        }
 
     saveMonitorAgents(agent, startDate);
 

@@ -132,7 +132,9 @@ if (LdsIsServer) {
             "       e.data.value('(//custom_elems/custom_elem[name=''month_otch'']/value)[1]', 'varchar(max)') AS report_month, " +
             "       ers.event_start_date, " +
             "       o.data.value('(//custom_elems/custom_elem[name=''wave'']/value)[1]', 'varchar(max)') AS wave, " +
-            "       pcs.name AS typical_position_name " +
+            "       pcs.name AS typical_position_name, " +
+            "       cs.email, " +
+            "       c.data.value('(collaborator/system_email)[1]', 'varchar(max)') AS system_email " +
             " FROM [WTDB].[dbo].event_results AS ers " +
             "         INNER JOIN [WTDB].[dbo].events AS es ON ers.event_id = es.id " + addYearCondition(yearParam) +
             "               AND es.education_org_id IN (7100351150313827874, 7410749948253583035, 7100351480975785298, 6148914691236517202, 6148914691236517203, 6802513472431981115, 6938000483356197646, 6938001238782589341, 7034790057599700358, 6856726259800948992, 7086784658178339954, 7410046389105987361, 7410749948253583035, 6856735269184478330, 6856735325928247512, 6856735493587543129, 6869760264243199229, 6870054939308859763) " +
@@ -205,8 +207,8 @@ if (LdsIsServer) {
         reportString.AppendStr("<td class='header'>Фамилия участника</td>");
         reportString.AppendStr("<td class='header'>Имя участника</td>");
         reportString.AppendStr("<td class='header'>Отчество участника</td>");
-        reportString.AppendStr("<td class='header'>Волна</td>");
-        reportString.AppendStr("<td class='header'>Есть в досье</td>");
+        reportString.AppendStr("<td class='header'>Email</td>");
+        reportString.AppendStr("<td class='header'>System email</td>");
         reportString.AppendStr("<td class='header'>Типовая должность</td>");
         reportString.AppendStr("</tr>");
 
@@ -252,8 +254,8 @@ if (LdsIsServer) {
                 "<td>" + fioList[0] + "</td>" +
                 "<td>" + (fioList[1] == "#empty" ? "" : fioList[1]) + "</td>" +
                 "<td>" + (fioList[2] == "#empty" ? "" : fioList[2]) + "</td>" +
-                "<td>" + data.wave + "</td>" +
-                "<td>" + (isCollaboratorExistsInDossier(data.person_code) ? "Да": "Нет") + "</td>" +
+                "<td>" + data.email + "</td>" +
+                "<td>" + data.system_email + "</td>" +
                 "<td>" + data.typical_position_name + "</td>" +
                 "</tr>");
 

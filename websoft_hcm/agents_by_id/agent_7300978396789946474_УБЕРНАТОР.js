@@ -57,7 +57,7 @@ function updateSingleFlag(flag, parentFlag, step, max) {
             if (data.org_flag_value != data.cs_flag_value) {
                 execList = ArrayDirect(XQuery("sql: " +
                     " UPDATE collaborators SET " + parentFlag + " = " + data.org_flag_value + " WHERE id = " + data.cs_id + "; " +
-                    " SELECT 1;"));
+                    " SELECT id FROM [WTDB].[dbo].cc_web_pages WHERE id = 7235877002894078514 "));
 
                 if (ArrayCount(execList) == 0) {
                     isSkipped = true;

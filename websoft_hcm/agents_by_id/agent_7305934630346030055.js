@@ -102,7 +102,7 @@ if (LdsIsServer) {
                     }
 
                     // OCK_RP
-                    returnedObject = getCertificateIdByEduMethodsIds(data.person_id, "7131096280190570779, 7143846913328314346");
+                    returnedObject = getCertificateIdByEduMethodsIds(data.person_id, "7131096280190570779");
                     if (returnedObject.eventResultId != null) {
                         addLogMessage(loggerName, "[agent.id: " + agentId + "] 1");
                         dossierDocTE.ock_rp_certification = returnedObject.eventResultId;
@@ -123,6 +123,28 @@ if (LdsIsServer) {
                     if (returnedObject.certificateId != null) {
                         dossierDocTE.ock_am_certificate = returnedObject.certificateId;
                         isSaved = true;                        
+                    }
+
+                    // OCK_BNO_RP
+                    returnedObject = getCertificateIdByEduMethodsIds(data.person_id, "7143846913328314346");
+                    if (returnedObject.eventResultId != null) {
+                        dossierDocTE.ock_rp_certification = returnedObject.eventResultId;
+                        isSaved = true;
+                    }
+                    if (returnedObject.certificateId != null) {
+                        dossierDocTE.ock_am_certificate = returnedObject.certificateId;
+                        isSaved = true;
+                    }
+
+                    // OCK_BNO_AM
+                    returnedObject = getCertificateIdByEduMethodsIds(data.person_id, "7260348075183431472");
+                    if (returnedObject.eventResultId != null) {
+                        dossierDocTE.ock_am_certification = returnedObject.eventResultId;
+                        isSaved = true;
+                    }
+                    if (returnedObject.certificateId != null) {
+                        dossierDocTE.ock_am_certificate = returnedObject.certificateId;
+                        isSaved = true;
                     }
                 } else {
                     addLogMessage(loggerName, "[agent.id: " + agentId + "] Dossier with ID " + data.id + " is not exist!");

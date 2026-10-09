@@ -48,7 +48,7 @@ try {
             dossierDocTE = dossierDoc.TopElem;
 
             for(collaborator in dossierDocTE.collaborator_lists) {
-                rpCetrificateList = ArrayDirect(XQuery("sql: " +
+                rccRpCetrificateList = ArrayDirect(XQuery("sql: " +
                     " SELECT cs.id " +
                     " FROM [WTDB].[dbo].certificates cs " +
                     "    INNER JOIN [WTDB].[dbo].certificate_types cts ON cs.type_id = cts.id " +
@@ -57,7 +57,7 @@ try {
                     "    OR cts.code = 'RCC-RG-FCC' " +
                     "    OR cts.code = 'RCC-T-RCC') "));
 
-                for (rpCetrificate in rpCetrificateList) {
+                for (rpCetrificate in rccRpCetrificateList) {
                     if(dossierDocTE.rcc_rp_certificates.GetOptChildByKey(rpCetrificate.id) == undefined) {
                         dossierDocTE.rcc_rp_certificates.ObtainChildByKey(rpCetrificate.id);
 
@@ -65,16 +65,67 @@ try {
                     }
                 }
 
-                trenCetrificateList = ArrayDirect(XQuery("sql: " +
+                rccTrenCetrificateList = ArrayDirect(XQuery("sql: " +
                     " SELECT cs.id " +
                     " FROM [WTDB].[dbo].certificates cs " +
                     "    INNER JOIN [WTDB].[dbo].certificate_types cts ON cs.type_id = cts.id " +
                     " WHERE cs.person_id = " + collaborator.collaborator_list_id +
                     "    AND cts.code = 'RCC-T' "));
 
-                for (trenCetrificate in trenCetrificateList) {
-                    if(dossierDocTE.rcc_tren_certificates.GetOptChildByKey(trenCetrificate.id) == undefined) {
-                        dossierDocTE.rcc_tren_certificates.ObtainChildByKey(trenCetrificate.id);
+                for (rccTrenCetrificate in rccTrenCetrificateList) {
+                    if(dossierDocTE.rcc_tren_certificates.GetOptChildByKey(rccTrenCetrificate.id) == undefined) {
+                        dossierDocTE.rcc_tren_certificates.ObtainChildByKey(rccTrenCetrificate.id);
+
+                        isSaved = true;
+                    }
+                }
+
+                ockRpCetrificateList = ArrayDirect(XQuery("sql: " +
+                    " SELECT TOP 1 cs.id " +
+                    " FROM [WTDB].[dbo].certificates cs " +
+                    "    INNER JOIN [WTDB].[dbo].certificate_types cts ON cs.type_id = cts.id " +
+                    " WHERE cs.person_id = " + collaborator.collaborator_list_id +
+                    "    AND (cts.code = 'OCK-RP_BNO' " +
+                    "    OR cts.code = 'OCK-RP_SS') " +
+                    " ORDER BY cs.delivery_date DESC "));
+
+                if (ArrayCount(ockRpCetrificateList) > 0) {
+                    if (dossierDocTE.ock_rp_certificate_id.GetOptChildByKey(ockRpCetrificateList[0].id) == undefined) {
+                        dossierDocTE.ock_rp_certificate_id.ObtainChildByKey(ockRpCetrificateList[0].id);
+
+                        isSaved = true;
+                    }
+                }
+
+                ockAmCetrificateList = ArrayDirect(XQuery("sql: " +
+                    " SELECT TOP 1 cs.id " +
+                    " FROM [WTDB].[dbo].certificates cs " +
+                    "    INNER JOIN [WTDB].[dbo].certificate_types cts ON cs.type_id = cts.id " +
+                    " WHERE cs.person_id = " + collaborator.collaborator_list_id +
+                    "    AND (cts.code = 'OCK-AM_BNO' " +
+                    "    OR cts.code = 'OCK-AM-SS') " +
+                    " ORDER BY cs.delivery_date DESC "));
+
+                if (ArrayCount(ockAmCetrificateList) > 0) {
+                    if (dossierDocTE.ock_am_certificate.GetOptChildByKey(ockAmCetrificateList[0].id) == undefined) {
+                        dossierDocTE.ock_am_certificate.ObtainChildByKey(ockAmCetrificateList[0].id);
+
+                        isSaved = true;
+                    }
+                }
+
+                ockTrenCetrificateList = ArrayDirect(XQuery("sql: " +
+                    " SELECT TOP 1 cs.id " +
+                    " FROM [WTDB].[dbo].certificates cs " +
+                    "    INNER JOIN [WTDB].[dbo].certificate_types cts ON cs.type_id = cts.id " +
+                    " WHERE cs.person_id = " + collaborator.collaborator_list_id +
+                    "    AND (cts.code = 'OCK-T_BNO' " +
+                    "    OR cts.code = 'OCK-T_SS') " +
+                    " ORDER BY cs.delivery_date DESC "));
+
+                if (ArrayCount(ockTrenCetrificateList) > 0) {
+                    if (dossierDocTE.ock_tren_certificate.GetOptChildByKey(ockTrenCetrificateList[0].id) == undefined) {
+                        dossierDocTE.ock_tren_certificate.ObtainChildByKey(ockTrenCetrificateList[0].id);
 
                         isSaved = true;
                     }

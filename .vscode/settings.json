@@ -1,0 +1,22 @@
+{
+    "sqltools.connections": [
+        {
+            "connectionTimeout": 15,
+            "mssqlOptions": {
+                "appName": "SQLTools",
+                "useUTC": false,
+                "encrypt": true,
+                "trustServerCertificate": true
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "192.168.0.97",
+            "port": 1433,
+            "driver": "MSSQL",
+            "name": "SERVER 97",
+            "database": "WTDB",
+            "username": "WEBTUTOR",
+            "password": "Cfdby7124493"
+        }
+    ]
+}
